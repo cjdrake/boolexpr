@@ -214,3 +214,11 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+GCS_BUCKET := gs://www.boolexpr.org
+HTML_DIR := build/html
+
+.PHONY: upload
+upload: html
+	gsutil -m rsync -d -p -r $(HTML_DIR) $(GCS_BUCKET)
+	gsutil -m acl ch -u AllUsers:R $(GCS_BUCKET)/**
