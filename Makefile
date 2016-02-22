@@ -30,7 +30,7 @@ cover: build/cover/a.out
 # Source Code
 #===============================================================================
 
-BX_HDRS := src/boolexpr.h
+BX_HDRS := include/boolexpr/boolexpr.h
 BX_SRCS := \
     src/argset.cc \
     src/binop.cc \
@@ -87,10 +87,10 @@ build/test/: | build/
 	@mkdir $@
 
 build/test/%.o: src/%.cc $(BX_HDRS) | build/test/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -Isrc $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -Iinclude $<
 
 build/test/%.o: test/%.cc $(BX_HDRS) $(TEST_HDRS) | build/test/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(GTEST)/include -Isrc -Itest $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(GTEST)/include -Iinclude -Itest $<
 
 BLD_TEST_OBJS := \
     $(patsubst src/%.cc,build/test/%.o,$(BX_SRCS)) \
@@ -104,10 +104,10 @@ build/cover/: | build/
 	@mkdir $@
 
 build/cover/%.o: src/%.cc $(BX_HDRS) | build/cover/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g --coverage -I$(CMSAT)/include -Isrc $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g --coverage -I$(CMSAT)/include -Iinclude $<
 
 build/cover/%.o: test/%.cc $(BX_HDRS) $(TEST_HDRS) | build/cover/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(GTEST)/include -Isrc -Itest $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(GTEST)/include -Iinclude -Itest $<
 
 BLD_COVER_OBJS := \
     $(patsubst src/%.cc,build/cover/%.o,$(BX_SRCS)) \

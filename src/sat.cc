@@ -21,7 +21,7 @@
 #include <boost/optional.hpp>
 #include <cryptominisat4/cryptominisat.h>
 
-#include "boolexpr.h"
+#include "boolexpr/boolexpr.h"
 
 
 using CMSat::SATSolver;

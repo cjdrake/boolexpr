@@ -21,7 +21,7 @@
 #include <boost/optional.hpp>
 #include <gtest/gtest.h>
 
-#include "boolexpr.h"
+#include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
 

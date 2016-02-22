@@ -20,7 +20,7 @@
 
 #include <boost/optional.hpp>
 
-#include "boolexpr.h"
+#include "boolexpr/boolexpr.h"
 
 
 using namespace boolexpr;
