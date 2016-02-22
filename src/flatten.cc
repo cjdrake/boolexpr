@@ -75,14 +75,11 @@ _lits_cmp(const std::set<lit_t>& xs, const std::set<lit_t>& ys)
             ++ys_it;
         }
         else {
-            auto abs_x_id = abs(x->id);
-            auto abs_y_id = abs(y->id);
-
-            if (abs_x_id < abs_y_id) {
+            if (x->id < y->id) {
                 ret &= ~XS_LTE_YS;
                 ++xs_it;
             }
-            else if (abs_x_id > abs_y_id) {
+            else if (x->id > y->id) {
                 ret &= ~YS_LTE_XS;
                 ++ys_it;
             }
