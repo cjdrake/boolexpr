@@ -1,5 +1,7 @@
 # Boolean Expressions
 
+[![Build Status](https://travis-ci.org/cjdrake/boolexpr.svg?branch=master)](https://travis-ci.org/cjdrake/boolexpr)
+
 BoolExpr is a C++ library for symbolic Boolean algebra.
 
 [Read the docs!](http://www.boolexpr.org)
