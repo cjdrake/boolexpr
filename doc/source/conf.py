@@ -110,12 +110,19 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = "alabaster"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    "github_user" : "cjdrake",
+    "github_repo" : "boolexpr",
+    "github_banner" : "true",
+    "analytics_id" : "UA-72705839-2",
+    "show_powered_by" : "false",
+    "show_related" : "false",
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []

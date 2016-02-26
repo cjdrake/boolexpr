@@ -1,22 +1,17 @@
-.. boolexpr documentation master file, created by
-   sphinx-quickstart on Sun Feb  7 21:09:00 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. Copyright 2016 Chris Drake
 
-Welcome to boolexpr's documentation!
-====================================
+BoolExpr Documentation
+======================
+
+BoolExpr is an open source C++ library for symbolic Boolean algebra.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-
-
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-
