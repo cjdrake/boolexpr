@@ -264,6 +264,63 @@ boolexpr::ite(const bx_t& s, const bx_t& d1, const bx_t& d0)
 }
 
 
+bx_t
+boolexpr::or_s(const vector<bx_t>& args)
+{ return simplify(or_(args)); }
+
+bx_t
+boolexpr::or_s(const vector<bx_t>&& args)
+{ return simplify(or_(args)); }
+
+bx_t
+boolexpr::or_s(std::initializer_list<bx_t> l)
+{ return simplify(or_(l)); }
+
+bx_t
+boolexpr::and_s(const vector<bx_t>& args)
+{ return simplify(and_(args)); }
+
+bx_t
+boolexpr::and_s(const vector<bx_t>&& args)
+{ return simplify(and_(args)); }
+
+bx_t
+boolexpr::and_s(std::initializer_list<bx_t> l)
+{ return simplify(and_(l)); }
+
+bx_t
+boolexpr::xor_s(const vector<bx_t>& args)
+{ return simplify(xor_(args)); }
+
+bx_t
+boolexpr::xor_s(const vector<bx_t>&& args)
+{ return simplify(xor_(args)); }
+
+bx_t
+boolexpr::xor_s(std::initializer_list<bx_t> l)
+{ return simplify(xor_(l)); }
+
+bx_t
+boolexpr::eq_s(const vector<bx_t>& args)
+{ return simplify(eq(args)); }
+
+bx_t
+boolexpr::eq_s(const vector<bx_t>&& args)
+{ return simplify(eq(args)); }
+
+bx_t
+boolexpr::eq_s(std::initializer_list<bx_t> l)
+{ return simplify(eq(l)); }
+
+bx_t
+boolexpr::impl_s(const bx_t& p, const bx_t& q)
+{ return simplify(impl(p, q)); }
+
+bx_t
+boolexpr::ite_s(const bx_t& s, const bx_t& d1, const bx_t& d0)
+{ return simplify(ite(s, d1, d0)); }
+
+
 // Overloaded Operators
 bx_t boolexpr::operator~(const bx_t& self) { return invert(self); }
 bx_t boolexpr::operator|(const bx_t& lhs, const bx_t& rhs) { return or_({lhs, rhs}); }

@@ -705,6 +705,21 @@ bx_t eq(std::initializer_list<bx_t>);
 bx_t impl(const bx_t&, const bx_t&);
 bx_t ite(const bx_t&, const bx_t&, const bx_t&);
 
+bx_t or_s(const vector<bx_t>&);
+bx_t or_s(const vector<bx_t>&&);
+bx_t or_s(std::initializer_list<bx_t>);
+bx_t and_s(const vector<bx_t>&);
+bx_t and_s(const vector<bx_t>&&);
+bx_t and_s(std::initializer_list<bx_t>);
+bx_t xor_s(const vector<bx_t>&);
+bx_t xor_s(const vector<bx_t>&&);
+bx_t xor_s(std::initializer_list<bx_t>);
+bx_t eq_s(const vector<bx_t>&);
+bx_t eq_s(const vector<bx_t>&&);
+bx_t eq_s(std::initializer_list<bx_t>);
+bx_t impl_s(const bx_t&, const bx_t&);
+bx_t ite_s(const bx_t&, const bx_t&, const bx_t&);
+
 bx_t operator~(const bx_t&);
 bx_t operator|(const bx_t&, const bx_t&);
 bx_t operator&(const bx_t&, const bx_t&);
