@@ -74,30 +74,24 @@ class Context;
 
 // Expression kinds
 typedef enum {
-    ZERO = 0x00,        // 0 0000
-    ONE  = 0x01,        // 0 0001
-
-    LOGICAL   = 0x04,   // 0 0100
-    ILLOGICAL = 0x06,   // 0 0110
-
-    COMP = 0x08,        // 0 1000
-    VAR  = 0x09,        // 0 1001
-
-    NOR  = 0x10,        // 1 0000
-    OR   = 0x11,        // 1 0001
-    NAND = 0x12,        // 1 0010
-    AND  = 0x13,        // 1 0011
-
-    XNOR = 0x14,        // 1 0100
-    XOR  = 0x15,        // 1 0101
-    NEQ  = 0x16,        // 1 0110
-    EQ   = 0x17,        // 1 0111
-
-    NIMPL = 0x18,       // 1 1000
-    IMPL  = 0x19,       // 1 1001
-
-    NITE = 0x1A,        // 1 1010
-    ITE  = 0x1B,        // 1 1011
+    ZERO  = 0x00,   // 0 0000
+    ONE   = 0x01,   // 0 0001
+    LOG   = 0x04,   // 0 0100
+    ILL   = 0x06,   // 0 0110
+    COMP  = 0x08,   // 0 1000
+    VAR   = 0x09,   // 0 1001
+    NOR   = 0x10,   // 1 0000
+    OR    = 0x11,   // 1 0001
+    NAND  = 0x12,   // 1 0010
+    AND   = 0x13,   // 1 0011
+    XNOR  = 0x14,   // 1 0100
+    XOR   = 0x15,   // 1 0101
+    NEQ   = 0x16,   // 1 0110
+    EQ    = 0x17,   // 1 0111
+    NIMPL = 0x18,   // 1 1000
+    IMPL  = 0x19,   // 1 1001
+    NITE  = 0x1A,   // 1 1010
+    ITE   = 0x1B,   // 1 1011
 } Kind;
 
 

@@ -34,8 +34,8 @@ Known::Known(Kind kind, bool val) : Constant(kind), val {val} {}
 Zero::Zero() : Known(ZERO, false) {}
 One::One() : Known(ONE, true) {}
 Unknown::Unknown(Kind kind) : Constant(kind) {}
-Logical::Logical() : Unknown(LOGICAL) {}
-Illogical::Illogical() : Unknown(ILLOGICAL) {}
+Logical::Logical() : Unknown(LOG) {}
+Illogical::Illogical() : Unknown(ILL) {}
 Literal::Literal(Kind kind, Context *ctx, id_t id) : Atom(kind), ctx {ctx}, id {id} {}
 Complement::Complement(Context *ctx, id_t id) : Literal(COMP, ctx, id) {}
 Variable::Variable(Context *ctx, id_t id) : Literal(VAR, ctx, id) {}
