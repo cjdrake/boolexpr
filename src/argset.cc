@@ -26,7 +26,7 @@
 using namespace boolexpr;
 
 
-LatticeArgSet::LatticeArgSet(const vector<bx_t>& args, const Kind& kind,
+LatticeArgSet::LatticeArgSet(const vector<bx_t>& args, const BoolExpr::Kind& kind,
                              const bx_t& identity, const bx_t& dominator)
     : infimum {true}
     , supremum {false}
@@ -82,7 +82,7 @@ LatticeArgSet::reduce() const
 
 
 OrArgSet::OrArgSet(const vector<bx_t>& args)
-    : LatticeArgSet(args, OR, Or::identity(), Or::dominator())
+    : LatticeArgSet(args, BoolExpr::OR, Or::identity(), Or::dominator())
 {}
 
 
@@ -94,7 +94,7 @@ OrArgSet::to_op() const
 
 
 AndArgSet::AndArgSet(const vector<bx_t>& args)
-    : LatticeArgSet(args, AND, And::identity(), And::dominator())
+    : LatticeArgSet(args, BoolExpr::AND, And::identity(), And::dominator())
 {}
 
 

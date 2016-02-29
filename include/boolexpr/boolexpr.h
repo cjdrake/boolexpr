@@ -18,22 +18,22 @@
 
 
 // Kind checks
-#define IS_ZERO(expr)  ((expr)->kind == boolexpr::ZERO)
-#define IS_ONE(expr)   ((expr)->kind == boolexpr::ONE)
-#define IS_COMP(expr)  ((expr)->kind == boolexpr::COMP)
-#define IS_VAR(expr)   ((expr)->kind == boolexpr::VAR)
-#define IS_NOR(expr)   ((expr)->kind == boolexpr::NOR)
-#define IS_OR(expr)    ((expr)->kind == boolexpr::OR)
-#define IS_NAND(expr)  ((expr)->kind == boolexpr::NAND)
-#define IS_AND(expr)   ((expr)->kind == boolexpr::AND)
-#define IS_XNOR(expr)  ((expr)->kind == boolexpr::XNOR)
-#define IS_XOR(expr)   ((expr)->kind == boolexpr::XOR)
-#define IS_NEQ(expr)   ((expr)->kind == boolexpr::NEQ)
-#define IS_EQ(expr)    ((expr)->kind == boolexpr::EQ)
-#define IS_NIMPL(expr) ((expr)->kind == boolexpr::NIMPL)
-#define IS_IMPL(expr)  ((expr)->kind == boolexpr::IMPL)
-#define IS_NITE(expr)  ((expr)->kind == boolexpr::NITE)
-#define IS_ITE(expr)   ((expr)->kind == boolexpr::ITE)
+#define IS_ZERO(expr)  ((expr)->kind == boolexpr::BoolExpr::ZERO)
+#define IS_ONE(expr)   ((expr)->kind == boolexpr::BoolExpr::ONE)
+#define IS_COMP(expr)  ((expr)->kind == boolexpr::BoolExpr::COMP)
+#define IS_VAR(expr)   ((expr)->kind == boolexpr::BoolExpr::VAR)
+#define IS_NOR(expr)   ((expr)->kind == boolexpr::BoolExpr::NOR)
+#define IS_OR(expr)    ((expr)->kind == boolexpr::BoolExpr::OR)
+#define IS_NAND(expr)  ((expr)->kind == boolexpr::BoolExpr::NAND)
+#define IS_AND(expr)   ((expr)->kind == boolexpr::BoolExpr::AND)
+#define IS_XNOR(expr)  ((expr)->kind == boolexpr::BoolExpr::XNOR)
+#define IS_XOR(expr)   ((expr)->kind == boolexpr::BoolExpr::XOR)
+#define IS_NEQ(expr)   ((expr)->kind == boolexpr::BoolExpr::NEQ)
+#define IS_EQ(expr)    ((expr)->kind == boolexpr::BoolExpr::EQ)
+#define IS_NIMPL(expr) ((expr)->kind == boolexpr::BoolExpr::NIMPL)
+#define IS_IMPL(expr)  ((expr)->kind == boolexpr::BoolExpr::IMPL)
+#define IS_NITE(expr)  ((expr)->kind == boolexpr::BoolExpr::NITE)
+#define IS_ITE(expr)   ((expr)->kind == boolexpr::BoolExpr::ITE)
 
 #define ARE_SAME(ex1, ex2) ((ex1)->kind == (ex2)->kind)
 
@@ -72,29 +72,6 @@ class LatticeOperator;
 class Context;
 
 
-// Expression kinds
-typedef enum {
-    ZERO  = 0x00,   // 0 0000
-    ONE   = 0x01,   // 0 0001
-    LOG   = 0x04,   // 0 0100
-    ILL   = 0x06,   // 0 0110
-    COMP  = 0x08,   // 0 1000
-    VAR   = 0x09,   // 0 1001
-    NOR   = 0x10,   // 1 0000
-    OR    = 0x11,   // 1 0001
-    NAND  = 0x12,   // 1 0010
-    AND   = 0x13,   // 1 0011
-    XNOR  = 0x14,   // 1 0100
-    XOR   = 0x15,   // 1 0101
-    NEQ   = 0x16,   // 1 0110
-    EQ    = 0x17,   // 1 0111
-    NIMPL = 0x18,   // 1 1000
-    IMPL  = 0x19,   // 1 1001
-    NITE  = 0x1A,   // 1 1010
-    ITE   = 0x1B,   // 1 1011
-} Kind;
-
-
 using id_t = uint32_t;
 
 using bx_t = std::shared_ptr<const BoolExpr>;
@@ -122,6 +99,27 @@ protected:
     virtual std::ostream& _op_lsh(std::ostream&) const = 0;
 
 public:
+    enum Kind {
+        ZERO  = 0x00,   // 0 0000
+        ONE   = 0x01,   // 0 0001
+        LOG   = 0x04,   // 0 0100
+        ILL   = 0x06,   // 0 0110
+        COMP  = 0x08,   // 0 1000
+        VAR   = 0x09,   // 0 1001
+        NOR   = 0x10,   // 1 0000
+        OR    = 0x11,   // 1 0001
+        NAND  = 0x12,   // 1 0010
+        AND   = 0x13,   // 1 0011
+        XNOR  = 0x14,   // 1 0100
+        XOR   = 0x15,   // 1 0101
+        NEQ   = 0x16,   // 1 0110
+        EQ    = 0x17,   // 1 0111
+        NIMPL = 0x18,   // 1 1000
+        IMPL  = 0x19,   // 1 1001
+        NITE  = 0x1A,   // 1 1010
+        ITE   = 0x1B,   // 1 1011
+    };
+
     const Kind kind;
 
     BoolExpr(Kind kind);
@@ -590,14 +588,14 @@ class LatticeArgSet : public ArgSet {
 protected:
     bool infimum;
     bool supremum;
-    Kind kind;
+    BoolExpr::Kind kind;
     bx_t identity;
     bx_t dominator;
 
     void insert(const bx_t&);
 
 public:
-    LatticeArgSet(const vector<bx_t>& args, const Kind& kind,
+    LatticeArgSet(const vector<bx_t>& args, const BoolExpr::Kind& kind,
                   const bx_t& identity, const bx_t& dominator);
     bx_t reduce() const;
 };
