@@ -57,15 +57,15 @@ TEST_F(SATTest, Atoms)
 
 TEST_F(SATTest, Clauses)
 {
-    auto f0 = ~xs[0] | xs[1] | ~xs[2] | xs[3];
-    auto soln0 = f0->sat();
+    auto y0 = ~xs[0] | xs[1] | ~xs[2] | xs[3];
+    auto soln0 = y0->sat();
     EXPECT_TRUE(soln0.first);
     auto p0 = *soln0.second;
     EXPECT_EQ(p0.size(), 4);
     EXPECT_TRUE((p0[xs[0]] == _zero) || (p0[xs[1]] == _one) || (p0[xs[2]] == _zero) || (p0[xs[3]] == _one));
 
-    auto f1 = ~xs[0] & xs[1] & ~xs[2] & xs[3];
-    auto soln1 = f1->sat();
+    auto y1 = ~xs[0] & xs[1] & ~xs[2] & xs[3];
+    auto soln1 = y1->sat();
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
     EXPECT_EQ(p1.size(), 4);
@@ -75,7 +75,7 @@ TEST_F(SATTest, Clauses)
 
 TEST_F(SATTest, Contradiction)
 {
-    auto f = (~xs[0] | ~xs[1]) & (~xs[0] | xs[1]) & (xs[0] | ~xs[1]) & (xs[0] | xs[1]);
-    auto soln = f->sat();
+    auto y = (~xs[0] | ~xs[1]) & (~xs[0] | xs[1]) & (xs[0] | ~xs[1]) & (xs[0] | xs[1]);
+    auto soln = y->sat();
     EXPECT_FALSE(soln.first);
 }
