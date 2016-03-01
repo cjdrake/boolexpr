@@ -40,14 +40,15 @@ TEST_F(ComposeTest, Basic)
         {xs[3], xs[7]},
     };
 
-    auto y0 = compose(_zero, var2bx);
-    EXPECT_EQ(y0, _zero);
+    auto g0 = _zero->compose(var2bx);
+    EXPECT_EQ(g0, _zero);
 
-    auto y1 = compose(_one, var2bx);
-    EXPECT_EQ(y1, _one);
+    auto g1 = _one->compose(var2bx);
+    EXPECT_EQ(g1, _one);
 
-    auto y2 = compose(~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]), var2bx);
-    EXPECT_TRUE(equivalent(y2, ~xs[4] | ((xs[5] & ~xs[6]) ^ xs[7])));
+    auto f2 = ~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]);
+    auto g2 = f2->compose(var2bx);
+    EXPECT_TRUE(equivalent(g2, ~xs[4] | ((xs[5] & ~xs[6]) ^ xs[7])));
 }
 
 
@@ -60,12 +61,13 @@ TEST_F(ComposeTest, Restrict)
         {xs[3], _one},
     };
 
-    auto y0 = restrict_(_zero, p);
-    EXPECT_EQ(y0, _zero);
+    auto g0 = _zero->restrict_(p);
+    EXPECT_EQ(g0, _zero);
 
-    auto y1 = restrict_(_one, p);
-    EXPECT_EQ(y1, _one);
+    auto g1 = _one->restrict_(p);
+    EXPECT_EQ(g1, _one);
 
-    auto y2 = restrict_(~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]), p);
-    EXPECT_EQ(y2, _one);
+    auto f2 = ~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]);
+    auto g2 = f2->restrict_(p);
+    EXPECT_EQ(g2, _one);
 }

@@ -549,11 +549,11 @@ boolexpr::cofactors(const bx_t& self, vector<var_t>& xs)
 
         auto p0 = point_t { {x, zero()} };
         for (const bx_t& cf : cfs)
-            temps.push_back(restrict_(cf, p0));
+            temps.push_back(cf->restrict_(p0));
 
         auto p1 = point_t { {x, one()} };
         for (const bx_t& cf : cfs)
-            temps.push_back(restrict_(cf, p1));
+            temps.push_back(cf->restrict_(p1));
 
         std::swap(cfs, temps);
     }

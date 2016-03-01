@@ -124,8 +124,6 @@ protected:
     virtual bx_t _simplify(const bx_t&) const = 0;
     virtual bx_t _to_latop(const bx_t&) const = 0;
     virtual bx_t _to_binop(const bx_t&) const = 0;
-    virtual bx_t _compose(const bx_t&, const var2bx_t&) const = 0;
-    virtual bx_t _restrict(const bx_t&, const point_t&) const = 0;
 
 public:
     const Kind kind;
@@ -141,8 +139,6 @@ public:
     friend bx_t to_nnf(const bx_t&);
     friend bx_t to_cnf(const bx_t&);
     friend bx_t to_dnf(const bx_t&);
-    friend bx_t compose(const bx_t&, const var2bx_t&);
-    friend bx_t restrict_(const bx_t&, const point_t&);
 
     virtual bx_t invert() const = 0;
 
@@ -153,6 +149,9 @@ public:
 
     virtual bool is_dnf() const = 0;
     virtual bool is_cnf() const = 0;
+
+    virtual bx_t compose(const var2bx_t&) const = 0;
+    virtual bx_t restrict_(const point_t&) const = 0;
 
     virtual bx_t tseytin(Context&, const string& = "a") const = 0;
     virtual soln_t sat() const = 0;
@@ -180,12 +179,11 @@ public:
 
 
 class Constant : public Atom {
-protected:
-    bx_t _compose(const bx_t&, const var2bx_t&) const;
-    bx_t _restrict(const bx_t&, const point_t&) const;
-
 public:
     Constant(Kind kind);
+
+    bx_t compose(const var2bx_t&) const;
+    bx_t restrict_(const point_t&) const;
 };
 
 
@@ -268,13 +266,13 @@ public:
 class Complement : public Literal {
 protected:
     string _str(const bx_t&) const;
-    bx_t _compose(const bx_t&, const var2bx_t&) const;
-    bx_t _restrict(const bx_t&, const point_t&) const;
 
 public:
     Complement(Context *ctx, id_t id);
 
     bx_t invert() const;
+    bx_t compose(const var2bx_t&) const;
+    bx_t restrict_(const point_t&) const;
     soln_t sat() const;
 };
 
@@ -282,13 +280,13 @@ public:
 class Variable : public Literal {
 protected:
     string _str(const bx_t&) const;
-    bx_t _compose(const bx_t&, const var2bx_t&) const;
-    bx_t _restrict(const bx_t&, const point_t&) const;
 
 public:
     Variable(Context *ctx, id_t id);
 
     bx_t invert() const;
+    bx_t compose(const var2bx_t&) const;
+    bx_t restrict_(const point_t&) const;
     soln_t sat() const;
 };
 
@@ -296,8 +294,6 @@ public:
 class Operator : public BoolExpr {
 protected:
     string _tostr(const string) const;
-    bx_t _compose(const bx_t&, const var2bx_t&) const;
-    bx_t _restrict(const bx_t&, const point_t&) const;
 
 public:
     const bool simple;
@@ -315,6 +311,8 @@ public:
     bool is_clause() const;
     bool is_dnf() const;
     bool is_cnf() const;
+    bx_t compose(const var2bx_t&) const;
+    bx_t restrict_(const point_t&) const;
     bx_t tseytin(Context&, const string& = "a") const;
     soln_t sat() const;
 
@@ -753,8 +751,6 @@ vector<bx_t> cofactors(const bx_t&, vector<var_t>&);
 bx_t smoothing(const bx_t&, vector<var_t>&);
 bx_t consensus(const bx_t&, vector<var_t>&);
 bx_t derivative(const bx_t&, vector<var_t>&);
-bx_t compose(const bx_t&, const var2bx_t&);
-bx_t restrict_(const bx_t&, const point_t&);
 
 bool equivalent(const bx_t&, const bx_t&);
 
