@@ -100,7 +100,7 @@ Nor::eqvar(const var_t& x) const
 
     clauses.push_back(or_(std::move(lits)));
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -120,7 +120,7 @@ Or::eqvar(const var_t& x) const
 
     clauses.push_back(or_(std::move(lits)));
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -140,7 +140,7 @@ Nand::eqvar(const var_t& x) const
 
     clauses.push_back(or_(std::move(lits)));
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -160,7 +160,7 @@ And::eqvar(const var_t& x) const
 
     clauses.push_back(or_(std::move(lits)));
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -200,7 +200,7 @@ Xnor::eqvar(const var_t& x) const
         clauses.push_back(or_(std::move(lits)));
     }
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -240,7 +240,7 @@ Xor::eqvar(const var_t& x) const
         clauses.push_back(or_(std::move(lits)));
     }
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -266,7 +266,7 @@ Unequal::eqvar(const var_t& x) const
         }
     }
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -292,7 +292,7 @@ Equal::eqvar(const var_t& x) const
         }
     }
 
-    return simplify(and_(std::move(clauses)));
+    return and_s(std::move(clauses));
 }
 
 
@@ -350,5 +350,5 @@ boolexpr::tseytin(const bx_t& self, Context& ctx, const string& auxvarname)
     for (const auto& constraint : constraints)
         cnfs.push_back(constraint.second->eqvar(constraint.first));
 
-    return simplify(and_(std::move(cnfs)));
+    return and_s(std::move(cnfs));
 }

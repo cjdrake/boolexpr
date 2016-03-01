@@ -562,22 +562,25 @@ boolexpr::cofactors(const bx_t& self, vector<var_t>& xs)
 }
 
 
+// FIXME(cjdrake): Rewrite this as a reduction
 bx_t
 boolexpr::smoothing(const bx_t& self, vector<var_t>& xs)
 {
-    return simplify(or_(cofactors(self, xs)));
+    return or_s(cofactors(self, xs));
 }
 
 
+// FIXME(cjdrake): Rewrite this as a reduction
 bx_t
 boolexpr::consensus(const bx_t& self, vector<var_t>& xs)
 {
-    return simplify(and_(cofactors(self, xs)));
+    return and_s(cofactors(self, xs));
 }
 
 
+// FIXME(cjdrake): Rewrite this as a reduction
 bx_t
 boolexpr::derivative(const bx_t& self, vector<var_t>& xs)
 {
-    return simplify(xor_(cofactors(self, xs)));
+    return xor_s(cofactors(self, xs));
 }
