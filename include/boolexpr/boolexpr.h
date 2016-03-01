@@ -126,7 +126,6 @@ protected:
     virtual bx_t _to_binop(const bx_t&) const = 0;
     virtual bx_t _compose(const bx_t&, const var2bx_t&) const = 0;
     virtual bx_t _restrict(const bx_t&, const point_t&) const = 0;
-    virtual soln_t _sat(const bx_t&) const = 0;
 
 public:
     const Kind kind;
@@ -144,7 +143,6 @@ public:
     friend bx_t to_dnf(const bx_t&);
     friend bx_t compose(const bx_t&, const var2bx_t&);
     friend bx_t restrict_(const bx_t&, const point_t&);
-    friend soln_t sat(const bx_t&);
 
     virtual bx_t invert() const = 0;
 
@@ -157,6 +155,7 @@ public:
     virtual bool is_cnf() const = 0;
 
     virtual bx_t tseytin(Context&, const string& = "a") const = 0;
+    virtual soln_t sat() const = 0;
 };
 
 
@@ -176,7 +175,7 @@ public:
     uint32_t op_count() const;
     bool is_dnf() const;
     bool is_cnf() const;
-    bx_t tseytin(Context&, const string&) const;
+    bx_t tseytin(Context&, const string& = "a") const;
 };
 
 
@@ -201,26 +200,26 @@ public:
 class Zero : public Known {
 protected:
     string _str(const bx_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     Zero();
 
     bx_t invert() const;
     bool is_dnf() const;
+    soln_t sat() const;
 };
 
 
 class One : public Known {
 protected:
     string _str(const bx_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     One();
 
     bx_t invert() const;
     bool is_cnf() const;
+    soln_t sat() const;
 };
 
 
@@ -233,24 +232,24 @@ public:
 class Logical : public Unknown {
 protected:
     string _str(const bx_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     Logical();
 
     bx_t invert() const;
+    soln_t sat() const;
 };
 
 
 class Illogical : public Unknown {
 protected:
     string _str(const bx_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     Illogical();
 
     bx_t invert() const;
+    soln_t sat() const;
 };
 
 
@@ -271,12 +270,12 @@ protected:
     string _str(const bx_t&) const;
     bx_t _compose(const bx_t&, const var2bx_t&) const;
     bx_t _restrict(const bx_t&, const point_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     Complement(Context *ctx, id_t id);
 
     bx_t invert() const;
+    soln_t sat() const;
 };
 
 
@@ -285,12 +284,12 @@ protected:
     string _str(const bx_t&) const;
     bx_t _compose(const bx_t&, const var2bx_t&) const;
     bx_t _restrict(const bx_t&, const point_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     Variable(Context *ctx, id_t id);
 
     bx_t invert() const;
+    soln_t sat() const;
 };
 
 
@@ -299,7 +298,6 @@ protected:
     string _tostr(const string) const;
     bx_t _compose(const bx_t&, const var2bx_t&) const;
     bx_t _restrict(const bx_t&, const point_t&) const;
-    soln_t _sat(const bx_t&) const;
 
 public:
     const bool simple;
@@ -317,7 +315,8 @@ public:
     bool is_clause() const;
     bool is_dnf() const;
     bool is_cnf() const;
-    bx_t tseytin(Context&, const string&) const;
+    bx_t tseytin(Context&, const string& = "a") const;
+    soln_t sat() const;
 
     virtual op_t from_args(const vector<bx_t>&) const = 0;
     virtual op_t from_args(const vector<bx_t>&&) const = 0;
@@ -756,7 +755,6 @@ bx_t consensus(const bx_t&, vector<var_t>&);
 bx_t derivative(const bx_t&, vector<var_t>&);
 bx_t compose(const bx_t&, const var2bx_t&);
 bx_t restrict_(const bx_t&, const point_t&);
-soln_t sat(const bx_t&);
 
 bool equivalent(const bx_t&, const bx_t&);
 

@@ -29,6 +29,6 @@ using namespace boolexpr;
 bool
 boolexpr::equivalent(const bx_t& f, const bx_t& g)
 {
-    auto soln = sat(f ^ g);
+    auto soln = (f ^ g)->sat();
     return !soln.first;
 }

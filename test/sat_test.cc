@@ -33,47 +33,49 @@ class SATTest : public BoolExprTest {};
 
 TEST_F(SATTest, Atoms)
 {
-    auto soln1 = sat(_zero);
-    EXPECT_FALSE(soln1.first);
+    auto soln0 = _zero->sat();
+    EXPECT_FALSE(soln0.first);
 
-    auto soln2 = sat(_one);
+    auto soln1 = _one->sat();
+    EXPECT_TRUE(soln1.first);
+    auto p1 = *soln1.second;
+    EXPECT_EQ(p1.size(), 0);
+
+    auto soln2 = xs[0]->sat();
     EXPECT_TRUE(soln2.first);
     auto p2 = *soln2.second;
-    EXPECT_EQ(p2.size(), 0);
+    EXPECT_EQ(p2.size(), 1);
+    EXPECT_EQ(p2[xs[0]], _one);
 
-    auto soln3 = sat(xs[0]);
+    auto soln3 = (~xs[0])->sat();
     EXPECT_TRUE(soln3.first);
     auto p3 = *soln3.second;
     EXPECT_EQ(p3.size(), 1);
-    EXPECT_EQ(p3[xs[0]], _one);
-
-    auto soln4 = sat(~xs[0]);
-    EXPECT_TRUE(soln4.first);
-    auto p4 = *soln4.second;
-    EXPECT_EQ(p4.size(), 1);
-    EXPECT_EQ(p4[xs[0]], _zero);
+    EXPECT_EQ(p3[xs[0]], _zero);
 }
 
 
 TEST_F(SATTest, Clauses)
 {
-    auto soln1 = sat(~xs[0] | xs[1] | ~xs[2] | xs[3]);
+    auto f0 = ~xs[0] | xs[1] | ~xs[2] | xs[3];
+    auto soln0 = f0->sat();
+    EXPECT_TRUE(soln0.first);
+    auto p0 = *soln0.second;
+    EXPECT_EQ(p0.size(), 4);
+    EXPECT_TRUE((p0[xs[0]] == _zero) || (p0[xs[1]] == _one) || (p0[xs[2]] == _zero) || (p0[xs[3]] == _one));
+
+    auto f1 = ~xs[0] & xs[1] & ~xs[2] & xs[3];
+    auto soln1 = f1->sat();
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
     EXPECT_EQ(p1.size(), 4);
-    EXPECT_TRUE((p1[xs[0]] == _zero) || (p1[xs[1]] == _one) || (p1[xs[2]] == _zero) || (p1[xs[3]] == _one));
-
-    auto soln2 = sat(~xs[0] & xs[1] & ~xs[2] & xs[3]);
-    EXPECT_TRUE(soln2.first);
-    auto p2 = *soln2.second;
-    EXPECT_EQ(p2.size(), 4);
-    EXPECT_TRUE((p2[xs[0]] == _zero) && (p2[xs[1]] == _one) && (p2[xs[2]] == _zero) && (p2[xs[3]] == _one));
+    EXPECT_TRUE((p1[xs[0]] == _zero) && (p1[xs[1]] == _one) && (p1[xs[2]] == _zero) && (p1[xs[3]] == _one));
 }
 
 
 TEST_F(SATTest, Contradiction)
 {
     auto f = (~xs[0] | ~xs[1]) & (~xs[0] | xs[1]) & (xs[0] | ~xs[1]) & (xs[0] | xs[1]);
-    auto soln = sat(f);
+    auto soln = f->sat();
     EXPECT_FALSE(soln.first);
 }
