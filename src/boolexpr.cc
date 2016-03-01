@@ -322,7 +322,7 @@ boolexpr::ite_s(const bx_t& s, const bx_t& d1, const bx_t& d0)
 
 
 // Overloaded Operators
-bx_t boolexpr::operator~(const bx_t& self) { return invert(self); }
+bx_t boolexpr::operator~(const bx_t& self) { return self->invert(); }
 bx_t boolexpr::operator|(const bx_t& lhs, const bx_t& rhs) { return or_({lhs, rhs}); }
 bx_t boolexpr::operator&(const bx_t& lhs, const bx_t& rhs) { return and_({lhs, rhs}); }
 bx_t boolexpr::operator^(const bx_t& lhs, const bx_t& rhs) { return xor_({lhs, rhs}); }
