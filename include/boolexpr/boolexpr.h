@@ -117,7 +117,7 @@ using point_t = unordered_map<var_t, const_t>;
 using soln_t = std::pair<bool, boost::optional<point_t>>;
 
 
-class BoolExpr {
+class BoolExpr : public std::enable_shared_from_this<BoolExpr> {
 protected:
     virtual string _str(const bx_t&) const = 0;
     virtual bx_t _invert(const bx_t&) const = 0;
