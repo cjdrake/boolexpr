@@ -126,7 +126,6 @@ protected:
     virtual bx_t _to_binop(const bx_t&) const = 0;
     virtual bx_t _compose(const bx_t&, const var2bx_t&) const = 0;
     virtual bx_t _restrict(const bx_t&, const point_t&) const = 0;
-    virtual bx_t _tseytin(const bx_t&, Context&, const string&, uint32_t&, var2op_t&) const = 0;
     virtual soln_t _sat(const bx_t&) const = 0;
 
 public:
@@ -145,7 +144,6 @@ public:
     friend bx_t to_dnf(const bx_t&);
     friend bx_t compose(const bx_t&, const var2bx_t&);
     friend bx_t restrict_(const bx_t&, const point_t&);
-    friend bx_t tseytin(const bx_t&, Context&, const string&);
     friend soln_t sat(const bx_t&);
 
     virtual bx_t invert() const = 0;
@@ -157,6 +155,8 @@ public:
 
     virtual bool is_dnf() const = 0;
     virtual bool is_cnf() const = 0;
+
+    virtual bx_t tseytin(Context&, const string& = "a") const = 0;
 };
 
 
@@ -166,7 +166,6 @@ protected:
     bx_t _simplify(const bx_t&) const;
     bx_t _to_latop(const bx_t&) const;
     bx_t _to_binop(const bx_t&) const;
-    bx_t _tseytin(const bx_t&, Context&, const string&, uint32_t&, var2op_t&) const;
 
 public:
     Atom(Kind kind);
@@ -175,9 +174,9 @@ public:
     uint32_t size() const;
     uint32_t atom_count() const;
     uint32_t op_count() const;
-
     bool is_dnf() const;
     bool is_cnf() const;
+    bx_t tseytin(Context&, const string&) const;
 };
 
 
@@ -300,7 +299,6 @@ protected:
     string _tostr(const string) const;
     bx_t _compose(const bx_t&, const var2bx_t&) const;
     bx_t _restrict(const bx_t&, const point_t&) const;
-    bx_t _tseytin(const bx_t&, Context&, const string&, uint32_t&, var2op_t&) const;
     soln_t _sat(const bx_t&) const;
 
 public:
@@ -319,6 +317,7 @@ public:
     bool is_clause() const;
     bool is_dnf() const;
     bool is_cnf() const;
+    bx_t tseytin(Context&, const string&) const;
 
     virtual op_t from_args(const vector<bx_t>&) const = 0;
     virtual op_t from_args(const vector<bx_t>&&) const = 0;
@@ -757,7 +756,6 @@ bx_t consensus(const bx_t&, vector<var_t>&);
 bx_t derivative(const bx_t&, vector<var_t>&);
 bx_t compose(const bx_t&, const var2bx_t&);
 bx_t restrict_(const bx_t&, const point_t&);
-bx_t tseytin(const bx_t&, Context&, const string& = "a");
 soln_t sat(const bx_t&);
 
 bool equivalent(const bx_t&, const bx_t&);

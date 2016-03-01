@@ -69,18 +69,29 @@ _op2con2(const op_t& op, Context& ctx, const string& auxvarname,
 
 
 bx_t
-Atom::_tseytin(const bx_t& self, Context&, const string&, uint32_t&, var2op_t&) const
+Atom::tseytin(Context&, const string&) const
 {
-    return self;
+    auto self = shared_from_this();
+    return std::static_pointer_cast<const BoolExpr>(self);
 }
 
 
 bx_t
-Operator::_tseytin(const bx_t& self, Context& ctx, const string& auxvarname,
-                   uint32_t& index, var2op_t& constraints) const
+Operator::tseytin(Context& ctx, const string& auxvarname) const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
-    return _op2con1(op, ctx, auxvarname, index, constraints);
+
+    uint32_t index {0};
+    var2op_t constraints;
+
+    auto top = _op2con1(op, ctx, auxvarname, index, constraints);
+
+    vector<bx_t> cnfs {top};
+    for (const auto& constraint : constraints)
+        cnfs.push_back(constraint.second->eqvar(constraint.first));
+
+    return and_s(std::move(cnfs));
 }
 
 
@@ -335,20 +346,4 @@ IfThenElse::eqvar(const var_t& x) const
     auto d0 = args[2];
 
     return simplify((x | ~s | ~d1) & (x | s | ~d0) & (~x | ~s | d1) & (~x | s | d0) & (~x | d1 | d0));
-}
-
-
-bx_t
-boolexpr::tseytin(const bx_t& self, Context& ctx, const string& auxvarname)
-{
-    uint32_t index {0};
-    var2op_t constraints;
-
-    auto top = self->_tseytin(simplify(self), ctx, auxvarname, index, constraints);
-
-    vector<bx_t> cnfs {top};
-    for (const auto& constraint : constraints)
-        cnfs.push_back(constraint.second->eqvar(constraint.first));
-
-    return and_s(std::move(cnfs));
 }

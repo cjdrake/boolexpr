@@ -79,7 +79,7 @@ soln_t
 Operator::_sat(const bx_t& bx) const
 {
     auto ctx = Context();
-    auto cnf = tseytin(bx, ctx);
+    auto cnf = bx->tseytin(ctx);
 
     auto s = support(cnf);
     unordered_map<bx_t, uint32_t> lit2idx;
