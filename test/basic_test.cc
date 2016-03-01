@@ -33,9 +33,9 @@ TEST_F(BoolExprTest, Basic)
 {
     EXPECT_EQ(ctx.get_var("x_0"), xs[0]);
 
-    auto x = std::static_pointer_cast<Literal>(xs[0]);
-    auto xn = std::static_pointer_cast<Literal>(~xs[0]);
-    auto y = std::static_pointer_cast<Literal>(xs[1]);
+    auto x = std::static_pointer_cast<const Literal>(xs[0]);
+    auto xn = std::static_pointer_cast<const Literal>(~xs[0]);
+    auto y = std::static_pointer_cast<const Literal>(xs[1]);
 
     EXPECT_LT(x, y);
     EXPECT_LT(xn, x);
@@ -45,13 +45,13 @@ TEST_F(BoolExprTest, Basic)
     EXPECT_LT(~xor_({xs[0], xs[1]}), xor_({xs[0], xs[1]}));
 
     vector<lit_t> lits;
-    lits.push_back(std::static_pointer_cast<Literal>(xs[7]));
-    lits.push_back(std::static_pointer_cast<Literal>(xs[13]));
-    lits.push_back(std::static_pointer_cast<Literal>(~xs[3]));
-    lits.push_back(std::static_pointer_cast<Literal>(xs[5]));
-    lits.push_back(std::static_pointer_cast<Literal>(~xs[13]));
-    lits.push_back(std::static_pointer_cast<Literal>(xs[3]));
-    lits.push_back(std::static_pointer_cast<Literal>(~xs[5]));
+    lits.push_back(std::static_pointer_cast<const Literal>(xs[7]));
+    lits.push_back(std::static_pointer_cast<const Literal>(xs[13]));
+    lits.push_back(std::static_pointer_cast<const Literal>(~xs[3]));
+    lits.push_back(std::static_pointer_cast<const Literal>(xs[5]));
+    lits.push_back(std::static_pointer_cast<const Literal>(~xs[13]));
+    lits.push_back(std::static_pointer_cast<const Literal>(xs[3]));
+    lits.push_back(std::static_pointer_cast<const Literal>(~xs[5]));
     std::sort(lits.begin(), lits.end());
     EXPECT_EQ(lits[0]->id, 3<<1);      // ~xs[3]
     EXPECT_EQ(lits[1]->id, 3<<1 | 1);  // xs[3]

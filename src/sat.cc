@@ -62,7 +62,7 @@ Illogical::_sat(const bx_t&) const
 soln_t
 Complement::_sat(const bx_t& self) const
 {
-    auto x = std::static_pointer_cast<Variable>(~self);
+    auto x = std::static_pointer_cast<const Variable>(~self);
     return std::make_pair(true, point_t { {x, zero()} });
 }
 
@@ -70,7 +70,7 @@ Complement::_sat(const bx_t& self) const
 soln_t
 Variable::_sat(const bx_t& self) const
 {
-    auto x = std::static_pointer_cast<Variable>(self);
+    auto x = std::static_pointer_cast<const Variable>(self);
     return std::make_pair(true, point_t { {x, one()} });
 }
 
@@ -97,7 +97,7 @@ Operator::_sat(const bx_t& bx) const
     vector<Lit> cmlits;
     solver.new_vars(s.size());
 
-    auto and_op = std::static_pointer_cast<And>(cnf);
+    auto and_op = std::static_pointer_cast<const And>(cnf);
     for (const bx_t& clause : and_op->args) {
         cmlits.clear();
         if (IS_LIT(clause)) {
@@ -105,7 +105,7 @@ Operator::_sat(const bx_t& bx) const
             cmlits.push_back(Lit(index >> 1, !(index & 1u)));
         }
         else {
-            auto or_op = std::static_pointer_cast<Or>(clause);
+            auto or_op = std::static_pointer_cast<const Or>(clause);
             for (const bx_t& lit : or_op->args) {
                 auto index = lit2idx.find(lit)->second;
                 cmlits.push_back(Lit(index >> 1, !(index & 1u)));

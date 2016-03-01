@@ -43,7 +43,7 @@ bx_t NotIfThenElse::_to_binop(const bx_t& self) const { return ~to_binop(~self);
 bx_t
 Or::_to_binop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)  // LCOV_EXCL_LINE
         return Or::identity(); // LCOV_EXCL_LINE
@@ -67,7 +67,7 @@ Or::_to_binop(const bx_t& self) const
 bx_t
 And::_to_binop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return And::identity(); // LCOV_EXCL_LINE
@@ -91,7 +91,7 @@ And::_to_binop(const bx_t& self) const
 bx_t
 Xor::_to_binop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
@@ -115,7 +115,7 @@ Xor::_to_binop(const bx_t& self) const
 bx_t
 Equal::_to_binop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() < 2) // LCOV_EXCL_LINE
         return one();        // LCOV_EXCL_LINE
@@ -140,14 +140,14 @@ Equal::_to_binop(const bx_t& self) const
 bx_t
 Implies::_to_binop(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), to_binop);
+    return transform(std::static_pointer_cast<const Operator>(self), to_binop);
 }
 
 
 bx_t
 IfThenElse::_to_binop(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), to_binop);
+    return transform(std::static_pointer_cast<const Operator>(self), to_binop);
 }
 
 

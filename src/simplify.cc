@@ -38,7 +38,7 @@ Atom::_simplify(const bx_t& self) const
 static bx_t
 _nop_simplify(const bx_t& self)
 {
-    auto nop = std::static_pointer_cast<Operator>(self);
+    auto nop = std::static_pointer_cast<const Operator>(self);
     if (nop->simple) return nop;
     return ~simplify(~nop);
 }
@@ -54,7 +54,7 @@ bx_t NotIfThenElse::_simplify(const bx_t& self) const { return _nop_simplify(sel
 bx_t
 Or::_simplify(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Or>(self);
+    auto op = std::static_pointer_cast<const Or>(self);
     if (op->simple) return op;
     return OrArgSet(op->args).reduce();
 }
@@ -63,7 +63,7 @@ Or::_simplify(const bx_t& self) const
 bx_t
 And::_simplify(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<And>(self);
+    auto op = std::static_pointer_cast<const And>(self);
     if (op->simple) return op;
     return AndArgSet(op->args).reduce();
 }
@@ -72,7 +72,7 @@ And::_simplify(const bx_t& self) const
 bx_t
 Xor::_simplify(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Xor>(self);
+    auto op = std::static_pointer_cast<const Xor>(self);
     if (op->simple) return op;
     return XorArgSet(op->args).reduce();
 }
@@ -81,7 +81,7 @@ Xor::_simplify(const bx_t& self) const
 bx_t
 Equal::_simplify(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Equal>(self);
+    auto op = std::static_pointer_cast<const Equal>(self);
     if (op->simple) return op;
     return EqArgSet(op->args).reduce();
 }
@@ -90,7 +90,7 @@ Equal::_simplify(const bx_t& self) const
 bx_t
 Implies::_simplify(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Implies>(self);
+    auto op = std::static_pointer_cast<const Implies>(self);
 
     if (op->simple) return op;
 
@@ -119,7 +119,7 @@ Implies::_simplify(const bx_t& self) const
 bx_t
 IfThenElse::_simplify(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<IfThenElse>(self);
+    auto op = std::static_pointer_cast<const IfThenElse>(self);
 
     if (op->simple) return op;
 

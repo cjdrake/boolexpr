@@ -331,8 +331,8 @@ bool
 boolexpr::operator<(const bx_t& lhs, const bx_t& rhs)
 {
     if (IS_LIT(lhs) && IS_LIT(rhs)) {
-        auto _lhs = std::static_pointer_cast<Literal>(lhs);
-        auto _rhs = std::static_pointer_cast<Literal>(rhs);
+        auto _lhs = std::static_pointer_cast<const Literal>(lhs);
+        auto _rhs = std::static_pointer_cast<const Literal>(rhs);
         return _lhs->ctx == _rhs->ctx ? _lhs->id < _rhs->id
                                       : _lhs->ctx < _rhs->ctx;
     }
@@ -359,14 +359,14 @@ string Illogical::_str(const bx_t&) const { return "?"; }
 string
 Complement::_str(const bx_t& self) const
 {
-    auto xn = std::static_pointer_cast<Complement>(self);
+    auto xn = std::static_pointer_cast<const Complement>(self);
     return "~" + xn->ctx->get_name(xn->id);
 }
 
 string
 Variable::_str(const bx_t& self) const
 {
-    auto x = std::static_pointer_cast<Variable>(self);
+    auto x = std::static_pointer_cast<const Variable>(self);
     return x->ctx->get_name(x->id);
 }
 
@@ -462,7 +462,7 @@ bool
 Or::is_dnf() const
 {
     for (const bx_t& arg : args)
-        if (!IS_LIT(arg) && !(IS_AND(arg) && std::static_pointer_cast<And>(arg)->is_clause()))
+        if (!IS_LIT(arg) && !(IS_AND(arg) && std::static_pointer_cast<const And>(arg)->is_clause()))
             return false;
     return true;
 }
@@ -498,7 +498,7 @@ bool
 And::is_cnf() const
 {
     for (const bx_t& arg : args)
-        if (!IS_LIT(arg) && !(IS_OR(arg) && std::static_pointer_cast<Or>(arg)->is_clause()))
+        if (!IS_LIT(arg) && !(IS_OR(arg) && std::static_pointer_cast<const Or>(arg)->is_clause()))
             return false;
     return true;
 }
@@ -511,9 +511,9 @@ boolexpr::support(const bx_t& self)
 
     for (auto it = dfs_iter(self); it != end(self); ++it) {
         if (IS_VAR(*it))
-            s.insert(std::static_pointer_cast<Variable>(*it));
+            s.insert(std::static_pointer_cast<const Variable>(*it));
         else if (IS_COMP(*it))
-            s.insert(std::static_pointer_cast<Variable>(~*it));
+            s.insert(std::static_pointer_cast<const Variable>(~*it));
     }
 
     return s;

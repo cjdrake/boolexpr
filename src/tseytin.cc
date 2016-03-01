@@ -53,7 +53,7 @@ _op2con2(const op_t& op, Context& ctx, const string& auxvarname,
     for (const bx_t& arg : op->args) {
         if (IS_OP(arg)) {
             found_subop = true;
-            auto subop = std::static_pointer_cast<Operator>(arg);
+            auto subop = std::static_pointer_cast<const Operator>(arg);
             _args.push_back(_op2con1(subop, ctx, auxvarname, index, constraints));
         }
         else {
@@ -79,7 +79,7 @@ bx_t
 Operator::_tseytin(const bx_t& self, Context& ctx, const string& auxvarname,
                    uint32_t& index, var2op_t& constraints) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
     return _op2con1(op, ctx, auxvarname, index, constraints);
 }
 

@@ -57,7 +57,7 @@ LatticeArgSet::insert(const bx_t& arg)
 
     // x + (y + z) <=> x + y + z
     if (arg->kind == kind) {
-        auto op = std::static_pointer_cast<Operator>(arg);
+        auto op = std::static_pointer_cast<const Operator>(arg);
         for (const bx_t& _arg : op->args) insert(_arg);
         return;
     }
@@ -141,14 +141,14 @@ XorArgSet::insert(const bx_t& arg)
 
     // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
     if (IS_XOR(arg)) {
-        auto op = std::static_pointer_cast<Operator>(arg);
+        auto op = std::static_pointer_cast<const Operator>(arg);
         for (const bx_t& _arg : op->args) insert(_arg);
         return;
     }
 
     // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
     if (IS_XNOR(arg)) {
-        auto op = std::static_pointer_cast<Operator>(arg);
+        auto op = std::static_pointer_cast<const Operator>(arg);
         for (const bx_t& _arg : op->args) insert(_arg);
         parity ^= true;
         return;

@@ -35,7 +35,7 @@ bx_t Illogical::_invert(const bx_t& self) const { return self; }
 bx_t
 Complement::_invert(const bx_t& self) const
 {
-    auto xn = std::static_pointer_cast<Complement>(self);
+    auto xn = std::static_pointer_cast<const Complement>(self);
     return xn->ctx->get_lit(xn->id + 1);
 }
 
@@ -43,7 +43,7 @@ Complement::_invert(const bx_t& self) const
 bx_t
 Variable::_invert(const bx_t& self) const
 {
-    auto x = std::static_pointer_cast<Variable>(self);
+    auto x = std::static_pointer_cast<const Variable>(self);
     return x->ctx->get_lit(x->id - 1);
 }
 
@@ -51,7 +51,7 @@ Variable::_invert(const bx_t& self) const
 bx_t
 Nor::_invert(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Nor>(self);
+    auto nop = std::static_pointer_cast<const Nor>(self);
     return std::make_shared<Or>(nop->simple, nop->args);
 }
 
@@ -59,7 +59,7 @@ Nor::_invert(const bx_t& self) const
 bx_t
 Or::_invert(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Or>(self);
+    auto op = std::static_pointer_cast<const Or>(self);
     return std::make_shared<Nor>(op->simple, op->args);
 }
 
@@ -67,7 +67,7 @@ Or::_invert(const bx_t& self) const
 bx_t
 Nand::_invert(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Nand>(self);
+    auto nop = std::static_pointer_cast<const Nand>(self);
     return std::make_shared<And>(nop->simple, nop->args);
 }
 
@@ -75,7 +75,7 @@ Nand::_invert(const bx_t& self) const
 bx_t
 And::_invert(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<And>(self);
+    auto op = std::static_pointer_cast<const And>(self);
     return std::make_shared<Nand>(op->simple, op->args);
 }
 
@@ -83,7 +83,7 @@ And::_invert(const bx_t& self) const
 bx_t
 Xnor::_invert(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Xnor>(self);
+    auto nop = std::static_pointer_cast<const Xnor>(self);
     return std::make_shared<Xor>(nop->simple, nop->args);
 }
 
@@ -91,7 +91,7 @@ Xnor::_invert(const bx_t& self) const
 bx_t
 Xor::_invert(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Xor>(self);
+    auto op = std::static_pointer_cast<const Xor>(self);
     return std::make_shared<Xnor>(op->simple, op->args);
 }
 
@@ -99,7 +99,7 @@ Xor::_invert(const bx_t& self) const
 bx_t
 Unequal::_invert(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Unequal>(self);
+    auto nop = std::static_pointer_cast<const Unequal>(self);
     return std::make_shared<Equal>(nop->simple, nop->args);
 }
 
@@ -107,7 +107,7 @@ Unequal::_invert(const bx_t& self) const
 bx_t
 Equal::_invert(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Equal>(self);
+    auto op = std::static_pointer_cast<const Equal>(self);
     return std::make_shared<Unequal>(op->simple, op->args);
 }
 
@@ -115,7 +115,7 @@ Equal::_invert(const bx_t& self) const
 bx_t
 NotImplies::_invert(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<NotImplies>(self);
+    auto nop = std::static_pointer_cast<const NotImplies>(self);
     return std::make_shared<Implies>(nop->simple, nop->args[0], nop->args[1]);
 }
 
@@ -123,7 +123,7 @@ NotImplies::_invert(const bx_t& self) const
 bx_t
 Implies::_invert(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Implies>(self);
+    auto op = std::static_pointer_cast<const Implies>(self);
     return std::make_shared<NotImplies>(op->simple, op->args[0], op->args[1]);
 }
 
@@ -131,7 +131,7 @@ Implies::_invert(const bx_t& self) const
 bx_t
 NotIfThenElse::_invert(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<NotIfThenElse>(self);
+    auto nop = std::static_pointer_cast<const NotIfThenElse>(self);
     return std::make_shared<IfThenElse>(nop->simple, nop->args[0], nop->args[1], nop->args[2]);
 }
 
@@ -139,7 +139,7 @@ NotIfThenElse::_invert(const bx_t& self) const
 bx_t
 IfThenElse::_invert(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<IfThenElse>(self);
+    auto op = std::static_pointer_cast<const IfThenElse>(self);
     return std::make_shared<NotIfThenElse>(op->simple, op->args[0], op->args[1], op->args[2]);
 }
 

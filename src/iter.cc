@@ -53,7 +53,7 @@ dfs_iter::_advance_one()
             }
             else {
                 colors[item] = Color::GRAY;
-                auto op = std::static_pointer_cast<Operator>(item);
+                auto op = std::static_pointer_cast<const Operator>(item);
                 for (auto it = op->args.crbegin(); it != op->args.crend(); ++it) {
                     stack.push_back(*it);
                     colors.insert({*it, Color::WHITE});

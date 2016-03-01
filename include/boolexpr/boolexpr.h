@@ -97,18 +97,18 @@ typedef enum {
 
 using id_t = uint32_t;
 
-using bx_t = std::shared_ptr<BoolExpr>;
+using bx_t = std::shared_ptr<const BoolExpr>;
 
-using const_t = std::shared_ptr<Constant>;
-using zero_t = std::shared_ptr<Zero>;
-using one_t = std::shared_ptr<One>;
-using log_t = std::shared_ptr<Logical>;
-using ill_t = std::shared_ptr<Illogical>;
+using const_t = std::shared_ptr<const Constant>;
+using zero_t = std::shared_ptr<const Zero>;
+using one_t = std::shared_ptr<const One>;
+using log_t = std::shared_ptr<const Logical>;
+using ill_t = std::shared_ptr<const Illogical>;
 
-using lit_t = std::shared_ptr<Literal>;
-using var_t = std::shared_ptr<Variable>;
-using op_t = std::shared_ptr<Operator>;
-using lop_t = std::shared_ptr<LatticeOperator>;
+using lit_t = std::shared_ptr<const Literal>;
+using var_t = std::shared_ptr<const Variable>;
+using op_t = std::shared_ptr<const Operator>;
+using lop_t = std::shared_ptr<const LatticeOperator>;
 
 using var2bx_t = unordered_map<var_t, bx_t>;
 using var2op_t = unordered_map<var_t, op_t>;

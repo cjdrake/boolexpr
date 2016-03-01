@@ -36,7 +36,7 @@ Constant::_compose(const bx_t& self, const var2bx_t&) const
 bx_t
 Complement::_compose(const bx_t& self, const var2bx_t& var2bx) const
 {
-    auto x = std::static_pointer_cast<Variable>(~self);
+    auto x = std::static_pointer_cast<const Variable>(~self);
     auto search = var2bx.find(x);
     return (search == var2bx.end()) ? self : ~(search->second);
 }
@@ -45,7 +45,7 @@ Complement::_compose(const bx_t& self, const var2bx_t& var2bx) const
 bx_t
 Variable::_compose(const bx_t& self, const var2bx_t& var2bx) const
 {
-    auto x = std::static_pointer_cast<Variable>(self);
+    auto x = std::static_pointer_cast<const Variable>(self);
     auto search = var2bx.find(x);
     return (search == var2bx.end()) ? self : search->second;
 }
@@ -54,7 +54,7 @@ Variable::_compose(const bx_t& self, const var2bx_t& var2bx) const
 bx_t
 Operator::_compose(const bx_t& self, const var2bx_t& var2bx) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
     auto f = [&var2bx] (const bx_t& bx) { return compose(bx, var2bx); };
     return transform(op, f);
 }
@@ -77,7 +77,7 @@ Constant::_restrict(const bx_t& self, const point_t&) const
 bx_t
 Complement::_restrict(const bx_t& self, const point_t& point) const
 {
-    auto x = std::static_pointer_cast<Variable>(~self);
+    auto x = std::static_pointer_cast<const Variable>(~self);
     auto search = point.find(x);
     return (search == point.end()) ? self : ~(search->second);
 }
@@ -86,7 +86,7 @@ Complement::_restrict(const bx_t& self, const point_t& point) const
 bx_t
 Variable::_restrict(const bx_t& self, const point_t& point) const
 {
-    auto x = std::static_pointer_cast<Variable>(self);
+    auto x = std::static_pointer_cast<const Variable>(self);
     auto search = point.find(x);
     return (search == point.end()) ? self : search->second;
 }
@@ -95,7 +95,7 @@ Variable::_restrict(const bx_t& self, const point_t& point) const
 bx_t
 Operator::_restrict(const bx_t& self, const point_t& point) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
     auto f = [&point] (const bx_t& bx) { return restrict_(bx, point); };
     return simplify(transform(op, f));
 }

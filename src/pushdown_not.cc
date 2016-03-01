@@ -36,7 +36,7 @@ Atom::_pushdown_not(const bx_t& self) const
 bx_t
 Nor::_pushdown_not(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Nor>(self);
+    auto nop = std::static_pointer_cast<const Nor>(self);
 
     // ~(x0 | x1 | ...) <=> ~x0 & ~x1 & ...
     vector<bx_t> _args;
@@ -50,14 +50,14 @@ Nor::_pushdown_not(const bx_t& self) const
 bx_t
 Or::_pushdown_not(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), pushdown_not);
+    return transform(std::static_pointer_cast<const Operator>(self), pushdown_not);
 }
 
 
 bx_t
 Nand::_pushdown_not(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Nand>(self);
+    auto nop = std::static_pointer_cast<const Nand>(self);
 
     // ~(x0 & x1 & ...) <=> ~x0 | ~x1 | ...
     vector<bx_t> _args;
@@ -71,14 +71,14 @@ Nand::_pushdown_not(const bx_t& self) const
 bx_t
 And::_pushdown_not(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), pushdown_not);
+    return transform(std::static_pointer_cast<const Operator>(self), pushdown_not);
 }
 
 
 bx_t
 Xnor::_pushdown_not(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Xnor>(self);
+    auto nop = std::static_pointer_cast<const Xnor>(self);
 
     // ~(x0 ^ x1 ^ x2 ^ ...) <=> ~x0 ^ x1 ^ x2 ^ ...
     vector<bx_t> _args {~nop->args[0]};
@@ -92,14 +92,14 @@ Xnor::_pushdown_not(const bx_t& self) const
 bx_t
 Xor::_pushdown_not(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), pushdown_not);
+    return transform(std::static_pointer_cast<const Operator>(self), pushdown_not);
 }
 
 
 bx_t
 Unequal::_pushdown_not(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<Unequal>(self);
+    auto nop = std::static_pointer_cast<const Unequal>(self);
 
     // ~eq(x0, x1, x2, ...) <=> eq(~x0, x1, x2, ...)
     vector<bx_t> _args {~nop->args[0]};
@@ -113,14 +113,14 @@ Unequal::_pushdown_not(const bx_t& self) const
 bx_t
 Equal::_pushdown_not(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), pushdown_not);
+    return transform(std::static_pointer_cast<const Operator>(self), pushdown_not);
 }
 
 
 bx_t
 NotImplies::_pushdown_not(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<NotImplies>(self);
+    auto nop = std::static_pointer_cast<const NotImplies>(self);
 
     // ~(p => q) <=> p & ~q
     auto p = pushdown_not(nop->args[0]);
@@ -133,7 +133,7 @@ NotImplies::_pushdown_not(const bx_t& self) const
 bx_t
 Implies::_pushdown_not(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Implies>(self);
+    auto op = std::static_pointer_cast<const Implies>(self);
 
     // p => q <=> ~p | q
     auto pn = pushdown_not(~op->args[0]);
@@ -146,7 +146,7 @@ Implies::_pushdown_not(const bx_t& self) const
 bx_t
 NotIfThenElse::_pushdown_not(const bx_t& self) const
 {
-    auto nop = std::static_pointer_cast<NotIfThenElse>(self);
+    auto nop = std::static_pointer_cast<const NotIfThenElse>(self);
 
     // ~(s ? d1 : d0) <=> s ? ~d1 : ~d0
     auto s = pushdown_not(nop->args[0]);
@@ -160,7 +160,7 @@ NotIfThenElse::_pushdown_not(const bx_t& self) const
 bx_t
 IfThenElse::_pushdown_not(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), pushdown_not);
+    return transform(std::static_pointer_cast<const Operator>(self), pushdown_not);
 }
 
 

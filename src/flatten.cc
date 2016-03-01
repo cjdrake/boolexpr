@@ -35,12 +35,12 @@ _twolvl2clauses(const lop_t& lop)
     for (const bx_t& arg : lop->args) {
         std::set<lit_t> clause;
         if (IS_LIT(arg)) {
-            clause.insert(std::static_pointer_cast<Literal>(arg));
+            clause.insert(std::static_pointer_cast<const Literal>(arg));
         }
         else {
-            auto op = std::static_pointer_cast<Operator>(arg);
+            auto op = std::static_pointer_cast<const Operator>(arg);
             for (const bx_t& subarg : op->args)
-                clause.insert(std::static_pointer_cast<Literal>(subarg));
+                clause.insert(std::static_pointer_cast<const Literal>(subarg));
         }
         clauses.push_back(std::move(clause));
     }
@@ -146,7 +146,7 @@ _product(const vector<std::set<lit_t>>& clauses)
         vector<std::set<lit_t>> newprod;
         for (const auto& factor : product) {
             for (const lit_t& x : clause) {
-                auto xn = std::static_pointer_cast<Literal>(~x);
+                auto xn = std::static_pointer_cast<const Literal>(~x);
                 if (factor.find(xn) == factor.end()) {
                     newprod.push_back(factor);
                     newprod.back().insert(x);
@@ -168,7 +168,7 @@ static bx_t
 _nnf2cnf(const bx_t& nnf1)
 {
     if (IS_ATOM(nnf1)) return nnf1;
-    auto lop1 = std::static_pointer_cast<LatticeOperator>(nnf1);
+    auto lop1 = std::static_pointer_cast<const LatticeOperator>(nnf1);
     if (lop1->is_clause()) return lop1;
 
     uint32_t mod_count = 0;
@@ -179,11 +179,11 @@ _nnf2cnf(const bx_t& nnf1)
         _args.push_back(_arg);
     }
 
-    std::shared_ptr<LatticeOperator> lop2;
+    std::shared_ptr<const LatticeOperator> lop2;
     if (mod_count) {
         auto nnf2 = simplify(lop1->from_args(std::move(_args)));
         if (IS_ATOM(nnf2)) return nnf2;
-        lop2 = std::move(std::static_pointer_cast<LatticeOperator>(nnf2));
+        lop2 = std::move(std::static_pointer_cast<const LatticeOperator>(nnf2));
         if (lop2->is_clause()) return lop2;
     }
     else {
@@ -205,7 +205,7 @@ static bx_t
 _nnf2dnf(const bx_t& nnf1)
 {
     if (IS_ATOM(nnf1)) return nnf1;
-    auto lop1 = std::static_pointer_cast<LatticeOperator>(nnf1);
+    auto lop1 = std::static_pointer_cast<const LatticeOperator>(nnf1);
     if (lop1->is_clause()) return lop1;
 
     uint32_t mod_count = 0;
@@ -216,11 +216,11 @@ _nnf2dnf(const bx_t& nnf1)
         _args.push_back(_arg);
     }
 
-    std::shared_ptr<LatticeOperator> lop2;
+    std::shared_ptr<const LatticeOperator> lop2;
     if (mod_count) {
         auto nnf2 = simplify(lop1->from_args(std::move(_args)));
         if (IS_ATOM(nnf2)) return nnf2;
-        lop2 = std::move(std::static_pointer_cast<LatticeOperator>(nnf2));
+        lop2 = std::move(std::static_pointer_cast<const LatticeOperator>(nnf2));
         if (lop2->is_clause()) return lop2;
     }
     else {

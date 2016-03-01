@@ -35,7 +35,7 @@ Atom::_to_latop(const bx_t& self) const {
 bx_t
 LatticeOperator::_to_latop(const bx_t& self) const
 {
-    return transform(std::static_pointer_cast<Operator>(self), to_latop);
+    return transform(std::static_pointer_cast<const Operator>(self), to_latop);
 }
 
 
@@ -50,7 +50,7 @@ bx_t NotIfThenElse::_to_latop(const bx_t& self) const { return ~to_latop(~self);
 bx_t
 Xor::_to_latop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
@@ -78,7 +78,7 @@ Xor::_to_latop(const bx_t& self) const
 bx_t
 Equal::_to_latop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Operator>(self);
+    auto op = std::static_pointer_cast<const Operator>(self);
 
     // eq(x0, x1, x2) <=> ~x0 & ~x1 & ~x2 | x0 & x1 & x2
     vector<bx_t> xs, xns;
@@ -96,7 +96,7 @@ Equal::_to_latop(const bx_t& self) const
 bx_t
 Implies::_to_latop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<Implies>(self);
+    auto op = std::static_pointer_cast<const Implies>(self);
 
     auto p = to_latop(op->args[0]);
     auto q = to_latop(op->args[1]);
@@ -108,7 +108,7 @@ Implies::_to_latop(const bx_t& self) const
 bx_t
 IfThenElse::_to_latop(const bx_t& self) const
 {
-    auto op = std::static_pointer_cast<IfThenElse>(self);
+    auto op = std::static_pointer_cast<const IfThenElse>(self);
 
     auto s = to_latop(op->args[0]);
     auto d1 = to_latop(op->args[1]);
