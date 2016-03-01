@@ -128,5 +128,5 @@ boolexpr::to_latop(const bx_t& self)
 bx_t
 boolexpr::to_nnf(const bx_t& self)
 {
-    return simplify(pushdown_not(self->_to_latop(self)));
+    return simplify(self->_to_latop(self)->pushdown_not());
 }

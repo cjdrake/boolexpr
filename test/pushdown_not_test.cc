@@ -34,42 +34,42 @@ class PushDownNotTest : public BoolExprTest {};
 TEST_F(PushDownNotTest, Basic)
 {
     auto y0 = ~or_({~xs[0], xs[1], ~xs[2], xs[3]});
-    EXPECT_EQ(str(pushdown_not(y0)), "And(x_0, ~x_1, x_2, ~x_3)");
+    EXPECT_EQ(str(y0->pushdown_not()), "And(x_0, ~x_1, x_2, ~x_3)");
 
     auto y1 = ~and_({~xs[0], xs[1], ~xs[2], xs[3]});
-    EXPECT_EQ(str(pushdown_not(y1)), "Or(x_0, ~x_1, x_2, ~x_3)");
+    EXPECT_EQ(str(y1->pushdown_not()), "Or(x_0, ~x_1, x_2, ~x_3)");
 
     auto y2 = ~xor_({~xs[0], xs[1], ~xs[2], xs[3]});
-    EXPECT_EQ(str(pushdown_not(y2)), "Xor(x_0, x_1, ~x_2, x_3)");
+    EXPECT_EQ(str(y2->pushdown_not()), "Xor(x_0, x_1, ~x_2, x_3)");
 
     auto y3 = ~eq({~xs[0], xs[1], ~xs[2], xs[3]});
-    EXPECT_EQ(str(pushdown_not(y3)), "Equal(x_0, x_1, ~x_2, x_3)");
+    EXPECT_EQ(str(y3->pushdown_not()), "Equal(x_0, x_1, ~x_2, x_3)");
 
     auto y4 = ~impl(xs[0], xs[1]);
-    EXPECT_EQ(str(pushdown_not(y4)), "And(x_0, ~x_1)");
+    EXPECT_EQ(str(y4->pushdown_not()), "And(x_0, ~x_1)");
 
     auto y5 = ~ite(xs[0], xs[1], xs[2]);
-    EXPECT_EQ(str(pushdown_not(y5)), "IfThenElse(x_0, ~x_1, ~x_2)");
+    EXPECT_EQ(str(y5->pushdown_not()), "IfThenElse(x_0, ~x_1, ~x_2)");
 }
 
 
 TEST_F(PushDownNotTest, TwoLevel)
 {
     auto y0 = or_({~(xs[0] & xs[1]), ~(xs[2] & xs[3])});
-    EXPECT_EQ(str(pushdown_not(y0)), "Or(Or(~x_0, ~x_1), Or(~x_2, ~x_3))");
+    EXPECT_EQ(str(y0->pushdown_not()), "Or(Or(~x_0, ~x_1), Or(~x_2, ~x_3))");
 
     auto y1 = and_({~(xs[0] | xs[1]), ~(xs[2] | xs[3])});
-    EXPECT_EQ(str(pushdown_not(y1)), "And(And(~x_0, ~x_1), And(~x_2, ~x_3))");
+    EXPECT_EQ(str(y1->pushdown_not()), "And(And(~x_0, ~x_1), And(~x_2, ~x_3))");
 
     auto y2 = xor_({~(xs[0] | xs[1]), ~(xs[2] | xs[3])});
-    EXPECT_EQ(str(pushdown_not(y2)), "Xor(And(~x_0, ~x_1), And(~x_2, ~x_3))");
+    EXPECT_EQ(str(y2->pushdown_not()), "Xor(And(~x_0, ~x_1), And(~x_2, ~x_3))");
 
     auto y3 = eq({~(xs[0] & xs[1]), ~(xs[2] & xs[3])});
-    EXPECT_EQ(str(pushdown_not(y3)), "Equal(Or(~x_0, ~x_1), Or(~x_2, ~x_3))");
+    EXPECT_EQ(str(y3->pushdown_not()), "Equal(Or(~x_0, ~x_1), Or(~x_2, ~x_3))");
 
     auto y4 = impl(~(xs[0] | xs[1]), ~(xs[2] | xs[3]));
-    EXPECT_EQ(str(pushdown_not(y4)), "Or(Or(x_0, x_1), And(~x_2, ~x_3))");
+    EXPECT_EQ(str(y4->pushdown_not()), "Or(Or(x_0, x_1), And(~x_2, ~x_3))");
 
     auto y5 = ite(~(xs[0] & xs[1]), ~(xs[2] & xs[3]), ~(xs[4] & xs[5]));
-    EXPECT_EQ(str(pushdown_not(y5)), "IfThenElse(Or(~x_0, ~x_1), Or(~x_2, ~x_3), Or(~x_4, ~x_5))");
+    EXPECT_EQ(str(y5->pushdown_not()), "IfThenElse(Or(~x_0, ~x_1), Or(~x_2, ~x_3), Or(~x_4, ~x_5))");
 }
