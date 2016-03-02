@@ -121,7 +121,6 @@ class BoolExpr : public std::enable_shared_from_this<BoolExpr> {
 protected:
     virtual string _str(const bx_t&) const = 0;
     virtual bx_t _simplify(const bx_t&) const = 0;
-    virtual bx_t _to_latop(const bx_t&) const = 0;
 
 public:
     const Kind kind;
@@ -131,7 +130,6 @@ public:
     friend bool operator<(const bx_t&, const bx_t&);
     friend string str(const bx_t&);
     friend bx_t simplify(const bx_t&);
-    friend bx_t to_latop(const bx_t&);
     friend bx_t to_nnf(const bx_t&);
     friend bx_t to_cnf(const bx_t&);
     friend bx_t to_dnf(const bx_t&);
@@ -148,6 +146,7 @@ public:
 
     virtual bx_t pushdown_not() const = 0;
     virtual bx_t to_binop() const = 0;
+    virtual bx_t to_latop() const = 0;
     virtual bx_t tseytin(Context&, const string& = "a") const = 0;
 
     virtual bx_t compose(const var2bx_t&) const = 0;
@@ -160,7 +159,6 @@ public:
 class Atom : public BoolExpr {
 protected:
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Atom(Kind kind);
@@ -173,6 +171,7 @@ public:
     bool is_cnf() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
     bx_t tseytin(Context&, const string& = "a") const;
 };
 
@@ -322,12 +321,11 @@ public:
 
 
 class LatticeOperator : public Operator {
-protected:
-    bx_t _to_latop(const bx_t&) const;
-
 public:
     LatticeOperator(Kind kind, bool simple, const vector<bx_t>& args);
     LatticeOperator(Kind kind, bool simple, const vector<bx_t>&& args);
+
+    bx_t to_latop() const;
 };
 
 
@@ -335,7 +333,6 @@ class Nor : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Nor(bool simple, const vector<bx_t>& args);
@@ -344,6 +341,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -379,7 +377,6 @@ class Nand : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Nand(bool simple, const vector<bx_t>& args);
@@ -388,6 +385,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -423,7 +421,6 @@ class Xnor : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Xnor(bool simple, const vector<bx_t>& args);
@@ -432,6 +429,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -443,7 +441,6 @@ class Xor : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Xor(bool simple, const vector<bx_t>& args);
@@ -454,6 +451,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -465,7 +463,6 @@ class Unequal : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Unequal(bool simple, const vector<bx_t>& args);
@@ -474,6 +471,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -485,7 +483,6 @@ class Equal : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Equal(bool simple, const vector<bx_t>& args) : Operator(EQ, simple, args) {}
@@ -494,6 +491,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -505,7 +503,6 @@ class NotImplies : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
@@ -513,6 +510,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -524,7 +522,6 @@ class Implies : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     Implies(bool simple, bx_t p, bx_t q);
@@ -532,6 +529,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -543,7 +541,6 @@ class NotIfThenElse : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -551,6 +548,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -562,7 +560,6 @@ class IfThenElse : public Operator {
 protected:
     string _str(const bx_t&) const;
     bx_t _simplify(const bx_t&) const;
-    bx_t _to_latop(const bx_t&) const;
 
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -570,6 +567,7 @@ public:
     bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t to_binop() const;
+    bx_t to_latop() const;
 
     op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
@@ -738,7 +736,6 @@ bool operator<(const lit_t&, const lit_t&);
 
 string str(const bx_t&);
 bx_t simplify(const bx_t&);
-bx_t to_latop(const bx_t&);
 bx_t to_nnf(const bx_t&);
 bx_t to_cnf(const bx_t&);
 bx_t to_dnf(const bx_t&);

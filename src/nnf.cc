@@ -27,41 +27,53 @@ using namespace boolexpr;
 
 
 bx_t
-Atom::_to_latop(const bx_t& self) const {
-    return self;
+Atom::to_latop() const {
+    auto self = shared_from_this();
+    return std::static_pointer_cast<const BoolExpr>(self);
 }
 
 
 bx_t
-LatticeOperator::_to_latop(const bx_t& self) const
+LatticeOperator::to_latop() const
 {
-    return transform(std::static_pointer_cast<const Operator>(self), to_latop);
+    auto self = shared_from_this();
+    auto op = std::static_pointer_cast<const Operator>(self);
+    return transform(op, [](const bx_t& arg){return arg->to_latop();});
 }
 
 
-bx_t Nor::_to_latop(const bx_t& self) const { return ~to_latop(~self); }
-bx_t Nand::_to_latop(const bx_t& self) const { return ~to_latop(~self); }
-bx_t Xnor::_to_latop(const bx_t& self) const { return ~to_latop(~self); }
-bx_t Unequal::_to_latop(const bx_t& self) const { return ~to_latop(~self); }
-bx_t NotImplies::_to_latop(const bx_t& self) const { return ~to_latop(~self); }
-bx_t NotIfThenElse::_to_latop(const bx_t& self) const { return ~to_latop(~self); }
+static bx_t
+_nop_to_latop(const BoolExpr* bx)
+{
+    auto nop = bx->shared_from_this();
+    auto op = ~nop;
+    return ~op->to_latop();
+}
+
+bx_t Nor::to_latop() const { return _nop_to_latop(this); }
+bx_t Nand::to_latop() const { return _nop_to_latop(this); }
+bx_t Xnor::to_latop() const { return _nop_to_latop(this); }
+bx_t Unequal::to_latop() const { return _nop_to_latop(this); }
+bx_t NotImplies::to_latop() const { return _nop_to_latop(this); }
+bx_t NotIfThenElse::to_latop() const { return _nop_to_latop(this); }
 
 
 bx_t
-Xor::_to_latop(const bx_t& self) const
+Xor::to_latop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
 
-    if (op->args.size() == 1)         // LCOV_EXCL_LINE
-        return to_latop(op->args[0]); // LCOV_EXCL_LINE
+    if (op->args.size() == 1)           // LCOV_EXCL_LINE
+        return op->args[0]->to_latop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2) {
         // x0 ^ x1 <=> ~x0 & x1 | x0 & ~x1
-        auto x0 = to_latop(op->args[0]);
-        auto x1 = to_latop(op->args[1]);
+        auto x0 = op->args[0]->to_latop();
+        auto x1 = op->args[1]->to_latop();
         return (~x0 & x1) | (x0 & ~x1);
     }
 
@@ -71,20 +83,21 @@ Xor::_to_latop(const bx_t& self) const
     auto lo = xor_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
     auto hi = xor_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
 
-    return to_latop(lo ^ hi);
+    return (lo ^ hi)->to_latop();
 }
 
 
 bx_t
-Equal::_to_latop(const bx_t& self) const
+Equal::to_latop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
 
     // eq(x0, x1, x2) <=> ~x0 & ~x1 & ~x2 | x0 & x1 & x2
     vector<bx_t> xs, xns;
 
     for (const bx_t& arg : op->args) {
-        auto x = to_latop(arg);
+        auto x = arg->to_latop();
         xs.push_back(x);
         xns.push_back(~x);
     }
@@ -94,39 +107,34 @@ Equal::_to_latop(const bx_t& self) const
 
 
 bx_t
-Implies::_to_latop(const bx_t& self) const
+Implies::to_latop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Implies>(self);
 
-    auto p = to_latop(op->args[0]);
-    auto q = to_latop(op->args[1]);
+    auto p = op->args[0]->to_latop();
+    auto q = op->args[1]->to_latop();
 
     return ~p | q;
 }
 
 
 bx_t
-IfThenElse::_to_latop(const bx_t& self) const
+IfThenElse::to_latop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const IfThenElse>(self);
 
-    auto s = to_latop(op->args[0]);
-    auto d1 = to_latop(op->args[1]);
-    auto d0 = to_latop(op->args[2]);
+    auto s = op->args[0]->to_latop();
+    auto d1 = op->args[1]->to_latop();
+    auto d0 = op->args[2]->to_latop();
 
     return (s & d1) | (~s & d0);
 }
 
 
 bx_t
-boolexpr::to_latop(const bx_t& self)
-{
-    return self->_to_latop(self);
-}
-
-
-bx_t
 boolexpr::to_nnf(const bx_t& self)
 {
-    return simplify(self->_to_latop(self)->pushdown_not());
+    return simplify(self->to_latop()->pushdown_not());
 }
