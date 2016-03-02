@@ -128,7 +128,6 @@ public:
 
     friend bool operator<(const bx_t&, const bx_t&);
     friend string str(const bx_t&);
-    friend bx_t to_nnf(const bx_t&);
     friend bx_t to_cnf(const bx_t&);
     friend bx_t to_dnf(const bx_t&);
 
@@ -146,6 +145,7 @@ public:
     virtual bx_t simplify() const = 0;
     virtual bx_t to_binop() const = 0;
     virtual bx_t to_latop() const = 0;
+    bx_t to_nnf() const;
     virtual bx_t tseytin(Context&, const string& = "a") const = 0;
 
     virtual bx_t compose(const var2bx_t&) const = 0;
@@ -738,7 +738,6 @@ bool operator<(const bx_t&, const bx_t&);
 bool operator<(const lit_t&, const lit_t&);
 
 string str(const bx_t&);
-bx_t to_nnf(const bx_t&);
 bx_t to_cnf(const bx_t&);
 bx_t to_dnf(const bx_t&);
 unordered_set<var_t> support(const bx_t&);
