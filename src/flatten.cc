@@ -239,14 +239,14 @@ _nnf2dnf(const bx_t& nnf1)
 
 
 bx_t
-boolexpr::to_cnf(const bx_t& self)
+BoolExpr::to_cnf() const
 {
-    return _nnf2cnf(self->to_nnf());
+    return _nnf2cnf(to_nnf());
 }
 
 
 bx_t
-boolexpr::to_dnf(const bx_t& self)
+BoolExpr::to_dnf() const
 {
-    return _nnf2dnf(self->to_nnf());
+    return _nnf2dnf(to_nnf());
 }
