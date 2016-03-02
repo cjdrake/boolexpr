@@ -62,20 +62,18 @@ TEST_F(BoolExprTest, Basic)
 
 TEST_F(BoolExprTest, ToString)
 {
-    EXPECT_EQ(str(_zero), "0");
-    EXPECT_EQ(str(_one), "1");
-    EXPECT_EQ(str(_logical), "X");
-    EXPECT_EQ(str(_illogical), "?");
-    EXPECT_EQ(str(~_logical), "X");
-    EXPECT_EQ(str(~_illogical), "?");
+    EXPECT_EQ(_zero->to_string(), "0");
+    EXPECT_EQ(_one->to_string(), "1");
+    EXPECT_EQ(_logical->to_string(), "X");
+    EXPECT_EQ(_illogical->to_string(), "?");
 
     EXPECT_EQ(xs[0], xs[0]);
     EXPECT_EQ(~xs[0], ~xs[0]);
 
-    EXPECT_EQ(str(~xs[0]), "~x_0");
-    EXPECT_EQ(str(xs[0]), "x_0");
-    EXPECT_EQ(str(~xs[1]), "~x_1");
-    EXPECT_EQ(str(xs[1]), "x_1");
+    EXPECT_EQ((~xs[0])->to_string(), "~x_0");
+    EXPECT_EQ(xs[0]->to_string(), "x_0");
+    EXPECT_EQ((~xs[1])->to_string(), "~x_1");
+    EXPECT_EQ(xs[1]->to_string(), "x_1");
 
     auto y0 = (~xs[0] & xs[1])
             | (~xs[2] ^ xs[3])
@@ -83,7 +81,7 @@ TEST_F(BoolExprTest, ToString)
             | impl(~xs[6], xs[7])
             | ite(~xs[8], xs[9], ~xs[10]);
 
-    EXPECT_EQ(str(y0), "Or(Or(Or(Or(And(~x_0, x_1), Xor(~x_2, x_3)), Equal(~x_4, x_5)), Implies(~x_6, x_7)), IfThenElse(~x_8, x_9, ~x_10))");
+    EXPECT_EQ(y0->to_string(), "Or(Or(Or(Or(And(~x_0, x_1), Xor(~x_2, x_3)), Equal(~x_4, x_5)), Implies(~x_6, x_7)), IfThenElse(~x_8, x_9, ~x_10))");
 
     auto y1 = ~(~(~xs[0] & xs[1])
             | ~(~xs[2] ^ xs[3])
@@ -91,11 +89,11 @@ TEST_F(BoolExprTest, ToString)
             | ~impl(~xs[6], xs[7])
             | ~ite(~xs[8], xs[9], ~xs[10]));
 
-    EXPECT_EQ(str(y1), "Nor(Or(Or(Or(Nand(~x_0, x_1), Xnor(~x_2, x_3)), Unequal(~x_4, x_5)), NotImplies(~x_6, x_7)), NotIfThenElse(~x_8, x_9, ~x_10))");
+    EXPECT_EQ(y1->to_string(), "Nor(Or(Or(Or(Nand(~x_0, x_1), Xnor(~x_2, x_3)), Unequal(~x_4, x_5)), NotImplies(~x_6, x_7)), NotIfThenElse(~x_8, x_9, ~x_10))");
 
     auto y2 = ~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]);
 
-    EXPECT_EQ(str(y2), "Or(~x_0, Xor(And(x_1, ~x_2), x_3))");
+    EXPECT_EQ(y2->to_string(), "Or(~x_0, Xor(And(x_1, ~x_2), x_3))");
 }
 
 
@@ -167,7 +165,7 @@ TEST_F(BoolExprTest, DFSIter)
 
     int i = 0;
     for (const auto& node : y)
-        EXPECT_EQ(str(node), ans[i++]);
+        EXPECT_EQ(node->to_string(), ans[i++]);
 }
 
 

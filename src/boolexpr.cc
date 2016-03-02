@@ -313,6 +313,18 @@ boolexpr::and_s(std::initializer_list<bx_t> l)
 { return and_(l)->simplify(); }
 
 bx_t
+boolexpr::xnor_s(const vector<bx_t>& args)
+{ return (~xor_(args))->simplify(); }
+
+bx_t
+boolexpr::xnor_s(const vector<bx_t>&& args)
+{ return (~xor_(args))->simplify(); }
+
+bx_t
+boolexpr::xnor_s(std::initializer_list<bx_t> l)
+{ return (~xor_(l))->simplify(); }
+
+bx_t
 boolexpr::xor_s(const vector<bx_t>& args)
 { return xor_(args)->simplify(); }
 
@@ -323,6 +335,18 @@ boolexpr::xor_s(const vector<bx_t>&& args)
 bx_t
 boolexpr::xor_s(std::initializer_list<bx_t> l)
 { return xor_(l)->simplify(); }
+
+bx_t
+boolexpr::neq_s(const vector<bx_t>& args)
+{ return (~eq(args))->simplify(); }
+
+bx_t
+boolexpr::neq_s(const vector<bx_t>&& args)
+{ return (~eq(args))->simplify(); }
+
+bx_t
+boolexpr::neq_s(std::initializer_list<bx_t> l)
+{ return (~eq(l))->simplify(); }
 
 bx_t
 boolexpr::eq_s(const vector<bx_t>& args)
@@ -337,8 +361,16 @@ boolexpr::eq_s(std::initializer_list<bx_t> l)
 { return eq(l)->simplify(); }
 
 bx_t
+boolexpr::nimpl_s(const bx_t& p, const bx_t& q)
+{ return (~impl(p, q))->simplify(); }
+
+bx_t
 boolexpr::impl_s(const bx_t& p, const bx_t& q)
 { return impl(p, q)->simplify(); }
+
+bx_t
+boolexpr::nite_s(const bx_t& s, const bx_t& d1, const bx_t& d0)
+{ return (~ite(s, d1, d0))->simplify(); }
 
 bx_t
 boolexpr::ite_s(const bx_t& s, const bx_t& d1, const bx_t& d0)
@@ -373,55 +405,54 @@ boolexpr::operator<(const lit_t& lhs, const lit_t& rhs)
 
 
 // String conversion
-string Zero::_str(const bx_t&) const { return "0"; }
-string One::_str(const bx_t&)  const { return "1"; }
+std::ostream& Zero::_op_lsh(std::ostream& s) const { return s << "0"; }
+std::ostream& One::_op_lsh(std::ostream& s) const { return s << "1"; }
+std::ostream& Logical::_op_lsh(std::ostream& s) const { return s << "X"; }
+std::ostream& Illogical::_op_lsh(std::ostream& s) const { return s << "?"; }
 
-string Logical::_str(const bx_t&)   const { return "X"; }
-string Illogical::_str(const bx_t&) const { return "?"; }
 
-
-string
-Complement::_str(const bx_t& self) const
+std::ostream&
+Complement::_op_lsh(std::ostream& s) const
 {
+    auto self = shared_from_this();
     auto xn = std::static_pointer_cast<const Complement>(self);
-    return "~" + xn->ctx->get_name(xn->id);
+    return s << "~" << xn->ctx->get_name(xn->id);
 }
 
-string
-Variable::_str(const bx_t& self) const
+
+std::ostream&
+Variable::_op_lsh(std::ostream& s) const
 {
+    auto self = shared_from_this();
     auto x = std::static_pointer_cast<const Variable>(self);
-    return x->ctx->get_name(x->id);
+    return s << x->ctx->get_name(x->id);
+}
+
+
+std::ostream&
+Operator::_op_lsh(std::ostream& s) const
+{
+    s << opname() << "(";
+    for (size_t i = 0; i < args.size(); ++i) {
+        if (i != 0) s << ", ";
+        s << args[i];
+    }
+    return s << ")";
 }
 
 
 string
-Operator::_tostr(const string opname) const
+BoolExpr::to_string() const
 {
-    std::stringstream ss;
-    ss << opname << "(";
-    for (size_t i = 0; i < args.size(); ++i) {
-        if (i != 0) ss << ", ";
-        ss << str(args[i]);
-    }
-    ss << ")";
-    return ss.str();
+    std::ostringstream oss;
+    oss << shared_from_this();
+    return oss.str();
 }
 
-string Nor::_str(const bx_t& self)     const { return _tostr("Nor"); }
-string Or::_str(const bx_t& self)      const { return _tostr("Or"); }
-string Nand::_str(const bx_t& self)    const { return _tostr("Nand"); }
-string And::_str(const bx_t& self)     const { return _tostr("And"); }
-string Xnor::_str(const bx_t& self)    const { return _tostr("Xnor"); }
-string Xor::_str(const bx_t& self)     const { return _tostr("Xor"); }
-string Unequal::_str(const bx_t& self) const { return _tostr("Unequal"); }
-string Equal::_str(const bx_t& self)   const { return _tostr("Equal"); }
 
-string NotImplies::_str(const bx_t& self) const { return _tostr("NotImplies"); }
-string Implies::_str(const bx_t& self)    const { return _tostr("Implies"); }
-
-string NotIfThenElse::_str(const bx_t& self) const { return _tostr("NotIfThenElse"); }
-string IfThenElse::_str(const bx_t& self)    const { return _tostr("IfThenElse"); }
+std::ostream&
+boolexpr::operator<<(std::ostream& s, const bx_t& bx)
+{ return bx->_op_lsh(s); }
 
 
 op_t Nor::from_args(const vector<bx_t>& args) const { return std::make_shared<Nor>(false, args); }
@@ -448,13 +479,6 @@ op_t NotIfThenElse::from_args(const vector<bx_t>& args) const { return std::make
 op_t NotIfThenElse::from_args(const vector<bx_t>&& args) const { return std::make_shared<NotIfThenElse>(false, args[0], args[1], args[2]); }
 op_t IfThenElse::from_args(const vector<bx_t>& args) const { return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]); }
 op_t IfThenElse::from_args(const vector<bx_t>&& args) const { return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]); }
-
-
-string
-boolexpr::str(const bx_t& self)
-{
-    return self->_str(self);
-}
 
 
 // Properties
