@@ -28,32 +28,36 @@ using namespace boolexpr;
 
 // Atoms are already simple
 bx_t
-Atom::_simplify(const bx_t& self) const
+Atom::simplify() const
 {
-    return self;
+    auto self = shared_from_this();
+    return std::static_pointer_cast<const BoolExpr>(self);
 }
 
 
 // Use the positive form to simplify inverted operators
 static bx_t
-_nop_simplify(const bx_t& self)
+_nop_simplify(const BoolExpr* bx)
 {
+    auto self = bx->shared_from_this();
     auto nop = std::static_pointer_cast<const Operator>(self);
     if (nop->simple) return nop;
-    return ~simplify(~nop);
+    auto op = ~nop;
+    return ~op->simplify();
 }
 
-bx_t Nor::_simplify(const bx_t& self) const { return _nop_simplify(self); }
-bx_t Nand::_simplify(const bx_t& self) const { return _nop_simplify(self); }
-bx_t Xnor::_simplify(const bx_t& self) const { return _nop_simplify(self); }
-bx_t Unequal::_simplify(const bx_t& self) const { return _nop_simplify(self); }
-bx_t NotImplies::_simplify(const bx_t& self) const { return _nop_simplify(self); }
-bx_t NotIfThenElse::_simplify(const bx_t& self) const { return _nop_simplify(self); }
+bx_t Nor::simplify() const { return _nop_simplify(this); }
+bx_t Nand::simplify() const { return _nop_simplify(this); }
+bx_t Xnor::simplify() const { return _nop_simplify(this); }
+bx_t Unequal::simplify() const { return _nop_simplify(this); }
+bx_t NotImplies::simplify() const { return _nop_simplify(this); }
+bx_t NotIfThenElse::simplify() const { return _nop_simplify(this); }
 
 
 bx_t
-Or::_simplify(const bx_t& self) const
+Or::simplify() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Or>(self);
     if (op->simple) return op;
     return OrArgSet(op->args).reduce();
@@ -61,8 +65,9 @@ Or::_simplify(const bx_t& self) const
 
 
 bx_t
-And::_simplify(const bx_t& self) const
+And::simplify() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const And>(self);
     if (op->simple) return op;
     return AndArgSet(op->args).reduce();
@@ -70,8 +75,9 @@ And::_simplify(const bx_t& self) const
 
 
 bx_t
-Xor::_simplify(const bx_t& self) const
+Xor::simplify() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Xor>(self);
     if (op->simple) return op;
     return XorArgSet(op->args).reduce();
@@ -79,8 +85,9 @@ Xor::_simplify(const bx_t& self) const
 
 
 bx_t
-Equal::_simplify(const bx_t& self) const
+Equal::simplify() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Equal>(self);
     if (op->simple) return op;
     return EqArgSet(op->args).reduce();
@@ -88,14 +95,15 @@ Equal::_simplify(const bx_t& self) const
 
 
 bx_t
-Implies::_simplify(const bx_t& self) const
+Implies::simplify() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Implies>(self);
 
     if (op->simple) return op;
 
-    auto p = simplify(op->args[0]);
-    auto q = simplify(op->args[1]);
+    auto p = op->args[0]->simplify();
+    auto q = op->args[1]->simplify();
 
     // 0 => q <=> p => 1 <=> 1
     if (IS_ZERO(p) || IS_ONE(q)) return one();
@@ -117,15 +125,16 @@ Implies::_simplify(const bx_t& self) const
 
 
 bx_t
-IfThenElse::_simplify(const bx_t& self) const
+IfThenElse::simplify() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const IfThenElse>(self);
 
     if (op->simple) return op;
 
-    auto s = simplify(op->args[0]);
-    auto d1 = simplify(op->args[1]);
-    auto d0 = simplify(op->args[2]);
+    auto s = op->args[0]->simplify();
+    auto d1 = op->args[1]->simplify();
+    auto d0 = op->args[2]->simplify();
 
     // 0 ? d1 : d0 <=> d0
     if (IS_ZERO(s)) return d0;
@@ -138,7 +147,7 @@ IfThenElse::_simplify(const bx_t& self) const
         // s ? 0 : 1 <=> ~s
         if (IS_ONE(d0)) return ~s;
         // s ? 0 : d0 <=> ~s & d0
-        return simplify(~s & d0);
+        return and_s({~s, d0});
     }
 
     if (IS_ONE(d1)) {
@@ -147,26 +156,19 @@ IfThenElse::_simplify(const bx_t& self) const
         // s ? 1 : 1 <=> 1
         if (IS_ONE(d0)) return one();
         // s ? 1 : d0 <=> s | d0
-        return simplify(s | d0);
+        return or_s({s, d0});
     }
 
     // s ? d1 : 0 <=> s & d1
-    if (IS_ZERO(d0)) return simplify(s & d1);
+    if (IS_ZERO(d0)) return and_s({s, d1});
     // s ? d1 : 1 <=> ~s | d1
-    if (IS_ONE(d0)) return simplify(~s | d1);
+    if (IS_ONE(d0)) return or_s({~s, d1});
     // s ? d1 : d1 <=> d1
     if (d1 == d0) return d1;
     // s ? s : d0 <=> s | d0
-    if (s == d1) return simplify(s | d0);
+    if (s == d1) return or_s({s, d0});
     // s ? d1 : s <=> s & d1
-    if (s == d0) return simplify(s & d1);
+    if (s == d0) return and_s({s, d1});
 
     return std::make_shared<IfThenElse>(true, s, d1, d0);
-}
-
-
-bx_t
-boolexpr::simplify(const bx_t& self)
-{
-    return self->_simplify(self);
 }

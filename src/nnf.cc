@@ -136,5 +136,5 @@ IfThenElse::to_latop() const
 bx_t
 boolexpr::to_nnf(const bx_t& self)
 {
-    return simplify(self->to_latop()->pushdown_not());
+    return self->to_latop()->pushdown_not()->simplify();
 }

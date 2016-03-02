@@ -98,5 +98,5 @@ Operator::restrict_(const point_t& point) const
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
     auto f = [&point] (const bx_t& bx) { return bx->restrict_(point); };
-    return simplify(transform(op, f));
+    return transform(op, f)->simplify();
 }

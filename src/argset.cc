@@ -34,7 +34,7 @@ LatticeArgSet::LatticeArgSet(const vector<bx_t>& args, const Kind& kind,
     , identity {identity}
     , dominator {dominator}
 {
-    for (const bx_t& arg : args) insert(simplify(arg));
+    for (const bx_t& arg : args) insert(arg->simplify());
 }
 
 
@@ -108,7 +108,7 @@ AndArgSet::to_op() const
 XorArgSet::XorArgSet(const vector<bx_t>& args)
     : parity {true}
 {
-    for (const bx_t& arg : args) insert(simplify(arg));
+    for (const bx_t& arg : args) insert(arg->simplify());
 }
 
 
@@ -185,7 +185,7 @@ EqArgSet::EqArgSet(const vector<bx_t>& args)
     : has_zero {false}
     , has_one {false}
 {
-    for (const bx_t& arg : args) insert(simplify(arg));
+    for (const bx_t& arg : args) insert(arg->simplify());
 }
 
 
@@ -242,11 +242,11 @@ EqArgSet::reduce() const
 
     // eq(0, x, y) <=> nor(x, y)
     if (has_zero)
-        return simplify(~or_(vector<bx_t>(args.begin(), args.end())));
+        return nor_s(vector<bx_t>(args.begin(), args.end()));
 
     // eq(1, x, y) <=> x & y
     if (has_one)
-        return simplify(and_(vector<bx_t>(args.begin(), args.end())));
+        return and_s(vector<bx_t>(args.begin(), args.end()));
 
     return to_op();
 }

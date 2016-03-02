@@ -33,10 +33,10 @@ class SimplifyTest : public BoolExprTest {};
 
 TEST_F(SimplifyTest, Atoms)
 {
-    EXPECT_EQ(str(simplify(_zero)), "0");
-    EXPECT_EQ(str(simplify(_one)), "1");
-    EXPECT_EQ(str(simplify(_logical)), "X");
-    EXPECT_EQ(str(simplify(_illogical)), "?");
+    EXPECT_EQ(str(_zero->simplify()), "0");
+    EXPECT_EQ(str(_one->simplify()), "1");
+    EXPECT_EQ(str(_logical->simplify()), "X");
+    EXPECT_EQ(str(_illogical->simplify()), "?");
 }
 
 

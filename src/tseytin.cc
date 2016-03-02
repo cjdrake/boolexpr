@@ -313,7 +313,7 @@ NotImplies::eqvar(const var_t& x) const
     auto p = args[0];
     auto q = args[1];
 
-    return simplify((~x | p) & (~x | ~q) & (x | ~p | q));
+    return and_s({(~x | p), (~x | ~q), (x | ~p | q)});
 }
 
 
@@ -323,7 +323,7 @@ Implies::eqvar(const var_t& x) const
     auto p = args[0];
     auto q = args[1];
 
-    return simplify((x | p) & (x | ~q) & (~x | ~p | q));
+    return and_s({(x | p), (x | ~q), (~x | ~p | q)});
 }
 
 
@@ -334,7 +334,7 @@ NotIfThenElse::eqvar(const var_t& x) const
     auto d1 = args[1];
     auto d0 = args[2];
 
-    return simplify((~x | ~s | ~d1) & (~x | s | ~d0) & (x | ~s | d1) & (x | s | d0) & (x | d1 | d0));
+    return and_s({(~x | ~s | ~d1), (~x | s | ~d0), (x | ~s | d1), (x | s | d0), (x | d1 | d0)});
 }
 
 
@@ -345,5 +345,5 @@ IfThenElse::eqvar(const var_t& x) const
     auto d1 = args[1];
     auto d0 = args[2];
 
-    return simplify((x | ~s | ~d1) & (x | s | ~d0) & (~x | ~s | d1) & (~x | s | d0) & (~x | d1 | d0));
+    return and_s({(x | ~s | ~d1), (x | s | ~d0), (~x | ~s | d1), (~x | s | d0), (~x | d1 | d0)});
 }

@@ -181,7 +181,7 @@ _nnf2cnf(const bx_t& nnf1)
 
     std::shared_ptr<const LatticeOperator> lop2;
     if (mod_count) {
-        auto nnf2 = simplify(lop1->from_args(std::move(_args)));
+        auto nnf2 = lop1->from_args(std::move(_args))->simplify();
         if (IS_ATOM(nnf2)) return nnf2;
         lop2 = std::move(std::static_pointer_cast<const LatticeOperator>(nnf2));
         if (lop2->is_clause()) return lop2;
@@ -218,7 +218,7 @@ _nnf2dnf(const bx_t& nnf1)
 
     std::shared_ptr<const LatticeOperator> lop2;
     if (mod_count) {
-        auto nnf2 = simplify(lop1->from_args(std::move(_args)));
+        auto nnf2 = lop1->from_args(std::move(_args))->simplify();
         if (IS_ATOM(nnf2)) return nnf2;
         lop2 = std::move(std::static_pointer_cast<const LatticeOperator>(nnf2));
         if (lop2->is_clause()) return lop2;
