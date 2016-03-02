@@ -27,32 +27,42 @@ using namespace boolexpr;
 
 
 bx_t
-Atom::_to_binop(const bx_t& self) const {
-    return self;
+Atom::to_binop() const {
+    auto self = shared_from_this();
+    return std::static_pointer_cast<const BoolExpr>(self);
 }
 
 
-bx_t Nor::_to_binop(const bx_t& self) const { return ~to_binop(~self); }
-bx_t Nand::_to_binop(const bx_t& self) const { return ~to_binop(~self); }
-bx_t Xnor::_to_binop(const bx_t& self) const { return ~to_binop(~self); }
-bx_t Unequal::_to_binop(const bx_t& self) const { return ~to_binop(~self); }
-bx_t NotImplies::_to_binop(const bx_t& self) const { return ~to_binop(~self); }
-bx_t NotIfThenElse::_to_binop(const bx_t& self) const { return ~to_binop(~self); }
+static bx_t
+_nop_to_binop(const BoolExpr* bx)
+{
+    auto nop = bx->shared_from_this();
+    auto op = ~nop;
+    return ~op->to_binop();
+}
+
+bx_t Nor::to_binop() const { return _nop_to_binop(this); }
+bx_t Nand::to_binop() const { return _nop_to_binop(this); }
+bx_t Xnor::to_binop() const { return _nop_to_binop(this); }
+bx_t Unequal::to_binop() const { return _nop_to_binop(this); }
+bx_t NotImplies::to_binop() const { return _nop_to_binop(this); }
+bx_t NotIfThenElse::to_binop() const { return _nop_to_binop(this); }
 
 
 bx_t
-Or::_to_binop(const bx_t& self) const
+Or::to_binop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)  // LCOV_EXCL_LINE
         return Or::identity(); // LCOV_EXCL_LINE
 
-    if (op->args.size() == 1)         // LCOV_EXCL_LINE
-        return to_binop(op->args[0]); // LCOV_EXCL_LINE
+    if (op->args.size() == 1)           // LCOV_EXCL_LINE
+        return op->args[0]->to_binop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, to_binop);
+        return transform(op, [](const bx_t& bx){return bx->to_binop();});
 
     // x0 | x1 | x2 | x3 <=> (x0 | x1) | (x2 | x3)
     size_t const mid = op->args.size() / 2;
@@ -60,23 +70,24 @@ Or::_to_binop(const bx_t& self) const
     auto lo = or_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
     auto hi = or_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
 
-    return to_binop(lo) | to_binop(hi);
+    return lo->to_binop() | hi->to_binop();
 }
 
 
 bx_t
-And::_to_binop(const bx_t& self) const
+And::to_binop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return And::identity(); // LCOV_EXCL_LINE
 
-    if (op->args.size() == 1)         // LCOV_EXCL_LINE
-        return to_binop(op->args[0]); // LCOV_EXCL_LINE
+    if (op->args.size() == 1)           // LCOV_EXCL_LINE
+        return op->args[0]->to_binop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, to_binop);
+        return transform(op, [](const bx_t& bx){return bx->to_binop();});
 
     // x0 & x1 & x2 & x3 <=> (x0 & x1) & (x2 & x3)
     size_t const mid = op->args.size() / 2;
@@ -84,23 +95,24 @@ And::_to_binop(const bx_t& self) const
     auto lo = and_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
     auto hi = and_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
 
-    return to_binop(lo) & to_binop(hi);
+    return lo->to_binop() & hi->to_binop();
 }
 
 
 bx_t
-Xor::_to_binop(const bx_t& self) const
+Xor::to_binop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
 
-    if (op->args.size() == 1)         // LCOV_EXCL_LINE
-        return to_binop(op->args[0]); // LCOV_EXCL_LINE
+    if (op->args.size() == 1)           // LCOV_EXCL_LINE
+        return op->args[0]->to_binop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, to_binop);
+        return transform(op, [](const bx_t& bx){return bx->to_binop();});
 
     // x0 ^ x1 ^ x2 ^ x3 <=> (x0 ^ x1) ^ (x2 ^ x3)
     size_t const mid = op->args.size() / 2;
@@ -108,24 +120,25 @@ Xor::_to_binop(const bx_t& self) const
     auto lo = xor_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
     auto hi = xor_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
 
-    return to_binop(lo) ^ to_binop(hi);
+    return lo->to_binop() ^ hi->to_binop();
 }
 
 
 bx_t
-Equal::_to_binop(const bx_t& self) const
+Equal::to_binop() const
 {
+    auto self = shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
 
     if (op->args.size() < 2) // LCOV_EXCL_LINE
         return one();        // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, to_binop);
+        return transform(op, [](const bx_t bx){return bx->to_binop();});
 
     vector<bx_t> _args;
     for (const bx_t& arg : op->args)
-        _args.push_back(to_binop(arg));
+        _args.push_back(arg->to_binop());
 
     vector<bx_t> pairs;
     for (size_t i = 0; i < (_args.size() - 1); ++i) {
@@ -138,21 +151,18 @@ Equal::_to_binop(const bx_t& self) const
 
 
 bx_t
-Implies::_to_binop(const bx_t& self) const
+Implies::to_binop() const
 {
-    return transform(std::static_pointer_cast<const Operator>(self), to_binop);
+    auto self = shared_from_this();
+    return transform(std::static_pointer_cast<const Operator>(self),
+                     [](const bx_t& bx){return bx->to_binop();});
 }
 
 
 bx_t
-IfThenElse::_to_binop(const bx_t& self) const
+IfThenElse::to_binop() const
 {
-    return transform(std::static_pointer_cast<const Operator>(self), to_binop);
-}
-
-
-bx_t
-boolexpr::to_binop(const bx_t& self)
-{
-    return self->_to_binop(self);
+    auto self = shared_from_this();
+    return transform(std::static_pointer_cast<const Operator>(self),
+                     [](const bx_t& bx){return bx->to_binop();});
 }

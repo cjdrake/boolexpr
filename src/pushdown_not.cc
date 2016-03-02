@@ -39,8 +39,7 @@ _op_pushdown_not(const BoolExpr* bx)
 {
     auto self = bx->shared_from_this();
     auto op = std::static_pointer_cast<const Operator>(self);
-    auto f = [](const bx_t& arg){ return arg->pushdown_not(); };
-    return transform(op, f);
+    return transform(op, [](const bx_t& arg){return arg->pushdown_not();});
 }
 
 bx_t Or::pushdown_not() const { return _op_pushdown_not(this); }
