@@ -136,22 +136,23 @@ public:
     virtual uint32_t atom_count() const = 0;
     virtual uint32_t op_count() const = 0;
 
-    virtual bool is_dnf() const = 0;
     virtual bool is_cnf() const = 0;
+    virtual bool is_dnf() const = 0;
 
     virtual bx_t pushdown_not() const = 0;
     virtual bx_t simplify() const = 0;
     virtual bx_t to_binop() const = 0;
     virtual bx_t to_latop() const = 0;
-    bx_t to_nnf() const;
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
     virtual bx_t tseytin(Context&, const string& = "a") const = 0;
 
     virtual bx_t compose(const var2bx_t&) const = 0;
     virtual bx_t restrict_(const point_t&) const = 0;
 
     virtual soln_t sat() const = 0;
+
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
+    bx_t to_nnf() const;
 };
 
 
@@ -163,8 +164,8 @@ public:
     uint32_t size() const;
     uint32_t atom_count() const;
     uint32_t op_count() const;
-    bool is_dnf() const;
     bool is_cnf() const;
+    bool is_dnf() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -253,8 +254,8 @@ public:
 
     Literal(Kind kind, Context *ctx, id_t id);
 
-    bool is_dnf() const;
     bool is_cnf() const;
+    bool is_dnf() const;
 };
 
 
@@ -302,18 +303,19 @@ public:
     uint32_t atom_count() const;
     uint32_t op_count() const;
 
-    bool is_d1() const;
-    bool is_clause() const;
-    bool is_dnf() const;
     bool is_cnf() const;
+    bool is_dnf() const;
+    bx_t tseytin(Context&, const string& = "a") const;
     bx_t compose(const var2bx_t&) const;
     bx_t restrict_(const point_t&) const;
-    bx_t tseytin(Context&, const string& = "a") const;
     soln_t sat() const;
 
     virtual op_t from_args(const vector<bx_t>&) const = 0;
     virtual op_t from_args(const vector<bx_t>&&) const = 0;
     virtual bx_t eqvar(const var_t&) const = 0;
+
+    bool is_d1() const;
+    bool is_clause() const;
 };
 
 
@@ -358,8 +360,8 @@ public:
     static bx_t dominator();
 
     bx_t invert() const;
-    bool is_dnf() const;
     bool is_cnf() const;
+    bool is_dnf() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -402,8 +404,8 @@ public:
     static bx_t dominator();
 
     bx_t invert() const;
-    bool is_dnf() const;
     bool is_cnf() const;
+    bool is_dnf() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;

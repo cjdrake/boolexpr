@@ -476,22 +476,6 @@ Operator::is_clause() const
 }
 
 
-bool Atom::is_dnf() const { return false; }
-bool Zero::is_dnf() const { return true; }
-bool Literal::is_dnf() const { return true; }
-bool Operator::is_dnf() const { return false; }
-
-
-bool
-Or::is_dnf() const
-{
-    for (const bx_t& arg : args)
-        if (!IS_LIT(arg) && !(IS_AND(arg) && std::static_pointer_cast<const And>(arg)->is_clause()))
-            return false;
-    return true;
-}
-
-
 bool Atom::is_cnf() const { return false; }
 bool One::is_cnf() const { return true; }
 bool Literal::is_cnf() const { return true; }
@@ -509,20 +493,36 @@ Or::is_cnf() const
 
 
 bool
-And::is_dnf() const
+And::is_cnf() const
 {
     for (const bx_t& arg : args)
-        if (!IS_LIT(arg))
+        if (!IS_LIT(arg) && !(IS_OR(arg) && std::static_pointer_cast<const Or>(arg)->is_clause()))
+            return false;
+    return true;
+}
+
+
+bool Atom::is_dnf() const { return false; }
+bool Zero::is_dnf() const { return true; }
+bool Literal::is_dnf() const { return true; }
+bool Operator::is_dnf() const { return false; }
+
+
+bool
+Or::is_dnf() const
+{
+    for (const bx_t& arg : args)
+        if (!IS_LIT(arg) && !(IS_AND(arg) && std::static_pointer_cast<const And>(arg)->is_clause()))
             return false;
     return true;
 }
 
 
 bool
-And::is_cnf() const
+And::is_dnf() const
 {
     for (const bx_t& arg : args)
-        if (!IS_LIT(arg) && !(IS_OR(arg) && std::static_pointer_cast<const Or>(arg)->is_clause()))
+        if (!IS_LIT(arg))
             return false;
     return true;
 }
