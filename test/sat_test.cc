@@ -33,38 +33,52 @@ class SATTest : public BoolExprTest {};
 
 TEST_F(SATTest, Atoms)
 {
+    // Zero is not satisfiable
     auto soln0 = _zero->sat();
     EXPECT_FALSE(soln0.first);
 
+    // One is trivially satisfiable
     auto soln1 = _one->sat();
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
     EXPECT_EQ(p1.size(), 0);
 
-    auto soln2 = xs[0]->sat();
-    EXPECT_TRUE(soln2.first);
-    auto p2 = *soln2.second;
-    EXPECT_EQ(p2.size(), 1);
-    EXPECT_EQ(p2[xs[0]], _one);
+    // Logical is not satisfiable
+    auto soln2 = _log->sat();
+    EXPECT_FALSE(soln2.first);
 
-    auto soln3 = (~xs[0])->sat();
-    EXPECT_TRUE(soln3.first);
-    auto p3 = *soln3.second;
-    EXPECT_EQ(p3.size(), 1);
-    EXPECT_EQ(p3[xs[0]], _zero);
+    // Illogical is not satisfiable
+    auto soln3 = _ill->sat();
+    EXPECT_FALSE(soln3.first);
+
+    // sat(x)
+    auto soln4 = xs[0]->sat();
+    EXPECT_TRUE(soln4.first);
+    auto p4 = *soln4.second;
+    EXPECT_EQ(p4.size(), 1);
+    EXPECT_EQ(p4[xs[0]], _one);
+
+    // sat(~x)
+    auto soln5 = (~xs[0])->sat();
+    EXPECT_TRUE(soln5.first);
+    auto p5 = *soln5.second;
+    EXPECT_EQ(p5.size(), 1);
+    EXPECT_EQ(p5[xs[0]], _zero);
 }
 
 
 TEST_F(SATTest, Clauses)
 {
-    auto y0 = ~xs[0] | xs[1] | ~xs[2] | xs[3];
+    // sat(~x0 | x1 | ~x2 | x3)
+    auto y0 = or_s({~xs[0], xs[1], ~xs[2], xs[3]});
     auto soln0 = y0->sat();
     EXPECT_TRUE(soln0.first);
     auto p0 = *soln0.second;
     EXPECT_EQ(p0.size(), 4);
     EXPECT_TRUE((p0[xs[0]] == _zero) || (p0[xs[1]] == _one) || (p0[xs[2]] == _zero) || (p0[xs[3]] == _one));
 
-    auto y1 = ~xs[0] & xs[1] & ~xs[2] & xs[3];
+    // sat(~x0 & x1 & ~x2 & x3)
+    auto y1 = and_s({~xs[0], xs[1], ~xs[2], xs[3]});
     auto soln1 = y1->sat();
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
@@ -75,7 +89,7 @@ TEST_F(SATTest, Clauses)
 
 TEST_F(SATTest, Contradiction)
 {
-    auto y = (~xs[0] | ~xs[1]) & (~xs[0] | xs[1]) & (xs[0] | ~xs[1]) & (xs[0] | xs[1]);
+    auto y = and_s({~xs[0] | ~xs[1], ~xs[0] | xs[1], xs[0] | ~xs[1], xs[0] | xs[1]});
     auto soln = y->sat();
     EXPECT_FALSE(soln.first);
 }

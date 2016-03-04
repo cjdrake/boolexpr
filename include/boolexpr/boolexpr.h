@@ -313,7 +313,6 @@ public:
     soln_t sat() const;
 
     virtual const string opname() const = 0;
-    virtual op_t from_args(const vector<bx_t>&) const = 0;
     virtual op_t from_args(const vector<bx_t>&&) const = 0;
     virtual bx_t eqvar(const var_t&) const = 0;
 
@@ -325,7 +324,6 @@ public:
 class LatticeOperator : public Operator {
 public:
     LatticeOperator(Kind kind, bool simple, const vector<bx_t>& args);
-    LatticeOperator(Kind kind, bool simple, const vector<bx_t>&& args);
 
     bx_t to_latop() const;
 };
@@ -334,7 +332,6 @@ public:
 class Nor : public Operator {
 public:
     Nor(bool simple, const vector<bx_t>& args);
-    Nor(bool simple, const vector<bx_t>&& args);
 
     bx_t invert() const;
     bx_t pushdown_not() const;
@@ -343,7 +340,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Nor";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -365,7 +361,6 @@ public:
     bx_t to_binop() const;
 
     const string opname() const {return "Or";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -374,7 +369,6 @@ public:
 class Nand : public Operator {
 public:
     Nand(bool simple, const vector<bx_t>& args);
-    Nand(bool simple, const vector<bx_t>&& args);
 
     bx_t invert() const;
     bx_t pushdown_not() const;
@@ -383,7 +377,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Nand";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -405,7 +398,6 @@ public:
     bx_t to_binop() const;
 
     const string opname() const {return "And";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -414,7 +406,6 @@ public:
 class Xnor : public Operator {
 public:
     Xnor(bool simple, const vector<bx_t>& args);
-    Xnor(bool simple, const vector<bx_t>&& args);
 
     bx_t invert() const;
     bx_t pushdown_not() const;
@@ -423,7 +414,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Xnor";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -443,7 +433,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Xor";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -452,7 +441,6 @@ public:
 class Unequal : public Operator {
 public:
     Unequal(bool simple, const vector<bx_t>& args);
-    Unequal(bool simple, const vector<bx_t>&& args);
 
     bx_t invert() const;
     bx_t pushdown_not() const;
@@ -461,7 +449,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Unequal";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -479,7 +466,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Equal";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -496,7 +482,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "NotImplies";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -513,7 +498,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "Implies";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -530,7 +514,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "NotIfThenElse";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -547,7 +530,6 @@ public:
     bx_t to_latop() const;
 
     const string opname() const {return "IfThenElse";};
-    op_t from_args(const vector<bx_t>&) const;
     op_t from_args(const vector<bx_t>&&) const;
     bx_t eqvar(const var_t&) const;
 };
@@ -675,19 +657,33 @@ one_t one();
 log_t logical();
 ill_t illogical();
 
+bx_t nor(const vector<bx_t>&);
+bx_t nor(const vector<bx_t>&&);
+bx_t nor(std::initializer_list<bx_t>);
 bx_t or_(const vector<bx_t>&);
 bx_t or_(const vector<bx_t>&&);
 bx_t or_(std::initializer_list<bx_t>);
+bx_t nand(const vector<bx_t>&);
+bx_t nand(const vector<bx_t>&&);
+bx_t nand(std::initializer_list<bx_t>);
 bx_t and_(const vector<bx_t>&);
 bx_t and_(const vector<bx_t>&&);
 bx_t and_(std::initializer_list<bx_t>);
+bx_t xnor(const vector<bx_t>&);
+bx_t xnor(const vector<bx_t>&&);
+bx_t xnor(std::initializer_list<bx_t>);
 bx_t xor_(const vector<bx_t>&);
 bx_t xor_(const vector<bx_t>&&);
 bx_t xor_(std::initializer_list<bx_t>);
+bx_t neq(const vector<bx_t>&);
+bx_t neq(const vector<bx_t>&&);
+bx_t neq(std::initializer_list<bx_t>);
 bx_t eq(const vector<bx_t>&);
 bx_t eq(const vector<bx_t>&&);
 bx_t eq(std::initializer_list<bx_t>);
+bx_t nimpl(const bx_t&, const bx_t&);
 bx_t impl(const bx_t&, const bx_t&);
+bx_t nite(const bx_t&, const bx_t&, const bx_t&);
 bx_t ite(const bx_t&, const bx_t&, const bx_t&);
 
 bx_t nor_s(const vector<bx_t>&);
@@ -723,15 +719,14 @@ bx_t operator~(const bx_t&);
 bx_t operator|(const bx_t&, const bx_t&);
 bx_t operator&(const bx_t&, const bx_t&);
 bx_t operator^(const bx_t&, const bx_t&);
-bool operator<(const bx_t&, const bx_t&);
 bool operator<(const lit_t&, const lit_t&);
 std::ostream& operator<<(std::ostream&, const bx_t&);
 
 op_t transform(const op_t&, std::function<bx_t(const bx_t&)>);
-vector<bx_t> cofactors(const bx_t&, vector<var_t>&);
-bx_t smoothing(const bx_t&, vector<var_t>&);
-bx_t consensus(const bx_t&, vector<var_t>&);
-bx_t derivative(const bx_t&, vector<var_t>&);
+//vector<bx_t> cofactors(const bx_t&, vector<var_t>&);
+//bx_t smoothing(const bx_t&, vector<var_t>&);
+//bx_t consensus(const bx_t&, vector<var_t>&);
+//bx_t derivative(const bx_t&, vector<var_t>&);
 
 bool equivalent(const bx_t&, const bx_t&);
 

@@ -23,8 +23,8 @@ protected:
 
     zero_t _zero;
     one_t _one;
-    log_t _logical;
-    ill_t _illogical;
+    log_t _log;
+    ill_t _ill;
 
     Context ctx;
     vector<var_t> xs;

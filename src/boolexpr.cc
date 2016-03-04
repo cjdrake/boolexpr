@@ -56,24 +56,16 @@ LatticeOperator::LatticeOperator(Kind kind, bool simple, const vector<bx_t>& arg
     : Operator(kind, simple, args)
 {}
 
-LatticeOperator::LatticeOperator(Kind kind, bool simple, const vector<bx_t>&& args)
-    : Operator(kind, simple, args)
-{}
-
 Nor::Nor(bool simple, const vector<bx_t>& args) : Operator(NOR, simple, args) {}
-Nor::Nor(bool simple, const vector<bx_t>&& args) : Operator(NOR, simple, args) {}
 Or::Or(bool simple, const vector<bx_t>& args) : LatticeOperator(OR, simple, args) {}
 Or::Or(bool simple, const vector<bx_t>&& args) : LatticeOperator(OR, simple, args) {}
 Nand::Nand(bool simple, const vector<bx_t>& args) : Operator(NAND, simple, args) {}
-Nand::Nand(bool simple, const vector<bx_t>&& args) : Operator(NAND, simple, args) {}
 And::And(bool simple, const vector<bx_t>& args) : LatticeOperator(AND, simple, args) {}
 And::And(bool simple, const vector<bx_t>&& args) : LatticeOperator(AND, simple, args) {}
 Xnor::Xnor(bool simple, const vector<bx_t>& args) : Operator(XNOR, simple, args) {}
-Xnor::Xnor(bool simple, const vector<bx_t>&& args) : Operator(XNOR, simple, args) {}
 Xor::Xor(bool simple, const vector<bx_t>& args) : Operator(XOR, simple, args) {}
 Xor::Xor(bool simple, const vector<bx_t>&& args) : Operator(XOR, simple, args) {}
 Unequal::Unequal(bool simple, const vector<bx_t>& args) : Operator(NEQ, simple, args) {}
-Unequal::Unequal(bool simple, const vector<bx_t>&& args) : Operator(NEQ, simple, args) {}
 
 NotImplies::NotImplies(bool simple, bx_t p, bx_t q)
     : Operator(NIMPL, simple, vector<bx_t>{p, q})
@@ -143,6 +135,11 @@ boolexpr::illogical()
 }
 
 
+bx_t boolexpr::nor(const vector<bx_t>& args) { return ~or_(args); }
+bx_t boolexpr::nor(const vector<bx_t>&& args) { return ~or_(args); }
+bx_t boolexpr::nor(std::initializer_list<bx_t> args) { return ~or_(args); }
+
+
 bx_t
 boolexpr::or_(const vector<bx_t>& args)
 {
@@ -166,10 +163,16 @@ boolexpr::or_(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::or_(std::initializer_list<bx_t> l)
+boolexpr::or_(std::initializer_list<bx_t> args)
 {
-    return or_(vector<bx_t>(l.begin(), l.end()));
+    return or_(vector<bx_t>(args.begin(), args.end()));
 }
+
+
+bx_t boolexpr::nand(const vector<bx_t>& args) { return ~and_(args); }
+bx_t boolexpr::nand(const vector<bx_t>&& args) { return ~and_(args); }
+bx_t boolexpr::nand(std::initializer_list<bx_t> args) { return ~and_(args); }
+
 
 bx_t
 boolexpr::and_(const vector<bx_t>& args)
@@ -194,10 +197,16 @@ boolexpr::and_(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::and_(std::initializer_list<bx_t> l)
+boolexpr::and_(std::initializer_list<bx_t> args)
 {
-    return and_(vector<bx_t>(l.begin(), l.end()));
+    return and_(vector<bx_t>(args.begin(), args.end()));
 }
+
+
+bx_t boolexpr::xnor(const vector<bx_t>& args) { return ~xor_(args); }
+bx_t boolexpr::xnor(const vector<bx_t>&& args) { return ~xor_(args); }
+bx_t boolexpr::xnor(std::initializer_list<bx_t> args) { return ~xor_(args); }
+
 
 bx_t
 boolexpr::xor_(const vector<bx_t>& args)
@@ -222,10 +231,16 @@ boolexpr::xor_(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::xor_(std::initializer_list<bx_t> l)
+boolexpr::xor_(std::initializer_list<bx_t> args)
 {
-    return xor_(vector<bx_t>(l.begin(), l.end()));
+    return xor_(vector<bx_t>(args.begin(), args.end()));
 }
+
+
+bx_t boolexpr::neq(const vector<bx_t>& args) { return ~eq(args); }
+bx_t boolexpr::neq(const vector<bx_t>&& args) { return ~eq(args); }
+bx_t boolexpr::neq(std::initializer_list<bx_t> args) { return ~eq(args); }
+
 
 bx_t
 boolexpr::eq(const vector<bx_t>& args)
@@ -246,16 +261,32 @@ boolexpr::eq(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::eq(std::initializer_list<bx_t> l)
+boolexpr::eq(std::initializer_list<bx_t> args)
 {
-    return eq(vector<bx_t>(l.begin(), l.end()));
+    return eq(vector<bx_t>(args.begin(), args.end()));
 }
+
+
+bx_t
+boolexpr::nimpl(const bx_t& p, const bx_t& q)
+{
+    return std::make_shared<NotImplies>(false, p, q);
+}
+
 
 bx_t
 boolexpr::impl(const bx_t& p, const bx_t& q)
 {
     return std::make_shared<Implies>(false, p, q);
 }
+
+
+bx_t
+boolexpr::nite(const bx_t& s, const bx_t& d1, const bx_t& d0)
+{
+    return std::make_shared<NotIfThenElse>(false, s, d1, d0);
+}
+
 
 bx_t
 boolexpr::ite(const bx_t& s, const bx_t& d1, const bx_t& d0)
@@ -266,15 +297,15 @@ boolexpr::ite(const bx_t& s, const bx_t& d1, const bx_t& d0)
 
 bx_t
 boolexpr::nor_s(const vector<bx_t>& args)
-{ return (~or_(args))->simplify(); }
+{ return nor(args)->simplify(); }
 
 bx_t
 boolexpr::nor_s(const vector<bx_t>&& args)
-{ return (~or_(args))->simplify(); }
+{ return nor(args)->simplify(); }
 
 bx_t
-boolexpr::nor_s(std::initializer_list<bx_t> l)
-{ return (~or_(l))->simplify(); }
+boolexpr::nor_s(std::initializer_list<bx_t> args)
+{ return nor(args)->simplify(); }
 
 bx_t
 boolexpr::or_s(const vector<bx_t>& args)
@@ -285,20 +316,20 @@ boolexpr::or_s(const vector<bx_t>&& args)
 { return or_(args)->simplify(); }
 
 bx_t
-boolexpr::or_s(std::initializer_list<bx_t> l)
-{ return or_(l)->simplify(); }
+boolexpr::or_s(std::initializer_list<bx_t> args)
+{ return or_(args)->simplify(); }
 
 bx_t
 boolexpr::nand_s(const vector<bx_t>& args)
-{ return (~and_(args))->simplify(); }
+{ return nand(args)->simplify(); }
 
 bx_t
 boolexpr::nand_s(const vector<bx_t>&& args)
-{ return (~and_(args))->simplify(); }
+{ return nand(args)->simplify(); }
 
 bx_t
-boolexpr::nand_s(std::initializer_list<bx_t> l)
-{ return (~and_(l))->simplify(); }
+boolexpr::nand_s(std::initializer_list<bx_t> args)
+{ return nand(args)->simplify(); }
 
 bx_t
 boolexpr::and_s(const vector<bx_t>& args)
@@ -309,20 +340,20 @@ boolexpr::and_s(const vector<bx_t>&& args)
 { return and_(args)->simplify(); }
 
 bx_t
-boolexpr::and_s(std::initializer_list<bx_t> l)
-{ return and_(l)->simplify(); }
+boolexpr::and_s(std::initializer_list<bx_t> args)
+{ return and_(args)->simplify(); }
 
 bx_t
 boolexpr::xnor_s(const vector<bx_t>& args)
-{ return (~xor_(args))->simplify(); }
+{ return xnor(args)->simplify(); }
 
 bx_t
 boolexpr::xnor_s(const vector<bx_t>&& args)
-{ return (~xor_(args))->simplify(); }
+{ return xnor(args)->simplify(); }
 
 bx_t
-boolexpr::xnor_s(std::initializer_list<bx_t> l)
-{ return (~xor_(l))->simplify(); }
+boolexpr::xnor_s(std::initializer_list<bx_t> args)
+{ return xnor(args)->simplify(); }
 
 bx_t
 boolexpr::xor_s(const vector<bx_t>& args)
@@ -333,20 +364,20 @@ boolexpr::xor_s(const vector<bx_t>&& args)
 { return xor_(args)->simplify(); }
 
 bx_t
-boolexpr::xor_s(std::initializer_list<bx_t> l)
-{ return xor_(l)->simplify(); }
+boolexpr::xor_s(std::initializer_list<bx_t> args)
+{ return xor_(args)->simplify(); }
 
 bx_t
 boolexpr::neq_s(const vector<bx_t>& args)
-{ return (~eq(args))->simplify(); }
+{ return neq(args)->simplify(); }
 
 bx_t
 boolexpr::neq_s(const vector<bx_t>&& args)
-{ return (~eq(args))->simplify(); }
+{ return neq(args)->simplify(); }
 
 bx_t
-boolexpr::neq_s(std::initializer_list<bx_t> l)
-{ return (~eq(l))->simplify(); }
+boolexpr::neq_s(std::initializer_list<bx_t> args)
+{ return neq(args)->simplify(); }
 
 bx_t
 boolexpr::eq_s(const vector<bx_t>& args)
@@ -357,12 +388,12 @@ boolexpr::eq_s(const vector<bx_t>&& args)
 { return eq(args)->simplify(); }
 
 bx_t
-boolexpr::eq_s(std::initializer_list<bx_t> l)
-{ return eq(l)->simplify(); }
+boolexpr::eq_s(std::initializer_list<bx_t> args)
+{ return eq(args)->simplify(); }
 
 bx_t
 boolexpr::nimpl_s(const bx_t& p, const bx_t& q)
-{ return (~impl(p, q))->simplify(); }
+{ return nimpl(p, q)->simplify(); }
 
 bx_t
 boolexpr::impl_s(const bx_t& p, const bx_t& q)
@@ -370,7 +401,7 @@ boolexpr::impl_s(const bx_t& p, const bx_t& q)
 
 bx_t
 boolexpr::nite_s(const bx_t& s, const bx_t& d1, const bx_t& d0)
-{ return (~ite(s, d1, d0))->simplify(); }
+{ return nite(s, d1, d0)->simplify(); }
 
 bx_t
 boolexpr::ite_s(const bx_t& s, const bx_t& d1, const bx_t& d0)
@@ -383,19 +414,6 @@ bx_t boolexpr::operator|(const bx_t& lhs, const bx_t& rhs) { return or_({lhs, rh
 bx_t boolexpr::operator&(const bx_t& lhs, const bx_t& rhs) { return and_({lhs, rhs}); }
 bx_t boolexpr::operator^(const bx_t& lhs, const bx_t& rhs) { return xor_({lhs, rhs}); }
 
-bool
-boolexpr::operator<(const bx_t& lhs, const bx_t& rhs)
-{
-    if (IS_LIT(lhs) && IS_LIT(rhs)) {
-        auto _lhs = std::static_pointer_cast<const Literal>(lhs);
-        auto _rhs = std::static_pointer_cast<const Literal>(rhs);
-        return _lhs->ctx == _rhs->ctx ? _lhs->id < _rhs->id
-                                      : _lhs->ctx < _rhs->ctx;
-    }
-    else {
-        return lhs->kind < rhs->kind;
-    }
-}
 
 bool
 boolexpr::operator<(const lit_t& lhs, const lit_t& rhs)
@@ -455,42 +473,21 @@ boolexpr::operator<<(std::ostream& s, const bx_t& bx)
 { return bx->_op_lsh(s); }
 
 
-op_t Nor::from_args(const vector<bx_t>& args) const { return std::make_shared<Nor>(false, args); }
 op_t Nor::from_args(const vector<bx_t>&& args) const { return std::make_shared<Nor>(false, args); }
-op_t Or::from_args(const vector<bx_t>& args) const { return std::make_shared<Or>(false, args); }
 op_t Or::from_args(const vector<bx_t>&& args) const { return std::make_shared<Or>(false, args); }
-op_t Nand::from_args(const vector<bx_t>& args) const { return std::make_shared<Nand>(false, args); }
 op_t Nand::from_args(const vector<bx_t>&& args) const { return std::make_shared<Nand>(false, args); }
-op_t And::from_args(const vector<bx_t>& args) const { return std::make_shared<And>(false, args); }
 op_t And::from_args(const vector<bx_t>&& args) const { return std::make_shared<And>(false, args); }
-op_t Xnor::from_args(const vector<bx_t>& args) const { return std::make_shared<Xnor>(false, args); }
 op_t Xnor::from_args(const vector<bx_t>&& args) const { return std::make_shared<Xnor>(false, args); }
-op_t Xor::from_args(const vector<bx_t>& args) const { return std::make_shared<Xor>(false, args); }
 op_t Xor::from_args(const vector<bx_t>&& args) const { return std::make_shared<Xor>(false, args); }
-op_t Unequal::from_args(const vector<bx_t>& args) const { return std::make_shared<Unequal>(false, args); }
 op_t Unequal::from_args(const vector<bx_t>&& args) const { return std::make_shared<Unequal>(false, args); }
-op_t Equal::from_args(const vector<bx_t>& args) const { return std::make_shared<Equal>(false, args); }
 op_t Equal::from_args(const vector<bx_t>&& args) const { return std::make_shared<Equal>(false, args); }
-op_t NotImplies::from_args(const vector<bx_t>& args) const { return std::make_shared<NotImplies>(false, args[0], args[1]); }
 op_t NotImplies::from_args(const vector<bx_t>&& args) const { return std::make_shared<NotImplies>(false, args[0], args[1]); }
-op_t Implies::from_args(const vector<bx_t>& args) const { return std::make_shared<Implies>(false, args[0], args[1]); }
 op_t Implies::from_args(const vector<bx_t>&& args) const { return std::make_shared<Implies>(false, args[0], args[1]); }
-op_t NotIfThenElse::from_args(const vector<bx_t>& args) const { return std::make_shared<NotIfThenElse>(false, args[0], args[1], args[2]); }
 op_t NotIfThenElse::from_args(const vector<bx_t>&& args) const { return std::make_shared<NotIfThenElse>(false, args[0], args[1], args[2]); }
-op_t IfThenElse::from_args(const vector<bx_t>& args) const { return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]); }
 op_t IfThenElse::from_args(const vector<bx_t>&& args) const { return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]); }
 
 
 // Properties
-bool
-Operator::is_d1() const
-{
-    for (const bx_t& arg : args)
-        if (IS_OP(arg)) return false;
-    return true;
-}
-
-
 bool
 Operator::is_clause() const
 {
@@ -589,48 +586,48 @@ boolexpr::transform(const op_t& op, std::function<bx_t(const bx_t&)> f)
 }
 
 
-vector<bx_t>
-boolexpr::cofactors(const bx_t& self, vector<var_t>& xs)
-{
-    vector<bx_t> cfs = {self};
-
-    for (const var_t& x : xs) {
-        vector<bx_t> temps;
-
-        auto p0 = point_t { {x, zero()} };
-        for (const bx_t& cf : cfs)
-            temps.push_back(cf->restrict_(p0));
-
-        auto p1 = point_t { {x, one()} };
-        for (const bx_t& cf : cfs)
-            temps.push_back(cf->restrict_(p1));
-
-        std::swap(cfs, temps);
-    }
-
-    return cfs;
-}
-
-
-// FIXME(cjdrake): Rewrite this as a reduction
-bx_t
-boolexpr::smoothing(const bx_t& self, vector<var_t>& xs)
-{
-    return or_s(cofactors(self, xs));
-}
+//vector<bx_t>
+//boolexpr::cofactors(const bx_t& self, vector<var_t>& xs)
+//{
+//    vector<bx_t> cfs = {self};
+//
+//    for (const var_t& x : xs) {
+//        vector<bx_t> temps;
+//
+//        auto p0 = point_t { {x, zero()} };
+//        for (const bx_t& cf : cfs)
+//            temps.push_back(cf->restrict_(p0));
+//
+//        auto p1 = point_t { {x, one()} };
+//        for (const bx_t& cf : cfs)
+//            temps.push_back(cf->restrict_(p1));
+//
+//        std::swap(cfs, temps);
+//    }
+//
+//    return cfs;
+//}
 
 
 // FIXME(cjdrake): Rewrite this as a reduction
-bx_t
-boolexpr::consensus(const bx_t& self, vector<var_t>& xs)
-{
-    return and_s(cofactors(self, xs));
-}
+//bx_t
+//boolexpr::smoothing(const bx_t& self, vector<var_t>& xs)
+//{
+//    return or_s(cofactors(self, xs));
+//}
 
 
 // FIXME(cjdrake): Rewrite this as a reduction
-bx_t
-boolexpr::derivative(const bx_t& self, vector<var_t>& xs)
-{
-    return xor_s(cofactors(self, xs));
-}
+//bx_t
+//boolexpr::consensus(const bx_t& self, vector<var_t>& xs)
+//{
+//    return and_s(cofactors(self, xs));
+//}
+
+
+// FIXME(cjdrake): Rewrite this as a reduction
+//bx_t
+//boolexpr::derivative(const bx_t& self, vector<var_t>& xs)
+//{
+//    return xor_s(cofactors(self, xs));
+//}

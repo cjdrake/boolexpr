@@ -31,6 +31,18 @@ using namespace boolexpr;
 class NNFTest : public BoolExprTest {};
 
 
+TEST_F(NNFTest, DeMorgan)
+{
+    auto y0 = ~(xs[0] | xs[1]);
+    auto y1 = y0->to_nnf();
+    EXPECT_TRUE(IS_AND(y1) && equivalent(y0, y1));
+
+    auto y2 = ~(xs[0] & xs[1]);
+    auto y3 = y2->to_nnf();
+    EXPECT_TRUE(IS_OR(y3) && equivalent(y2, y3));
+}
+
+
 TEST_F(NNFTest, Xor)
 {
     auto y0 = ~(xs[0] ^ xs[1]);

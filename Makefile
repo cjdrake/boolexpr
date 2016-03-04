@@ -23,8 +23,11 @@ test: build/test/a.out
 .PHONY: cover
 cover: build/cover/a.out
 	@./$<
-	@$(LCOV) -c -d build/cover -o build/cover/coverage.info
-	@$(GENHTML) -o build/cover/html build/cover/coverage.info
+	@$(LCOV) -c -o build/cover/coverage.info -d build/cover
+	@$(LCOV) -r build/cover/coverage.info "/usr/*" -o build/cover/coverage.info
+	@$(LCOV) -r build/cover/coverage.info "third_party/*" -o build/cover/coverage.info
+	@$(GENHTML) -o build/cover/html -t "BoolExpr Coverage" build/cover/coverage.info
+	@./script/covall.py build/cover/coverage.info
 
 #===============================================================================
 # Source Code
@@ -55,10 +58,12 @@ TEST_SRCS := \
     test/boolexprtest.cc \
     test/compose_test.cc \
     test/count_test.cc \
+    test/flatten_test.cc \
     test/nnf_test.cc \
     test/pushdown_not_test.cc \
     test/sat_test.cc \
     test/simplify_test.cc \
+    test/tseytin_test.cc \
     test/main.cc \
 
 #===============================================================================

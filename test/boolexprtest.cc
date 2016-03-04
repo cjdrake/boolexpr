@@ -33,8 +33,8 @@ BoolExprTest::SetUp()
 {
     _zero = zero();
     _one = one();
-    _logical = logical();
-    _illogical = illogical();
+    _log = logical();
+    _ill = illogical();
 
     // Initialize local literals
     for (int i = 0; i < N; ++i)

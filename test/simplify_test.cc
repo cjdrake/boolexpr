@@ -35,8 +35,8 @@ TEST_F(SimplifyTest, Atoms)
 {
     EXPECT_EQ(_zero->simplify()->to_string(), "0");
     EXPECT_EQ(_one->simplify()->to_string(), "1");
-    EXPECT_EQ(_logical->simplify()->to_string(), "X");
-    EXPECT_EQ(_illogical->simplify()->to_string(), "?");
+    EXPECT_EQ(_log->simplify()->to_string(), "X");
+    EXPECT_EQ(_ill->simplify()->to_string(), "?");
 }
 
 
@@ -95,6 +95,11 @@ TEST_F(SimplifyTest, OrTruthTable)
     EXPECT_EQ(or_s({ xs[0], ~xs[0]})->to_string(), "1");
     EXPECT_EQ(or_s({~xs[0],  xs[0]})->to_string(), "1");
     EXPECT_EQ(or_s({ xs[0],  xs[0]})->to_string(), "x_0");
+
+    // or(x0,  or(x1, x2)) <=>  or(x0, x1, x2)
+    auto y0 = (xs[0] | xs[1] | xs[2])->simplify();
+    EXPECT_EQ(y0->depth(), 1);
+    EXPECT_TRUE(equivalent(y0, or_({xs[0], xs[1], xs[2]})));
 }
 
 
@@ -153,6 +158,11 @@ TEST_F(SimplifyTest, AndTruthTable)
     EXPECT_EQ(and_s({ xs[0], ~xs[0]})->to_string(), "0");
     EXPECT_EQ(and_s({~xs[0],  xs[0]})->to_string(), "0");
     EXPECT_EQ(and_s({ xs[0],  xs[0]})->to_string(), "x_0");
+
+    // and(x0,  and(x1, x2)) <=>  and(x0, x1, x2)
+    auto y0 = (xs[0] & xs[1] & xs[2])->simplify();
+    EXPECT_EQ(y0->depth(), 1);
+    EXPECT_TRUE(equivalent(y0, and_({xs[0], xs[1], xs[2]})));
 }
 
 
@@ -211,6 +221,26 @@ TEST_F(SimplifyTest, XorTruthTable)
     EXPECT_EQ(xor_s({ xs[0], ~xs[0]})->to_string(), "1");
     EXPECT_EQ(xor_s({~xs[0],  xs[0]})->to_string(), "1");
     EXPECT_EQ(xor_s({ xs[0],  xs[0]})->to_string(), "0");
+
+    // xor(x0,  xor(x1, x2)) <=>  xor(x0, x1, x2)
+    auto y0 = (xs[0] ^ xs[1] ^ xs[2])->simplify();
+    EXPECT_EQ(y0->depth(), 1);
+    EXPECT_TRUE(equivalent(y0, xor_({xs[0], xs[1], xs[2]})));
+
+    // xnor(x0,  xor(x1, x2)) <=> xnor(x0, x1, x2)
+    auto y1 = xnor({xs[0], xs[1] ^ xs[2]})->simplify();
+    EXPECT_EQ(y1->depth(), 1);
+    EXPECT_TRUE(equivalent(y1, xnor({xs[0], xs[1], xs[2]})));
+
+    // xor(x0, xnor(x1, x2)) <=> xnor(x0, x1, x2)
+    auto y2 = xor_({xs[0], xnor({xs[1], xs[2]})})->simplify();
+    EXPECT_EQ(y2->depth(), 1);
+    EXPECT_TRUE(equivalent(y2, xnor({xs[0], xs[1], xs[2]})));
+
+    // xnor(x0, xnor(x1, x2)) <=> xor(x0, x1, x2)
+    auto y3 = xnor({xs[0], xnor({xs[1], xs[2]})})->simplify();
+    EXPECT_EQ(y3->depth(), 1);
+    EXPECT_TRUE(equivalent(y3, xor_({xs[0], xs[1], xs[2]})));
 }
 
 
@@ -269,6 +299,9 @@ TEST_F(SimplifyTest, EqualTruthTable)
     EXPECT_EQ(eq_s({ xs[0], ~xs[0]})->to_string(), "0");
     EXPECT_EQ(eq_s({~xs[0],  xs[0]})->to_string(), "0");
     EXPECT_EQ(eq_s({ xs[0],  xs[0]})->to_string(), "1");
+
+    auto y0 = eq_s({xs[0], xs[1], xs[0], xs[1], xs[0]})->simplify();
+    EXPECT_TRUE(equivalent(y0, eq({xs[0], xs[1]})));
 }
 
 
@@ -307,6 +340,8 @@ TEST_F(SimplifyTest, ImpliesTruthTable)
     EXPECT_EQ(impl_s( xs[0], ~xs[0])->to_string(), "~x_0");
     EXPECT_EQ(impl_s(~xs[0],  xs[0])->to_string(), "x_0");
     EXPECT_EQ(impl_s( xs[0],  xs[0])->to_string(), "1");
+
+    EXPECT_EQ(impl_s(xs[0], xs[1])->to_string(), "Implies(x_0, x_1)");
 }
 
 
@@ -323,15 +358,16 @@ TEST_F(SimplifyTest, NotIfThenElseTruthTable)
 
     EXPECT_EQ(nite_s(xs[0], _zero, _zero)->to_string(), "1");
     EXPECT_EQ(nite_s(xs[0], _zero, _one)->to_string(), "x_0");
-    EXPECT_TRUE(equivalent(nite_s(xs[0], _zero, xs[1]), ~(~xs[0] & xs[1])));
     EXPECT_EQ(nite_s(xs[0], _one, _zero)->to_string(), "~x_0");
     EXPECT_EQ(nite_s(xs[0], _one, _one)->to_string(), "0");
-    EXPECT_TRUE(equivalent(nite_s(xs[0], _one, xs[1]), ~(xs[0] | xs[1])));
-    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[1], _zero), ~(xs[0] & xs[1])));
-    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[1], _one), ~(~xs[0] | xs[1])));
     EXPECT_EQ(nite_s(xs[0], xs[1], xs[1])->to_string(), "~x_1");
-    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[0], xs[1]), ~(xs[0] | xs[1])));
-    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[1], xs[0]), ~(xs[0] & xs[1])));
+
+    EXPECT_TRUE(equivalent(nite_s(xs[0], _zero, xs[1]), ~(~xs[0] & xs[1])));
+    EXPECT_TRUE(equivalent(nite_s(xs[0], _one,  xs[1]), ~( xs[0] | xs[1])));
+    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[1], _zero), ~( xs[0] & xs[1])));
+    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[1],  _one), ~(~xs[0] | xs[1])));
+    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[0], xs[1]), ~( xs[0] | xs[1])));
+    EXPECT_TRUE(equivalent(nite_s(xs[0], xs[1], xs[0]), ~( xs[0] & xs[1])));
 }
 
 
@@ -348,13 +384,16 @@ TEST_F(SimplifyTest, IfThenElseTruthTable)
 
     EXPECT_EQ(ite_s(xs[0], _zero, _zero)->to_string(), "0");
     EXPECT_EQ(ite_s(xs[0], _zero, _one)->to_string(), "~x_0");
-    EXPECT_TRUE(equivalent(ite_s(xs[0], _zero, xs[1]), ~xs[0] & xs[1]));
     EXPECT_EQ(ite_s(xs[0], _one, _zero)->to_string(), "x_0");
     EXPECT_EQ(ite_s(xs[0], _one, _one)->to_string(), "1");
-    EXPECT_TRUE(equivalent(ite_s(xs[0], _one, xs[1]), xs[0] | xs[1]));
-    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[1], _zero), xs[0] & xs[1]));
-    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[1], _one), ~xs[0] | xs[1]));
     EXPECT_EQ(ite_s(xs[0], xs[1], xs[1])->to_string(), "x_1");
-    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[0], xs[1]), xs[0] | xs[1]));
-    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[1], xs[0]), xs[0] & xs[1]));
+
+    EXPECT_TRUE(equivalent(ite_s(xs[0], _zero, xs[1]), ~xs[0] & xs[1]));
+    EXPECT_TRUE(equivalent(ite_s(xs[0], _one,  xs[1]),  xs[0] | xs[1]));
+    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[1], _zero),  xs[0] & xs[1]));
+    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[1],  _one), ~xs[0] | xs[1]));
+    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[0], xs[1]),  xs[0] | xs[1]));
+    EXPECT_TRUE(equivalent(ite_s(xs[0], xs[1], xs[0]),  xs[0] & xs[1]));
+
+    EXPECT_EQ(ite_s(xs[0], xs[1], xs[2])->to_string(), "IfThenElse(x_0, x_1, x_2)");
 }
