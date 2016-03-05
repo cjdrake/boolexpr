@@ -14,7 +14,7 @@ env:
 
 install:
     - sudo apt-get update --fix-missing
-    - sudo apt-get install -y libboost-dev
+    - sudo apt-get install -y lcov libboost-dev
     - pushd third_party/cryptominisat
     - git checkout $CMSAT_TAG
     - cmake .
