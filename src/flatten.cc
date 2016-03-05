@@ -83,9 +83,6 @@ _lits_cmp(const std::set<lit_t>& xs, const std::set<lit_t>& ys)
                 ret &= ~YS_LTE_XS;
                 ++ys_it;
             }
-            else {
-                break;
-            }
         }
     }
 

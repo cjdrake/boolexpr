@@ -18,6 +18,9 @@ with open(covinfo) as fin:
     for line in fin:
         if line.startswith("SF:"):
             fname = line[3:-1]
+            fnf, fnh = 0, 0
+            lf, lh = 0, 0
+            brf, brh = 0, 0
         elif line.startswith("FNF:"):
             fnf = int(line[4:-1])
         elif line.startswith("FNH:"):
@@ -26,17 +29,13 @@ with open(covinfo) as fin:
             lf = int(line[3:-1])
         elif line.startswith("LH:"):
             lh = int(line[3:-1])
-        elif line.startswith("BRF:"):
-            brf = int(line[4:-1])
-        elif line.startswith("BRH:"):
-            brh = int(line[4:-1])
         elif line.startswith("end_of_record"):
             COV[fname] = (fnf, fnh, lf, lh, brf, brh)
 
 status = 0
 
 for fname, entry in COV.items():
-    fnf, fnh, lf, lh, brf, brh = entry
+    fnf, fnh, lf, lh, brh, brh = entry
     if fnf != fnh or lf != lh:
         print("Incomplete:", fname)
         status = 1

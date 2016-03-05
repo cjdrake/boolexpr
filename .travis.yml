@@ -27,4 +27,4 @@ install:
     - popd
 
 script:
-    - make -j4 test
+    - make -j4 do_covall

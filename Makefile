@@ -20,14 +20,20 @@ help:
 test: build/test/a.out
 	@./$<
 
-.PHONY: cover
-cover: build/cover/a.out
+do_lcov: build/cover/a.out
 	@./$<
 	@$(LCOV) -c -o build/cover/coverage.info -d build/cover
 	@$(LCOV) -r build/cover/coverage.info "/usr/*" -o build/cover/coverage.info
 	@$(LCOV) -r build/cover/coverage.info "third_party/*" -o build/cover/coverage.info
-	@$(GENHTML) -o build/cover/html -t "BoolExpr Coverage" build/cover/coverage.info
+
+do_covall: do_lcov
 	@./script/covall.py build/cover/coverage.info
+
+do_genhtml: do_lcov
+	@$(GENHTML) -o build/cover/html -t "BoolExpr Coverage" build/cover/coverage.info
+
+.PHONY: cover
+cover: do_genhtml
 
 #===============================================================================
 # Source Code
