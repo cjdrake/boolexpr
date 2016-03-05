@@ -86,7 +86,7 @@ Operator::sat() const
     auto ctx = Context();
     auto cnf = op->tseytin(ctx);
 
-    auto s = support(cnf);
+    auto s = cnf->support();
     unordered_map<bx_t, uint32_t> lit2idx;
     unordered_map<uint32_t, var_t> idx2var;
 

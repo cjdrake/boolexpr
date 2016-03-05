@@ -153,6 +153,8 @@ public:
     bx_t to_cnf() const;
     bx_t to_dnf() const;
     bx_t to_nnf() const;
+
+    unordered_set<var_t> support() const;
 };
 
 
@@ -725,7 +727,6 @@ bool operator<(const bx_t&, const bx_t&);
 bool operator<(const lit_t&, const lit_t&);
 std::ostream& operator<<(std::ostream&, const bx_t&);
 
-unordered_set<var_t> support(const bx_t&);
 op_t transform(const op_t&, std::function<bx_t(const bx_t&)>);
 vector<bx_t> cofactors(const bx_t&, vector<var_t>&);
 bx_t smoothing(const bx_t&, vector<var_t>&);

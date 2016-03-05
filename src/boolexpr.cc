@@ -553,8 +553,10 @@ And::is_dnf() const
 
 
 unordered_set<var_t>
-boolexpr::support(const bx_t& self)
+BoolExpr::support() const
 {
+    auto self = shared_from_this();
+
     unordered_set<var_t> s;
 
     for (auto it = dfs_iter(self); it != end(self); ++it) {
