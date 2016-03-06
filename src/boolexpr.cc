@@ -137,7 +137,7 @@ boolexpr::illogical()
 
 bx_t boolexpr::nor(const vector<bx_t>& args) { return ~or_(args); }
 bx_t boolexpr::nor(const vector<bx_t>&& args) { return ~or_(args); }
-bx_t boolexpr::nor(std::initializer_list<bx_t> args) { return ~or_(args); }
+bx_t boolexpr::nor(const std::initializer_list<bx_t> args) { return ~or_(args); }
 
 
 bx_t
@@ -163,7 +163,7 @@ boolexpr::or_(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::or_(std::initializer_list<bx_t> args)
+boolexpr::or_(const std::initializer_list<bx_t> args)
 {
     return or_(vector<bx_t>(args.begin(), args.end()));
 }
@@ -171,7 +171,7 @@ boolexpr::or_(std::initializer_list<bx_t> args)
 
 bx_t boolexpr::nand(const vector<bx_t>& args) { return ~and_(args); }
 bx_t boolexpr::nand(const vector<bx_t>&& args) { return ~and_(args); }
-bx_t boolexpr::nand(std::initializer_list<bx_t> args) { return ~and_(args); }
+bx_t boolexpr::nand(const std::initializer_list<bx_t> args) { return ~and_(args); }
 
 
 bx_t
@@ -197,7 +197,7 @@ boolexpr::and_(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::and_(std::initializer_list<bx_t> args)
+boolexpr::and_(const std::initializer_list<bx_t> args)
 {
     return and_(vector<bx_t>(args.begin(), args.end()));
 }
@@ -205,7 +205,7 @@ boolexpr::and_(std::initializer_list<bx_t> args)
 
 bx_t boolexpr::xnor(const vector<bx_t>& args) { return ~xor_(args); }
 bx_t boolexpr::xnor(const vector<bx_t>&& args) { return ~xor_(args); }
-bx_t boolexpr::xnor(std::initializer_list<bx_t> args) { return ~xor_(args); }
+bx_t boolexpr::xnor(const std::initializer_list<bx_t> args) { return ~xor_(args); }
 
 
 bx_t
@@ -231,7 +231,7 @@ boolexpr::xor_(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::xor_(std::initializer_list<bx_t> args)
+boolexpr::xor_(const std::initializer_list<bx_t> args)
 {
     return xor_(vector<bx_t>(args.begin(), args.end()));
 }
@@ -239,7 +239,7 @@ boolexpr::xor_(std::initializer_list<bx_t> args)
 
 bx_t boolexpr::neq(const vector<bx_t>& args) { return ~eq(args); }
 bx_t boolexpr::neq(const vector<bx_t>&& args) { return ~eq(args); }
-bx_t boolexpr::neq(std::initializer_list<bx_t> args) { return ~eq(args); }
+bx_t boolexpr::neq(const std::initializer_list<bx_t> args) { return ~eq(args); }
 
 
 bx_t
@@ -261,7 +261,7 @@ boolexpr::eq(const vector<bx_t>&& args)
 }
 
 bx_t
-boolexpr::eq(std::initializer_list<bx_t> args)
+boolexpr::eq(const std::initializer_list<bx_t> args)
 {
     return eq(vector<bx_t>(args.begin(), args.end()));
 }
@@ -304,7 +304,7 @@ boolexpr::nor_s(const vector<bx_t>&& args)
 { return nor(args)->simplify(); }
 
 bx_t
-boolexpr::nor_s(std::initializer_list<bx_t> args)
+boolexpr::nor_s(const std::initializer_list<bx_t> args)
 { return nor(args)->simplify(); }
 
 bx_t
@@ -316,7 +316,7 @@ boolexpr::or_s(const vector<bx_t>&& args)
 { return or_(args)->simplify(); }
 
 bx_t
-boolexpr::or_s(std::initializer_list<bx_t> args)
+boolexpr::or_s(const std::initializer_list<bx_t> args)
 { return or_(args)->simplify(); }
 
 bx_t
@@ -328,7 +328,7 @@ boolexpr::nand_s(const vector<bx_t>&& args)
 { return nand(args)->simplify(); }
 
 bx_t
-boolexpr::nand_s(std::initializer_list<bx_t> args)
+boolexpr::nand_s(const std::initializer_list<bx_t> args)
 { return nand(args)->simplify(); }
 
 bx_t
@@ -340,7 +340,7 @@ boolexpr::and_s(const vector<bx_t>&& args)
 { return and_(args)->simplify(); }
 
 bx_t
-boolexpr::and_s(std::initializer_list<bx_t> args)
+boolexpr::and_s(const std::initializer_list<bx_t> args)
 { return and_(args)->simplify(); }
 
 bx_t
@@ -352,7 +352,7 @@ boolexpr::xnor_s(const vector<bx_t>&& args)
 { return xnor(args)->simplify(); }
 
 bx_t
-boolexpr::xnor_s(std::initializer_list<bx_t> args)
+boolexpr::xnor_s(const std::initializer_list<bx_t> args)
 { return xnor(args)->simplify(); }
 
 bx_t
@@ -364,7 +364,7 @@ boolexpr::xor_s(const vector<bx_t>&& args)
 { return xor_(args)->simplify(); }
 
 bx_t
-boolexpr::xor_s(std::initializer_list<bx_t> args)
+boolexpr::xor_s(const std::initializer_list<bx_t> args)
 { return xor_(args)->simplify(); }
 
 bx_t
@@ -376,7 +376,7 @@ boolexpr::neq_s(const vector<bx_t>&& args)
 { return neq(args)->simplify(); }
 
 bx_t
-boolexpr::neq_s(std::initializer_list<bx_t> args)
+boolexpr::neq_s(const std::initializer_list<bx_t> args)
 { return neq(args)->simplify(); }
 
 bx_t
@@ -388,7 +388,7 @@ boolexpr::eq_s(const vector<bx_t>&& args)
 { return eq(args)->simplify(); }
 
 bx_t
-boolexpr::eq_s(std::initializer_list<bx_t> args)
+boolexpr::eq_s(const std::initializer_list<bx_t> args)
 { return eq(args)->simplify(); }
 
 bx_t
