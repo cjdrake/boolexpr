@@ -316,7 +316,6 @@ public:
     virtual op_t from_args(const vector<bx_t>&&) const = 0;
     virtual bx_t eqvar(const var_t&) const = 0;
 
-    bool is_d1() const;
     bool is_clause() const;
 };
 
