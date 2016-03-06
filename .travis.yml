@@ -6,7 +6,8 @@ sudo: required
 dist: trusty
 
 compiler:
-    - clang
+    # FIXME(cjdrake): lcov doesn't work with clang
+    #- clang
     - gcc
 
 env:
