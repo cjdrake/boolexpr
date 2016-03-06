@@ -6,8 +6,7 @@ sudo: required
 dist: trusty
 
 compiler:
-    # FIXME(cjdrake): lcov doesn't work with clang
-    #- clang
+    - clang
     - gcc
 
 env:
@@ -28,4 +27,4 @@ install:
     - popd
 
 script:
-    - make do_covall
+    - if [[ $CC == "gcc" ]]; then make do_covall; else make test; fi
