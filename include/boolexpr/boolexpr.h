@@ -154,6 +154,7 @@ public:
     bx_t to_dnf() const;
     bx_t to_nnf() const;
 
+    bool equiv(const bx_t&) const;
     unordered_set<var_t> support() const;
 };
 
@@ -726,9 +727,6 @@ std::ostream& operator<<(std::ostream&, const bx_t&);
 //bx_t smoothing(const bx_t&, vector<var_t>&);
 //bx_t consensus(const bx_t&, vector<var_t>&);
 //bx_t derivative(const bx_t&, vector<var_t>&);
-
-bool equivalent(const bx_t&, const bx_t&);
-
 
 } // namespace boolexpr
 

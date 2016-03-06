@@ -55,9 +55,9 @@ TEST_F(FlattenTest, Xor)
 
     auto y1 = y0->to_cnf();
     auto y2 = std::static_pointer_cast<const Operator>(y1);
-    EXPECT_TRUE(IS_AND(y2) && y2->args.size() == 32 && equivalent(y0, y2));
+    EXPECT_TRUE(IS_AND(y2) && y2->args.size() == 32 && y0->equiv(y2));
 
     auto y3 = y0->to_dnf();
     auto y4 = std::static_pointer_cast<const Operator>(y3);
-    EXPECT_TRUE(IS_OR(y4) && y4->args.size() == 32 && equivalent(y0, y4));
+    EXPECT_TRUE(IS_OR(y4) && y4->args.size() == 32 && y0->equiv(y4));
 }

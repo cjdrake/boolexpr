@@ -48,7 +48,7 @@ TEST_F(ComposeTest, Basic)
 
     auto f2 = ~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]);
     auto g2 = f2->compose(var2bx);
-    EXPECT_TRUE(equivalent(g2, ~xs[4] | ((xs[5] & ~xs[6]) ^ xs[7])));
+    EXPECT_TRUE(g2->equiv(~xs[4] | ((xs[5] & ~xs[6]) ^ xs[7])));
 }
 
 
