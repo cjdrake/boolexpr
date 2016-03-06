@@ -34,12 +34,10 @@ Atom::pushdown_not() const
 }
 
 
-static bx_t
-_op_pushdown_not(const BoolExpr* bx)
+static op_t
+_op_pushdown_not(const Operator* op)
 {
-    auto self = bx->shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
-    return transform(op, [](const bx_t& arg){return arg->pushdown_not();});
+    return op->transform([](const bx_t& arg){return arg->pushdown_not();});
 }
 
 bx_t Or::pushdown_not() const { return _op_pushdown_not(this); }

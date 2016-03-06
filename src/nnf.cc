@@ -36,9 +36,7 @@ Atom::to_latop() const {
 bx_t
 LatticeOperator::to_latop() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
-    return transform(op, [](const bx_t& arg){return arg->to_latop();});
+    return transform([](const bx_t& arg){return arg->to_latop();});
 }
 
 

@@ -62,7 +62,7 @@ Or::to_binop() const
         return op->args[0]->to_binop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, [](const bx_t& bx){return bx->to_binop();});
+        return transform([](const bx_t& bx){return bx->to_binop();});
 
     // x0 | x1 | x2 | x3 <=> (x0 | x1) | (x2 | x3)
     size_t const mid = op->args.size() / 2;
@@ -87,7 +87,7 @@ And::to_binop() const
         return op->args[0]->to_binop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, [](const bx_t& bx){return bx->to_binop();});
+        return transform([](const bx_t& bx){return bx->to_binop();});
 
     // x0 & x1 & x2 & x3 <=> (x0 & x1) & (x2 & x3)
     size_t const mid = op->args.size() / 2;
@@ -112,7 +112,7 @@ Xor::to_binop() const
         return op->args[0]->to_binop(); // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, [](const bx_t& bx){return bx->to_binop();});
+        return transform([](const bx_t& bx){return bx->to_binop();});
 
     // x0 ^ x1 ^ x2 ^ x3 <=> (x0 ^ x1) ^ (x2 ^ x3)
     size_t const mid = op->args.size() / 2;
@@ -134,7 +134,7 @@ Equal::to_binop() const
         return one();        // LCOV_EXCL_LINE
 
     if (op->args.size() == 2)
-        return transform(op, [](const bx_t bx){return bx->to_binop();});
+        return transform([](const bx_t bx){return bx->to_binop();});
 
     vector<bx_t> _args;
     for (const bx_t& arg : op->args)
@@ -153,16 +153,12 @@ Equal::to_binop() const
 bx_t
 Implies::to_binop() const
 {
-    auto self = shared_from_this();
-    return transform(std::static_pointer_cast<const Operator>(self),
-                     [](const bx_t& bx){return bx->to_binop();});
+    return transform([](const bx_t& bx){return bx->to_binop();});
 }
 
 
 bx_t
 IfThenElse::to_binop() const
 {
-    auto self = shared_from_this();
-    return transform(std::static_pointer_cast<const Operator>(self),
-                     [](const bx_t& bx){return bx->to_binop();});
+    return transform([](const bx_t& bx){return bx->to_binop();});
 }

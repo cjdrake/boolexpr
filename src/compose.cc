@@ -57,10 +57,7 @@ Variable::compose(const var2bx_t& var2bx) const
 bx_t
 Operator::compose(const var2bx_t& var2bx) const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
-    auto f = [&var2bx] (const bx_t& bx) { return bx->compose(var2bx); };
-    return transform(op, f);
+    return transform([&var2bx](const bx_t& bx){return bx->compose(var2bx);});
 }
 
 
@@ -95,8 +92,6 @@ Variable::restrict_(const point_t& point) const
 bx_t
 Operator::restrict_(const point_t& point) const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
     auto f = [&point] (const bx_t& bx) { return bx->restrict_(point); };
-    return transform(op, f)->simplify();
+    return transform(f)->simplify();
 }

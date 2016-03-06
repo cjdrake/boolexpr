@@ -317,6 +317,7 @@ public:
     virtual bx_t eqvar(const var_t&) const = 0;
 
     bool is_clause() const;
+    op_t transform(std::function<bx_t(const bx_t&)>) const;
 };
 
 
@@ -721,7 +722,6 @@ bx_t operator^(const bx_t&, const bx_t&);
 bool operator<(const lit_t&, const lit_t&);
 std::ostream& operator<<(std::ostream&, const bx_t&);
 
-op_t transform(const op_t&, std::function<bx_t(const bx_t&)>);
 //vector<bx_t> cofactors(const bx_t&, vector<var_t>&);
 //bx_t smoothing(const bx_t&, vector<var_t>&);
 //bx_t consensus(const bx_t&, vector<var_t>&);

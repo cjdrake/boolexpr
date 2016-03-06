@@ -568,21 +568,21 @@ BoolExpr::support() const
 
 
 op_t
-boolexpr::transform(const op_t& op, std::function<bx_t(const bx_t&)> f)
+Operator::transform(std::function<bx_t(const bx_t&)> f) const
 {
     uint32_t mod_count = 0;
     vector<bx_t> _args;
 
-    for (const bx_t& arg : op->args) {
+    for (const bx_t& arg : args) {
         auto _arg = f(arg);
         mod_count += (_arg != arg);
         _args.push_back(_arg);
     }
 
     if (mod_count)
-        return op->from_args(std::move(_args));
+        return from_args(std::move(_args));
 
-    return op;
+    return std::static_pointer_cast<const Operator>(shared_from_this());
 }
 
 
