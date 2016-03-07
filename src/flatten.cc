@@ -28,19 +28,19 @@ using namespace boolexpr;
 
 
 static vector<std::set<lit_t>>
-_twolvl2clauses(const lop_t& lop)
+_twolvl2clauses(lop_t const & lop)
 {
     vector<std::set<lit_t>> clauses;
 
-    for (const bx_t& arg : lop->args) {
+    for (bx_t const & arg : lop->args) {
         std::set<lit_t> clause;
         if (IS_LIT(arg)) {
-            clause.insert(std::static_pointer_cast<const Literal>(arg));
+            clause.insert(std::static_pointer_cast<Literal const>(arg));
         }
         else {
-            auto op = std::static_pointer_cast<const Operator>(arg);
-            for (const bx_t& subarg : op->args)
-                clause.insert(std::static_pointer_cast<const Literal>(subarg));
+            auto op = std::static_pointer_cast<Operator const>(arg);
+            for (bx_t const & subarg : op->args)
+                clause.insert(std::static_pointer_cast<Literal const>(subarg));
         }
         clauses.push_back(std::move(clause));
     }
@@ -59,7 +59,7 @@ _twolvl2clauses(const lop_t& lop)
 #define YS_LTE_XS (1u << 1)
 
 static uint8_t
-_lits_cmp(const std::set<lit_t>& xs, const std::set<lit_t>& ys)
+_lits_cmp(std::set<lit_t> const & xs, std::set<lit_t> const & ys)
 {
     uint8_t ret = XS_LTE_YS | YS_LTE_XS;
 
@@ -97,10 +97,10 @@ _lits_cmp(const std::set<lit_t>& xs, const std::set<lit_t>& ys)
 
 
 static vector<std::set<lit_t>>
-_absorb(vector<std::set<lit_t>>&& clauses)
+_absorb(vector<std::set<lit_t>> const && clauses)
 {
     vector<bool> keep;
-    for (const auto& clause : clauses)
+    for (auto const & clause : clauses)
         keep.push_back(true);
 
     bool drop = false;
@@ -135,15 +135,15 @@ _absorb(vector<std::set<lit_t>>&& clauses)
 
 // NOTE: Return size is MxN
 static vector<std::set<lit_t>>
-_product(const vector<std::set<lit_t>>& clauses)
+_product(vector<std::set<lit_t>> const & clauses)
 {
     vector<std::set<lit_t>> product {{}};
 
-    for (const auto& clause : clauses) {
+    for (auto const & clause : clauses) {
         vector<std::set<lit_t>> newprod;
-        for (const auto& factor : product) {
-            for (const lit_t& x : clause) {
-                auto xn = std::static_pointer_cast<const Literal>(~x);
+        for (auto const & factor : product) {
+            for (lit_t const & x : clause) {
+                auto xn = std::static_pointer_cast<Literal const>(~x);
                 if (factor.find(xn) == factor.end()) {
                     newprod.push_back(factor);
                     newprod.back().insert(x);
@@ -157,30 +157,30 @@ _product(const vector<std::set<lit_t>>& clauses)
 }
 
 
-static bx_t _nnf2cnf(const bx_t&);
-static bx_t _nnf2dnf(const bx_t&);
+static bx_t _nnf2cnf(bx_t const &);
+static bx_t _nnf2dnf(bx_t const &);
 
 
 static bx_t
-_nnf2cnf(const bx_t& nnf1)
+_nnf2cnf(bx_t const & nnf1)
 {
     if (IS_ATOM(nnf1)) return nnf1;
-    auto lop1 = std::static_pointer_cast<const LatticeOperator>(nnf1);
+    auto lop1 = std::static_pointer_cast<LatticeOperator const>(nnf1);
     if (lop1->is_clause()) return lop1;
 
     uint32_t mod_count = 0;
     vector<bx_t> _args;
-    for (const bx_t& arg : lop1->args) {
+    for (bx_t const & arg : lop1->args) {
         auto _arg = IS_OR(lop1) ? _nnf2dnf(arg) : _nnf2cnf(arg);
         mod_count += (_arg != arg);
         _args.push_back(_arg);
     }
 
-    std::shared_ptr<const LatticeOperator> lop2;
+    std::shared_ptr<LatticeOperator const> lop2;
     if (mod_count) {
         auto nnf2 = lop1->from_args(std::move(_args))->simplify();
         if (IS_ATOM(nnf2)) return nnf2;
-        lop2 = std::move(std::static_pointer_cast<const LatticeOperator>(nnf2));
+        lop2 = std::move(std::static_pointer_cast<LatticeOperator const>(nnf2));
         if (lop2->is_clause()) return lop2;
     }
     else {
@@ -192,32 +192,32 @@ _nnf2cnf(const bx_t& nnf1)
     auto clauses3 = IS_OR(lop2) ? _product(clauses2) : std::move(clauses2);
 
     vector<bx_t> args;
-    for (const auto& clause : clauses3)
+    for (auto const & clause : clauses3)
         args.push_back(or_s(vector<bx_t>(clause.begin(), clause.end())));
     return and_s(std::move(args));
 }
 
 
 static bx_t
-_nnf2dnf(const bx_t& nnf1)
+_nnf2dnf(bx_t const & nnf1)
 {
     if (IS_ATOM(nnf1)) return nnf1;
-    auto lop1 = std::static_pointer_cast<const LatticeOperator>(nnf1);
+    auto lop1 = std::static_pointer_cast<LatticeOperator const>(nnf1);
     if (lop1->is_clause()) return lop1;
 
     uint32_t mod_count = 0;
     vector<bx_t> _args;
-    for (const bx_t& arg : lop1->args) {
+    for (bx_t const & arg : lop1->args) {
         auto _arg = IS_OR(lop1) ? _nnf2dnf(arg) : _nnf2cnf(arg);
         mod_count += (_arg != arg);
         _args.push_back(_arg);
     }
 
-    std::shared_ptr<const LatticeOperator> lop2;
+    std::shared_ptr<LatticeOperator const> lop2;
     if (mod_count) {
         auto nnf2 = lop1->from_args(std::move(_args))->simplify();
         if (IS_ATOM(nnf2)) return nnf2;
-        lop2 = std::move(std::static_pointer_cast<const LatticeOperator>(nnf2));
+        lop2 = std::move(std::static_pointer_cast<LatticeOperator const>(nnf2));
         if (lop2->is_clause()) return lop2;
     }
     else {
@@ -229,7 +229,7 @@ _nnf2dnf(const bx_t& nnf1)
     auto clauses3 = IS_AND(lop2) ? _product(clauses2) : std::move(clauses2);
 
     vector<bx_t> args;
-    for (const auto& clause : clauses3)
+    for (auto const & clause : clauses3)
         args.push_back(and_s(vector<bx_t>(clause.begin(), clause.end())));
     return or_s(std::move(args));
 }

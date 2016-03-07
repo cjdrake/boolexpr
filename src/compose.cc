@@ -27,71 +27,71 @@ using namespace boolexpr;
 
 
 bx_t
-Constant::compose(const var2bx_t&) const
+Constant::compose(var2bx_t const &) const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
 bx_t
-Complement::compose(const var2bx_t& var2bx) const
+Complement::compose(var2bx_t const & var2bx) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(~self);
+    auto x = std::static_pointer_cast<Variable const>(~self);
     auto search = var2bx.find(x);
     return (search == var2bx.end()) ? self : ~(search->second);
 }
 
 
 bx_t
-Variable::compose(const var2bx_t& var2bx) const
+Variable::compose(var2bx_t const & var2bx) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(self);
+    auto x = std::static_pointer_cast<Variable const>(self);
     auto search = var2bx.find(x);
     return (search == var2bx.end()) ? self : search->second;
 }
 
 
 bx_t
-Operator::compose(const var2bx_t& var2bx) const
+Operator::compose(var2bx_t const & var2bx) const
 {
-    return transform([&var2bx](const bx_t& bx){return bx->compose(var2bx);});
+    return transform([&var2bx](bx_t const & bx){return bx->compose(var2bx);});
 }
 
 
 bx_t
-Constant::restrict_(const point_t&) const
+Constant::restrict_(point_t const &) const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
 bx_t
-Complement::restrict_(const point_t& point) const
+Complement::restrict_(point_t const & point) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(~self);
+    auto x = std::static_pointer_cast<Variable const>(~self);
     auto search = point.find(x);
     return (search == point.end()) ? self : ~(search->second);
 }
 
 
 bx_t
-Variable::restrict_(const point_t& point) const
+Variable::restrict_(point_t const & point) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(self);
+    auto x = std::static_pointer_cast<Variable const>(self);
     auto search = point.find(x);
     return (search == point.end()) ? self : search->second;
 }
 
 
 bx_t
-Operator::restrict_(const point_t& point) const
+Operator::restrict_(point_t const & point) const
 {
-    auto f = [&point] (const bx_t& bx) { return bx->restrict_(point); };
+    auto f = [&point] (bx_t const & bx) { return bx->restrict_(point); };
     return transform(f)->simplify();
 }

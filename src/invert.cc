@@ -34,7 +34,7 @@ bx_t
 Logical::invert() const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
@@ -42,7 +42,7 @@ bx_t
 Illogical::invert() const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
@@ -50,7 +50,7 @@ bx_t
 Complement::invert() const
 {
     auto self = shared_from_this();
-    auto xn = std::static_pointer_cast<const Complement>(self);
+    auto xn = std::static_pointer_cast<Complement const>(self);
     return xn->ctx->get_lit(xn->id + 1);
 }
 
@@ -59,7 +59,7 @@ bx_t
 Variable::invert() const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(self);
+    auto x = std::static_pointer_cast<Variable const>(self);
     return x->ctx->get_lit(x->id - 1);
 }
 
@@ -68,7 +68,7 @@ bx_t
 Nor::invert() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Nor>(self);
+    auto nop = std::static_pointer_cast<Nor const>(self);
     return std::make_shared<Or>(nop->simple, nop->args);
 }
 
@@ -77,7 +77,7 @@ bx_t
 Or::invert() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Or>(self);
+    auto op = std::static_pointer_cast<Or const>(self);
     return std::make_shared<Nor>(op->simple, op->args);
 }
 
@@ -86,7 +86,7 @@ bx_t
 Nand::invert() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Nand>(self);
+    auto nop = std::static_pointer_cast<Nand const>(self);
     return std::make_shared<And>(nop->simple, nop->args);
 }
 
@@ -95,7 +95,7 @@ bx_t
 And::invert() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const And>(self);
+    auto op = std::static_pointer_cast<And const>(self);
     return std::make_shared<Nand>(op->simple, op->args);
 }
 
@@ -104,7 +104,7 @@ bx_t
 Xnor::invert() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Xnor>(self);
+    auto nop = std::static_pointer_cast<Xnor const>(self);
     return std::make_shared<Xor>(nop->simple, nop->args);
 }
 
@@ -113,7 +113,7 @@ bx_t
 Xor::invert() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Xor>(self);
+    auto op = std::static_pointer_cast<Xor const>(self);
     return std::make_shared<Xnor>(op->simple, op->args);
 }
 
@@ -122,7 +122,7 @@ bx_t
 Unequal::invert() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Unequal>(self);
+    auto nop = std::static_pointer_cast<Unequal const>(self);
     return std::make_shared<Equal>(nop->simple, nop->args);
 }
 
@@ -131,7 +131,7 @@ bx_t
 Equal::invert() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Equal>(self);
+    auto op = std::static_pointer_cast<Equal const>(self);
     return std::make_shared<Unequal>(op->simple, op->args);
 }
 
@@ -140,7 +140,7 @@ bx_t
 NotImplies::invert() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const NotImplies>(self);
+    auto nop = std::static_pointer_cast<NotImplies const>(self);
     return std::make_shared<Implies>(nop->simple, nop->args[0], nop->args[1]);
 }
 
@@ -149,7 +149,7 @@ bx_t
 Implies::invert() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Implies>(self);
+    auto op = std::static_pointer_cast<Implies const>(self);
     return std::make_shared<NotImplies>(op->simple, op->args[0], op->args[1]);
 }
 
@@ -158,7 +158,7 @@ bx_t
 NotIfThenElse::invert() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const NotIfThenElse>(self);
+    auto nop = std::static_pointer_cast<NotIfThenElse const>(self);
     return std::make_shared<IfThenElse>(nop->simple, nop->args[0], nop->args[1], nop->args[2]);
 }
 
@@ -167,6 +167,6 @@ bx_t
 IfThenElse::invert() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const IfThenElse>(self);
+    auto op = std::static_pointer_cast<IfThenElse const>(self);
     return std::make_shared<NotIfThenElse>(op->simple, op->args[0], op->args[1], op->args[2]);
 }

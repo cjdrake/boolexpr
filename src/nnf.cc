@@ -29,19 +29,19 @@ using namespace boolexpr;
 bx_t
 Atom::to_latop() const {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
 bx_t
 LatticeOperator::to_latop() const
 {
-    return transform([](const bx_t& arg){return arg->to_latop();});
+    return transform([](bx_t const & arg){return arg->to_latop();});
 }
 
 
 static bx_t
-_nop_to_latop(const BoolExpr* bx)
+_nop_to_latop(BoolExpr const * const bx)
 {
     auto nop = bx->shared_from_this();
     auto op = ~nop;
@@ -60,7 +60,7 @@ bx_t
 Xor::to_latop() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
+    auto op = std::static_pointer_cast<Operator const>(self);
 
     if (op->args.size() == 0)   // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
@@ -89,12 +89,12 @@ bx_t
 Equal::to_latop() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
+    auto op = std::static_pointer_cast<Operator const>(self);
 
     // eq(x0, x1, x2) <=> ~x0 & ~x1 & ~x2 | x0 & x1 & x2
     vector<bx_t> xs, xns;
 
-    for (const bx_t& arg : op->args) {
+    for (bx_t const & arg : op->args) {
         auto x = arg->to_latop();
         xs.push_back(x);
         xns.push_back(~x);
@@ -108,7 +108,7 @@ bx_t
 Implies::to_latop() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Implies>(self);
+    auto op = std::static_pointer_cast<Implies const>(self);
 
     auto p = op->args[0]->to_latop();
     auto q = op->args[1]->to_latop();
@@ -121,7 +121,7 @@ bx_t
 IfThenElse::to_latop() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const IfThenElse>(self);
+    auto op = std::static_pointer_cast<IfThenElse const>(self);
 
     auto s = op->args[0]->to_latop();
     auto d1 = op->args[1]->to_latop();

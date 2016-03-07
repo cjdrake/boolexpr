@@ -26,20 +26,20 @@
 using namespace boolexpr;
 
 
-LatticeArgSet::LatticeArgSet(const vector<bx_t>& args, const BoolExpr::Kind& kind,
-                             const bx_t& identity, const bx_t& dominator)
+LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
+                             bx_t const & identity, bx_t const & dominator)
     : infimum {true}
     , supremum {false}
     , kind {kind}
     , identity {identity}
     , dominator {dominator}
 {
-    for (const bx_t& arg : args) insert(arg->simplify());
+    for (bx_t const & arg : args) insert(arg->simplify());
 }
 
 
 void
-LatticeArgSet::insert(const bx_t& arg)
+LatticeArgSet::insert(bx_t const & arg)
 {
     // 1 + x <=> 1 ; x + 0 <=> x
     if (supremum || ARE_SAME(arg, identity))
@@ -57,8 +57,8 @@ LatticeArgSet::insert(const bx_t& arg)
 
     // x + (y + z) <=> x + y + z
     if (arg->kind == kind) {
-        auto op = std::static_pointer_cast<const Operator>(arg);
-        for (const bx_t& _arg : op->args) insert(_arg);
+        auto op = std::static_pointer_cast<Operator const>(arg);
+        for (bx_t const & _arg : op->args) insert(_arg);
         return;
     }
 
@@ -81,7 +81,7 @@ LatticeArgSet::reduce() const
 }
 
 
-OrArgSet::OrArgSet(const vector<bx_t>& args)
+OrArgSet::OrArgSet(vector<bx_t> const & args)
     : LatticeArgSet(args, BoolExpr::OR, Or::identity(), Or::dominator())
 {}
 
@@ -93,7 +93,7 @@ OrArgSet::to_op() const
 }
 
 
-AndArgSet::AndArgSet(const vector<bx_t>& args)
+AndArgSet::AndArgSet(vector<bx_t> const & args)
     : LatticeArgSet(args, BoolExpr::AND, And::identity(), And::dominator())
 {}
 
@@ -105,15 +105,15 @@ AndArgSet::to_op() const
 }
 
 
-XorArgSet::XorArgSet(const vector<bx_t>& args)
+XorArgSet::XorArgSet(vector<bx_t> const & args)
     : parity {true}
 {
-    for (const bx_t& arg : args) insert(arg->simplify());
+    for (bx_t const & arg : args) insert(arg->simplify());
 }
 
 
 void
-XorArgSet::insert(const bx_t& arg)
+XorArgSet::insert(bx_t const & arg)
 {
     if (IS_KNOWN(arg)) {
         parity ^= static_cast<bool>(arg->kind);
@@ -141,15 +141,15 @@ XorArgSet::insert(const bx_t& arg)
 
     // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
     if (IS_XOR(arg)) {
-        auto op = std::static_pointer_cast<const Operator>(arg);
-        for (const bx_t& _arg : op->args) insert(_arg);
+        auto op = std::static_pointer_cast<Operator const>(arg);
+        for (bx_t const & _arg : op->args) insert(_arg);
         return;
     }
 
     // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
     if (IS_XNOR(arg)) {
-        auto op = std::static_pointer_cast<const Operator>(arg);
-        for (const bx_t& _arg : op->args) insert(_arg);
+        auto op = std::static_pointer_cast<Operator const>(arg);
+        for (bx_t const & _arg : op->args) insert(_arg);
         parity ^= true;
         return;
     }
@@ -181,16 +181,16 @@ XorArgSet::reduce() const
 }
 
 
-EqArgSet::EqArgSet(const vector<bx_t>& args)
+EqArgSet::EqArgSet(vector<bx_t> const & args)
     : has_zero {false}
     , has_one {false}
 {
-    for (const bx_t& arg : args) insert(arg->simplify());
+    for (bx_t const & arg : args) insert(arg->simplify());
 }
 
 
 void
-EqArgSet::insert(const bx_t& arg)
+EqArgSet::insert(bx_t const & arg)
 {
     if (has_zero && has_one)
         return;

@@ -29,7 +29,7 @@ using namespace boolexpr;
 dfs_iter::dfs_iter() : p {nullptr} {}
 
 
-dfs_iter::dfs_iter(const bx_t& start)
+dfs_iter::dfs_iter(bx_t const & start)
 {
     stack.push_back(start);
     colors.insert({start, Color::WHITE});
@@ -41,7 +41,7 @@ void
 dfs_iter::_advance_one()
 {
     while (stack.size() > 0) {
-        const bx_t& item = stack.back();
+        bx_t const & item = stack.back();
         auto color = colors.find(item)->second;
 
         if (color == Color::WHITE) {
@@ -53,7 +53,7 @@ dfs_iter::_advance_one()
             }
             else {
                 colors[item] = Color::GRAY;
-                auto op = std::static_pointer_cast<const Operator>(item);
+                auto op = std::static_pointer_cast<Operator const>(item);
                 for (auto it = op->args.crbegin(); it != op->args.crend(); ++it) {
                     stack.push_back(*it);
                     colors.insert({*it, Color::WHITE});
@@ -76,27 +76,27 @@ dfs_iter::_advance_one()
 
 
 bool
-dfs_iter::operator==(const dfs_iter& rhs) const
+dfs_iter::operator==(dfs_iter const & rhs) const
 {
     return p == rhs.p;
 }
 
 
 bool
-dfs_iter::operator!=(const dfs_iter& rhs) const
+dfs_iter::operator!=(dfs_iter const & rhs) const
 {
     return !(*this == rhs);
 }
 
 
-const bx_t&
+bx_t const &
 dfs_iter::operator*() const
 {
     return *p;
 }
 
 
-const dfs_iter&
+dfs_iter const &
 dfs_iter::operator++()
 {
     _advance_one();

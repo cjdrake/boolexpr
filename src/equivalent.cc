@@ -27,7 +27,7 @@ using namespace boolexpr;
 
 
 bool
-BoolExpr::equiv(const bx_t& other) const
+BoolExpr::equiv(bx_t const & other) const
 {
     auto self = shared_from_this();
     auto soln = (self ^ other)->sat();

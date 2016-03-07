@@ -30,14 +30,14 @@ bx_t
 Atom::pushdown_not() const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
 static op_t
-_op_pushdown_not(const Operator* op)
+_op_pushdown_not(Operator const * const op)
 {
-    return op->transform([](const bx_t& arg){return arg->pushdown_not();});
+    return op->transform([](bx_t const & arg){return arg->pushdown_not();});
 }
 
 bx_t Or::pushdown_not() const { return _op_pushdown_not(this); }
@@ -51,11 +51,11 @@ bx_t
 Nor::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Nor>(self);
+    auto nop = std::static_pointer_cast<Nor const>(self);
 
     // ~(x0 | x1 | ...) <=> ~x0 & ~x1 & ...
     vector<bx_t> _args;
-    for (const bx_t& arg : nop->args)
+    for (bx_t const & arg : nop->args)
         _args.push_back((~arg)->pushdown_not());
 
     return and_(std::move(_args));
@@ -66,11 +66,11 @@ bx_t
 Nand::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Nand>(self);
+    auto nop = std::static_pointer_cast<Nand const>(self);
 
     // ~(x0 & x1 & ...) <=> ~x0 | ~x1 | ...
     vector<bx_t> _args;
-    for (const bx_t& arg : nop->args)
+    for (bx_t const & arg : nop->args)
         _args.push_back((~arg)->pushdown_not());
 
     return or_(std::move(_args));
@@ -81,7 +81,7 @@ bx_t
 Xnor::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Xnor>(self);
+    auto nop = std::static_pointer_cast<Xnor const>(self);
 
     // ~(x0 ^ x1 ^ x2 ^ ...) <=> ~x0 ^ x1 ^ x2 ^ ...
     vector<bx_t> _args {~nop->args[0]};
@@ -96,7 +96,7 @@ bx_t
 Unequal::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const Unequal>(self);
+    auto nop = std::static_pointer_cast<Unequal const>(self);
 
     // ~eq(x0, x1, x2, ...) <=> eq(~x0, x1, x2, ...)
     vector<bx_t> _args {~nop->args[0]};
@@ -111,7 +111,7 @@ bx_t
 NotImplies::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const NotImplies>(self);
+    auto nop = std::static_pointer_cast<NotImplies const>(self);
 
     // ~(p => q) <=> p & ~q
     auto p = (nop->args[0])->pushdown_not();
@@ -125,7 +125,7 @@ bx_t
 Implies::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Implies>(self);
+    auto op = std::static_pointer_cast<Implies const>(self);
 
     // p => q <=> ~p | q
     auto pn = (~op->args[0])->pushdown_not();
@@ -139,7 +139,7 @@ bx_t
 NotIfThenElse::pushdown_not() const
 {
     auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<const NotIfThenElse>(self);
+    auto nop = std::static_pointer_cast<NotIfThenElse const>(self);
 
     // ~(s ? d1 : d0) <=> s ? ~d1 : ~d0
     auto s = (nop->args[0])->pushdown_not();

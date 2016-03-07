@@ -26,12 +26,12 @@
 using namespace boolexpr;
 
 
-static var_t _op2con1(const op_t& op, Context& ctx, const string& auxvarname, uint32_t& index, var2op_t& constraints);
-static op_t  _op2con2(const op_t& op, Context& ctx, const string& auxvarname, uint32_t& index, var2op_t& constraints);
+static var_t _op2con1(op_t const &, Context&, string const &, uint32_t&, var2op_t&);
+static op_t  _op2con2(op_t const &, Context&, string const &, uint32_t&, var2op_t&);
 
 
 static var_t
-_op2con1(const op_t& op, Context& ctx, const string& auxvarname,
+_op2con1(op_t const & op, Context& ctx, string const & auxvarname,
          uint32_t& index, var2op_t& constraints)
 {
     auto key = ctx.get_var(auxvarname + "_" + std::to_string(index++));
@@ -44,16 +44,16 @@ _op2con1(const op_t& op, Context& ctx, const string& auxvarname,
 
 
 static op_t
-_op2con2(const op_t& op, Context& ctx, const string& auxvarname,
+_op2con2(op_t const & op, Context& ctx, string const & auxvarname,
          uint32_t& index, var2op_t& constraints)
 {
     bool found_subop = false;
     vector<bx_t> _args;
 
-    for (const bx_t& arg : op->args) {
+    for (bx_t const & arg : op->args) {
         if (IS_OP(arg)) {
             found_subop = true;
-            auto subop = std::static_pointer_cast<const Operator>(arg);
+            auto subop = std::static_pointer_cast<Operator const>(arg);
             _args.push_back(_op2con1(subop, ctx, auxvarname, index, constraints));
         }
         else {
@@ -69,18 +69,18 @@ _op2con2(const op_t& op, Context& ctx, const string& auxvarname,
 
 
 bx_t
-Atom::tseytin(Context&, const string&) const
+Atom::tseytin(Context&, string const &) const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
 bx_t
-Operator::tseytin(Context& ctx, const string& auxvarname) const
+Operator::tseytin(Context& ctx, string const & auxvarname) const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
+    auto op = std::static_pointer_cast<Operator const>(self);
 
     uint32_t index {0};
     var2op_t constraints;
@@ -88,7 +88,7 @@ Operator::tseytin(Context& ctx, const string& auxvarname) const
     auto top = _op2con1(op, ctx, auxvarname, index, constraints);
 
     vector<bx_t> cnfs {top};
-    for (const auto& constraint : constraints)
+    for (auto const & constraint : constraints)
         cnfs.push_back(constraint.second->eqvar(constraint.first));
 
     return and_s(std::move(cnfs));
@@ -96,17 +96,17 @@ Operator::tseytin(Context& ctx, const string& auxvarname) const
 
 
 bx_t
-Nor::eqvar(const var_t& x) const
+Nor::eqvar(var_t const & x) const
 {
     // x = ~(a | b | ...) <=> (~x | ~a) & (~x | ~b) & ... & (x | a | b | ...)
 
     vector<bx_t> clauses;
 
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         clauses.push_back(~x | ~arg);
 
     vector<bx_t> lits {x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits.push_back(arg);
 
     clauses.push_back(or_(std::move(lits)));
@@ -116,17 +116,17 @@ Nor::eqvar(const var_t& x) const
 
 
 bx_t
-Or::eqvar(const var_t& x) const
+Or::eqvar(var_t const & x) const
 {
     // x = a | b | ... <=> (x | ~a) & (x | ~b) & ... & (~x | a | b | ...)
 
     vector<bx_t> clauses;
 
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         clauses.push_back(x | ~arg);
 
     vector<bx_t> lits {~x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits.push_back(arg);
 
     clauses.push_back(or_(std::move(lits)));
@@ -136,17 +136,17 @@ Or::eqvar(const var_t& x) const
 
 
 bx_t
-Nand::eqvar(const var_t& x) const
+Nand::eqvar(var_t const & x) const
 {
     // x = ~(a & b & ...) <=> (x | a) & (x | b) & ... & (~x | ~a | ~b | ...)
 
     vector<bx_t> clauses;
 
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         clauses.push_back(x | arg);
 
     vector<bx_t> lits {~x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits.push_back(~arg);
 
     clauses.push_back(or_(std::move(lits)));
@@ -156,17 +156,17 @@ Nand::eqvar(const var_t& x) const
 
 
 bx_t
-And::eqvar(const var_t& x) const
+And::eqvar(var_t const & x) const
 {
     // x = a & b & ... <=> (~x | a) & (~x | b) & ... & (x | ~a | ~b | ...)
 
     vector<bx_t> clauses;
 
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         clauses.push_back(~x | arg);
 
     vector<bx_t> lits {x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits.push_back(~arg);
 
     clauses.push_back(or_(std::move(lits)));
@@ -176,11 +176,11 @@ And::eqvar(const var_t& x) const
 
 
 bx_t
-Xnor::eqvar(const var_t& x) const
+Xnor::eqvar(var_t const & x) const
 {
     vector<vector<bx_t>> stack { vector<bx_t> {x} };
 
-    for (const bx_t& arg : args) {
+    for (bx_t const & arg : args) {
         vector<vector<bx_t>> temp;
 
         while (stack.size() > 0) {
@@ -216,11 +216,11 @@ Xnor::eqvar(const var_t& x) const
 
 
 bx_t
-Xor::eqvar(const var_t& x) const
+Xor::eqvar(var_t const & x) const
 {
     vector<vector<bx_t>> stack { vector<bx_t> {~x} };
 
-    for (const bx_t& arg : args) {
+    for (bx_t const & arg : args) {
         vector<vector<bx_t>> temp;
 
         while (stack.size() > 0) {
@@ -256,17 +256,17 @@ Xor::eqvar(const var_t& x) const
 
 
 bx_t
-Unequal::eqvar(const var_t& x) const
+Unequal::eqvar(var_t const & x) const
 {
     vector<bx_t> clauses;
 
     vector<bx_t> lits1 {~x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits1.push_back(arg);
     clauses.push_back(or_(std::move(lits1)));
 
     vector<bx_t> lits2 {~x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits2.push_back(~arg);
     clauses.push_back(or_(std::move(lits2)));
 
@@ -282,17 +282,17 @@ Unequal::eqvar(const var_t& x) const
 
 
 bx_t
-Equal::eqvar(const var_t& x) const
+Equal::eqvar(var_t const & x) const
 {
     vector<bx_t> clauses;
 
     vector<bx_t> lits1 {x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits1.push_back(arg);
     clauses.push_back(or_(std::move(lits1)));
 
     vector<bx_t> lits2 {x};
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         lits2.push_back(~arg);
     clauses.push_back(or_(std::move(lits2)));
 
@@ -308,7 +308,7 @@ Equal::eqvar(const var_t& x) const
 
 
 bx_t
-NotImplies::eqvar(const var_t& x) const
+NotImplies::eqvar(var_t const & x) const
 {
     auto p = args[0];
     auto q = args[1];
@@ -318,7 +318,7 @@ NotImplies::eqvar(const var_t& x) const
 
 
 bx_t
-Implies::eqvar(const var_t& x) const
+Implies::eqvar(var_t const & x) const
 {
     auto p = args[0];
     auto q = args[1];
@@ -328,7 +328,7 @@ Implies::eqvar(const var_t& x) const
 
 
 bx_t
-NotIfThenElse::eqvar(const var_t& x) const
+NotIfThenElse::eqvar(var_t const & x) const
 {
     auto s = args[0];
     auto d1 = args[1];
@@ -339,7 +339,7 @@ NotIfThenElse::eqvar(const var_t& x) const
 
 
 bx_t
-IfThenElse::eqvar(const var_t& x) const
+IfThenElse::eqvar(var_t const & x) const
 {
     auto s = args[0];
     auto d1 = args[1];

@@ -37,7 +37,7 @@ uint32_t
 Operator::depth() const
 {
     uint32_t max_depth = 0;
-    for (const bx_t& arg : args) {
+    for (bx_t const & arg : args) {
         auto depth = arg->depth();
         if (depth > max_depth) max_depth = depth;
     }
@@ -56,7 +56,7 @@ uint32_t
 Operator::size() const
 {
     uint32_t size = 0;
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         size += arg->size();
     return size + 1;
 }
@@ -73,7 +73,7 @@ uint32_t
 Operator::atom_count() const
 {
     uint32_t atom_count = 0;
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         atom_count += arg->atom_count();
     return atom_count;
 }
@@ -90,7 +90,7 @@ uint32_t
 Operator::op_count() const
 {
     uint32_t op_count = 0;
-    for (const bx_t& arg : args)
+    for (bx_t const & arg : args)
         op_count += arg->op_count();
     return op_count + 1;
 }

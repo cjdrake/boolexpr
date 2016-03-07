@@ -63,7 +63,7 @@ soln_t
 Complement::sat() const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(~self);
+    auto x = std::static_pointer_cast<Variable const>(~self);
     return std::make_pair(true, point_t { {x, zero()} });
 }
 
@@ -72,7 +72,7 @@ soln_t
 Variable::sat() const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<const Variable>(self);
+    auto x = std::static_pointer_cast<Variable const>(self);
     return std::make_pair(true, point_t { {x, one()} });
 }
 
@@ -81,7 +81,7 @@ soln_t
 Operator::sat() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Operator>(self);
+    auto op = std::static_pointer_cast<Operator const>(self);
 
     auto ctx = Context();
     auto cnf = op->tseytin(ctx);
@@ -91,7 +91,7 @@ Operator::sat() const
     unordered_map<uint32_t, var_t> idx2var;
 
     uint32_t index = 0u;
-    for (const var_t& x : s) {
+    for (var_t const & x : s) {
         lit2idx.insert({~x, (index << 1) | 0u});
         lit2idx.insert({ x, (index << 1) | 1u});
         idx2var.insert({index, x});
@@ -102,16 +102,16 @@ Operator::sat() const
     vector<Lit> cmlits;
     solver.new_vars(s.size());
 
-    auto and_op = std::static_pointer_cast<const And>(cnf);
-    for (const bx_t& clause : and_op->args) {
+    auto and_op = std::static_pointer_cast<And const>(cnf);
+    for (bx_t const & clause : and_op->args) {
         cmlits.clear();
         if (IS_LIT(clause)) {
             auto index = lit2idx.find(clause)->second;
             cmlits.push_back(Lit(index >> 1, !(index & 1u)));
         }
         else {
-            auto or_op = std::static_pointer_cast<const Or>(clause);
-            for (const bx_t& lit : or_op->args) {
+            auto or_op = std::static_pointer_cast<Or const>(clause);
+            for (bx_t const & lit : or_op->args) {
                 auto index = lit2idx.find(lit)->second;
                 cmlits.push_back(Lit(index >> 1, !(index & 1u)));
             }

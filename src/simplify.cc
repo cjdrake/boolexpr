@@ -31,16 +31,16 @@ bx_t
 Atom::simplify() const
 {
     auto self = shared_from_this();
-    return std::static_pointer_cast<const BoolExpr>(self);
+    return std::static_pointer_cast<BoolExpr const>(self);
 }
 
 
 // Use the positive form to simplify inverted operators
 static bx_t
-_nop_simplify(const BoolExpr* bx)
+_nop_simplify(BoolExpr const * const bx)
 {
     auto self = bx->shared_from_this();
-    auto nop = std::static_pointer_cast<const Operator>(self);
+    auto nop = std::static_pointer_cast<Operator const>(self);
     if (nop->simple) return nop;
     auto op = ~nop;
     return ~op->simplify();
@@ -58,7 +58,7 @@ bx_t
 Or::simplify() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Or>(self);
+    auto op = std::static_pointer_cast<Or const>(self);
     if (op->simple) return op;
     return OrArgSet(op->args).reduce();
 }
@@ -68,7 +68,7 @@ bx_t
 And::simplify() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const And>(self);
+    auto op = std::static_pointer_cast<And const>(self);
     if (op->simple) return op;
     return AndArgSet(op->args).reduce();
 }
@@ -78,7 +78,7 @@ bx_t
 Xor::simplify() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Xor>(self);
+    auto op = std::static_pointer_cast<Xor const>(self);
     if (op->simple) return op;
     return XorArgSet(op->args).reduce();
 }
@@ -88,7 +88,7 @@ bx_t
 Equal::simplify() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Equal>(self);
+    auto op = std::static_pointer_cast<Equal const>(self);
     if (op->simple) return op;
     return EqArgSet(op->args).reduce();
 }
@@ -98,7 +98,7 @@ bx_t
 Implies::simplify() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const Implies>(self);
+    auto op = std::static_pointer_cast<Implies const>(self);
 
     if (op->simple) return op;
 
@@ -128,7 +128,7 @@ bx_t
 IfThenElse::simplify() const
 {
     auto self = shared_from_this();
-    auto op = std::static_pointer_cast<const IfThenElse>(self);
+    auto op = std::static_pointer_cast<IfThenElse const>(self);
 
     if (op->simple) return op;
 
