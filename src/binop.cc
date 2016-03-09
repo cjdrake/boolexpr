@@ -27,9 +27,9 @@ using namespace boolexpr;
 
 
 bx_t
-Atom::to_binop() const {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+Atom::to_binop() const
+{
+    return shared_from_this();
 }
 
 

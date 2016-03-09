@@ -29,8 +29,7 @@ using namespace boolexpr;
 bx_t
 Constant::compose(var2bx_t const &) const
 {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+    return shared_from_this();
 }
 
 
@@ -64,8 +63,7 @@ Operator::compose(var2bx_t const & var2bx) const
 bx_t
 Constant::restrict_(point_t const &) const
 {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+    return shared_from_this();
 }
 
 

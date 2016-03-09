@@ -71,8 +71,7 @@ _op2con2(op_t const & op, Context& ctx, string const & auxvarname,
 bx_t
 Atom::tseytin(Context&, string const &) const
 {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+    return shared_from_this();
 }
 
 

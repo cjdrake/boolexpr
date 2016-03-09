@@ -534,8 +534,7 @@ public:
 };
 
 
-class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
-{
+class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t> {
 private:
     vector<bx_t> stack;
 

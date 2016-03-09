@@ -29,8 +29,7 @@ using namespace boolexpr;
 bx_t
 Atom::pushdown_not() const
 {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+    return shared_from_this();
 }
 
 

@@ -33,16 +33,14 @@ bx_t One::invert()  const { return zero(); }
 bx_t
 Logical::invert() const
 {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+    return shared_from_this();
 }
 
 
 bx_t
 Illogical::invert() const
 {
-    auto self = shared_from_this();
-    return std::static_pointer_cast<BoolExpr const>(self);
+    return shared_from_this();
 }
 
 
