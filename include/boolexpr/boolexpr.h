@@ -96,6 +96,7 @@ using soln_t = std::pair<bool, boost::optional<point_t>>;
 
 class BoolExpr : public std::enable_shared_from_this<BoolExpr> {
 protected:
+    virtual bx_t _invert() const = 0;
     virtual std::ostream& _op_lsh(std::ostream&) const = 0;
 
 public:
@@ -124,10 +125,10 @@ public:
 
     BoolExpr(Kind kind);
 
+    friend bx_t operator~(bx_t const &);
     friend std::ostream& operator<<(std::ostream&, bx_t const &);
 
     string to_string() const;
-    virtual bx_t invert() const = 0;
 
     virtual uint32_t depth() const = 0;
     virtual uint32_t size() const = 0;
@@ -194,12 +195,12 @@ public:
 
 class Zero : public Known {
 protected:
+    bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
     Zero();
 
-    bx_t invert() const;
     bool is_dnf() const;
     soln_t sat() const;
 };
@@ -207,12 +208,12 @@ public:
 
 class One : public Known {
 protected:
+    bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
     One();
 
-    bx_t invert() const;
     bool is_cnf() const;
     soln_t sat() const;
 };
@@ -226,24 +227,24 @@ public:
 
 class Logical : public Unknown {
 protected:
+    bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
     Logical();
 
-    bx_t invert() const;
     soln_t sat() const;
 };
 
 
 class Illogical : public Unknown {
 protected:
+    bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
     Illogical();
 
-    bx_t invert() const;
     soln_t sat() const;
 };
 
@@ -262,12 +263,12 @@ public:
 
 class Complement : public Literal {
 protected:
+    bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
     Complement(Context *ctx, id_t id);
 
-    bx_t invert() const;
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
     soln_t sat() const;
@@ -276,12 +277,12 @@ public:
 
 class Variable : public Literal {
 protected:
+    bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
     Variable(Context *ctx, id_t id);
 
-    bx_t invert() const;
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
     soln_t sat() const;
@@ -329,10 +330,12 @@ public:
 
 
 class Nor : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Nor(bool simple, vector<bx_t> const & args);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -345,6 +348,9 @@ public:
 
 
 class Or : public LatticeOperator {
+protected:
+    bx_t _invert() const;
+
 public:
     Or(bool simple, vector<bx_t> const & args);
     Or(bool simple, vector<bx_t> const && args);
@@ -352,7 +358,6 @@ public:
     static bx_t identity();
     static bx_t dominator();
 
-    bx_t invert() const;
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t pushdown_not() const;
@@ -366,10 +371,12 @@ public:
 
 
 class Nand : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Nand(bool simple, vector<bx_t> const & args);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -382,6 +389,9 @@ public:
 
 
 class And : public LatticeOperator {
+protected:
+    bx_t _invert() const;
+
 public:
     And(bool simple, vector<bx_t> const & args);
     And(bool simple, vector<bx_t> const && args);
@@ -389,7 +399,6 @@ public:
     static bx_t identity();
     static bx_t dominator();
 
-    bx_t invert() const;
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t pushdown_not() const;
@@ -403,10 +412,12 @@ public:
 
 
 class Xnor : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Xnor(bool simple, vector<bx_t> const & args);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -419,13 +430,15 @@ public:
 
 
 class Xor : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Xor(bool simple, vector<bx_t> const & args);
     Xor(bool simple, vector<bx_t> const && args);
 
     static bx_t identity();
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -438,10 +451,12 @@ public:
 
 
 class Unequal : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Unequal(bool simple, vector<bx_t> const & args);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -454,11 +469,13 @@ public:
 
 
 class Equal : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Equal(bool simple, vector<bx_t> const & args) : Operator(EQ, simple, args) {}
     Equal(bool simple, vector<bx_t> const && args) : Operator(EQ, simple, args) {}
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -471,10 +488,12 @@ public:
 
 
 class NotImplies : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -487,10 +506,12 @@ public:
 
 
 class Implies : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     Implies(bool simple, bx_t p, bx_t q);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -503,10 +524,12 @@ public:
 
 
 class NotIfThenElse : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
@@ -519,10 +542,12 @@ public:
 
 
 class IfThenElse : public Operator {
+protected:
+    bx_t _invert() const;
+
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t invert() const;
     bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
