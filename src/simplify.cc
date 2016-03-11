@@ -21,6 +21,7 @@
 #include <boost/optional.hpp>
 
 #include "boolexpr/boolexpr.h"
+#include "argset.h"
 
 
 using namespace boolexpr;

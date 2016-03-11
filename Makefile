@@ -101,7 +101,7 @@ build/test/: | build/
 	@mkdir $@
 
 build/test/%.o: src/%.cc $(BX_HDRS) | build/test/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -Iinclude $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -Iinclude -Isrc $<
 
 build/test/%.o: test/%.cc $(BX_HDRS) $(TEST_HDRS) | build/test/
 	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(GTEST)/include -Iinclude -Itest $<
