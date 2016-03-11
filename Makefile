@@ -47,6 +47,7 @@ BX_SRCS := \
     src/argset.cc \
     src/binop.cc \
     src/boolexpr.cc \
+    src/bxcffi.cc \
     src/compose.cc \
     src/context.cc \
     src/count.cc \
@@ -65,6 +66,7 @@ TEST_SRCS := \
     test/basic_test.cc \
     test/binop_test.cc \
     test/boolexprtest.cc \
+    test/bxcffi_test.cc \
     test/compose_test.cc \
     test/count_test.cc \
     test/flatten_test.cc \

@@ -17,6 +17,9 @@
 #define BOOLEXPR_H
 
 
+#ifdef __cplusplus
+
+
 // Kind checks
 #define IS_ZERO(expr)  ((expr)->kind == boolexpr::BoolExpr::ZERO)
 #define IS_ONE(expr)   ((expr)->kind == boolexpr::BoolExpr::ONE)
@@ -679,4 +682,30 @@ std::ostream& operator<<(std::ostream&, bx_t const &);
 } // namespace boolexpr
 
 
-#endif /* BOOLEXPR_H */
+#endif // __cplusplus
+
+
+// C Foreign Function Interface (CFFI)
+extern "C"
+{
+    void * boolexpr_Context(void);
+    void const * boolexpr_Context_get_var(void *, char const *);
+
+    void const * boolexpr_zero(void);
+    void const * boolexpr_one(void);
+
+    void const * boolexpr_not(void const *);
+    void const * boolexpr_or(uint32_t, void const **);
+    void const * boolexpr_and(uint32_t, void const **);
+    void const * boolexpr_xor(uint32_t, void const **);
+    void const * boolexpr_eq(uint32_t, void const **);
+    void const * boolexpr_impl(void const *, void const *);
+    void const * boolexpr_ite(void const *, void const *, void const *);
+
+    uint32_t boolexpr_BoolExpr_kind(void const *);
+    char const * boolexpr_BoolExpr_to_string(void const *);
+    uint32_t boolexpr_BoolExpr_depth(void const *);
+}
+
+
+#endif // BOOLEXPR_H
