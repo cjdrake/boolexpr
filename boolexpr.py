@@ -21,33 +21,33 @@ class Context:
     A context for new Boolean variables
     """
     def __init__(self):
-        self._c_ctx = lib.boolexpr_Context()
+        self._cdata = lib.boolexpr_Context()
 
     @property
-    def c_ctx(self):
-        return self._c_ctx
+    def cdata(self):
+        return self._cdata
 
     def get_var(self, name):
-        c_bx = lib.boolexpr_Context_get_var(self._c_ctx, name.encode('ascii'))
-        return _bx(c_bx)
+        cdata = lib.boolexpr_Context_get_var(self._cdata, name.encode('ascii'))
+        return _bx(cdata)
 
 
 class BoolExpr:
     """
     Base class for Boolean expressions
     """
-    def __init__(self, c_bx):
-        self._c_bx = c_bx
+    def __init__(self, cdata):
+        self._cdata = cdata
 
     @property
-    def c_bx(self):
-        return self._c_bx
+    def cdata(self):
+        return self._cdata
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        b = ffi.string(lib.boolexpr_BoolExpr_to_string(self._c_bx))
+        b = ffi.string(lib.boolexpr_BoolExpr_to_string(self._cdata))
         return b.decode('utf-8')
 
     def __invert__(self):
@@ -73,11 +73,49 @@ class BoolExpr:
 
     @property
     def kind(self):
-        return lib.boolexpr_BoolExpr_kind(self._c_bx)
+        return lib.boolexpr_BoolExpr_kind(self._cdata)
 
-    @property
     def depth(self):
-        return lib.boolexpr_BoolExpr_depth(self._c_bx)
+        return lib.boolexpr_BoolExpr_depth(self._cdata)
+
+    def size(self):
+        return lib.boolexpr_BoolExpr_size(self._cdata)
+
+    def atom_count(self):
+        return lib.boolexpr_BoolExpr_atom_count(self._cdata)
+
+    def op_count(self):
+        return lib.boolexpr_BoolExpr_op_count(self._cdata)
+
+    def is_cnf(self):
+        return bool(lib.boolexpr_BoolExpr_is_cnf(self._cdata))
+
+    def is_dnf(self):
+        return bool(lib.boolexpr_BoolExpr_is_dnf(self._cdata))
+
+    def pushdown_not(self):
+        return _bx(lib.boolexpr_BoolExpr_pushdown_not(self._cdata))
+
+    def simplify(self):
+        return _bx(lib.boolexpr_BoolExpr_simplify(self._cdata))
+
+    def to_binop(self):
+        return _bx(lib.boolexpr_BoolExpr_to_binop(self._cdata))
+
+    def to_latop(self):
+        return _bx(lib.boolexpr_BoolExpr_to_latop(self._cdata))
+
+    def to_cnf(self):
+        return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))
+
+    def to_dnf(self):
+        return _bx(lib.boolexpr_BoolExpr_to_dnf(self._cdata))
+
+    def to_nnf(self):
+        return _bx(lib.boolexpr_BoolExpr_to_nnf(self._cdata))
+
+    def equiv(self, other):
+        return bool(lib.boolexpr_BoolExpr_equiv(self._cdata, other.cdata))
 
 
 class Atom(BoolExpr): pass
@@ -142,7 +180,7 @@ def _convert_args(args):
         elif args == True:
             _args[i] = lib.boolexpr_one()
         elif isinstance(arg, BoolExpr):
-            _args[i] = arg.c_bx
+            _args[i] = arg.cdata
         else:
             raise TypeError("Expected False, True, 0, 1, or BoolExpr")
     return n, _args
@@ -150,19 +188,35 @@ def _convert_args(args):
 
 def not_(arg):
     n, args = _convert_args((arg, ))
-    return _bx(lib.boolexpr_not(arg.c_bx))
+    return _bx(lib.boolexpr_not(arg.cdata))
+
+def nor(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_nor(n, args))
 
 def or_(*args):
     n, args = _convert_args(args)
     return _bx(lib.boolexpr_or(n, args))
 
+def nand(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_nand(n, args))
+
 def and_(*args):
     n, args = _convert_args(args)
     return _bx(lib.boolexpr_and(n, args))
 
+def xnor_(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_xnor(n, args))
+
 def xor_(*args):
     n, args = _convert_args(args)
     return _bx(lib.boolexpr_xor(n, args))
+
+def neq(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_neq(n, args))
 
 def eq(*args):
     n, args = _convert_args(args)

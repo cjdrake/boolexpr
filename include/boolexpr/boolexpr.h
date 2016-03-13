@@ -695,9 +695,13 @@ extern "C"
     void const * boolexpr_one(void);
 
     void const * boolexpr_not(void const *);
+    void const * boolexpr_nor(uint32_t, void const **);
     void const * boolexpr_or(uint32_t, void const **);
+    void const * boolexpr_nand(uint32_t, void const **);
     void const * boolexpr_and(uint32_t, void const **);
+    void const * boolexpr_xnor(uint32_t, void const **);
     void const * boolexpr_xor(uint32_t, void const **);
+    void const * boolexpr_neq(uint32_t, void const **);
     void const * boolexpr_eq(uint32_t, void const **);
     void const * boolexpr_impl(void const *, void const *);
     void const * boolexpr_ite(void const *, void const *, void const *);
@@ -705,6 +709,19 @@ extern "C"
     uint32_t boolexpr_BoolExpr_kind(void const *);
     char const * boolexpr_BoolExpr_to_string(void const *);
     uint32_t boolexpr_BoolExpr_depth(void const *);
+    uint32_t boolexpr_BoolExpr_size(void const *);
+    uint32_t boolexpr_BoolExpr_atom_count(void const *);
+    uint32_t boolexpr_BoolExpr_op_count(void const *);
+    bool boolexpr_BoolExpr_is_cnf(void const *);
+    bool boolexpr_BoolExpr_is_dnf(void const *);
+    void const * boolexpr_BoolExpr_pushdown_not(void const *);
+    void const * boolexpr_BoolExpr_simplify(void const *);
+    void const * boolexpr_BoolExpr_to_binop(void const *);
+    void const * boolexpr_BoolExpr_to_latop(void const *);
+    void const * boolexpr_BoolExpr_to_cnf(void const *);
+    void const * boolexpr_BoolExpr_to_dnf(void const *);
+    void const * boolexpr_BoolExpr_to_nnf(void const *);
+    bool boolexpr_BoolExpr_equiv(void const *, void const *);
 }
 
 
