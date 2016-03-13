@@ -27,4 +27,4 @@ install:
     - popd
 
 script:
-    - if [[ $CC == "gcc" ]]; then make do_covall; else make test; fi
+    - make test
