@@ -1,0 +1,6 @@
+include VERSION
+include README.md
+include boolexpr_build.py
+recursive-include include *.h
+recursive-include src *.h *.cc
+recursive-include third_party/cryptominisat/include *.h

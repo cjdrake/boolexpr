@@ -1,4 +1,6 @@
 build
+dist
 *.a
 *.o
 *.so
+*.egg-info
