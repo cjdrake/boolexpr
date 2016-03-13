@@ -47,7 +47,6 @@ SOURCES = glob(join("src", "*.cc"))
 
 INCLUDE_DIRS = [
     "include",
-    "src",
     join(CMSAT, "include"),
 ]
 
@@ -55,7 +54,9 @@ LIBRARY_DIRS = [
     join(CMSAT, "lib"),
 ]
 
-LIBRARIES = ["cryptominisat4"]
+LIBRARIES = [
+    "cryptominisat4"
+]
 
 ffi = cffi.FFI()
 
