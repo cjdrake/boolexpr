@@ -10,6 +10,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   relnotes.rst
+
 Indices and Tables
 ==================
 
