@@ -37,7 +37,7 @@ setup(
     version=VERSION,
     author="Chris Drake",
     author_email="cjdrake@gmail.com",
-    url="http://boolexpr.org",
+    url="http://www.boolexpr.org",
     description="Boolean Expressions",
     long_description=README,
     classifiers=CLASSIFIERS,
