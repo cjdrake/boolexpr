@@ -35,7 +35,7 @@ To build `CryptoMiniSat <https://github.com/msoos/cryptominisat>`_::
 
 To build `Google Test <https://github.com/google/googletest>`_::
 
-    pushd third_party/googletest
+    cd third_party/googletest
     cmake .
     make
 

@@ -18,7 +18,7 @@ from _boolexpr import ffi, lib
 
 class Context:
     """
-    A context for new Boolean variables
+    A context for Boolean variables
     """
     def __init__(self):
         self._cdata = lib.boolexpr_Context()
