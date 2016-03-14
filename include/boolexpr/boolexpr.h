@@ -694,7 +694,8 @@ std::ostream& operator<<(std::ostream&, bx_t const &);
 // C Foreign Function Interface (CFFI)
 extern "C"
 {
-    void * boolexpr_Context(void);
+    void * boolexpr_Context_new(void);
+    void boolexpr_Context_del(void *);
     void const * boolexpr_Context_get_var(void *, char const *);
 
     void const * boolexpr_zero(void);
@@ -722,6 +723,7 @@ extern "C"
     void const * boolexpr_impl_s(void const *, void const *);
     void const * boolexpr_ite_s(void const *, void const *, void const *);
 
+    void boolexpr_BoolExpr_del(void const *);
     uint32_t boolexpr_BoolExpr_kind(void const *);
     char const * boolexpr_BoolExpr_to_string(void const *);
     uint32_t boolexpr_BoolExpr_depth(void const *);

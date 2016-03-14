@@ -44,7 +44,7 @@ TEST(CFFI, Basic)
     EXPECT_TRUE(strcmp(boolexpr_BoolExpr_to_string(zero), "0") == 0);
     EXPECT_TRUE(strcmp(boolexpr_BoolExpr_to_string(one), "1") == 0);
 
-    auto ctx = boolexpr_Context();
+    auto ctx = boolexpr_Context_new();
 
     auto a = boolexpr_Context_get_var(ctx, "a");
     auto b = boolexpr_Context_get_var(ctx, "b");

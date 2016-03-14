@@ -36,9 +36,17 @@ struct BoolExprProxy {
 
 
 void *
-boolexpr_Context()
+boolexpr_Context_new()
 {
     return new Context();
+}
+
+
+void
+boolexpr_Context_del(void * ctx)
+{
+    auto _ctx = reinterpret_cast<Context *>(ctx);
+    delete _ctx;
 }
 
 
@@ -178,6 +186,14 @@ boolexpr_ite_s(void const * s, void const * d1, void const * d0)
     auto _d1 = reinterpret_cast<BoolExprProxy const *>(d1)->bx;
     auto _d0 = reinterpret_cast<BoolExprProxy const *>(d0)->bx;
     return new BoolExprProxy(ite_s(_s, _d1, _d0));
+}
+
+
+void
+boolexpr_BoolExpr_del(void const *bxp)
+{
+    auto _bxp = reinterpret_cast<BoolExprProxy const *>(bxp);
+    delete _bxp;
 }
 
 

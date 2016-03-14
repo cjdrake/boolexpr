@@ -21,7 +21,10 @@ class Context:
     A context for Boolean variables
     """
     def __init__(self):
-        self._cdata = lib.boolexpr_Context()
+        self._cdata = lib.boolexpr_Context_new()
+
+    def __del__(self):
+        lib.boolexpr_Context_del(self._cdata)
 
     @property
     def cdata(self):
@@ -38,6 +41,9 @@ class BoolExpr:
     """
     def __init__(self, cdata):
         self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_BoolExpr_del(self._cdata)
 
     @property
     def cdata(self):
