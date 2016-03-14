@@ -20,8 +20,62 @@ from glob import glob
 import cffi
 
 
+# Add file from boolexpr
+INCLUDE_DIRS = ["include"]
+SOURCES = glob(join("src", "*.cc"))
+
+
+# Add files from CryptoMiniSat 4.5.3
 CMSAT = join("third_party", "cryptominisat")
 
+INCLUDE_DIRS += [
+    join(CMSAT),
+    join(CMSAT, "include"),
+]
+
+SOURCES += [
+    join(CMSAT, "cmsat4-src", "GitSHA1.cpp"),
+    join(CMSAT, "cmsat4-src", "sql_tablestructure.cpp"),
+    join(CMSAT, "src", "bva.cpp"),
+    join(CMSAT, "src", "calcdefpolars.cpp"),
+    join(CMSAT, "src", "clauseallocator.cpp"),
+    join(CMSAT, "src", "clausecleaner.cpp"),
+    join(CMSAT, "src", "clausedumper.cpp"),
+    join(CMSAT, "src", "clauseusagestats.cpp"),
+    join(CMSAT, "src", "cleaningstats.cpp"),
+    join(CMSAT, "src", "cnf.cpp"),
+    join(CMSAT, "src", "compfinder.cpp"),
+    join(CMSAT, "src", "comphandler.cpp"),
+    join(CMSAT, "src", "completedetachreattacher.cpp"),
+    join(CMSAT, "src", "cryptominisat.cpp"),
+    join(CMSAT, "src", "datasync.cpp"),
+    join(CMSAT, "src", "distiller.cpp"),
+    join(CMSAT, "src", "features.cpp"),
+    join(CMSAT, "src", "features_calc.cpp"),
+    join(CMSAT, "src", "features_to_reconf.cpp"),
+    join(CMSAT, "src", "gatefinder.cpp"),
+    join(CMSAT, "src", "hyperengine.cpp"),
+    join(CMSAT, "src", "implcache.cpp"),
+    join(CMSAT, "src", "intree.cpp"),
+    join(CMSAT, "src", "occsimplifier.cpp"),
+    join(CMSAT, "src", "prober.cpp"),
+    join(CMSAT, "src", "propengine.cpp"),
+    join(CMSAT, "src", "reducedb.cpp"),
+    join(CMSAT, "src", "sccfinder.cpp"),
+    join(CMSAT, "src", "searcher.cpp"),
+    join(CMSAT, "src", "solutionextender.cpp"),
+    join(CMSAT, "src", "solver.cpp"),
+    join(CMSAT, "src", "solverconf.cpp"),
+    join(CMSAT, "src", "sqlstats.cpp"),
+    join(CMSAT, "src", "stamp.cpp"),
+    join(CMSAT, "src", "strengthener.cpp"),
+    join(CMSAT, "src", "subsumeimplicit.cpp"),
+    join(CMSAT, "src", "subsumestrengthen.cpp"),
+    join(CMSAT, "src", "varreplacer.cpp"),
+]
+
+
+# C Foreign Function Interface
 
 HEADER = """
 
@@ -62,34 +116,16 @@ _Bool boolexpr_BoolExpr_equiv(void const *, void const *);
 
 """
 
-SOURCES = glob(join("src", "*.cc"))
-
-INCLUDE_DIRS = [
-    "include",
-    join(CMSAT, "include"),
-]
-
-LIBRARY_DIRS = [
-    join(CMSAT, "lib"),
-]
-
-LIBRARIES = [
-    "cryptominisat4"
-]
-
 ffi = cffi.FFI()
 
 ffi.set_source(
     "_boolexpr",
     HEADER,
     language="c++",
-    sources=SOURCES,
     define_macros=[],
     extra_compile_args=["-std=c++11"],
-    extra_link_args=[],
     include_dirs=INCLUDE_DIRS,
-    library_dirs=LIBRARY_DIRS,
-    libraries=LIBRARIES,
+    sources=SOURCES,
 )
 
 ffi.cdef(HEADER)

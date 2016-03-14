@@ -21,7 +21,7 @@ from setuptools import setup
 with open("VERSION") as fin:
     VERSION = fin.read().strip()
 
-with open("README.md") as fin:
+with open("README.rst") as fin:
     README = fin.read()
 
 CLASSIFIERS = [

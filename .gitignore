@@ -3,5 +3,6 @@ dist
 *.a
 *.o
 *.so
+.eggs
 *.egg-info
 *.py[co]
