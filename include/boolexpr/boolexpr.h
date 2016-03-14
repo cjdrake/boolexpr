@@ -98,9 +98,14 @@ using soln_t = std::pair<bool, boost::optional<point_t>>;
 
 
 class BoolExpr : public std::enable_shared_from_this<BoolExpr> {
+
+    friend bx_t operator~(bx_t const &);
+    friend std::ostream& operator<<(std::ostream&, bx_t const &);
+
 protected:
     virtual bx_t _invert() const = 0;
     virtual std::ostream& _op_lsh(std::ostream&) const = 0;
+
 
 public:
     enum Kind {
@@ -127,9 +132,6 @@ public:
     Kind const kind;
 
     BoolExpr(Kind kind);
-
-    friend bx_t operator~(bx_t const &);
-    friend std::ostream& operator<<(std::ostream&, bx_t const &);
 
     string to_string() const;
 
@@ -562,8 +564,8 @@ public:
 };
 
 
-class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t> {
-private:
+class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
+{
     vector<bx_t> stack;
 
 protected:
@@ -583,20 +585,24 @@ public:
 };
 
 
-class Context {
-private:
+class Context
+{
+    friend class Complement;
+    friend class Variable;
+
     id_t id;
 
     unordered_map<string, var_t> vars;
     unordered_map<id_t, string> id2name;
     unordered_map<id_t, lit_t> id2lit;
 
+    string get_name(id_t id) const;
+    lit_t get_lit(id_t id) const;
+
 public:
     Context();
 
     var_t get_var(string name);
-    string get_name(id_t id) const;
-    lit_t get_lit(id_t id) const;
 };
 
 
@@ -705,6 +711,16 @@ extern "C"
     void const * boolexpr_eq(uint32_t, void const **);
     void const * boolexpr_impl(void const *, void const *);
     void const * boolexpr_ite(void const *, void const *, void const *);
+    void const * boolexpr_nor_s(uint32_t, void const **);
+    void const * boolexpr_or_s(uint32_t, void const **);
+    void const * boolexpr_nand_s(uint32_t, void const **);
+    void const * boolexpr_and_s(uint32_t, void const **);
+    void const * boolexpr_xnor_s(uint32_t, void const **);
+    void const * boolexpr_xor_s(uint32_t, void const **);
+    void const * boolexpr_neq_s(uint32_t, void const **);
+    void const * boolexpr_eq_s(uint32_t, void const **);
+    void const * boolexpr_impl_s(void const *, void const *);
+    void const * boolexpr_ite_s(void const *, void const *, void const *);
 
     uint32_t boolexpr_BoolExpr_kind(void const *);
     char const * boolexpr_BoolExpr_to_string(void const *);
@@ -718,6 +734,7 @@ extern "C"
     void const * boolexpr_BoolExpr_simplify(void const *);
     void const * boolexpr_BoolExpr_to_binop(void const *);
     void const * boolexpr_BoolExpr_to_latop(void const *);
+    void const * boolexpr_BoolExpr_tseytin(void const *, void *, char const *);
     void const * boolexpr_BoolExpr_to_cnf(void const *);
     void const * boolexpr_BoolExpr_to_dnf(void const *);
     void const * boolexpr_BoolExpr_to_nnf(void const *);

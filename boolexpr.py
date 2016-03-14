@@ -28,7 +28,7 @@ class Context:
         return self._cdata
 
     def get_var(self, name):
-        cdata = lib.boolexpr_Context_get_var(self._cdata, name.encode('ascii'))
+        cdata = lib.boolexpr_Context_get_var(self._cdata, name.encode("ascii"))
         return _bx(cdata)
 
 
@@ -66,10 +66,10 @@ class BoolExpr:
         return and_(other, self)
 
     def __xor__(self, other):
-        return xor_(self, other)
+        return xor(self, other)
 
     def __rxor__(self, other):
-        return xor_(other, self)
+        return xor(other, self)
 
     @property
     def kind(self):
@@ -104,6 +104,10 @@ class BoolExpr:
 
     def to_latop(self):
         return _bx(lib.boolexpr_BoolExpr_to_latop(self._cdata))
+
+    def tseytin(self, ctx, auxvarname="a"):
+        name = auxvarname.encode("ascii")
+        return _bx(lib.boolexpr_BoolExpr_tseytin(self._cdata, ctx.cdata, name))
 
     def to_cnf(self):
         return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))
@@ -206,11 +210,11 @@ def and_(*args):
     n, args = _convert_args(args)
     return _bx(lib.boolexpr_and(n, args))
 
-def xnor_(*args):
+def xnor(*args):
     n, args = _convert_args(args)
     return _bx(lib.boolexpr_xnor(n, args))
 
-def xor_(*args):
+def xor(*args):
     n, args = _convert_args(args)
     return _bx(lib.boolexpr_xor(n, args))
 
@@ -229,3 +233,43 @@ def impl(p, q):
 def ite(s, d1, d0):
     _, args = _convert_args((s, d1, d0))
     return _bx(lib.boolexpr_ite(args[0], args[1], args[2]))
+
+def nor_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_nor_s(n, args))
+
+def or_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_or_s(n, args))
+
+def nand_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_nand_s(n, args))
+
+def and_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_and_s(n, args))
+
+def xnor_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_xnor_s(n, args))
+
+def xor_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_xor_s(n, args))
+
+def neq_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_neq_s(n, args))
+
+def eq_s(*args):
+    n, args = _convert_args(args)
+    return _bx(lib.boolexpr_eq_s(n, args))
+
+def impl_s(p, q):
+    _, args = _convert_args((p, q))
+    return _bx(lib.boolexpr_impl_s(args[0], args[1]))
+
+def ite_s(s, d1, d0):
+    _, args = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_ite_s(args[0], args[1], args[2]))
