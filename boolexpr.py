@@ -52,9 +52,14 @@ class BoolExpr:
     def __repr__(self):
         return self.__str__()
 
+    def __bytes__(self):
+        cdata = lib.boolexpr_BoolExpr_to_string(self._cdata)
+        b = ffi.string(cdata)
+        lib.boolexpr_string_del(cdata);
+        return b
+
     def __str__(self):
-        b = ffi.string(lib.boolexpr_BoolExpr_to_string(self._cdata))
-        return b.decode('utf-8')
+        return self.__bytes__().decode('utf-8')
 
     def __invert__(self):
         return not_(self)

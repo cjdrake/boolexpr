@@ -42,8 +42,8 @@ setup(
     long_description=README,
     classifiers=CLASSIFIERS,
     license="Apache 2.0",
-    install_requires=["cffi>=1.0.0"],
-    setup_requires=["cffi>=1.0.0"],
+    install_requires=["cffi>=1.5.0"],
+    setup_requires=["cffi>=1.5.0"],
     cffi_modules=["boolexpr_build.py:ffi"],
     py_modules=["boolexpr"],
 )

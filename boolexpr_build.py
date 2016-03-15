@@ -111,6 +111,7 @@ void const * boolexpr_ite_s(void const *, void const *, void const *);
 void boolexpr_BoolExpr_del(void const *);
 uint32_t boolexpr_BoolExpr_kind(void const *);
 char const * boolexpr_BoolExpr_to_string(void const *);
+void boolexpr_string_del(char const *);
 uint32_t boolexpr_BoolExpr_depth(void const *);
 uint32_t boolexpr_BoolExpr_size(void const *);
 uint32_t boolexpr_BoolExpr_atom_count(void const *);

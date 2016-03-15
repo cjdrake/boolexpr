@@ -210,9 +210,16 @@ boolexpr_BoolExpr_to_string(void const * bxp)
 {
     auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
     auto str = bx->to_string();
-    char * cstr = new char [str.length() + 1];
+    char * cstr = new char [str.length()+1];
     std::strcpy(cstr, str.c_str());
     return cstr;
+}
+
+
+void
+boolexpr_string_del(char const * b)
+{
+    delete [] b;
 }
 
 
