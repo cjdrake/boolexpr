@@ -29,10 +29,7 @@ using namespace boolexpr;
 
 LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
                              bx_t const & identity, bx_t const & dominator)
-    : infimum {true}
-    , is_log {false}
-    , supremum {false}
-    , is_ill {false}
+    : state { State::infimum }
     , kind {kind}
     , identity {identity}
     , dominator {dominator}
@@ -44,67 +41,91 @@ LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & k
 void
 LatticeArgSet::insert(bx_t const & arg)
 {
-    // x + 0 <=> x
-    if (ARE_SAME(arg, identity)) return;
+    switch (state) {
 
-    // ? + x <=> ?
-    if (is_ill) return;
+        case State::infimum:
+            if (IS_ILL(arg)) {
+                state = State::isill;
+            }
+            else if (ARE_SAME(arg, dominator) || IS_LIT(arg) && (args.find(~arg) != args.end())) {
+                state = State::supremum;
+            }
+            else if (IS_LOG(arg)) {
+                state = State::islog;
+            }
+            else if (arg->kind == kind) {
+                auto op = std::static_pointer_cast<Operator const>(arg);
+                for (bx_t const & _arg : op->args)
+                    insert(_arg);
+            }
+            else if (!ARE_SAME(arg, identity)) {
+                args.insert(arg);
+                state = State::basic;
+            }
+            break;
 
-    // x + ? <=> ?
-    if (IS_ILL(arg)) {
-        infimum = false;
-        is_log = false;
-        supremum = false;
-        is_ill = true;
-        args.clear();
-        return;
+        case State::basic:
+            if (IS_ILL(arg)) {
+                state = State::isill;
+            }
+            else if (ARE_SAME(arg, dominator) || IS_LIT(arg) && (args.find(~arg) != args.end())) {
+                state = State::supremum;
+            }
+            else if (IS_LOG(arg)) {
+                state = State::islog;
+            }
+            else if (arg->kind == kind) {
+                auto op = std::static_pointer_cast<Operator const>(arg);
+                for (bx_t const & _arg : op->args)
+                    insert(_arg);
+            }
+            else if (!ARE_SAME(arg, identity)) {
+                args.insert(arg);
+            }
+            break;
+
+        case State::islog:
+            if (IS_ILL(arg)) {
+                state = State::isill;
+            }
+            else if (ARE_SAME(arg, dominator) || IS_LIT(arg) && (args.find(~arg) != args.end())) {
+                state = State::supremum;
+            }
+            else if (arg->kind == kind) {
+                auto op = std::static_pointer_cast<Operator const>(arg);
+                for (bx_t const & _arg : op->args)
+                    insert(_arg);
+            }
+            else if (!ARE_SAME(arg, identity)) {
+                args.insert(arg);
+            }
+            break;
+
+        case State::supremum:
+            if (IS_ILL(arg)) {
+                state = State::isill;
+            }
+            else if (arg->kind == kind) {
+                auto op = std::static_pointer_cast<Operator const>(arg);
+                for (bx_t const & _arg : op->args)
+                    insert(_arg);
+            }
+            break;
+
+        case State::isill:
+            break;
     }
-
-    // 1 + a <=> 1
-    if (supremum) return;
-
-    // a + 1 <=> 1 ; a + ~a <=> 1
-    if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
-        infimum = false;
-        is_log = false;
-        supremum = true;
-        args.clear();
-        return;
-    }
-
-    // X + a <=> X
-    if (is_log) return;
-
-    // a + X <=> X
-    if (IS_LOG(arg)) {
-        infimum = false;
-        is_log = true;
-        args.clear();
-        return;
-    }
-
-    // x + (y + z) <=> x + y + z
-    if (arg->kind == kind) {
-        auto op = std::static_pointer_cast<Operator const>(arg);
-        for (bx_t const & _arg : op->args) insert(_arg);
-        return;
-    }
-
-    // x + x <=> x
-    infimum = false;
-    args.insert(arg);
 }
 
 
 bx_t
 LatticeArgSet::reduce() const
 {
-    if (is_ill) return illogical();
-    if (infimum) return identity;
-    if (is_log) return logical();
-    if (supremum) return dominator;
+    if (state == State::infimum) return identity;
+    if (state == State::islog) return logical();
+    if (state == State::supremum) return dominator;
+    if (state == State::isill) return illogical();
 
-    if (args.size() == 0) return identity;
     if (args.size() == 1) return *args.begin();
 
     return to_op();

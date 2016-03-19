@@ -404,18 +404,36 @@ TEST_F(SimplifyTest, Unknowns)
     auto y0 = xs[0] | _log;
     EXPECT_EQ(y0->simplify()->to_string(), "X");
 
-    auto y1 = xs[0] | _ill;
-    EXPECT_EQ(y1->simplify()->to_string(), "?");
+    auto y1 = _log | xs[0];
+    EXPECT_EQ(y1->simplify()->to_string(), "X");
 
     auto y2 = xs[0] | _log | _one;
     EXPECT_EQ(y2->simplify()->to_string(), "1");
 
-    auto y3 = ((xs[0] | xs[1]) & (_log | xs[3])) | ((_ill | xs[5]) & (xs[6] | xs[7]));
-    EXPECT_EQ(y3->simplify()->to_string(), "?");
+    auto y3 = xs[0] | _one | _log;
+    EXPECT_EQ(y3->simplify()->to_string(), "1");
 
-    auto y4 = ((xs[0] | xs[1]) & (_log | xs[3])) | ((_one | xs[5]) & (_one | xs[7]));
+    auto y4 = _log | xs[0] | _one;
     EXPECT_EQ(y4->simplify()->to_string(), "1");
 
-    auto y5 = ((xs[0] | xs[1]) & (_log | xs[3])) | ((xs[4] | xs[5]) & (xs[6] | xs[7]));
-    EXPECT_EQ(y5->simplify()->to_string(), "X");
+    auto y5 = _log | _one | xs[0];
+    EXPECT_EQ(y5->simplify()->to_string(), "1");
+
+    auto y6 = _one | xs[0] | _log;
+    EXPECT_EQ(y6->simplify()->to_string(), "1");
+
+    auto y7 = _one | _log | xs[0];
+    EXPECT_EQ(y7->simplify()->to_string(), "1");
+
+    auto y8 = xs[0] | _log | _one | _ill;
+    EXPECT_EQ(y8->simplify()->to_string(), "?");
+
+    auto y9 = _log | xs[0] | _one | _ill;
+    EXPECT_EQ(y9->simplify()->to_string(), "?");
+
+    auto y10 = _log | _one | xs[0] | _ill;
+    EXPECT_EQ(y10->simplify()->to_string(), "?");
+
+    auto y11 = _log | _one | _ill | xs[0];
+    EXPECT_EQ(y11->simplify()->to_string(), "?");
 }

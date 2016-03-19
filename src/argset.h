@@ -27,12 +27,12 @@ public:
 };
 
 
-class LatticeArgSet : public ArgSet {
+class LatticeArgSet : public ArgSet
+{
 protected:
-    bool infimum;
-    bool is_log;
-    bool supremum;
-    bool is_ill;
+    enum class State { infimum, basic, islog, supremum, isill };
+    State state;
+
     BoolExpr::Kind kind;
     bx_t identity;
     bx_t dominator;
