@@ -397,3 +397,25 @@ TEST_F(SimplifyTest, IfThenElseTruthTable)
 
     EXPECT_EQ(ite_s(xs[0], xs[1], xs[2])->to_string(), "IfThenElse(x_0, x_1, x_2)");
 }
+
+
+TEST_F(SimplifyTest, Unknowns)
+{
+    auto y0 = xs[0] | _log;
+    EXPECT_EQ(y0->simplify()->to_string(), "X");
+
+    auto y1 = xs[0] | _ill;
+    EXPECT_EQ(y1->simplify()->to_string(), "?");
+
+    auto y2 = xs[0] | _log | _one;
+    EXPECT_EQ(y2->simplify()->to_string(), "1");
+
+    auto y3 = ((xs[0] | xs[1]) & (_log | xs[3])) | ((_ill | xs[5]) & (xs[6] | xs[7]));
+    EXPECT_EQ(y3->simplify()->to_string(), "?");
+
+    auto y4 = ((xs[0] | xs[1]) & (_log | xs[3])) | ((_one | xs[5]) & (_one | xs[7]));
+    EXPECT_EQ(y4->simplify()->to_string(), "1");
+
+    auto y5 = ((xs[0] | xs[1]) & (_log | xs[3])) | ((xs[4] | xs[5]) & (xs[6] | xs[7]));
+    EXPECT_EQ(y5->simplify()->to_string(), "X");
+}

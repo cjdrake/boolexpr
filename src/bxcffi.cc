@@ -70,6 +70,14 @@ void const *
 boolexpr_one()
 { return new BoolExprProxy(one()); }
 
+void const *
+boolexpr_logical()
+{ return new BoolExprProxy(logical()); }
+
+void const *
+boolexpr_illogical()
+{ return new BoolExprProxy(illogical()); }
+
 
 void const *
 boolexpr_not(void const * bxp)

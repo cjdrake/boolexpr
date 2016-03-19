@@ -30,7 +30,9 @@ using namespace boolexpr;
 LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
                              bx_t const & identity, bx_t const & dominator)
     : infimum {true}
+    , is_log {false}
     , supremum {false}
+    , is_ill {false}
     , kind {kind}
     , identity {identity}
     , dominator {dominator}
@@ -42,16 +44,41 @@ LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & k
 void
 LatticeArgSet::insert(bx_t const & arg)
 {
-    // 1 + x <=> 1 ; x + 0 <=> x
-    if (supremum || ARE_SAME(arg, identity))
+    // x + 0 <=> x
+    if (ARE_SAME(arg, identity)) return;
+
+    // ? + x <=> ?
+    if (is_ill) return;
+
+    // x + ? <=> ?
+    if (IS_ILL(arg)) {
+        infimum = false;
+        is_log = false;
+        supremum = false;
+        is_ill = true;
+        args.clear();
         return;
+    }
 
-    // FIXME(cjdrake): Implement unknowns
+    // 1 + a <=> 1
+    if (supremum) return;
 
-    // x + 1 <=> 1 ; x + ~x <=> 1
+    // a + 1 <=> 1 ; a + ~a <=> 1
     if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
         infimum = false;
+        is_log = false;
         supremum = true;
+        args.clear();
+        return;
+    }
+
+    // X + a <=> X
+    if (is_log) return;
+
+    // a + X <=> X
+    if (IS_LOG(arg)) {
+        infimum = false;
+        is_log = true;
         args.clear();
         return;
     }
@@ -72,7 +99,9 @@ LatticeArgSet::insert(bx_t const & arg)
 bx_t
 LatticeArgSet::reduce() const
 {
+    if (is_ill) return illogical();
     if (infimum) return identity;
+    if (is_log) return logical();
     if (supremum) return dominator;
 
     if (args.size() == 0) return identity;
@@ -108,6 +137,8 @@ AndArgSet::to_op() const
 
 XorArgSet::XorArgSet(vector<bx_t> const & args)
     : parity {true}
+    , is_log {false}
+    , is_ill {false}
 {
     for (bx_t const & arg : args) insert(arg->simplify());
 }

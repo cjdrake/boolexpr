@@ -192,8 +192,12 @@ def _convert_args(args):
     for i, arg in enumerate(args):
         if arg == False:
             _args[i] = lib.boolexpr_zero()
-        elif args == True:
+        elif arg == True:
             _args[i] = lib.boolexpr_one()
+        elif arg == "x" or arg == "X":
+            _args[i] = lib.boolexpr_logical()
+        elif arg == "?":
+            _args[i] = lib.boolexpr_illogical()
         elif isinstance(arg, BoolExpr):
             _args[i] = arg.cdata
         else:

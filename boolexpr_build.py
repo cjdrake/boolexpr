@@ -85,6 +85,8 @@ void const * boolexpr_Context_get_var(void *, char const *);
 
 void const * boolexpr_zero(void);
 void const * boolexpr_one(void);
+void const * boolexpr_logical(void);
+void const * boolexpr_illogical(void);
 
 void const * boolexpr_not(void const *);
 void const * boolexpr_nor(uint32_t, void const **);

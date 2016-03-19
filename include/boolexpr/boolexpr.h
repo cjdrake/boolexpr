@@ -23,6 +23,8 @@
 // Kind checks
 #define IS_ZERO(expr)  ((expr)->kind == boolexpr::BoolExpr::ZERO)
 #define IS_ONE(expr)   ((expr)->kind == boolexpr::BoolExpr::ONE)
+#define IS_LOG(expr)   ((expr)->kind == boolexpr::BoolExpr::LOG)
+#define IS_ILL(expr)   ((expr)->kind == boolexpr::BoolExpr::ILL)
 #define IS_COMP(expr)  ((expr)->kind == boolexpr::BoolExpr::COMP)
 #define IS_VAR(expr)   ((expr)->kind == boolexpr::BoolExpr::VAR)
 #define IS_NOR(expr)   ((expr)->kind == boolexpr::BoolExpr::NOR)
@@ -700,6 +702,8 @@ extern "C"
 
     void const * boolexpr_zero(void);
     void const * boolexpr_one(void);
+    void const * boolexpr_logical(void);
+    void const * boolexpr_illogical(void);
 
     void const * boolexpr_not(void const *);
     void const * boolexpr_nor(uint32_t, void const **);

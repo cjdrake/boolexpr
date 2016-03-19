@@ -30,7 +30,9 @@ public:
 class LatticeArgSet : public ArgSet {
 protected:
     bool infimum;
+    bool is_log;
     bool supremum;
+    bool is_ill;
     BoolExpr::Kind kind;
     bx_t identity;
     bx_t dominator;
@@ -65,6 +67,8 @@ public:
 class XorArgSet : public ArgSet {
 private:
     bool parity;
+    bool is_log;
+    bool is_ill;
 
 protected:
     void insert(bx_t const &);
