@@ -42,7 +42,10 @@ cover: do_genhtml
 # Source Code
 #===============================================================================
 
-BX_HDRS := include/boolexpr/boolexpr.h
+BX_HDRS := \
+    include/boolexpr/boolexpr.h \
+    src/argset.h \
+
 BX_SRCS := \
     src/argset.cc \
     src/binop.cc \
