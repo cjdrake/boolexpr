@@ -4,6 +4,13 @@
   Release Notes
 *****************
 
+Release 0.2
+===========
+
+This release fixes a couple memory leak issues with ``0.1``,
+and introduces the capability to simplify a Boolean expression with an
+"unknown" input value.
+
 Release 0.1
 ===========
 
