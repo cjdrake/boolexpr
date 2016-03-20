@@ -80,8 +80,10 @@ public:
 };
 
 
-class EqArgSet : public ArgSet {
-private:
+class EqArgSet : public ArgSet
+{
+    enum class State { basic, islog, isill };
+    State state;
     bool has_zero;
     bool has_one;
 

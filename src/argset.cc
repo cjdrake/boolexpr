@@ -248,7 +248,8 @@ XorArgSet::reduce() const
 
 
 EqArgSet::EqArgSet(vector<bx_t> const & args)
-    : has_zero {false}
+    : state { State::basic }
+    , has_zero {false}
     , has_one {false}
 {
     for (bx_t const & arg : args) insert(arg->simplify());
@@ -258,33 +259,43 @@ EqArgSet::EqArgSet(vector<bx_t> const & args)
 void
 EqArgSet::insert(bx_t const & arg)
 {
-    if (has_zero && has_one)
-        return;
+    switch (state) {
 
-    // eq(0, x) <=> 0
-    if (IS_ZERO(arg)) {
-        has_zero = true;
-        if (has_one) args.clear();
-        return;
+        case State::basic:
+            if (IS_ILL(arg)) {
+                state = State::isill;
+            }
+            else if (IS_LOG(arg)) {
+                state = State::islog;
+            }
+            else if (IS_ZERO(arg)) {
+                has_zero = true;
+                if (has_one)
+                    args.clear();
+            }
+            else if (IS_ONE(arg)) {
+                has_one = true;
+                if (has_zero)
+                    args.clear();
+            }
+            else if (IS_LIT(arg) && (args.find(~arg) != args.end())) {
+                has_zero = true;
+                has_one = true;
+                args.clear();
+            }
+            else {
+                args.insert(arg);
+            }
+            break;
+
+        case State::islog:
+            if (IS_ILL(arg))
+                state = State::isill;
+            break;
+
+        case State::isill:
+            break;
     }
-
-    // eq(1, x) <=> 1
-    if (IS_ONE(arg)) {
-        has_one = true;
-        if (has_zero) args.clear();
-        return;
-    }
-
-    // eq(~x, x) <=> 0
-    if (IS_LIT(arg) && (args.find(~arg) != args.end())) {
-        has_zero = true;
-        has_one = true;
-        args.clear();
-        return;
-    }
-
-    // eq(x, x, y) <=> eq(x, y)
-    args.insert(arg);
 }
 
 
@@ -298,6 +309,11 @@ EqArgSet::to_op() const
 bx_t
 EqArgSet::reduce() const
 {
+    if (state == State::islog)
+        return logical();
+    if (state == State::isill)
+        return illogical();
+
     // eq(0, 1) <=> 0
     if (has_zero && has_one)
         return zero();
