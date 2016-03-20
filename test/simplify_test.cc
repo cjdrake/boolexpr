@@ -399,7 +399,7 @@ TEST_F(SimplifyTest, IfThenElseTruthTable)
 }
 
 
-TEST_F(SimplifyTest, Unknowns)
+TEST_F(SimplifyTest, LatticeUnknowns)
 {
     auto y0 = xs[0] | _log;
     EXPECT_EQ(y0->simplify()->to_string(), "X");
@@ -436,4 +436,17 @@ TEST_F(SimplifyTest, Unknowns)
 
     auto y11 = _log | _one | _ill | xs[0];
     EXPECT_EQ(y11->simplify()->to_string(), "?");
+}
+
+
+TEST_F(SimplifyTest, ImpliesUnknowns)
+{
+    EXPECT_EQ(impl_s(xs[0], _log)->to_string(), "X");
+    EXPECT_EQ(impl_s(_log, xs[0])->to_string(), "X");
+
+    EXPECT_EQ(impl_s(xs[0], _ill)->to_string(), "?");
+    EXPECT_EQ(impl_s(_ill, xs[0])->to_string(), "?");
+
+    EXPECT_EQ(impl_s(_log, _ill)->to_string(), "?");
+    EXPECT_EQ(impl_s(_ill, _log)->to_string(), "?");
 }

@@ -105,20 +105,32 @@ Implies::simplify() const
     auto p = op->args[0]->simplify();
     auto q = op->args[1]->simplify();
 
+    if (IS_ILL(p) || IS_ILL(q))
+        return illogical();
+
     // 0 => q <=> p => 1 <=> 1
-    if (IS_ZERO(p) || IS_ONE(q)) return one();
+    if (IS_ZERO(p) || IS_ONE(q))
+        return one();
 
     // 1 => q <=> q
-    if (IS_ONE(p)) return q;
+    if (IS_ONE(p))
+        return q;
 
     // p => 0 <=> ~p
-    if (IS_ZERO(q)) return ~p;
+    if (IS_ZERO(q))
+        return ~p;
+
+    // X => q <=> p => X <=> X
+    if (IS_LOG(p) || IS_LOG(q))
+        return logical();
 
     // q => q <=> 1
-    if (p == q) return one();
+    if (p == q)
+        return one();
 
     // ~q => q <=> q
-    if (IS_LIT(p) && IS_LIT(q) && (p == ~q)) return q;
+    if (IS_LIT(p) && IS_LIT(q) && (p == ~q))
+        return q;
 
     return std::make_shared<Implies>(true, p, q);
 }
