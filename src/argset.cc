@@ -47,7 +47,7 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || IS_LIT(arg) && (args.find(~arg) != args.end())) {
+            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
                 state = State::supremum;
             }
             else if (IS_LOG(arg)) {
@@ -68,7 +68,7 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || IS_LIT(arg) && (args.find(~arg) != args.end())) {
+            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
                 state = State::supremum;
             }
             else if (IS_LOG(arg)) {
@@ -88,7 +88,7 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || IS_LIT(arg) && (args.find(~arg) != args.end())) {
+            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
                 state = State::supremum;
             }
             else if (arg->kind == kind) {
@@ -121,10 +121,14 @@ LatticeArgSet::insert(bx_t const & arg)
 bx_t
 LatticeArgSet::reduce() const
 {
-    if (state == State::infimum) return identity;
-    if (state == State::islog) return logical();
-    if (state == State::supremum) return dominator;
-    if (state == State::isill) return illogical();
+    if (state == State::infimum)
+        return identity;
+    if (state == State::islog)
+        return logical();
+    if (state == State::supremum)
+        return dominator;
+    if (state == State::isill)
+        return illogical();
 
     if (args.size() == 1) return *args.begin();
 
@@ -157,9 +161,8 @@ AndArgSet::to_op() const
 
 
 XorArgSet::XorArgSet(vector<bx_t> const & args)
-    : parity {true}
-    , is_log {false}
-    , is_ill {false}
+    : state { State::basic }
+    , parity {true}
 {
     for (bx_t const & arg : args) insert(arg->simplify());
 }
@@ -168,46 +171,51 @@ XorArgSet::XorArgSet(vector<bx_t> const & args)
 void
 XorArgSet::insert(bx_t const & arg)
 {
-    if (IS_KNOWN(arg)) {
-        parity ^= static_cast<bool>(arg->kind);
-        return;
+    switch (state) {
+
+        case State::basic:
+            if (IS_ILL(arg)) {
+                state = State::isill;
+            }
+            else if (IS_LOG(arg)) {
+                state = State::islog;
+            }
+            else if (IS_KNOWN(arg)) {
+                parity ^= static_cast<bool>(arg->kind);
+            }
+            // xor(x, y, z, z) <=> xor(x, y) ; xnor(x, y, z, z) <=> xnor(x, y)
+            else if (args.find(arg) != args.end()) {
+                args.erase(arg);
+            }
+            // xor(x, y, z, ~z) <=> xnor(x, y) ; xnor(x, y, z, ~z) <=> xor(x, y)
+            else if (IS_LIT(arg) && args.find(~arg) != args.end()) {
+                args.erase(~arg);
+                parity ^= true;
+            }
+            // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
+            else if (IS_XOR(arg)) {
+                auto op = std::static_pointer_cast<Operator const>(arg);
+                for (bx_t const & _arg : op->args) insert(_arg);
+            }
+            // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
+            else if (IS_XNOR(arg)) {
+                auto op = std::static_pointer_cast<Operator const>(arg);
+                for (bx_t const & _arg : op->args) insert(_arg);
+                parity ^= true;
+            }
+            else {
+                args.insert(arg);
+            }
+            break;
+
+        case State::islog:
+            if (IS_ILL(arg))
+                state = State::isill;
+            break;
+
+        case State::isill:
+            break;
     }
-
-    // FIXME(cjdrake): Implement unknowns
-
-    // xor(x, y, z, z) <=> xor(x, y) ; xnor(x, y, z, z) <=> xnor(x, y)
-    auto search = args.find(arg);
-    if (search != args.end()) {
-        args.erase(search);
-        return;
-    }
-
-    // xor(x, y, z, ~z) <=> xnor(x, y) ; xnor(x, y, z, ~z) <=> xor(x, y)
-    if (IS_LIT(arg)) {
-        auto search = args.find(~arg);
-        if (search != args.end()) {
-            args.erase(search);
-            parity ^= true;
-            return;
-        }
-    }
-
-    // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
-    if (IS_XOR(arg)) {
-        auto op = std::static_pointer_cast<Operator const>(arg);
-        for (bx_t const & _arg : op->args) insert(_arg);
-        return;
-    }
-
-    // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
-    if (IS_XNOR(arg)) {
-        auto op = std::static_pointer_cast<Operator const>(arg);
-        for (bx_t const & _arg : op->args) insert(_arg);
-        parity ^= true;
-        return;
-    }
-
-    args.insert(arg);
 }
 
 
@@ -221,16 +229,21 @@ XorArgSet::to_op() const
 bx_t
 XorArgSet::reduce() const
 {
-    bx_t ret;
+    if (state == State::islog)
+        return logical();
+    if (state == State::isill)
+        return illogical();
+
+    bx_t y;
 
     if (args.size() == 0)
-        ret = zero();
+        y = zero();
     else if (args.size() == 1)
-        ret = *args.begin();
+        y = *args.begin();
     else
-        ret = to_op();
+        y = to_op();
 
-    return parity ? ret : ~ret;
+    return parity ? y : ~y;
 }
 
 

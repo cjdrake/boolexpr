@@ -64,11 +64,11 @@ public:
 };
 
 
-class XorArgSet : public ArgSet {
-private:
+class XorArgSet : public ArgSet
+{
+    enum class State { basic, islog, isill };
+    State state;
     bool parity;
-    bool is_log;
-    bool is_ill;
 
 protected:
     void insert(bx_t const &);
