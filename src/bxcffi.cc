@@ -359,6 +359,21 @@ boolexpr_BoolExpr_compose(void const * vbxp, int n, void const ** vvars, void co
 
 
 void const *
+boolexpr_BoolExpr_restrict(void const * vbxp, int n, void const ** vvars, void const ** vconsts)
+{
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    auto point = point_t();
+    for (int i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(vvars[i]);
+        auto constp = reinterpret_cast<BoolExprProxy const *>(vconsts[i]);
+        point.insert({std::static_pointer_cast<Variable const>(varp->bx),
+                      std::static_pointer_cast<Constant const>(bxp->bx)});
+    }
+    return new BoolExprProxy(bxp->bx->restrict_(point));
+}
+
+
+void const *
 boolexpr_BoolExpr_to_cnf(void const * vbxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);

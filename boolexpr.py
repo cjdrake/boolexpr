@@ -135,6 +135,30 @@ class BoolExpr:
             i += 1
         return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, n, vars_, bxs))
 
+    def restrict(self, point):
+        n = len(point)
+        vars_ = ffi.new("void * []", n)
+        consts = ffi.new("void * []", n)
+        i = 0
+        for var, const in point.items():
+            if not isinstance(var, Variable):
+                raise TypeError("Expected point to be a dict(Variable: Constant)")
+            vars_[i] = var.cdata
+            if const == False:
+                consts[i] = lib.boolexpr_zero()
+            elif const == True:
+                consts[i] = lib.boolexpr_one()
+            elif const == "x" or const == "X":
+                consts[i] = lib.boolexpr_logical()
+            elif const == "?":
+                consts[i] = lib.boolexpr_illogical()
+            elif isinstance(const, Constant):
+                consts[i] = const.cdata
+            else:
+                raise TypeError("Expected point to b e a dict(Variable: Constant)")
+            i += 1
+        return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, n, vars_, consts))
+
     def to_cnf(self):
         return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))
 
