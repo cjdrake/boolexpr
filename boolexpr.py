@@ -53,9 +53,11 @@ class BoolExpr:
         return self.__str__()
 
     def __bytes__(self):
-        cdata = lib.boolexpr_BoolExpr_to_string(self._cdata)
-        b = ffi.string(cdata)
-        lib.boolexpr_string_del(cdata);
+        sp = lib.boolexpr_BoolExpr_to_string(self._cdata)
+        try:
+            b = ffi.string(lib.boolexpr_StringProxy_str(sp))
+        finally:
+            lib.boolexpr_StringProxy_del(sp)
         return b
 
     def __str__(self):

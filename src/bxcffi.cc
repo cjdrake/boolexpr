@@ -62,6 +62,39 @@ boolexpr_Context_get_var(void * vctx, char const * name)
 }
 
 
+struct StringProxy {
+
+    char * str;
+
+    StringProxy(string const & s)
+    {
+        str = new char [s.length() + 1];
+        std::strcpy(str, s.c_str());
+    }
+
+    ~StringProxy()
+    {
+        delete [] str;
+    }
+};
+
+
+void
+boolexpr_StringProxy_del(void const *vsp)
+{
+    auto sp = reinterpret_cast<StringProxy const *>(vsp);
+    delete sp;
+}
+
+
+char const *
+boolexpr_StringProxy_str(void const *vsp)
+{
+    auto sp = reinterpret_cast<StringProxy const *>(vsp);
+    return sp->str;
+}
+
+
 void const *
 boolexpr_zero()
 { return new BoolExprProxy(zero()); }
@@ -213,21 +246,11 @@ boolexpr_BoolExpr_kind(void const * vbxp)
 }
 
 
-char const *
+void const *
 boolexpr_BoolExpr_to_string(void const * vbxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
-    auto str = bxp->bx->to_string();
-    char * cstr = new char [str.length()+1];
-    std::strcpy(cstr, str.c_str());
-    return cstr;
-}
-
-
-void
-boolexpr_string_del(char const * b)
-{
-    delete [] b;
+    return new StringProxy(bxp->bx->to_string());
 }
 
 

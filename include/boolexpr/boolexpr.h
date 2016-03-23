@@ -700,6 +700,9 @@ extern "C"
     void boolexpr_Context_del(void *);
     void const * boolexpr_Context_get_var(void *, char const *);
 
+    void boolexpr_StringProxy_del(void const *);
+    char const * boolexpr_StringProxy_str(void const *);
+
     void const * boolexpr_zero(void);
     void const * boolexpr_one(void);
     void const * boolexpr_logical(void);
@@ -729,8 +732,7 @@ extern "C"
 
     void boolexpr_BoolExpr_del(void const *);
     uint32_t boolexpr_BoolExpr_kind(void const *);
-    char const * boolexpr_BoolExpr_to_string(void const *);
-    void boolexpr_string_del(char const *);
+    void const * boolexpr_BoolExpr_to_string(void const *);
     uint32_t boolexpr_BoolExpr_depth(void const *);
     uint32_t boolexpr_BoolExpr_size(void const *);
     uint32_t boolexpr_BoolExpr_atom_count(void const *);
