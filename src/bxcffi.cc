@@ -345,6 +345,20 @@ boolexpr_BoolExpr_tseytin(void const * vbxp, void * vctx, char const * auxvarnam
 
 
 void const *
+boolexpr_BoolExpr_compose(void const * vbxp, int n, void const ** vvars, void const ** vbxs)
+{
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    auto var2bx = var2bx_t();
+    for (int i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(vvars[i]);
+        auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxs[i]);
+        var2bx.insert({std::static_pointer_cast<Variable const>(varp->bx), bxp->bx});
+    }
+    return new BoolExprProxy(bxp->bx->compose(var2bx));
+}
+
+
+void const *
 boolexpr_BoolExpr_to_cnf(void const * vbxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);

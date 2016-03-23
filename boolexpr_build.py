@@ -127,6 +127,7 @@ void const * boolexpr_BoolExpr_simplify(void const *);
 void const * boolexpr_BoolExpr_to_binop(void const *);
 void const * boolexpr_BoolExpr_to_latop(void const *);
 void const * boolexpr_BoolExpr_tseytin(void const *, void *, char const *);
+void const * boolexpr_BoolExpr_compose(void const *, int, void const **, void const **);
 void const * boolexpr_BoolExpr_to_cnf(void const *);
 void const * boolexpr_BoolExpr_to_dnf(void const *);
 void const * boolexpr_BoolExpr_to_nnf(void const *);

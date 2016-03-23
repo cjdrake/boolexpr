@@ -122,6 +122,19 @@ class BoolExpr:
         name = auxvarname.encode("ascii")
         return _bx(lib.boolexpr_BoolExpr_tseytin(self._cdata, ctx.cdata, name))
 
+    def compose(self, var2bx):
+        n = len(var2bx)
+        vars_ = ffi.new("void * []", n)
+        bxs = ffi.new("void * []", n)
+        i = 0
+        for var, bx in var2bx.items():
+            if not isinstance(var, Variable):
+                raise TypeError("Expected var2bx to be a dict(Variable: BoolExpr)")
+            vars_[i] = var.cdata
+            bxs[i] = bx.cdata
+            i += 1
+        return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, n, vars_, bxs))
+
     def to_cnf(self):
         return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))
 
