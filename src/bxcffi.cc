@@ -43,20 +43,20 @@ boolexpr_Context_new()
 
 
 void
-boolexpr_Context_del(void * ctx)
+boolexpr_Context_del(void * vctx)
 {
-    auto _ctx = reinterpret_cast<Context *>(ctx);
-    delete _ctx;
+    auto ctx = reinterpret_cast<Context *>(vctx);
+    delete ctx;
 }
 
 
 void const *
-boolexpr_Context_get_var(void * ctx, char const * name)
+boolexpr_Context_get_var(void * vctx, char const * name)
 {
-    auto _ctx = reinterpret_cast<Context *>(ctx);
+    auto ctx = reinterpret_cast<Context *>(vctx);
     std::string _name { name };
 
-    auto var = _ctx->get_var(_name);
+    auto var = ctx->get_var(_name);
     auto x = std::static_pointer_cast<BoolExpr const>(var);
     return new BoolExprProxy(x);
 }
@@ -80,10 +80,10 @@ boolexpr_illogical()
 
 
 void const *
-boolexpr_not(void const * bxp)
+boolexpr_not(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(~bx);
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(~bxp->bx);
 }
 
 
@@ -130,20 +130,20 @@ boolexpr_eq(uint32_t n, void const * args[])
 { return new BoolExprProxy(eq(_convert_args(n, args))); }
 
 void const *
-boolexpr_impl(void const * p, void const * q)
+boolexpr_impl(void const * vp, void const * vq)
 {
-    auto _p = reinterpret_cast<BoolExprProxy const *>(p)->bx;
-    auto _q = reinterpret_cast<BoolExprProxy const *>(q)->bx;
-    return new BoolExprProxy(impl(_p, _q));
+    auto p = reinterpret_cast<BoolExprProxy const *>(vp);
+    auto q = reinterpret_cast<BoolExprProxy const *>(vq);
+    return new BoolExprProxy(impl(p->bx, q->bx));
 }
 
 void const *
-boolexpr_ite(void const * s, void const * d1, void const * d0)
+boolexpr_ite(void const * vs, void const * vd1, void const * vd0)
 {
-    auto _s = reinterpret_cast<BoolExprProxy const *>(s)->bx;
-    auto _d1 = reinterpret_cast<BoolExprProxy const *>(d1)->bx;
-    auto _d0 = reinterpret_cast<BoolExprProxy const *>(d0)->bx;
-    return new BoolExprProxy(ite(_s, _d1, _d0));
+    auto s = reinterpret_cast<BoolExprProxy const *>(vs);
+    auto d1 = reinterpret_cast<BoolExprProxy const *>(vd1);
+    auto d0 = reinterpret_cast<BoolExprProxy const *>(vd0);
+    return new BoolExprProxy(ite(s->bx, d1->bx, d0->bx));
 }
 
 
@@ -180,44 +180,44 @@ boolexpr_eq_s(uint32_t n, void const * args[])
 { return new BoolExprProxy(eq_s(_convert_args(n, args))); }
 
 void const *
-boolexpr_impl_s(void const * p, void const * q)
+boolexpr_impl_s(void const * vp, void const * vq)
 {
-    auto _p = reinterpret_cast<BoolExprProxy const *>(p)->bx;
-    auto _q = reinterpret_cast<BoolExprProxy const *>(q)->bx;
-    return new BoolExprProxy(impl_s(_p, _q));
+    auto p = reinterpret_cast<BoolExprProxy const *>(vp);
+    auto q = reinterpret_cast<BoolExprProxy const *>(vq);
+    return new BoolExprProxy(impl_s(p->bx, q->bx));
 }
 
 void const *
-boolexpr_ite_s(void const * s, void const * d1, void const * d0)
+boolexpr_ite_s(void const * vs, void const * vd1, void const * vd0)
 {
-    auto _s = reinterpret_cast<BoolExprProxy const *>(s)->bx;
-    auto _d1 = reinterpret_cast<BoolExprProxy const *>(d1)->bx;
-    auto _d0 = reinterpret_cast<BoolExprProxy const *>(d0)->bx;
-    return new BoolExprProxy(ite_s(_s, _d1, _d0));
+    auto s = reinterpret_cast<BoolExprProxy const *>(vs);
+    auto d1 = reinterpret_cast<BoolExprProxy const *>(vd1);
+    auto d0 = reinterpret_cast<BoolExprProxy const *>(vd0);
+    return new BoolExprProxy(ite_s(s->bx, d1->bx, d0->bx));
 }
 
 
 void
-boolexpr_BoolExpr_del(void const *bxp)
+boolexpr_BoolExpr_del(void const *vbxp)
 {
-    auto _bxp = reinterpret_cast<BoolExprProxy const *>(bxp);
-    delete _bxp;
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    delete bxp;
 }
 
 
 uint32_t
-boolexpr_BoolExpr_kind(void const * bxp)
+boolexpr_BoolExpr_kind(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return static_cast<uint32_t>(bx->kind);
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return static_cast<uint32_t>(bxp->bx->kind);
 }
 
 
 char const *
-boolexpr_BoolExpr_to_string(void const * bxp)
+boolexpr_BoolExpr_to_string(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    auto str = bx->to_string();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    auto str = bxp->bx->to_string();
     char * cstr = new char [str.length()+1];
     std::strcpy(cstr, str.c_str());
     return cstr;
@@ -232,123 +232,123 @@ boolexpr_string_del(char const * b)
 
 
 uint32_t
-boolexpr_BoolExpr_depth(void const * bxp)
+boolexpr_BoolExpr_depth(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return bx->depth();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return bxp->bx->depth();
 }
 
 
 uint32_t
-boolexpr_BoolExpr_size(void const * bxp)
+boolexpr_BoolExpr_size(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return bx->size();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return bxp->bx->size();
 }
 
 
 uint32_t
-boolexpr_BoolExpr_atom_count(void const * bxp)
+boolexpr_BoolExpr_atom_count(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return bx->atom_count();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return bxp->bx->atom_count();
 }
 
 
 uint32_t
-boolexpr_BoolExpr_op_count(void const * bxp)
+boolexpr_BoolExpr_op_count(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return bx->op_count();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return bxp->bx->op_count();
 }
 
 
 bool
-boolexpr_BoolExpr_is_cnf(void const * bxp)
+boolexpr_BoolExpr_is_cnf(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return bx->is_cnf();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return bxp->bx->is_cnf();
 }
 
 
 bool
-boolexpr_BoolExpr_is_dnf(void const * bxp)
+boolexpr_BoolExpr_is_dnf(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return bx->is_dnf();
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return bxp->bx->is_dnf();
 }
 
 
 void const *
-boolexpr_BoolExpr_pushdown_not(void const * bxp)
+boolexpr_BoolExpr_pushdown_not(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->pushdown_not());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->pushdown_not());
 }
 
 
 void const *
-boolexpr_BoolExpr_simplify(void const * bxp)
+boolexpr_BoolExpr_simplify(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->simplify());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->simplify());
 }
 
 
 void const *
-boolexpr_BoolExpr_to_binop(void const * bxp)
+boolexpr_BoolExpr_to_binop(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->to_binop());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->to_binop());
 }
 
 
 void const *
-boolexpr_BoolExpr_to_latop(void const * bxp)
+boolexpr_BoolExpr_to_latop(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->to_latop());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->to_latop());
 }
 
 
 void const *
-boolexpr_BoolExpr_tseytin(void const * bxp, void * ctx, char const * auxvarname)
+boolexpr_BoolExpr_tseytin(void const * vbxp, void * vctx, char const * auxvarname)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    auto _ctx = reinterpret_cast<Context *>(ctx);
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    auto ctx = reinterpret_cast<Context *>(vctx);
     std::string _auxvarname { auxvarname };
-    return new BoolExprProxy(bx->tseytin(*_ctx, _auxvarname));
+    return new BoolExprProxy(bxp->bx->tseytin(*ctx, _auxvarname));
 }
 
 
 void const *
-boolexpr_BoolExpr_to_cnf(void const * bxp)
+boolexpr_BoolExpr_to_cnf(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->to_cnf());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->to_cnf());
 }
 
 
 void const *
-boolexpr_BoolExpr_to_dnf(void const * bxp)
+boolexpr_BoolExpr_to_dnf(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->to_dnf());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->to_dnf());
 }
 
 
 void const *
-boolexpr_BoolExpr_to_nnf(void const * bxp)
+boolexpr_BoolExpr_to_nnf(void const * vbxp)
 {
-    auto bx = reinterpret_cast<BoolExprProxy const *>(bxp)->bx;
-    return new BoolExprProxy(bx->to_nnf());
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(vbxp);
+    return new BoolExprProxy(bxp->bx->to_nnf());
 }
 
 
 bool
-boolexpr_BoolExpr_equiv(void const * bxp1, void const * bxp2)
+boolexpr_BoolExpr_equiv(void const * vbxp1, void const * vbxp2)
 {
-    auto bx1 = reinterpret_cast<BoolExprProxy const *>(bxp1)->bx;
-    auto bx2 = reinterpret_cast<BoolExprProxy const *>(bxp2)->bx;
-    return bx1->equiv(bx2);
+    auto bxp1 = reinterpret_cast<BoolExprProxy const *>(vbxp1);
+    auto bxp2 = reinterpret_cast<BoolExprProxy const *>(vbxp2);
+    return bxp1->bx->equiv(bxp2->bx);
 }
