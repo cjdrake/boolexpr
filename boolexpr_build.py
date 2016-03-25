@@ -114,7 +114,7 @@ void const * boolexpr_impl_s(void const *, void const *);
 void const * boolexpr_ite_s(void const *, void const *, void const *);
 
 void boolexpr_BoolExpr_del(void const *);
-uint32_t boolexpr_BoolExpr_kind(void const *);
+uint8_t boolexpr_BoolExpr_kind(void const *);
 void const * boolexpr_BoolExpr_to_string(void const *);
 uint32_t boolexpr_BoolExpr_depth(void const *);
 uint32_t boolexpr_BoolExpr_size(void const *);

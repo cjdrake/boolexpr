@@ -241,11 +241,11 @@ boolexpr_BoolExpr_del(void const *c_self)
 }
 
 
-uint32_t
+uint8_t
 boolexpr_BoolExpr_kind(void const * c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return static_cast<uint32_t>(self->bx->kind);
+    return static_cast<uint8_t>(self->bx->kind);
 }
 
 
