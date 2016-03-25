@@ -27,6 +27,23 @@
 using namespace boolexpr;
 
 
+struct StringProxy
+{
+    char * str;
+
+    StringProxy(string const & s)
+    {
+        str = new char [s.length() + 1];
+        std::strcpy(str, s.c_str());
+    }
+
+    ~StringProxy()
+    {
+        delete [] str;
+    }
+};
+
+
 struct BoolExprProxy
 {
     bx_t const bx;
@@ -61,23 +78,6 @@ boolexpr_Context_get_var(void * c_self, char const * c_name)
     auto bx = std::static_pointer_cast<BoolExpr const>(var);
     return new BoolExprProxy(bx);
 }
-
-
-struct StringProxy
-{
-    char * str;
-
-    StringProxy(string const & s)
-    {
-        str = new char [s.length() + 1];
-        std::strcpy(str, s.c_str());
-    }
-
-    ~StringProxy()
-    {
-        delete [] str;
-    }
-};
 
 
 void
@@ -122,7 +122,7 @@ boolexpr_not(void const * c_arg)
 
 
 static vector<bx_t>
-_convert_args(uint32_t n, void const * c_args[])
+_convert_args(size_t n, void const * c_args[])
 {
     vector<bx_t> _args(n);
     for (uint32_t i = 0u; i < n; ++i) {
@@ -134,35 +134,35 @@ _convert_args(uint32_t n, void const * c_args[])
 
 
 void const *
-boolexpr_nor(uint32_t n, void const * c_args[])
+boolexpr_nor(size_t n, void const * c_args[])
 { return new BoolExprProxy(nor(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_or(uint32_t n, void const * c_args[])
+boolexpr_or(size_t n, void const * c_args[])
 { return new BoolExprProxy(or_(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_nand(uint32_t n, void const * c_args[])
+boolexpr_nand(size_t n, void const * c_args[])
 { return new BoolExprProxy(nand(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_and(uint32_t n, void const * c_args[])
+boolexpr_and(size_t n, void const * c_args[])
 { return new BoolExprProxy(and_(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_xnor(uint32_t n, void const * c_args[])
+boolexpr_xnor(size_t n, void const * c_args[])
 { return new BoolExprProxy(xnor(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_xor(uint32_t n, void const * c_args[])
+boolexpr_xor(size_t n, void const * c_args[])
 { return new BoolExprProxy(xor_(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_neq(uint32_t n, void const * c_args[])
+boolexpr_neq(size_t n, void const * c_args[])
 { return new BoolExprProxy(neq(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_eq(uint32_t n, void const * c_args[])
+boolexpr_eq(size_t n, void const * c_args[])
 { return new BoolExprProxy(eq(_convert_args(n, c_args))); }
 
 void const *
@@ -184,35 +184,35 @@ boolexpr_ite(void const * c_s, void const * c_d1, void const * c_d0)
 
 
 void const *
-boolexpr_nor_s(uint32_t n, void const * c_args[])
+boolexpr_nor_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(nor_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_or_s(uint32_t n, void const * c_args[])
+boolexpr_or_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(or_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_nand_s(uint32_t n, void const * c_args[])
+boolexpr_nand_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(nand_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_and_s(uint32_t n, void const * c_args[])
+boolexpr_and_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(and_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_xnor_s(uint32_t n, void const * c_args[])
+boolexpr_xnor_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(xnor_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_xor_s(uint32_t n, void const * c_args[])
+boolexpr_xor_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(xor_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_neq_s(uint32_t n, void const * c_args[])
+boolexpr_neq_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(neq_s(_convert_args(n, c_args))); }
 
 void const *
-boolexpr_eq_s(uint32_t n, void const * c_args[])
+boolexpr_eq_s(size_t n, void const * c_args[])
 { return new BoolExprProxy(eq_s(_convert_args(n, c_args))); }
 
 void const *
