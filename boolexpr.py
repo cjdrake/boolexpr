@@ -197,6 +197,21 @@ class BoolExpr:
     def equiv(self, other):
         return bool(lib.boolexpr_BoolExpr_equiv(self._cdata, other.cdata))
 
+    def support(self):
+        ret = set()
+        s = lib.boolexpr_BoolExpr_support(self._cdata)
+        try:
+            lib.boolexpr_VarSet_iter(s)
+            while True:
+                val = lib.boolexpr_VarSet_val(s)
+                if val == ffi.NULL:
+                    break
+                ret.add(_bx(val))
+                lib.boolexpr_VarSet_next(s)
+        finally:
+            lib.boolexpr_VarSet_del(s)
+        return ret
+
 
 class Atom(BoolExpr): pass
 class Constant(Atom): pass

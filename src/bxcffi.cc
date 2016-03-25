@@ -53,6 +53,24 @@ struct BoolExprProxy
 };
 
 
+struct VarSetProxy
+{
+    unordered_set<var_t> s;
+    std::unordered_set<var_t>::iterator it;
+
+    VarSetProxy(unordered_set<var_t> const && s): s {s} {}
+    ~VarSetProxy() {}
+
+    void iter() { it = s.begin(); }
+    void next() { ++it; }
+
+    BoolExprProxy * val() const
+    {
+        return (it == s.end()) ? nullptr : new BoolExprProxy(*it);
+    }
+};
+
+
 void *
 boolexpr_Context_new()
 {
@@ -81,7 +99,7 @@ boolexpr_Context_get_var(void * c_self, char const * c_name)
 
 
 void
-boolexpr_String_del(void const *c_self)
+boolexpr_String_del(void const * c_self)
 {
     auto self = reinterpret_cast<StringProxy const *>(c_self);
     delete self;
@@ -89,10 +107,42 @@ boolexpr_String_del(void const *c_self)
 
 
 char const *
-boolexpr_String_str(void const *c_self)
+boolexpr_String_str(void const * c_self)
 {
     auto self = reinterpret_cast<StringProxy const *>(c_self);
     return self->str;
+}
+
+
+void
+boolexpr_VarSet_del(void const * c_self)
+{
+    auto self = reinterpret_cast<VarSetProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_VarSet_iter(void * c_self)
+{
+    auto self = reinterpret_cast<VarSetProxy *>(c_self);
+    self->iter();
+}
+
+
+void
+boolexpr_VarSet_next(void * c_self)
+{
+    auto self = reinterpret_cast<VarSetProxy *>(c_self);
+    self->next();
+}
+
+
+void const *
+boolexpr_VarSet_val(void const * c_self)
+{
+    auto self = reinterpret_cast<VarSetProxy const *>(c_self);
+    return self->val();
 }
 
 
@@ -125,7 +175,7 @@ static vector<bx_t>
 _convert_args(size_t n, void const * c_args[])
 {
     vector<bx_t> _args(n);
-    for (uint32_t i = 0u; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         auto arg = reinterpret_cast<BoolExprProxy const *>(c_args[i]);
         _args[i] = arg->bx;
     }
@@ -234,7 +284,7 @@ boolexpr_ite_s(void const * c_s, void const * c_d1, void const * c_d0)
 
 
 void
-boolexpr_BoolExpr_del(void const *c_self)
+boolexpr_BoolExpr_del(void const * c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     delete self;
@@ -409,4 +459,12 @@ boolexpr_BoolExpr_equiv(void const * c_self, void const * c_other)
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     auto other = reinterpret_cast<BoolExprProxy const *>(c_other);
     return self->bx->equiv(other->bx);
+}
+
+
+void const *
+boolexpr_BoolExpr_support(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    return new VarSetProxy(self->bx->support());
 }
