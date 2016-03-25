@@ -165,17 +165,17 @@ boolexpr_VarSet_val(void const * c_self)
 
 
 void const *
-boolexpr_DfsIter_new(void const * c_self)
+boolexpr_DfsIter_new(void const * c_bxp)
 {
-    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return new DfsIterProxy(self->bx);
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
+    return new DfsIterProxy(bxp->bx);
 }
 
 
 void
 boolexpr_DfsIter_del(void const * c_self)
 {
-    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto self = reinterpret_cast<DfsIterProxy const *>(c_self);
     delete self;
 }
 
