@@ -367,7 +367,7 @@ boolexpr_BoolExpr_restrict(void const * vbxp, int n, void const ** vvars, void c
         auto varp = reinterpret_cast<BoolExprProxy const *>(vvars[i]);
         auto constp = reinterpret_cast<BoolExprProxy const *>(vconsts[i]);
         point.insert({std::static_pointer_cast<Variable const>(varp->bx),
-                      std::static_pointer_cast<Constant const>(bxp->bx)});
+                      std::static_pointer_cast<Constant const>(constp->bx)});
     }
     return new BoolExprProxy(bxp->bx->restrict_(point));
 }

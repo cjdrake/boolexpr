@@ -126,24 +126,34 @@ class BoolExpr:
         n = len(var2bx)
         vars_ = ffi.new("void * []", n)
         bxs = ffi.new("void * []", n)
-        i = 0
-        for var, bx in var2bx.items():
-            if not isinstance(var, Variable):
+        for i, (var, bx) in enumerate(var2bx.items()):
+            if isinstance(var, Variable):
+                vars_[i] = var.cdata
+            else:
                 raise TypeError("Expected var2bx to be a dict(Variable: BoolExpr)")
-            vars_[i] = var.cdata
-            bxs[i] = bx.cdata
-            i += 1
+            if bx == False:
+                bxs[i] = lib.boolexpr_zero()
+            elif bx == True:
+                bxs[i] = lib.boolexpr_one()
+            elif bx == "x" or const == "X":
+                bxs[i] = lib.boolexpr_logical()
+            elif bx == "?":
+                bxs[i] = lib.boolexpr_illogical()
+            elif isinstance(bx, BoolExpr):
+                bxs[i] = bx.cdata
+            else:
+                raise TypeError("Expected var2bx to be a dict(Variable: BoolExpr)")
         return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, n, vars_, bxs))
 
     def restrict(self, point):
         n = len(point)
         vars_ = ffi.new("void * []", n)
         consts = ffi.new("void * []", n)
-        i = 0
-        for var, const in point.items():
-            if not isinstance(var, Variable):
+        for i, (var, const) in enumerate(point.items()):
+            if isinstance(var, Variable):
+                vars_[i] = var.cdata
+            else:
                 raise TypeError("Expected point to be a dict(Variable: Constant)")
-            vars_[i] = var.cdata
             if const == False:
                 consts[i] = lib.boolexpr_zero()
             elif const == True:
@@ -155,9 +165,8 @@ class BoolExpr:
             elif isinstance(const, Constant):
                 consts[i] = const.cdata
             else:
-                raise TypeError("Expected point to b e a dict(Variable: Constant)")
-            i += 1
-        return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, n, vars_, consts))
+                raise TypeError("Expected point to be a dict(Variable: Constant)")
+        return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, n, vars_, consts))
 
     def to_cnf(self):
         return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))
