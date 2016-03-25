@@ -99,15 +99,14 @@ using point_t = unordered_map<var_t, const_t>;
 using soln_t = std::pair<bool, boost::optional<point_t>>;
 
 
-class BoolExpr : public std::enable_shared_from_this<BoolExpr> {
-
+class BoolExpr : public std::enable_shared_from_this<BoolExpr>
+{
     friend bx_t operator~(bx_t const &);
     friend std::ostream& operator<<(std::ostream&, bx_t const &);
 
 protected:
     virtual bx_t _invert() const = 0;
     virtual std::ostream& _op_lsh(std::ostream&) const = 0;
-
 
 public:
     enum Kind {
@@ -165,7 +164,8 @@ public:
 };
 
 
-class Atom : public BoolExpr {
+class Atom : public BoolExpr
+{
 public:
     Atom(Kind kind);
 
@@ -183,7 +183,8 @@ public:
 };
 
 
-class Constant : public Atom {
+class Constant : public Atom
+{
 public:
     Constant(Kind kind);
 
@@ -192,7 +193,8 @@ public:
 };
 
 
-class Known : public Constant {
+class Known : public Constant
+{
 public:
     bool const val;
 
@@ -200,7 +202,8 @@ public:
 };
 
 
-class Zero : public Known {
+class Zero : public Known
+{
 protected:
     bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
@@ -213,7 +216,8 @@ public:
 };
 
 
-class One : public Known {
+class One : public Known
+{
 protected:
     bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
@@ -226,13 +230,15 @@ public:
 };
 
 
-class Unknown : public Constant {
+class Unknown : public Constant
+{
 public:
     Unknown(Kind kind);
 };
 
 
-class Logical : public Unknown {
+class Logical : public Unknown
+{
 protected:
     bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
@@ -244,7 +250,8 @@ public:
 };
 
 
-class Illogical : public Unknown {
+class Illogical : public Unknown
+{
 protected:
     bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
@@ -256,7 +263,8 @@ public:
 };
 
 
-class Literal : public Atom {
+class Literal : public Atom
+{
 public:
     Context *ctx;
     id_t const id;
@@ -268,7 +276,8 @@ public:
 };
 
 
-class Complement : public Literal {
+class Complement : public Literal
+{
 protected:
     bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
@@ -282,7 +291,8 @@ public:
 };
 
 
-class Variable : public Literal {
+class Variable : public Literal
+{
 protected:
     bx_t _invert() const;
     std::ostream& _op_lsh(std::ostream&) const;
@@ -296,7 +306,8 @@ public:
 };
 
 
-class Operator : public BoolExpr {
+class Operator : public BoolExpr
+{
 protected:
     std::ostream& _op_lsh(std::ostream&) const;
 
@@ -328,7 +339,8 @@ public:
 };
 
 
-class LatticeOperator : public Operator {
+class LatticeOperator : public Operator
+{
 public:
     LatticeOperator(Kind kind, bool simple, vector<bx_t> const & args);
 
@@ -336,7 +348,8 @@ public:
 };
 
 
-class Nor : public Operator {
+class Nor : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -354,7 +367,8 @@ public:
 };
 
 
-class Or : public LatticeOperator {
+class Or : public LatticeOperator
+{
 protected:
     bx_t _invert() const;
 
@@ -377,7 +391,8 @@ public:
 };
 
 
-class Nand : public Operator {
+class Nand : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -395,7 +410,8 @@ public:
 };
 
 
-class And : public LatticeOperator {
+class And : public LatticeOperator
+{
 protected:
     bx_t _invert() const;
 
@@ -418,7 +434,8 @@ public:
 };
 
 
-class Xnor : public Operator {
+class Xnor : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -436,7 +453,8 @@ public:
 };
 
 
-class Xor : public Operator {
+class Xor : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -457,7 +475,8 @@ public:
 };
 
 
-class Unequal : public Operator {
+class Unequal : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -475,7 +494,8 @@ public:
 };
 
 
-class Equal : public Operator {
+class Equal : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -494,7 +514,8 @@ public:
 };
 
 
-class NotImplies : public Operator {
+class NotImplies : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -512,7 +533,8 @@ public:
 };
 
 
-class Implies : public Operator {
+class Implies : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -530,7 +552,8 @@ public:
 };
 
 
-class NotIfThenElse : public Operator {
+class NotIfThenElse : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -548,7 +571,8 @@ public:
 };
 
 
-class IfThenElse : public Operator {
+class IfThenElse : public Operator
+{
 protected:
     bx_t _invert() const;
 
@@ -707,6 +731,12 @@ extern "C"
     void boolexpr_VarSet_iter(void *);
     void boolexpr_VarSet_next(void *);
     void const * boolexpr_VarSet_val(void const *);
+
+    void const * boolexpr_DfsIter_new(void const *);
+    void boolexpr_DfsIter_del(void const *);
+    void boolexpr_DfsIter_iter(void *);
+    void boolexpr_DfsIter_next(void *);
+    void const * boolexpr_DfsIter_val(void const *);
 
     void const * boolexpr_zero(void);
     void const * boolexpr_one(void);

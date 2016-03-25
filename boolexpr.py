@@ -212,6 +212,19 @@ class BoolExpr:
             lib.boolexpr_VarSet_del(s)
         return ret
 
+    def dfs_iter(self):
+        it = lib.boolexpr_DfsIter_new(self._cdata)
+        try:
+            lib.boolexpr_DfsIter_iter(it)
+            while True:
+                val = lib.boolexpr_DfsIter_val(it)
+                if val == ffi.NULL:
+                    break
+                yield _bx(val)
+                lib.boolexpr_DfsIter_next(it)
+        finally:
+            lib.boolexpr_DfsIter_del(it)
+
 
 class Atom(BoolExpr): pass
 class Constant(Atom): pass

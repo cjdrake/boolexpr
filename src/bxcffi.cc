@@ -71,6 +71,24 @@ struct VarSetProxy
 };
 
 
+struct DfsIterProxy
+{
+    bx_t bx;
+    dfs_iter it;
+
+    DfsIterProxy(bx_t const & bx): bx {bx} {}
+    ~DfsIterProxy() {}
+
+    void iter() { it = dfs_iter(bx); }
+    void next() { ++it; }
+
+    BoolExprProxy * val() const
+    {
+        return (it == end(bx)) ? nullptr : new BoolExprProxy(*it);
+    }
+};
+
+
 void *
 boolexpr_Context_new()
 {
@@ -142,6 +160,46 @@ void const *
 boolexpr_VarSet_val(void const * c_self)
 {
     auto self = reinterpret_cast<VarSetProxy const *>(c_self);
+    return self->val();
+}
+
+
+void const *
+boolexpr_DfsIter_new(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    return new DfsIterProxy(self->bx);
+}
+
+
+void
+boolexpr_DfsIter_del(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_DfsIter_iter(void * c_self)
+{
+    auto self = reinterpret_cast<DfsIterProxy *>(c_self);
+    self->iter();
+}
+
+
+void
+boolexpr_DfsIter_next(void * c_self)
+{
+    auto self = reinterpret_cast<DfsIterProxy *>(c_self);
+    self->next();
+}
+
+
+void const *
+boolexpr_DfsIter_val(void const * c_self)
+{
+    auto self = reinterpret_cast<DfsIterProxy const *>(c_self);
     return self->val();
 }
 

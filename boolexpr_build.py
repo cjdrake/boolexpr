@@ -91,6 +91,12 @@ void boolexpr_VarSet_iter(void *);
 void boolexpr_VarSet_next(void *);
 void const * boolexpr_VarSet_val(void const *);
 
+void const * boolexpr_DfsIter_new(void const *);
+void boolexpr_DfsIter_del(void const *);
+void boolexpr_DfsIter_iter(void *);
+void boolexpr_DfsIter_next(void *);
+void const * boolexpr_DfsIter_val(void const *);
+
 void const * boolexpr_zero(void);
 void const * boolexpr_one(void);
 void const * boolexpr_logical(void);
