@@ -83,8 +83,8 @@ void * boolexpr_Context_new(void);
 void boolexpr_Context_del(void *);
 void const * boolexpr_Context_get_var(void *, char const *);
 
-void boolexpr_StringProxy_del(void const *);
-char const * boolexpr_StringProxy_str(void const *);
+void boolexpr_String_del(void const *);
+char const * boolexpr_String_str(void const *);
 
 void const * boolexpr_zero(void);
 void const * boolexpr_one(void);

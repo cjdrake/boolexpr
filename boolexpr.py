@@ -16,6 +16,51 @@
 from _boolexpr import ffi, lib
 
 
+def _expect_bx(obj):
+    if obj == False:
+        return lib.boolexpr_zero()
+    elif obj == True:
+        return lib.boolexpr_one()
+    elif obj == "x" or obj == "X":
+        return lib.boolexpr_logical()
+    elif obj == "?":
+        return lib.boolexpr_illogical()
+    elif isinstance(obj, BoolExpr):
+        return obj.cdata
+    else:
+        raise TypeError("Expected obj to be a BoolExpr")
+
+
+def _expect_const(obj):
+    if obj == False:
+        return lib.boolexpr_zero()
+    elif obj == True:
+        return lib.boolexpr_one()
+    elif obj == "x" or obj == "X":
+        return lib.boolexpr_logical()
+    elif obj == "?":
+        return lib.boolexpr_illogical()
+    elif isinstance(obj, Constant):
+        return obj.cdata
+    else:
+        raise TypeError("Expected obj to be a Constant")
+
+
+def _expect_var(obj):
+    if isinstance(obj, Variable):
+        return obj.cdata
+    else:
+        raise TypeError("Expected obj to be a Variable")
+
+
+def _convert_args(args):
+    n = len(args)
+    _args = ffi.new("void const * []", n)
+    for i, arg in enumerate(args):
+        _args[i] = _expect_bx(arg)
+    return n, _args
+
+
 class Context:
     """
     A context for Boolean variables
@@ -55,9 +100,9 @@ class BoolExpr:
     def __bytes__(self):
         sp = lib.boolexpr_BoolExpr_to_string(self._cdata)
         try:
-            b = ffi.string(lib.boolexpr_StringProxy_str(sp))
+            b = ffi.string(lib.boolexpr_String_str(sp))
         finally:
-            lib.boolexpr_StringProxy_del(sp)
+            lib.boolexpr_String_del(sp)
         return b
 
     def __str__(self):
@@ -127,22 +172,8 @@ class BoolExpr:
         vars_ = ffi.new("void * []", n)
         bxs = ffi.new("void * []", n)
         for i, (var, bx) in enumerate(var2bx.items()):
-            if isinstance(var, Variable):
-                vars_[i] = var.cdata
-            else:
-                raise TypeError("Expected var2bx to be a dict(Variable: BoolExpr)")
-            if bx == False:
-                bxs[i] = lib.boolexpr_zero()
-            elif bx == True:
-                bxs[i] = lib.boolexpr_one()
-            elif bx == "x" or const == "X":
-                bxs[i] = lib.boolexpr_logical()
-            elif bx == "?":
-                bxs[i] = lib.boolexpr_illogical()
-            elif isinstance(bx, BoolExpr):
-                bxs[i] = bx.cdata
-            else:
-                raise TypeError("Expected var2bx to be a dict(Variable: BoolExpr)")
+            vars_[i] = _expect_var(var)
+            bxs[i] = _expect_bx(bx)
         return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, n, vars_, bxs))
 
     def restrict(self, point):
@@ -150,22 +181,8 @@ class BoolExpr:
         vars_ = ffi.new("void * []", n)
         consts = ffi.new("void * []", n)
         for i, (var, const) in enumerate(point.items()):
-            if isinstance(var, Variable):
-                vars_[i] = var.cdata
-            else:
-                raise TypeError("Expected point to be a dict(Variable: Constant)")
-            if const == False:
-                consts[i] = lib.boolexpr_zero()
-            elif const == True:
-                consts[i] = lib.boolexpr_one()
-            elif const == "x" or const == "X":
-                consts[i] = lib.boolexpr_logical()
-            elif const == "?":
-                consts[i] = lib.boolexpr_illogical()
-            elif isinstance(const, Constant):
-                consts[i] = const.cdata
-            else:
-                raise TypeError("Expected point to be a dict(Variable: Constant)")
+            vars_[i] = _expect_var(var)
+            consts = _expect_const(const)
         return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, n, vars_, consts))
 
     def to_cnf(self):
@@ -232,25 +249,6 @@ _KIND2CLS = {
 def _bx(cbx):
     kind = lib.boolexpr_BoolExpr_kind(cbx)
     return _KIND2CLS[kind](cbx)
-
-
-def _convert_args(args):
-    n = len(args)
-    _args = ffi.new("void const * [" + str(n) + "]")
-    for i, arg in enumerate(args):
-        if arg == False:
-            _args[i] = lib.boolexpr_zero()
-        elif arg == True:
-            _args[i] = lib.boolexpr_one()
-        elif arg == "x" or arg == "X":
-            _args[i] = lib.boolexpr_logical()
-        elif arg == "?":
-            _args[i] = lib.boolexpr_illogical()
-        elif isinstance(arg, BoolExpr):
-            _args[i] = arg.cdata
-        else:
-            raise TypeError("Expected False, True, 0, 1, or BoolExpr")
-    return n, _args
 
 
 def not_(arg):

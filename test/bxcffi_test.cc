@@ -42,10 +42,10 @@ TEST(CFFI, Basic)
     auto one = boolexpr_one();
 
     auto sp_0 = boolexpr_BoolExpr_to_string(zero);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_0), "0") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_0), "0") == 0);
 
     auto sp_1 = boolexpr_BoolExpr_to_string(one);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_1), "1") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_1), "1") == 0);
 
     auto ctx = boolexpr_Context_new();
 
@@ -63,19 +63,19 @@ TEST(CFFI, Basic)
     auto sp_b = boolexpr_BoolExpr_to_string(b);
     auto sp_c = boolexpr_BoolExpr_to_string(c);
     auto sp_d = boolexpr_BoolExpr_to_string(d);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_a), "a") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_b), "b") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_c), "c") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_d), "d") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_a), "a") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_b), "b") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_c), "c") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_d), "d") == 0);
 
     auto sp_an = boolexpr_BoolExpr_to_string(an);
     auto sp_bn = boolexpr_BoolExpr_to_string(bn);
     auto sp_cn = boolexpr_BoolExpr_to_string(cn);
     auto sp_dn = boolexpr_BoolExpr_to_string(dn);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_an), "~a") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_bn), "~b") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_cn), "~c") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_dn), "~d") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_an), "~a") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_bn), "~b") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_cn), "~c") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_dn), "~d") == 0);
 
     void const * args[] = {an, b, cn, d};
 
@@ -107,10 +107,10 @@ TEST(CFFI, Basic)
     auto sp_y4 = boolexpr_BoolExpr_to_string(y4);
     auto sp_y5 = boolexpr_BoolExpr_to_string(y5);
 
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_y0), "Or(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_y1), "And(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_y2), "Xor(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_y3), "Equal(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_y4), "Implies(~a, b)") == 0);
-    EXPECT_TRUE(strcmp(boolexpr_StringProxy_str(sp_y5), "IfThenElse(~a, b, ~c)") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_y0), "Or(~a, b, ~c, d)") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_y1), "And(~a, b, ~c, d)") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_y2), "Xor(~a, b, ~c, d)") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_y3), "Equal(~a, b, ~c, d)") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_y4), "Implies(~a, b)") == 0);
+    EXPECT_TRUE(strcmp(boolexpr_String_str(sp_y5), "IfThenElse(~a, b, ~c)") == 0);
 }
