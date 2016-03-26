@@ -141,7 +141,7 @@ boolexpr_String_del(char const * c_str)
 
 
 void
-boolexpr_Set_del(void const * c_self)
+boolexpr_VarSet_del(void const * c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> const *>(c_self);
     delete self;
@@ -149,7 +149,7 @@ boolexpr_Set_del(void const * c_self)
 
 
 void
-boolexpr_Set_iter(void * c_self)
+boolexpr_VarSet_iter(void * c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> *>(c_self);
     self->iter();
@@ -157,7 +157,7 @@ boolexpr_Set_iter(void * c_self)
 
 
 void
-boolexpr_Set_next(void * c_self)
+boolexpr_VarSet_next(void * c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> *>(c_self);
     self->next();
@@ -165,7 +165,7 @@ boolexpr_Set_next(void * c_self)
 
 
 void const *
-boolexpr_Set_val(void const * c_self)
+boolexpr_VarSet_val(void const * c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> const *>(c_self);
     return self->val();
@@ -173,7 +173,7 @@ boolexpr_Set_val(void const * c_self)
 
 
 void
-boolexpr_Map_del(void const * c_self)
+boolexpr_Point_del(void const * c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> const *>(c_self);
     delete self;
@@ -181,7 +181,7 @@ boolexpr_Map_del(void const * c_self)
 
 
 void
-boolexpr_Map_iter(void * c_self)
+boolexpr_Point_iter(void * c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> *>(c_self);
     self->iter();
@@ -189,7 +189,7 @@ boolexpr_Map_iter(void * c_self)
 
 
 void
-boolexpr_Map_next(void * c_self)
+boolexpr_Point_next(void * c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> *>(c_self);
     self->next();
@@ -197,7 +197,7 @@ boolexpr_Map_next(void * c_self)
 
 
 void const *
-boolexpr_Map_key(void const * c_self)
+boolexpr_Point_key(void const * c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> const *>(c_self);
     return self->key();
@@ -205,7 +205,7 @@ boolexpr_Map_key(void const * c_self)
 
 
 void const *
-boolexpr_Map_val(void const * c_self)
+boolexpr_Point_val(void const * c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> const *>(c_self);
     return self->val();
