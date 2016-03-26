@@ -726,16 +726,16 @@ extern "C"
 
     void boolexpr_String_del(char const *);
 
-    void boolexpr_VarSet_del(void const *);
-    void boolexpr_VarSet_iter(void *);
-    void boolexpr_VarSet_next(void *);
-    void const * boolexpr_VarSet_val(void const *);
+    void boolexpr_Set_del(void const *);
+    void boolexpr_Set_iter(void *);
+    void boolexpr_Set_next(void *);
+    void const * boolexpr_Set_val(void const *);
 
-    void boolexpr_Var2Const_del(void const *);
-    void boolexpr_Var2Const_iter(void *);
-    void boolexpr_Var2Const_next(void *);
-    void const * boolexpr_Var2Const_key(void const *);
-    void const * boolexpr_Var2Const_val(void const *);
+    void boolexpr_Map_del(void const *);
+    void boolexpr_Map_iter(void *);
+    void boolexpr_Map_next(void *);
+    void const * boolexpr_Map_key(void const *);
+    void const * boolexpr_Map_val(void const *);
 
     void boolexpr_Soln_del(void const *);
     bool boolexpr_Soln_first(void const *);

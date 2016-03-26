@@ -36,13 +36,14 @@ struct BoolExprProxy
 };
 
 
-struct VarSetProxy
+template <typename T>
+struct SetProxy
 {
-    unordered_set<var_t> s;
-    std::unordered_set<var_t>::iterator it;
+    unordered_set<T> s;
+    typename std::unordered_set<T>::iterator it;
 
-    VarSetProxy(unordered_set<var_t> const && s): s {s} {}
-    ~VarSetProxy() {}
+    SetProxy(unordered_set<T> const && s): s {s} {}
+    ~SetProxy() {}
 
     void iter() { it = s.begin(); }
     void next() { ++it; }
@@ -54,13 +55,14 @@ struct VarSetProxy
 };
 
 
-struct Var2ConstProxy
+template <typename K, typename V>
+struct MapProxy
 {
-    unordered_map<var_t, const_t> m;
-    std::unordered_map<var_t, const_t>::iterator it;
+    unordered_map<K, V> m;
+    typename std::unordered_map<K, V>::iterator it;
 
-    Var2ConstProxy(unordered_map<var_t, const_t> const && m): m {m} {}
-    ~Var2ConstProxy() {}
+    MapProxy(unordered_map<K, V> const && m): m {m} {}
+    ~MapProxy() {}
 
     void iter() { it = m.begin(); }
     void next() { ++it; }
@@ -139,73 +141,73 @@ boolexpr_String_del(char const * c_str)
 
 
 void
-boolexpr_VarSet_del(void const * c_self)
+boolexpr_Set_del(void const * c_self)
 {
-    auto self = reinterpret_cast<VarSetProxy const *>(c_self);
+    auto self = reinterpret_cast<SetProxy<var_t> const *>(c_self);
     delete self;
 }
 
 
 void
-boolexpr_VarSet_iter(void * c_self)
+boolexpr_Set_iter(void * c_self)
 {
-    auto self = reinterpret_cast<VarSetProxy *>(c_self);
+    auto self = reinterpret_cast<SetProxy<var_t> *>(c_self);
     self->iter();
 }
 
 
 void
-boolexpr_VarSet_next(void * c_self)
+boolexpr_Set_next(void * c_self)
 {
-    auto self = reinterpret_cast<VarSetProxy *>(c_self);
+    auto self = reinterpret_cast<SetProxy<var_t> *>(c_self);
     self->next();
 }
 
 
 void const *
-boolexpr_VarSet_val(void const * c_self)
+boolexpr_Set_val(void const * c_self)
 {
-    auto self = reinterpret_cast<VarSetProxy const *>(c_self);
+    auto self = reinterpret_cast<SetProxy<var_t> const *>(c_self);
     return self->val();
 }
 
 
 void
-boolexpr_Var2Const_del(void const * c_self)
+boolexpr_Map_del(void const * c_self)
 {
-    auto self = reinterpret_cast<Var2ConstProxy const *>(c_self);
+    auto self = reinterpret_cast<MapProxy<var_t, const_t> const *>(c_self);
     delete self;
 }
 
 
 void
-boolexpr_Var2Const_iter(void * c_self)
+boolexpr_Map_iter(void * c_self)
 {
-    auto self = reinterpret_cast<Var2ConstProxy *>(c_self);
+    auto self = reinterpret_cast<MapProxy<var_t, const_t> *>(c_self);
     self->iter();
 }
 
 
 void
-boolexpr_Var2Const_next(void * c_self)
+boolexpr_Map_next(void * c_self)
 {
-    auto self = reinterpret_cast<Var2ConstProxy *>(c_self);
+    auto self = reinterpret_cast<MapProxy<var_t, const_t> *>(c_self);
     self->next();
 }
 
 
 void const *
-boolexpr_Var2Const_key(void const * c_self)
+boolexpr_Map_key(void const * c_self)
 {
-    auto self = reinterpret_cast<Var2ConstProxy const *>(c_self);
+    auto self = reinterpret_cast<MapProxy<var_t, const_t> const *>(c_self);
     return self->key();
 }
 
 
 void const *
-boolexpr_Var2Const_val(void const * c_self)
+boolexpr_Map_val(void const * c_self)
 {
-    auto self = reinterpret_cast<Var2ConstProxy const *>(c_self);
+    auto self = reinterpret_cast<MapProxy<var_t, const_t> const *>(c_self);
     return self->val();
 }
 
@@ -231,7 +233,7 @@ boolexpr_Soln_second(void const * c_self)
 {
     auto self = reinterpret_cast<SolnProxy const *>(c_self);
     auto point = *(self->soln.second);
-    return new Var2ConstProxy(std::move(point));
+    return new MapProxy<var_t, const_t>(std::move(point));
 }
 
 
@@ -606,5 +608,5 @@ void const *
 boolexpr_BoolExpr_support(void const * c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return new VarSetProxy(self->bx->support());
+    return new SetProxy<var_t>(self->bx->support());
 }

@@ -197,16 +197,16 @@ class BoolExpr:
 
         ret = dict()
         try:
-            lib.boolexpr_Var2Const_iter(snd)
+            lib.boolexpr_Map_iter(snd)
             while True:
-                key = lib.boolexpr_Var2Const_key(snd)
+                key = lib.boolexpr_Map_key(snd)
                 if key == ffi.NULL:
                     break
-                val = lib.boolexpr_Var2Const_val(snd)
+                val = lib.boolexpr_Map_val(snd)
                 ret[_bx(key)] = _bx(val)
-                lib.boolexpr_Var2Const_next(snd)
+                lib.boolexpr_Map_next(snd)
         finally:
-            lib.boolexpr_Var2Const_del(snd)
+            lib.boolexpr_Map_del(snd)
 
         return (True, ret)
 
@@ -226,15 +226,15 @@ class BoolExpr:
         ret = set()
         s = lib.boolexpr_BoolExpr_support(self._cdata)
         try:
-            lib.boolexpr_VarSet_iter(s)
+            lib.boolexpr_Set_iter(s)
             while True:
-                val = lib.boolexpr_VarSet_val(s)
+                val = lib.boolexpr_Set_val(s)
                 if val == ffi.NULL:
                     break
                 ret.add(_bx(val))
-                lib.boolexpr_VarSet_next(s)
+                lib.boolexpr_Set_next(s)
         finally:
-            lib.boolexpr_VarSet_del(s)
+            lib.boolexpr_Set_del(s)
         return ret
 
     def dfs_iter(self):
