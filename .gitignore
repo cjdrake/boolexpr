@@ -1,5 +1,7 @@
+.coverage
 build
 dist
+htmlcov
 *.a
 *.o
 *.so

@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+from enum import Enum
+
 from _boolexpr import ffi, lib
 
 
@@ -80,6 +82,27 @@ class Context:
         return _bx(cdata)
 
 
+class Kind(Enum):
+    zero = lib.ZERO
+    one = lib.ONE
+    log = lib.LOG
+    ill = lib.ILL
+    comp = lib.COMP
+    var = lib.VAR
+    nor = lib.NOR
+    or_ = lib.OR
+    nand = lib.NAND
+    and_ = lib.AND
+    xnor = lib.XNOR
+    xor = lib.XOR
+    neq = lib.NEQ
+    eq = lib.EQ
+    nimpl = lib.NIMPL
+    impl = lib.IMPL
+    nite = lib.NITE
+    ite = lib.ITE
+
+
 class BoolExpr:
     """
     Base class for Boolean expressions
@@ -131,7 +154,7 @@ class BoolExpr:
 
     @property
     def kind(self):
-        return lib.boolexpr_BoolExpr_kind(self._cdata)
+        return Kind(lib.boolexpr_BoolExpr_kind(self._cdata))
 
     def depth(self):
         return lib.boolexpr_BoolExpr_depth(self._cdata)
@@ -197,16 +220,16 @@ class BoolExpr:
 
         ret = dict()
         try:
-            lib.boolexpr_Map_iter(snd)
+            lib.boolexpr_Point_iter(snd)
             while True:
-                key = lib.boolexpr_Map_key(snd)
+                key = lib.boolexpr_Point_key(snd)
                 if key == ffi.NULL:
                     break
-                val = lib.boolexpr_Map_val(snd)
+                val = lib.boolexpr_Point_val(snd)
                 ret[_bx(key)] = _bx(val)
-                lib.boolexpr_Map_next(snd)
+                lib.boolexpr_Point_next(snd)
         finally:
-            lib.boolexpr_Map_del(snd)
+            lib.boolexpr_Point_del(snd)
 
         return (True, ret)
 
@@ -226,15 +249,15 @@ class BoolExpr:
         ret = set()
         s = lib.boolexpr_BoolExpr_support(self._cdata)
         try:
-            lib.boolexpr_Set_iter(s)
+            lib.boolexpr_VarSet_iter(s)
             while True:
-                val = lib.boolexpr_Set_val(s)
+                val = lib.boolexpr_VarSet_val(s)
                 if val == ffi.NULL:
                     break
                 ret.add(_bx(val))
-                lib.boolexpr_Set_next(s)
+                lib.boolexpr_VarSet_next(s)
         finally:
-            lib.boolexpr_Set_del(s)
+            lib.boolexpr_VarSet_del(s)
         return ret
 
     def dfs_iter(self):
@@ -279,24 +302,24 @@ class IfThenElse(Operator): pass
 
 
 _KIND2CLS = {
-    0x00: Zero,
-    0x01: One,
-    0x04: Logical,
-    0x06: Illogical,
-    0x08: Complement,
-    0x09: Variable,
-    0x10: Nor,
-    0x11: Or,
-    0x12: Nand,
-    0x13: And,
-    0x14: Xnor,
-    0x15: Xor,
-    0x16: Unequal,
-    0x17: Equal,
-    0x18: NotImplies,
-    0x19: Implies,
-    0x1A: NotIfThenElse,
-    0x1B: IfThenElse,
+    lib.ZERO  : Zero,
+    lib.ONE   : One,
+    lib.LOG   : Logical,
+    lib.ILL   : Illogical,
+    lib.COMP  : Complement,
+    lib.VAR   : Variable,
+    lib.NOR   : Nor,
+    lib.OR    : Or,
+    lib.NAND  : Nand,
+    lib.AND   : And,
+    lib.XNOR  : Xnor,
+    lib.XOR   : Xor,
+    lib.NEQ   : Unequal,
+    lib.EQ    : Equal,
+    lib.NIMPL : NotImplies,
+    lib.IMPL  : Implies,
+    lib.NITE  : NotIfThenElse,
+    lib.ITE   : IfThenElse,
 }
 
 def _bx(cbx):

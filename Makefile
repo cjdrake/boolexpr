@@ -1,6 +1,7 @@
 # Filename: Makefile
 
 CMAKE := cmake
+COVERAGE := coverage
 GENHTML := genhtml
 LCOV := lcov
 
@@ -13,8 +14,10 @@ help:
 	@printf "Valid targets:\n"
 	@printf "\n"
 	@printf "    help            Display this help message\n"
-	@printf "    test            Run unit tests\n"
-	@printf "    cover           Collect coverage\n"
+	@printf "    test            Run C++ unit tests\n"
+	@printf "    cover           Collect C++ coverage\n"
+	@printf "    pytest          Run Python unit tests\n"
+	@printf "    pycov           Collect C++ coverage\n"
 
 .PHONY: test
 test: build/test/a.out
@@ -37,6 +40,16 @@ do_genhtml: do_lcov
 
 .PHONY: cover
 cover: do_genhtml
+
+.PHONY: pytest
+pytest:
+	@./setup.py test
+
+.PHONY: pycov
+pycov: test_boolexpr.py
+	@./setup.py build_ext -i
+	@coverage run test_boolexpr.py
+	@coverage html
 
 #===============================================================================
 # Source Code
