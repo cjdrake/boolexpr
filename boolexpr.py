@@ -327,6 +327,18 @@ def _bx(cbx):
     return _KIND2CLS[kind](cbx)
 
 
+def zero():
+    return _bx(lib.boolexpr_zero())
+
+def one():
+    return _bx(lib.boolexpr_one())
+
+def logical():
+    return _bx(lib.boolexpr_logical())
+
+def illogical():
+    return _bx(lib.boolexpr_illogical())
+
 def not_(arg):
     _, args = _convert_args((arg, ))
     return _bx(lib.boolexpr_not(args[0]))

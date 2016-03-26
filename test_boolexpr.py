@@ -19,6 +19,7 @@ from boolexpr import Context
 from boolexpr import Kind
 
 from boolexpr import (
+    zero, one, logical, illogical,
     not_,
     nor, or_, nand, and_, xnor, xor, neq, eq, impl, ite,
     nor_s, or_s, nand_s, and_s, xnor_s, xor_s, neq_s, eq_s, impl_s, ite_s,
@@ -36,14 +37,37 @@ class BoolExprTest(unittest.TestCase):
 
     def test_basic(self):
         xs = self.xs
+
+        self.assertEqual(str(zero()), "0")
+        self.assertEqual(str(one()), "1")
+        self.assertEqual(str(logical()), "X")
+        self.assertEqual(str(illogical()), "?")
+
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         self.assertEqual(str(f), "Or(~x_0, Xor(And(x_1, ~x_2), x_3))")
+        self.assertEqual(str(f), repr(f))
         self.assertEqual(f.depth(), 3)
         self.assertEqual(f.size(), 7)
         self.assertEqual(f.atom_count(), 4)
         self.assertEqual(f.op_count(), 3)
         self.assertFalse(f.is_cnf())
         self.assertFalse(f.is_dnf())
+
+    def test_errors(self):
+        xs = self.xs
+        f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
+
+        # Expected obj to be a BoolExpr
+        with self.assertRaises(TypeError):
+            xs[0] | 42
+
+        # Expected obj to be a Constant
+        with self.assertRaises(TypeError):
+            f.restrict({xs[0]: 42})
+
+        # Expected obj to be a Variable
+        with self.assertRaises(TypeError):
+            f.compose({xs[0] & xs[1]: False})
 
     def test_ops1(self):
         xs = self.xs
@@ -125,7 +149,8 @@ class BoolExprTest(unittest.TestCase):
     def test_restrict(self):
         xs = self.xs
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
-        g = f.restrict({xs[0]: False, xs[1]: 1, xs[2]: 'X', xs[3]: '?'})
+        g = f.restrict({xs[0]: False, xs[1]: 1, xs[2]: 'X', xs[3]: '?',
+                        xs[4]: zero(), xs[5]: one(), xs[6]: logical(), xs[7]: illogical()})
         self.assertEqual(str(g), "?")
 
     def test_equiv(self):
