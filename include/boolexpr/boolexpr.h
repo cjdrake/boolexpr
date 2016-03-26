@@ -731,6 +731,16 @@ extern "C"
     void boolexpr_VarSet_next(void *);
     void const * boolexpr_VarSet_val(void const *);
 
+    void boolexpr_Var2Const_del(void const *);
+    void boolexpr_Var2Const_iter(void *);
+    void boolexpr_Var2Const_next(void *);
+    void const * boolexpr_Var2Const_key(void const *);
+    void const * boolexpr_Var2Const_val(void const *);
+
+    void boolexpr_Soln_del(void const *);
+    bool boolexpr_Soln_first(void const *);
+    void const * boolexpr_Soln_second(void const *);
+
     void const * boolexpr_DfsIter_new(void const *);
     void boolexpr_DfsIter_del(void const *);
     void boolexpr_DfsIter_iter(void *);
@@ -780,6 +790,7 @@ extern "C"
     void const * boolexpr_BoolExpr_tseytin(void const *, void *, char const *);
     void const * boolexpr_BoolExpr_compose(void const *, int, void const **, void const **);
     void const * boolexpr_BoolExpr_restrict(void const *, int, void const **, void const **);
+    void const * boolexpr_BoolExpr_sat(void const *);
     void const * boolexpr_BoolExpr_to_cnf(void const *);
     void const * boolexpr_BoolExpr_to_dnf(void const *);
     void const * boolexpr_BoolExpr_to_nnf(void const *);

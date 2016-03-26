@@ -182,8 +182,33 @@ class BoolExpr:
         consts = ffi.new("void * []", n)
         for i, (var, const) in enumerate(point.items()):
             vars_[i] = _expect_var(var)
-            consts = _expect_const(const)
+            consts[i] = _expect_const(const)
         return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, n, vars_, consts))
+
+    def sat(self):
+        soln = lib.boolexpr_BoolExpr_sat(self._cdata)
+        try:
+            fst = bool(lib.boolexpr_Soln_first(soln))
+            if not fst:
+                return (False, None)
+            snd = lib.boolexpr_Soln_second(soln)
+        finally:
+            lib.boolexpr_Soln_del(soln)
+
+        ret = dict()
+        try:
+            lib.boolexpr_Var2Const_iter(snd)
+            while True:
+                key = lib.boolexpr_Var2Const_key(snd)
+                if key == ffi.NULL:
+                    break
+                val = lib.boolexpr_Var2Const_val(snd)
+                ret[_bx(key)] = _bx(val)
+                lib.boolexpr_Var2Const_next(snd)
+        finally:
+            lib.boolexpr_Var2Const_del(snd)
+
+        return (True, ret)
 
     def to_cnf(self):
         return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))

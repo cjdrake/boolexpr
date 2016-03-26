@@ -54,6 +54,38 @@ struct VarSetProxy
 };
 
 
+struct Var2ConstProxy
+{
+    unordered_map<var_t, const_t> m;
+    std::unordered_map<var_t, const_t>::iterator it;
+
+    Var2ConstProxy(unordered_map<var_t, const_t> const && m): m {m} {}
+    ~Var2ConstProxy() {}
+
+    void iter() { it = m.begin(); }
+    void next() { ++it; }
+
+    BoolExprProxy * key() const
+    {
+        return (it == m.end()) ? nullptr : new BoolExprProxy((*it).first);
+    }
+
+    BoolExprProxy * val() const
+    {
+        return (it == m.end()) ? nullptr : new BoolExprProxy((*it).second);
+    }
+};
+
+
+struct SolnProxy
+{
+    soln_t soln;
+
+    SolnProxy(soln_t const && soln): soln {soln} {}
+    ~SolnProxy() {}
+};
+
+
 struct DfsIterProxy
 {
     bx_t bx;
@@ -135,6 +167,71 @@ boolexpr_VarSet_val(void const * c_self)
 {
     auto self = reinterpret_cast<VarSetProxy const *>(c_self);
     return self->val();
+}
+
+
+void
+boolexpr_Var2Const_del(void const * c_self)
+{
+    auto self = reinterpret_cast<Var2ConstProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_Var2Const_iter(void * c_self)
+{
+    auto self = reinterpret_cast<Var2ConstProxy *>(c_self);
+    self->iter();
+}
+
+
+void
+boolexpr_Var2Const_next(void * c_self)
+{
+    auto self = reinterpret_cast<Var2ConstProxy *>(c_self);
+    self->next();
+}
+
+
+void const *
+boolexpr_Var2Const_key(void const * c_self)
+{
+    auto self = reinterpret_cast<Var2ConstProxy const *>(c_self);
+    return self->key();
+}
+
+
+void const *
+boolexpr_Var2Const_val(void const * c_self)
+{
+    auto self = reinterpret_cast<Var2ConstProxy const *>(c_self);
+    return self->val();
+}
+
+
+void
+boolexpr_Soln_del(void const * c_self)
+{
+    auto self = reinterpret_cast<SolnProxy const *>(c_self);
+    delete self;
+}
+
+
+bool
+boolexpr_Soln_first(void const * c_self)
+{
+    auto self = reinterpret_cast<SolnProxy const *>(c_self);
+    return self->soln.first;
+}
+
+
+void const *
+boolexpr_Soln_second(void const * c_self)
+{
+    auto self = reinterpret_cast<SolnProxy const *>(c_self);
+    auto point = *(self->soln.second);
+    return new Var2ConstProxy(std::move(point));
 }
 
 
@@ -461,6 +558,14 @@ boolexpr_BoolExpr_restrict(void const * c_self, int n, void const ** c_varps, vo
         point.insert({var, const_});
     }
     return new BoolExprProxy(self->bx->restrict_(point));
+}
+
+
+void const *
+boolexpr_BoolExpr_sat(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    return new SolnProxy(self->bx->sat());
 }
 
 
