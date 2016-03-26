@@ -280,8 +280,8 @@ def _bx(cbx):
 
 
 def not_(arg):
-    n, args = _convert_args((arg, ))
-    return _bx(lib.boolexpr_not(arg.cdata))
+    _, args = _convert_args((arg, ))
+    return _bx(lib.boolexpr_not(args[0]))
 
 def nor(*args):
     n, args = _convert_args(args)
