@@ -27,23 +27,6 @@
 using namespace boolexpr;
 
 
-struct StringProxy
-{
-    char * str;
-
-    StringProxy(string const & s)
-    {
-        str = new char [s.length() + 1];
-        std::strcpy(str, s.c_str());
-    }
-
-    ~StringProxy()
-    {
-        delete [] str;
-    }
-};
-
-
 struct BoolExprProxy
 {
     bx_t const bx;
@@ -117,18 +100,9 @@ boolexpr_Context_get_var(void * c_self, char const * c_name)
 
 
 void
-boolexpr_String_del(void const * c_self)
+boolexpr_String_del(char const * c_str)
 {
-    auto self = reinterpret_cast<StringProxy const *>(c_self);
-    delete self;
-}
-
-
-char const *
-boolexpr_String_str(void const * c_self)
-{
-    auto self = reinterpret_cast<StringProxy const *>(c_self);
-    return self->str;
+    delete c_str;
 }
 
 
@@ -357,11 +331,14 @@ boolexpr_BoolExpr_kind(void const * c_self)
 }
 
 
-void const *
+char const *
 boolexpr_BoolExpr_to_string(void const * c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return new StringProxy(self->bx->to_string());
+    auto str = self->bx->to_string();
+    auto c_str = new char [str.length() + 1];
+    std::strcpy(c_str, str.c_str());
+    return c_str;
 }
 
 

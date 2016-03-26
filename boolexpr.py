@@ -98,11 +98,11 @@ class BoolExpr:
         return self.__str__()
 
     def __bytes__(self):
-        sp = lib.boolexpr_BoolExpr_to_string(self._cdata)
+        c_str = lib.boolexpr_BoolExpr_to_string(self._cdata)
         try:
-            b = ffi.string(lib.boolexpr_String_str(sp))
+            b = ffi.string(c_str)
         finally:
-            lib.boolexpr_String_del(sp)
+            lib.boolexpr_String_del(c_str)
         return b
 
     def __str__(self):

@@ -83,8 +83,7 @@ void * boolexpr_Context_new(void);
 void boolexpr_Context_del(void *);
 void const * boolexpr_Context_get_var(void *, char const *);
 
-void boolexpr_String_del(void const *);
-char const * boolexpr_String_str(void const *);
+void boolexpr_String_del(char const *);
 
 void boolexpr_VarSet_del(void const *);
 void boolexpr_VarSet_iter(void *);
@@ -126,7 +125,7 @@ void const * boolexpr_ite_s(void const *, void const *, void const *);
 
 void boolexpr_BoolExpr_del(void const *);
 uint8_t boolexpr_BoolExpr_kind(void const *);
-void const * boolexpr_BoolExpr_to_string(void const *);
+char const * boolexpr_BoolExpr_to_string(void const *);
 uint32_t boolexpr_BoolExpr_depth(void const *);
 uint32_t boolexpr_BoolExpr_size(void const *);
 uint32_t boolexpr_BoolExpr_atom_count(void const *);
