@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2016 Chris Drake
 #
@@ -28,6 +28,9 @@ CLASSIFIERS = [
     "Development Status :: 1 - Planning",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: C++",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
     "Programming Language :: Python",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
