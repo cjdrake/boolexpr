@@ -37,6 +37,25 @@ struct BoolExprProxy
 
 
 template <typename T>
+struct VecProxy
+{
+    vector<T> v;
+    typename std::vector<T>::iterator it;
+
+    VecProxy(vector<T> const & v): v {v} {}
+    ~VecProxy() {}
+
+    void iter() { it = v.begin(); }
+    void next() { ++it; }
+
+    BoolExprProxy * val() const
+    {
+        return (it == v.end()) ? nullptr : new BoolExprProxy(*it);
+    }
+};
+
+
+template <typename T>
 struct SetProxy
 {
     unordered_set<T> s;
@@ -137,6 +156,38 @@ void
 boolexpr_String_del(char const * c_str)
 {
     delete c_str;
+}
+
+
+void
+boolexpr_Vec_del(void const * c_self)
+{
+    auto self = reinterpret_cast<VecProxy<bx_t> const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_Vec_iter(void * c_self)
+{
+    auto self = reinterpret_cast<VecProxy<bx_t> *>(c_self);
+    self->iter();
+}
+
+
+void
+boolexpr_Vec_next(void * c_self)
+{
+    auto self = reinterpret_cast<VecProxy<bx_t> *>(c_self);
+    self->next();
+}
+
+
+void const *
+boolexpr_Vec_val(void const * c_self)
+{
+    auto self = reinterpret_cast<VecProxy<bx_t> const *>(c_self);
+    return self->val();
 }
 
 
@@ -618,4 +669,22 @@ boolexpr_Operator_simple(void const * c_self)
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     auto op = std::static_pointer_cast<Operator const>(self->bx);
     return op->simple;
+}
+
+
+void const *
+boolexpr_Operator_args(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto op = std::static_pointer_cast<Operator const>(self->bx);
+    return new VecProxy<bx_t>(op->args);
+}
+
+
+bool
+boolexpr_Operator_is_clause(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto op = std::static_pointer_cast<Operator const>(self->bx);
+    return op->is_clause();
 }

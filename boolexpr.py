@@ -75,6 +75,19 @@ def _convert_args(args):
     return num, c_args
 
 
+def _convert_vec(c_vec):
+    """Convert a CData Vec object to a Python {Variable}."""
+    vec = list()
+    lib.boolexpr_Vec_iter(c_vec)
+    while True:
+        val = lib.boolexpr_Vec_val(c_vec)
+        if val == ffi.NULL:
+            break
+        vec.append(_bx(val))
+        lib.boolexpr_Vec_next(c_vec)
+    return vec
+
+
 def _convert_varset(c_varset):
     """Convert a CData VarSet object to a Python {Variable}."""
     varset = set()
@@ -368,7 +381,21 @@ class Operator(BoolExpr):
 
     @property
     def simple(self):
+        """Return True if the operator is simple."""
         return bool(lib.boolexpr_Operator_simple(self._cdata))
+
+    @property
+    def args(self):
+        """Return a tuple of the operator's arguments."""
+        c_vec = lib.boolexpr_Operator_args(self._cdata)
+        try:
+            return tuple(_convert_vec(c_vec))
+        finally:
+            lib.boolexpr_Vec_del(c_vec)
+
+    def is_clause(self):
+        """Return True if the operator is a clause."""
+        return bool(lib.boolexpr_Operator_is_clause(self._cdata))
 
 
 class LatticeOperator(Operator):

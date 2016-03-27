@@ -106,6 +106,11 @@ void const * boolexpr_Context_get_var(void *, char const *);
 
 void boolexpr_String_del(char const *);
 
+void boolexpr_Vec_del(void const *);
+void boolexpr_Vec_iter(void *);
+void boolexpr_Vec_next(void *);
+void const * boolexpr_Vec_val(void const *);
+
 void boolexpr_VarSet_del(void const *);
 void boolexpr_VarSet_iter(void *);
 void boolexpr_VarSet_next(void *);
@@ -178,6 +183,8 @@ _Bool boolexpr_BoolExpr_equiv(void const *, void const *);
 void const * boolexpr_BoolExpr_support(void const *);
 
 _Bool boolexpr_Operator_simple(void const *);
+void const * boolexpr_Operator_args(void const *);
+_Bool boolexpr_Operator_is_clause(void const *);
 
 """
 

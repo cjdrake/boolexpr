@@ -726,6 +726,11 @@ extern "C"
 
     void boolexpr_String_del(char const *);
 
+    void boolexpr_Vec_del(void const *);
+    void boolexpr_Vec_iter(void *);
+    void boolexpr_Vec_next(void *);
+    void const * boolexpr_Vec_val(void const *);
+
     void boolexpr_VarSet_del(void const *);
     void boolexpr_VarSet_iter(void *);
     void boolexpr_VarSet_next(void *);
@@ -798,6 +803,8 @@ extern "C"
     void const * boolexpr_BoolExpr_support(void const *);
 
     bool boolexpr_Operator_simple(void const *);
+    void const * boolexpr_Operator_args(void const *);
+    bool boolexpr_Operator_is_clause(void const *);
 }
 
 

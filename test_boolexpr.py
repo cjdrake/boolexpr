@@ -248,6 +248,20 @@ class BoolExprTest(unittest.TestCase):
         ]
         self.assertEqual(observed, expected)
 
+    def test_op_args(self):
+        xs = self.xs
+        f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
+        self.assertEqual(str(f.args[1].args[0].args[0]), "x_1")
+
+    def test_op_is_clause(self):
+        xs = self.xs
+        f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
+        self.assertFalse(f.is_clause())
+        g = or_(*xs[:8])
+        self.assertTrue(g.is_clause())
+        h = and_(*xs[:8])
+        self.assertTrue(h.is_clause())
+
 
 if __name__ == "__main__":
     unittest.main()
