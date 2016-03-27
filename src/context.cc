@@ -46,17 +46,15 @@ Context::get_var(string name)
 }
 
 
-// FIXME(cjdrake): This doesn't handle errors
 string
-Context::get_name(id_t id) const
+Context::_get_name(id_t id) const
 {
     return id2name.find(id >> 1)->second;
 }
 
 
-// FIXME(cjdrake): This doesn't handle errors
 lit_t
-Context::get_lit(id_t id) const
+Context::_get_lit(id_t id) const
 {
     return id2lit.find(id)->second;
 }

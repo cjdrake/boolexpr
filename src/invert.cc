@@ -49,7 +49,7 @@ Complement::_invert() const
 {
     auto self = shared_from_this();
     auto xn = std::static_pointer_cast<Complement const>(self);
-    return xn->ctx->get_lit(xn->id + 1);
+    return xn->ctx->_get_lit(xn->id + 1);
 }
 
 
@@ -58,7 +58,7 @@ Variable::_invert() const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(self);
-    return x->ctx->get_lit(x->id - 1);
+    return x->ctx->_get_lit(x->id - 1);
 }
 
 

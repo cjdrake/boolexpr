@@ -434,7 +434,7 @@ Complement::_op_lsh(std::ostream& s) const
 {
     auto self = shared_from_this();
     auto xn = std::static_pointer_cast<Complement const>(self);
-    return s << "~" << xn->ctx->get_name(xn->id);
+    return s << "~" << xn->ctx->_get_name(xn->id);
 }
 
 
@@ -443,14 +443,14 @@ Variable::_op_lsh(std::ostream& s) const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(self);
-    return s << x->ctx->get_name(x->id);
+    return s << x->ctx->_get_name(x->id);
 }
 
 
 std::ostream&
 Operator::_op_lsh(std::ostream& s) const
 {
-    s << opname() << "(";
+    s << _opname() << "(";
     for (size_t i = 0; i < args.size(); ++i) {
         if (i != 0) s << ", ";
         s << args[i];
