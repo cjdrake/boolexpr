@@ -144,7 +144,9 @@ class BoolExprTest(unittest.TestCase):
     def test_simplify(self):
         xs = self.xs
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
+        self.assertFalse(f.simple)
         g = f.simplify()
+        self.assertTrue(g.simple)
         self.assertTrue(f.equiv(g))
 
     def test_to_binop(self):
