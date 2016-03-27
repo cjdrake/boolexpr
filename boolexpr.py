@@ -20,6 +20,7 @@ Use CFFI to interface the boolexpr C++ library to Python.
 """
 
 
+import itertools
 from enum import Enum
 
 from _boolexpr import ffi, lib
@@ -558,3 +559,75 @@ def ite_s(s, d1, d0):
     """Simplifying Boolean IfThenElse operator."""
     _, c_args = _convert_args((s, d1, d0))
     return _bx(lib.boolexpr_ite_s(c_args[0], c_args[1], c_args[2]))
+
+
+def onehot0(*args, conj=True):
+    """
+    Return an expression that means
+    "at most one input function is true".
+
+    If *conj* is ``True``, return a CNF.
+    Otherwise, return a DNF.
+    """
+    terms = list()
+    if conj:
+        for x_0, x_1 in itertools.combinations(args, 2):
+            terms.append(or_(not_(x_0), not_(x_1)))
+        return and_(*terms)
+    else:
+        for xs in itertools.combinations(args, len(args) - 1):
+            terms.append(and_(*[not_(x) for x in xs]))
+        return or_(*terms)
+
+
+def onehot(*args, conj=True):
+    """
+    Return an expression that means
+    "exactly one input function is true".
+
+    If *conj* is ``True``, return a CNF.
+    Otherwise, return a DNF.
+    """
+    terms = list()
+    if conj:
+        for x_0, x_1 in itertools.combinations(args, 2):
+            terms.append(or_(not_(x_0), not_(x_1)))
+        terms.append(or_(*args))
+        return and_(*terms)
+    else:
+        for i, x_i in enumerate(args):
+            zeros = [not_(arg) for arg in args[:i] + args[i+1:]]
+            terms.append(and_(x_i, *zeros))
+        return or_(*terms)
+
+
+def majority(*args, conj=False):
+    """
+    Return an expression that means
+    "the majority of input functions are true".
+
+    If *conj* is ``True``, return a CNF.
+    Otherwise, return a DNF.
+    """
+    if conj:
+        terms = list()
+        for xs in itertools.combinations(args, (len(args) + 1) // 2):
+            terms.append(or_(*xs))
+        return and_(*terms)
+    else:
+        terms = list()
+        for xs in itertools.combinations(args, len(args) // 2 + 1):
+            terms.append(and_(*xs))
+        return or_(*terms)
+
+
+def achilles_heel(*args):
+    r"""
+    Return the Achille's Heel function, defined as:
+    :math:`\prod_{i=0}^{n/2-1}{X_{2i} + X_{2i+1}}`.
+    """
+    num = len(args)
+    if num & 1:
+        fstr = "expected an even number of arguments, got {}"
+        raise ValueError(fstr.format(num))
+    return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])

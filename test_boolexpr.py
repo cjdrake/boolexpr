@@ -23,6 +23,7 @@ from boolexpr import (
     not_,
     nor, or_, nand, and_, xnor, xor, neq, eq, impl, ite,
     nor_s, or_s, nand_s, and_s, xnor_s, xor_s, neq_s, eq_s, impl_s, ite_s,
+    onehot0, onehot, majority, achilles_heel,
 )
 
 
@@ -105,6 +106,33 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(str(True & xs[0]), "And(1, x_0)")
         self.assertEqual(str(xs[0] ^ 0), "Xor(x_0, 0)")
         self.assertEqual(str(1 ^ xs[0]), "Xor(1, x_0)")
+
+    def test_ops3(self):
+        xs = self.xs
+
+        f0 = onehot0(*xs[:8], conj=False)
+        self.assertEqual(f0.kind, Kind.or_)
+        f1 = onehot0(*xs[:8], conj=True)
+        self.assertEqual(f1.kind, Kind.and_)
+        self.assertTrue(f0.equiv(f1))
+
+        f2 = onehot(*xs[:8], conj=False)
+        self.assertEqual(f2.kind, Kind.or_)
+        f3 = onehot(*xs[:8], conj=True)
+        self.assertEqual(f3.kind, Kind.and_)
+        self.assertTrue(f2.equiv(f3))
+
+        f4 = majority(*xs[:8], conj=False)
+        self.assertEqual(f4.kind, Kind.or_)
+        f5 = majority(*xs[:8], conj=True)
+        self.assertEqual(f5.kind, Kind.and_)
+        self.assertTrue(f4.equiv(f5))
+
+        f6 = achilles_heel(*xs[:8])
+        self.assertEqual(f6.kind, Kind.and_)
+
+        with self.assertRaises(ValueError):
+            achilles_heel(*xs[:7])
 
     def test_pushdown_not(self):
         xs = self.xs
