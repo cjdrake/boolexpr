@@ -609,13 +609,12 @@ def majority(*args, conj=False):
     If *conj* is ``True``, return a CNF.
     Otherwise, return a DNF.
     """
+    terms = list()
     if conj:
-        terms = list()
         for xs in itertools.combinations(args, (len(args) + 1) // 2):
             terms.append(or_(*xs))
         return and_(*terms)
     else:
-        terms = list()
         for xs in itertools.combinations(args, len(args) // 2 + 1):
             terms.append(and_(*xs))
         return or_(*terms)
