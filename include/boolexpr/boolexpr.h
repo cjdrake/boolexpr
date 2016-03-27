@@ -796,6 +796,8 @@ extern "C"
     void const * boolexpr_BoolExpr_to_nnf(void const *);
     bool boolexpr_BoolExpr_equiv(void const *, void const *);
     void const * boolexpr_BoolExpr_support(void const *);
+
+    bool boolexpr_Operator_simple(void const *);
 }
 
 

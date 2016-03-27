@@ -610,3 +610,12 @@ boolexpr_BoolExpr_support(void const * c_self)
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     return new SetProxy<var_t>(self->bx->support());
 }
+
+
+bool
+boolexpr_Operator_simple(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto op = std::static_pointer_cast<Operator const>(self->bx);
+    return op->simple;
+}

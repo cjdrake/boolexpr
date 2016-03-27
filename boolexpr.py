@@ -362,8 +362,14 @@ class Complement(Literal):
 class Variable(Literal):
     """Boolean Variable"""
 
+
 class Operator(BoolExpr):
     """Boolean Operator"""
+
+    @property
+    def simple(self):
+        return bool(lib.boolexpr_Operator_simple(self._cdata))
+
 
 class LatticeOperator(Operator):
     """Boolean Lattice Operator"""
