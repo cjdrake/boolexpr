@@ -86,12 +86,12 @@ Operator::sat() const
     auto ctx = Context();
     auto cnf = op->tseytin(ctx);
 
-    auto s = cnf->support();
+    auto xs = cnf->support();
     unordered_map<bx_t, uint32_t> lit2idx;
     unordered_map<uint32_t, var_t> idx2var;
 
     uint32_t index = 0u;
-    for (var_t const & x : s) {
+    for (var_t const & x : xs) {
         lit2idx.insert({~x, (index << 1) | 0u});
         lit2idx.insert({ x, (index << 1) | 1u});
         idx2var.insert({index, x});
@@ -100,7 +100,7 @@ Operator::sat() const
 
     SATSolver solver;
     vector<Lit> cmlits;
-    solver.new_vars(s.size());
+    solver.new_vars(xs.size());
 
     auto and_op = std::static_pointer_cast<And const>(cnf);
     for (bx_t const & clause : and_op->args) {
