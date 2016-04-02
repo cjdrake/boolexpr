@@ -120,7 +120,7 @@ struct DfsIterProxy
 
     BoolExprProxy * val() const
     {
-        return (it == end(bx)) ? nullptr : new BoolExprProxy(*it);
+        return (it == dfs_iter()) ? nullptr : new BoolExprProxy(*it);
     }
 };
 

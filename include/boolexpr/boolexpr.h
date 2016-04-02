@@ -632,9 +632,6 @@ public:
 };
 
 
-dfs_iter begin(bx_t const &);
-dfs_iter const end(bx_t const &);
-
 zero_t zero();
 one_t one();
 log_t logical();

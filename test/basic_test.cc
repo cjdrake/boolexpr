@@ -310,8 +310,8 @@ TEST_F(BoolExprTest, DFSIter)
     };
 
     int i = 0;
-    for (const auto& node : y)
-        EXPECT_EQ(node->to_string(), ans[i++]);
+    for (auto it = dfs_iter(y); it != dfs_iter(); ++it)
+        EXPECT_EQ((*it)->to_string(), ans[i++]);
 }
 
 

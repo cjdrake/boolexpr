@@ -93,19 +93,6 @@ bx_t And::dominator() { return zero(); }
 bx_t Xor::identity() { return zero(); }
 
 
-dfs_iter
-boolexpr::begin(bx_t const & bx)
-{
-    return dfs_iter(bx);
-}
-
-dfs_iter const
-boolexpr::end(bx_t const &)
-{
-    return dfs_iter();
-}
-
-
 zero_t
 boolexpr::zero()
 {
@@ -556,7 +543,7 @@ BoolExpr::support() const
 
     unordered_set<var_t> s;
 
-    for (auto it = dfs_iter(self); it != end(self); ++it) {
+    for (auto it = dfs_iter(self); it != dfs_iter(); ++it) {
         if (IS_VAR(*it))
             s.insert(std::static_pointer_cast<Variable const>(*it));
         else if (IS_COMP(*it))
