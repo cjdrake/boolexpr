@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -77,6 +78,7 @@ struct MapProxy
     std::unordered_map<K, V> m;
     typename std::unordered_map<K, V>::iterator it;
 
+    MapProxy(std::unordered_map<K, V> const & m): m {m} {}
     MapProxy(std::unordered_map<K, V> const && m): m {m} {}
 
     void iter() { it = m.begin(); }
@@ -104,17 +106,30 @@ struct SolnProxy
 
 struct DfsIterProxy
 {
-    bx_t bx;
     dfs_iter it;
 
-    DfsIterProxy(bx_t const & bx): bx {bx} {}
+    DfsIterProxy(bx_t const & bx): it {dfs_iter(bx)} {}
 
-    void iter() { it = dfs_iter(bx); }
     void next() { ++it; }
 
     BoolExprProxy * val() const
     {
         return (it == dfs_iter()) ? nullptr : new BoolExprProxy(*it);
+    }
+};
+
+
+struct SatIterProxy
+{
+    sat_iter it;
+
+    SatIterProxy(bx_t const & bx): it {sat_iter(bx)} {}
+
+    void next() { ++it; }
+
+    MapProxy<var_t, const_t> * val() const
+    {
+        return (it == sat_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
     }
 };
 
@@ -283,6 +298,38 @@ boolexpr_Soln_second(void const * c_self)
 
 
 void const *
+boolexpr_SatIter_new(void const * c_bxp)
+{
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
+    return new SatIterProxy(bxp->bx);
+}
+
+
+void
+boolexpr_SatIter_del(void const * c_self)
+{
+    auto self = reinterpret_cast<SatIterProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_SatIter_next(void * c_self)
+{
+    auto self = reinterpret_cast<SatIterProxy *>(c_self);
+    self->next();
+}
+
+
+void const *
+boolexpr_SatIter_val(void const * c_self)
+{
+    auto self = reinterpret_cast<SatIterProxy const *>(c_self);
+    return self->val();
+}
+
+
+void const *
 boolexpr_DfsIter_new(void const * c_bxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
@@ -295,14 +342,6 @@ boolexpr_DfsIter_del(void const * c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy const *>(c_self);
     delete self;
-}
-
-
-void
-boolexpr_DfsIter_iter(void * c_self)
-{
-    auto self = reinterpret_cast<DfsIterProxy *>(c_self);
-    self->iter();
 }
 
 

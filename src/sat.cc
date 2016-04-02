@@ -98,43 +98,178 @@ Operator::sat() const
     }
 
     CMSat::SATSolver solver;
-    vector<CMSat::Lit> cmlits;
+    vector<CMSat::Lit> clause;
     solver.new_vars(xs.size());
 
     auto and_op = std::static_pointer_cast<And const>(cnf);
-    for (bx_t const & clause : and_op->args) {
-        cmlits.clear();
-        if (IS_LIT(clause)) {
-            auto index = lit2idx.find(clause)->second;
-            cmlits.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
+    for (bx_t const & arg : and_op->args) {
+        clause.clear();
+        if (IS_LIT(arg)) {
+            auto index = lit2idx.find(arg)->second;
+            clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
         }
         else {
-            auto or_op = std::static_pointer_cast<Or const>(clause);
+            auto or_op = std::static_pointer_cast<Or const>(arg);
             for (bx_t const & lit : or_op->args) {
                 auto index = lit2idx.find(lit)->second;
-                cmlits.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
+                clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
         }
-        solver.add_clause(cmlits);
+        solver.add_clause(clause);
     }
 
-    auto ret = solver.solve();
+    auto sat = solver.solve();
 
-    if (ret == l_True) {
+    if (sat == l_True) {
         auto model = solver.get_model();
-        point_t point;
+        point_t soln;
         for (size_t i = 0; i < solver.nVars(); ++i) {
             auto x = idx2var.find(i)->second;
             if (x->ctx != &ctx) {
                 if (model[i] == l_False)
-                    point.insert({x, zero()});
+                    soln.insert({x, zero()});
                 else if (model[i] == l_True)
-                    point.insert({x, one()});
+                    soln.insert({x, one()});
             }
         }
-        return std::make_pair(true, std::move(point));
+        return std::make_pair(true, std::move(soln));
     }
     else {
         return std::make_pair(false, boost::none);
     }
+}
+
+
+sat_iter::sat_iter() : sat {l_False} {}
+
+
+sat_iter::sat_iter(bx_t const & bx)
+{
+    _one_soln = false;
+
+    if (IS_ZERO(bx) || IS_UNKNOWN(bx)) {
+        sat = l_False;
+        return;
+    }
+
+    if (IS_ONE(bx)) {
+        sat = l_True;
+        _one_soln = true;
+        return;
+    }
+
+    if (IS_COMP(bx)) {
+        sat = l_True;
+        auto x = std::static_pointer_cast<Variable const>(~bx);
+        soln.insert({x, zero()});
+        _one_soln = true;
+        return;
+    }
+
+    if (IS_VAR(bx)) {
+        sat = l_True;
+        auto x = std::static_pointer_cast<Variable const>(bx);
+        soln.insert({x, one()});
+        _one_soln = true;
+        return;
+    }
+
+    // Operator
+
+    auto op = std::static_pointer_cast<Operator const>(bx);
+    auto cnf = op->tseytin(_ctx);
+
+    auto xs = cnf->support();
+    _solver.new_vars(xs.size());
+    uint32_t index = 0u;
+    for (var_t const & x : xs) {
+        _lit2idx.insert({~x, (index << 1) | 0u});
+        _lit2idx.insert({ x, (index << 1) | 1u});
+        _idx2var.insert({index, x});
+        ++index;
+    }
+
+    vector<CMSat::Lit> clause;
+    auto and_op = std::static_pointer_cast<And const>(cnf);
+    for (bx_t const & arg : and_op->args) {
+        clause.clear();
+        if (IS_LIT(arg)) {
+            auto index = _lit2idx.find(arg)->second;
+            clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
+        }
+        else {
+            auto or_op = std::static_pointer_cast<Or const>(arg);
+            for (bx_t const & lit : or_op->args) {
+                auto index = _lit2idx.find(lit)->second;
+                clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
+            }
+        }
+        _solver.add_clause(clause);
+    }
+
+    _get_soln();
+}
+
+
+void
+sat_iter::_get_soln()
+{
+    soln.clear();
+
+    sat = _solver.solve();
+    if (sat == l_True) {
+        auto model = _solver.get_model();
+        vector<CMSat::Lit> clause;
+        for (size_t i = 0; i < _solver.nVars(); ++i) {
+            auto x = _idx2var.find(i)->second;
+            if (x->ctx != &_ctx) {
+                if (model[i] == l_False) {
+                    soln.insert({x, zero()});
+                    clause.push_back(CMSat::Lit(i, false));
+                }
+                else if (model[i] == l_True) {
+                    soln.insert({x, one()});
+                    clause.push_back(CMSat::Lit(i, true));
+                }
+            }
+        }
+        // Block this solution
+        _solver.add_clause(clause);
+    }
+}
+
+
+bool
+sat_iter::operator==(sat_iter const & rhs) const
+{
+    return sat == rhs.sat;
+}
+
+
+bool
+sat_iter::operator!=(sat_iter const & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+point_t const &
+sat_iter::operator*() const
+{
+    return soln;
+}
+
+
+sat_iter const &
+sat_iter::operator++()
+{
+    if (_one_soln) {
+        sat = l_False;
+        soln.clear();
+    }
+    else {
+        _get_soln();
+    }
+
+    return *this;
 }

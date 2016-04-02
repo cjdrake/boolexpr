@@ -126,9 +126,13 @@ void boolexpr_Soln_del(void const *);
 _Bool boolexpr_Soln_first(void const *);
 void const * boolexpr_Soln_second(void const *);
 
+void const * boolexpr_SatIter_new(void const *);
+void boolexpr_SatIter_del(void const *);
+void boolexpr_SatIter_next(void *);
+void const * boolexpr_SatIter_val(void const *);
+
 void const * boolexpr_DfsIter_new(void const *);
 void boolexpr_DfsIter_del(void const *);
-void boolexpr_DfsIter_iter(void *);
 void boolexpr_DfsIter_next(void *);
 void const * boolexpr_DfsIter_val(void const *);
 

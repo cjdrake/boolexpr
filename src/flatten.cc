@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 

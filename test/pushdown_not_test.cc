@@ -19,6 +19,7 @@
 #include <vector>
 
 #include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"

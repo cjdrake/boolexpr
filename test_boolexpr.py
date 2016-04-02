@@ -202,6 +202,11 @@ class BoolExprTest(unittest.TestCase):
         expected = {('x_1', '1'), ('x_0', '1')}
         self.assertEqual(observed, expected)
 
+    def test_iter_sat(self):
+        xs = self.xs
+        f = onehot(*xs[:8])
+        self.assertEqual(len(list(f.iter_sat())), 8)
+
     def test_cnf(self):
         xs = self.xs
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]

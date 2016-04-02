@@ -631,6 +631,31 @@ public:
 };
 
 
+class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
+{
+    Context _ctx;
+    std::unordered_map<bx_t, uint32_t> _lit2idx;
+    std::unordered_map<uint32_t, var_t> _idx2var;
+
+    CMSat::SATSolver _solver;
+
+    CMSat::lbool sat;
+    point_t soln;
+
+    bool _one_soln;
+    void _get_soln();
+
+public:
+    sat_iter();
+    sat_iter(bx_t const &);
+
+    bool operator==(sat_iter const &) const;
+    bool operator!=(sat_iter const &) const;
+    point_t const & operator*() const;
+    sat_iter const & operator++();
+};
+
+
 zero_t zero();
 one_t one();
 log_t logical();
@@ -742,9 +767,13 @@ extern "C"
     bool boolexpr_Soln_first(void const *);
     void const * boolexpr_Soln_second(void const *);
 
+    void const * boolexpr_SatIter_new(void const *);
+    void boolexpr_SatIter_del(void const *);
+    void boolexpr_SatIter_next(void *);
+    void const * boolexpr_SatIter_val(void const *);
+
     void const * boolexpr_DfsIter_new(void const *);
     void boolexpr_DfsIter_del(void const *);
-    void boolexpr_DfsIter_iter(void *);
     void boolexpr_DfsIter_next(void *);
     void const * boolexpr_DfsIter_val(void const *);
 

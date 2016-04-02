@@ -298,6 +298,19 @@ class BoolExpr:
         finally:
             lib.boolexpr_Point_del(c_point)
 
+    def iter_sat(self):
+        """Iterate through all satisfying input points."""
+        it = lib.boolexpr_SatIter_new(self._cdata)
+        try:
+            while True:
+                val = lib.boolexpr_SatIter_val(it)
+                if val == ffi.NULL:
+                    break
+                yield _convert_point(val)
+                lib.boolexpr_SatIter_next(it)
+        finally:
+            lib.boolexpr_SatIter_del(it)
+
     def to_cnf(self):
         """Convert the expression to conjunctive normal form (CNF)."""
         return _bx(lib.boolexpr_BoolExpr_to_cnf(self._cdata))
@@ -331,7 +344,6 @@ class BoolExpr:
         """Iterate through all expression nodes in DFS order."""
         it = lib.boolexpr_DfsIter_new(self._cdata)
         try:
-            lib.boolexpr_DfsIter_iter(it)
             while True:
                 val = lib.boolexpr_DfsIter_val(it)
                 if val == ffi.NULL:
