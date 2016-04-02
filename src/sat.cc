@@ -24,8 +24,7 @@
 #include "boolexpr/boolexpr.h"
 
 
-using CMSat::SATSolver;
-using CMSat::Lit;
+// Required for l_False and l_True
 using CMSat::lbool;
 
 using namespace boolexpr;
@@ -98,8 +97,8 @@ Operator::sat() const
         ++index;
     }
 
-    SATSolver solver;
-    vector<Lit> cmlits;
+    CMSat::SATSolver solver;
+    vector<CMSat::Lit> cmlits;
     solver.new_vars(xs.size());
 
     auto and_op = std::static_pointer_cast<And const>(cnf);
@@ -107,13 +106,13 @@ Operator::sat() const
         cmlits.clear();
         if (IS_LIT(clause)) {
             auto index = lit2idx.find(clause)->second;
-            cmlits.push_back(Lit(index >> 1, !(index & 1u)));
+            cmlits.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
         }
         else {
             auto or_op = std::static_pointer_cast<Or const>(clause);
             for (bx_t const & lit : or_op->args) {
                 auto index = lit2idx.find(lit)->second;
-                cmlits.push_back(Lit(index >> 1, !(index & 1u)));
+                cmlits.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
         }
         solver.add_clause(cmlits);
