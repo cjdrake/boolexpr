@@ -327,7 +327,7 @@ class BoolExpr:
         finally:
             lib.boolexpr_VarSet_del(c_varset)
 
-    def dfs_iter(self):
+    def iter_dfs(self):
         """Iterate through all expression nodes in DFS order."""
         it = lib.boolexpr_DfsIter_new(self._cdata)
         try:

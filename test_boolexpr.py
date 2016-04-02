@@ -221,7 +221,7 @@ class BoolExprTest(unittest.TestCase):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         g = f.to_nnf()
         NNF_KINDS = {Kind.or_, Kind.and_, Kind.comp, Kind.var}
-        for bx in g.dfs_iter():
+        for bx in g.iter_dfs():
             self.assertTrue(bx.kind in NNF_KINDS)
 
     def test_support(self):
@@ -236,7 +236,7 @@ class BoolExprTest(unittest.TestCase):
     def test_dfs_iter(self):
         xs = self.xs
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
-        observed = list(str(bx) for bx in f.dfs_iter())
+        observed = list(str(bx) for bx in f.iter_dfs())
         expected = [
             "~x_0",
             "x_1",
