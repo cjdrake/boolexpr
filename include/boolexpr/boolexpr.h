@@ -58,8 +58,6 @@ namespace boolexpr {
 
 
 using std::string;
-using std::unordered_map;
-using std::unordered_set;
 using std::vector;
 
 
@@ -92,9 +90,9 @@ using var_t = std::shared_ptr<Variable const>;
 using op_t = std::shared_ptr<Operator const>;
 using lop_t = std::shared_ptr<LatticeOperator const>;
 
-using var2bx_t = unordered_map<var_t, bx_t>;
-using var2op_t = unordered_map<var_t, op_t>;
-using point_t = unordered_map<var_t, const_t>;
+using var2bx_t = std::unordered_map<var_t, bx_t>;
+using var2op_t = std::unordered_map<var_t, op_t>;
+using point_t = std::unordered_map<var_t, const_t>;
 
 using soln_t = std::pair<bool, boost::optional<point_t>>;
 
@@ -160,7 +158,7 @@ public:
     bx_t to_nnf() const;
 
     bool equiv(bx_t const &) const;
-    unordered_set<var_t> support() const;
+    std::unordered_set<var_t> support() const;
 };
 
 
@@ -596,7 +594,7 @@ class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
 
 protected:
     enum class Color { WHITE, GRAY, BLACK };
-    unordered_map<bx_t, Color> colors;
+    std::unordered_map<bx_t, Color> colors;
     bx_t const * p;
     void _advance_one();
 
@@ -618,9 +616,9 @@ class Context
 
     id_t id;
 
-    unordered_map<string, var_t> vars;
-    unordered_map<id_t, string> id2name;
-    unordered_map<id_t, lit_t> id2lit;
+    std::unordered_map<string, var_t> vars;
+    std::unordered_map<id_t, string> id2name;
+    std::unordered_map<id_t, lit_t> id2lit;
 
     string _get_name(id_t id) const;
     lit_t _get_lit(id_t id) const;

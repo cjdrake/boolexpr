@@ -318,7 +318,7 @@ TEST_F(BoolExprTest, DFSIter)
 TEST_F(BoolExprTest, Support)
 {
     auto y = (~xs[0] & xs[1]) | (~xs[2] & xs[3]);
-    unordered_set<var_t> s = {xs[0], xs[1], xs[2], xs[3]};
+    std::unordered_set<var_t> s = {xs[0], xs[1], xs[2], xs[3]};
 
     EXPECT_EQ(y->support(), s);
 }

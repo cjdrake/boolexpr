@@ -58,10 +58,10 @@ struct VecProxy
 template <typename T>
 struct SetProxy
 {
-    unordered_set<T> s;
+    std::unordered_set<T> s;
     typename std::unordered_set<T>::iterator it;
 
-    SetProxy(unordered_set<T> const && s): s {s} {}
+    SetProxy(std::unordered_set<T> const && s): s {s} {}
     ~SetProxy() {}
 
     void iter() { it = s.begin(); }
@@ -77,10 +77,10 @@ struct SetProxy
 template <typename K, typename V>
 struct MapProxy
 {
-    unordered_map<K, V> m;
+    std::unordered_map<K, V> m;
     typename std::unordered_map<K, V>::iterator it;
 
-    MapProxy(unordered_map<K, V> const && m): m {m} {}
+    MapProxy(std::unordered_map<K, V> const && m): m {m} {}
     ~MapProxy() {}
 
     void iter() { it = m.begin(); }

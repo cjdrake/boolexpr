@@ -536,12 +536,12 @@ And::is_dnf() const
 }
 
 
-unordered_set<var_t>
+std::unordered_set<var_t>
 BoolExpr::support() const
 {
     auto self = shared_from_this();
 
-    unordered_set<var_t> s;
+    std::unordered_set<var_t> s;
 
     for (auto it = dfs_iter(self); it != dfs_iter(); ++it) {
         if (IS_VAR(*it))
@@ -550,7 +550,7 @@ BoolExpr::support() const
             s.insert(std::static_pointer_cast<Variable const>(~*it));
     }
 
-    return s;
+    return std::move(s);
 }
 
 

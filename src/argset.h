@@ -18,7 +18,7 @@ namespace boolexpr {
 
 class ArgSet {
 protected:
-    unordered_set<bx_t> args;
+    std::unordered_set<bx_t> args;
     virtual void insert(bx_t const &) = 0;
     virtual bx_t to_op() const = 0;
 

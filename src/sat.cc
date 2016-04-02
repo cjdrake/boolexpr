@@ -87,8 +87,8 @@ Operator::sat() const
     auto cnf = op->tseytin(ctx);
 
     auto xs = cnf->support();
-    unordered_map<bx_t, uint32_t> lit2idx;
-    unordered_map<uint32_t, var_t> idx2var;
+    std::unordered_map<bx_t, uint32_t> lit2idx;
+    std::unordered_map<uint32_t, var_t> idx2var;
 
     uint32_t index = 0u;
     for (var_t const & x : xs) {
