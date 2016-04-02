@@ -40,12 +40,20 @@ TEST(CFFI, Basic)
 {
     auto zero = boolexpr_zero();
     auto one = boolexpr_one();
+    auto log = boolexpr_logical();
+    auto ill = boolexpr_illogical();
 
     auto cstr_0 = boolexpr_BoolExpr_to_string(zero);
     EXPECT_TRUE(strcmp(cstr_0, "0") == 0);
 
     auto cstr_1 = boolexpr_BoolExpr_to_string(one);
     EXPECT_TRUE(strcmp(cstr_1, "1") == 0);
+
+    auto cstr_x = boolexpr_BoolExpr_to_string(log);
+    EXPECT_TRUE(strcmp(cstr_x, "X") == 0);
+
+    auto cstr_xx = boolexpr_BoolExpr_to_string(ill);
+    EXPECT_TRUE(strcmp(cstr_xx, "?") == 0);
 
     auto ctx = boolexpr_Context_new();
 
@@ -116,6 +124,8 @@ TEST(CFFI, Basic)
 
     boolexpr_String_del(cstr_0);
     boolexpr_String_del(cstr_1);
+    boolexpr_String_del(cstr_x);
+    boolexpr_String_del(cstr_xx);
     boolexpr_String_del(cstr_a);
     boolexpr_String_del(cstr_b);
     boolexpr_String_del(cstr_c);

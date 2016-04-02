@@ -439,6 +439,92 @@ TEST_F(SimplifyTest, LatticeUnknowns)
 }
 
 
+TEST_F(SimplifyTest, XorUnknowns)
+{
+    auto y0 = xs[0] ^ _log;
+    EXPECT_EQ(y0->simplify()->to_string(), "X");
+
+    auto y1 = _log ^ xs[0];
+    EXPECT_EQ(y1->simplify()->to_string(), "X");
+
+    auto y2 = xs[0] ^ _log ^ _one;
+    EXPECT_EQ(y2->simplify()->to_string(), "X");
+
+    auto y3 = xs[0] ^ _one ^ _log;
+    EXPECT_EQ(y3->simplify()->to_string(), "X");
+
+    auto y4 = _log ^ xs[0] ^ _one;
+    EXPECT_EQ(y4->simplify()->to_string(), "X");
+
+    auto y5 = _log ^ _one ^ xs[0];
+    EXPECT_EQ(y5->simplify()->to_string(), "X");
+
+    auto y6 = _one ^ xs[0] ^ _log;
+    EXPECT_EQ(y6->simplify()->to_string(), "X");
+
+    auto y7 = _one ^ _log ^ xs[0];
+    EXPECT_EQ(y7->simplify()->to_string(), "X");
+
+    auto y8 = xs[0] ^ _log ^ _one ^ _ill;
+    EXPECT_EQ(y8->simplify()->to_string(), "?");
+
+    auto y9 = _log ^ xs[0] ^ _one ^ _ill;
+    EXPECT_EQ(y9->simplify()->to_string(), "?");
+
+    auto y10 = _log ^ _one ^ xs[0] ^ _ill;
+    EXPECT_EQ(y10->simplify()->to_string(), "?");
+
+    auto y11 = _log ^ _one ^ _ill ^ xs[0];
+    EXPECT_EQ(y11->simplify()->to_string(), "?");
+}
+
+
+TEST_F(SimplifyTest, EqualUnknowns)
+{
+    auto y0 = eq_s({xs[0], _log});
+    EXPECT_EQ(y0->simplify()->to_string(), "X");
+
+    auto y1 = eq_s({_log, xs[0]});
+    EXPECT_EQ(y1->simplify()->to_string(), "X");
+
+    auto y2 = eq_s({xs[0], _log, _one});
+    EXPECT_EQ(y2->simplify()->to_string(), "X");
+
+    auto y3 = eq_s({xs[0], _one, _log});
+    EXPECT_EQ(y3->simplify()->to_string(), "X");
+
+    auto y4 = eq_s({_log, xs[0], _one});
+    EXPECT_EQ(y4->simplify()->to_string(), "X");
+
+    auto y5 = eq_s({_log, _one, xs[0]});
+    EXPECT_EQ(y5->simplify()->to_string(), "X");
+
+    auto y6 = eq_s({_one, xs[0], _log});
+    EXPECT_EQ(y6->simplify()->to_string(), "X");
+
+    auto y7 = eq_s({_one, _log, xs[0]});
+    EXPECT_EQ(y7->simplify()->to_string(), "X");
+
+    auto y8 = eq_s({xs[0], _log, _one, _ill});
+    EXPECT_EQ(y8->simplify()->to_string(), "?");
+
+    auto y9 = eq_s({_log, xs[0], _one, _ill});
+    EXPECT_EQ(y9->simplify()->to_string(), "?");
+
+    auto y10 = eq_s({_log, _one, xs[0], _ill});
+    EXPECT_EQ(y10->simplify()->to_string(), "?");
+
+    auto y11 = eq_s({_log, _one, _ill, xs[0]});
+    EXPECT_EQ(y11->simplify()->to_string(), "?");
+
+    auto y12 = eq_s({_log});
+    EXPECT_EQ(y12->simplify()->to_string(), "1");
+
+    auto y13 = eq_s({xs[0], _ill, _log, _one});
+    EXPECT_EQ(y13->simplify()->to_string(), "?");
+}
+
+
 TEST_F(SimplifyTest, ImpliesUnknowns)
 {
     EXPECT_EQ(impl_s(xs[0], _log)->to_string(), "X");
@@ -449,4 +535,16 @@ TEST_F(SimplifyTest, ImpliesUnknowns)
 
     EXPECT_EQ(impl_s(_log, _ill)->to_string(), "?");
     EXPECT_EQ(impl_s(_ill, _log)->to_string(), "?");
+}
+
+
+TEST_F(SimplifyTest, IfThenElseUnknowns)
+{
+    EXPECT_EQ(ite_s(_ill, xs[0], xs[1])->to_string(), "?");
+    EXPECT_EQ(ite_s(xs[0], _ill, xs[1])->to_string(), "?");
+    EXPECT_EQ(ite_s(xs[0], xs[1], _ill)->to_string(), "?");
+
+    EXPECT_EQ(ite_s(xs[0], _log, xs[1])->to_string(), "X");
+    EXPECT_EQ(ite_s(xs[0], xs[1], _log)->to_string(), "X");
+    EXPECT_EQ(ite_s(_log, xs[0], xs[1])->to_string(), "X");
 }
