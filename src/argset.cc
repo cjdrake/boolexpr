@@ -47,7 +47,7 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
+            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
             }
             else if (IS_LOG(arg)) {
@@ -68,7 +68,7 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
+            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
             }
             else if (IS_LOG(arg)) {
@@ -88,7 +88,7 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.end()))) {
+            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
             }
             else if (arg->kind == kind) {
@@ -130,7 +130,7 @@ LatticeArgSet::reduce() const
     if (state == State::isill)
         return illogical();
 
-    if (args.size() == 1) return *args.begin();
+    if (args.size() == 1) return *args.cbegin();
 
     return to_op();
 }
@@ -144,7 +144,7 @@ OrArgSet::OrArgSet(vector<bx_t> const & args)
 bx_t
 OrArgSet::to_op() const
 {
-    return std::make_shared<Or>(true, vector<bx_t>(args.begin(), args.end()));
+    return std::make_shared<Or>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -156,7 +156,7 @@ AndArgSet::AndArgSet(vector<bx_t> const & args)
 bx_t
 AndArgSet::to_op() const
 {
-    return std::make_shared<And>(true, vector<bx_t>(args.begin(), args.end()));
+    return std::make_shared<And>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -184,11 +184,11 @@ XorArgSet::insert(bx_t const & arg)
                 parity ^= static_cast<bool>(arg->kind);
             }
             // xor(x, y, z, z) <=> xor(x, y) ; xnor(x, y, z, z) <=> xnor(x, y)
-            else if (args.find(arg) != args.end()) {
+            else if (args.find(arg) != args.cend()) {
                 args.erase(arg);
             }
             // xor(x, y, z, ~z) <=> xnor(x, y) ; xnor(x, y, z, ~z) <=> xor(x, y)
-            else if (IS_LIT(arg) && args.find(~arg) != args.end()) {
+            else if (IS_LIT(arg) && args.find(~arg) != args.cend()) {
                 args.erase(~arg);
                 parity ^= true;
             }
@@ -222,7 +222,7 @@ XorArgSet::insert(bx_t const & arg)
 bx_t
 XorArgSet::to_op() const
 {
-    return std::make_shared<Xor>(true, vector<bx_t>(args.begin(), args.end()));
+    return std::make_shared<Xor>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -239,7 +239,7 @@ XorArgSet::reduce() const
     if (args.size() == 0)
         y = zero();
     else if (args.size() == 1)
-        y = *args.begin();
+        y = *args.cbegin();
     else
         y = to_op();
 
@@ -278,7 +278,7 @@ EqArgSet::insert(bx_t const & arg)
                 if (has_zero)
                     args.clear();
             }
-            else if (IS_LIT(arg) && (args.find(~arg) != args.end())) {
+            else if (IS_LIT(arg) && (args.find(~arg) != args.cend())) {
                 has_zero = true;
                 has_one = true;
                 args.clear();
@@ -302,7 +302,7 @@ EqArgSet::insert(bx_t const & arg)
 bx_t
 EqArgSet::to_op() const
 {
-    return std::make_shared<Equal>(true, vector<bx_t>(args.begin(), args.end()));
+    return std::make_shared<Equal>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -324,11 +324,11 @@ EqArgSet::reduce() const
 
     // eq(0, x, y) <=> nor(x, y)
     if (has_zero)
-        return nor_s(vector<bx_t>(args.begin(), args.end()));
+        return nor_s(vector<bx_t>(args.cbegin(), args.cend()));
 
     // eq(1, x, y) <=> x & y
     if (has_one)
-        return and_s(vector<bx_t>(args.begin(), args.end()));
+        return and_s(vector<bx_t>(args.cbegin(), args.cend()));
 
     return to_op();
 }

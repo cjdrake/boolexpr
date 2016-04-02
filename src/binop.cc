@@ -67,8 +67,8 @@ Or::to_binop() const
     // x0 | x1 | x2 | x3 <=> (x0 | x1) | (x2 | x3)
     size_t const mid = op->args.size() / 2;
 
-    auto lo = or_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
-    auto hi = or_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
+    auto lo = or_(vector<bx_t>(op->args.cbegin(), op->args.cbegin() + mid));
+    auto hi = or_(vector<bx_t>(op->args.cbegin() + mid, op->args.cend()));
 
     return lo->to_binop() | hi->to_binop();
 }
@@ -92,8 +92,8 @@ And::to_binop() const
     // x0 & x1 & x2 & x3 <=> (x0 & x1) & (x2 & x3)
     size_t const mid = op->args.size() / 2;
 
-    auto lo = and_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
-    auto hi = and_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
+    auto lo = and_(vector<bx_t>(op->args.cbegin(), op->args.cbegin() + mid));
+    auto hi = and_(vector<bx_t>(op->args.cbegin() + mid, op->args.cend()));
 
     return lo->to_binop() & hi->to_binop();
 }
@@ -117,8 +117,8 @@ Xor::to_binop() const
     // x0 ^ x1 ^ x2 ^ x3 <=> (x0 ^ x1) ^ (x2 ^ x3)
     size_t const mid = op->args.size() / 2;
 
-    auto lo = xor_(vector<bx_t>(op->args.begin(), op->args.begin() + mid));
-    auto hi = xor_(vector<bx_t>(op->args.begin() + mid, op->args.end()));
+    auto lo = xor_(vector<bx_t>(op->args.cbegin(), op->args.cbegin() + mid));
+    auto hi = xor_(vector<bx_t>(op->args.cbegin() + mid, op->args.cend()));
 
     return lo->to_binop() ^ hi->to_binop();
 }

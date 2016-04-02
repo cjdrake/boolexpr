@@ -84,7 +84,7 @@ Xnor::pushdown_not() const
 
     // ~(x0 ^ x1 ^ x2 ^ ...) <=> ~x0 ^ x1 ^ x2 ^ ...
     vector<bx_t> _args {~nop->args[0]};
-    for (auto it = nop->args.begin() + 1; it != nop->args.end(); ++it)
+    for (auto it = nop->args.cbegin() + 1; it != nop->args.cend(); ++it)
         _args.push_back((*it)->pushdown_not());
 
     return xor_(std::move(_args));
@@ -99,7 +99,7 @@ Unequal::pushdown_not() const
 
     // ~eq(x0, x1, x2, ...) <=> eq(~x0, x1, x2, ...)
     vector<bx_t> _args {~nop->args[0]};
-    for (auto it = nop->args.begin() + 1; it != nop->args.end(); ++it)
+    for (auto it = nop->args.cbegin() + 1; it != nop->args.cend(); ++it)
         _args.push_back((*it)->pushdown_not());
 
     return eq(std::move(_args));

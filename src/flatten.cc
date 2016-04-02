@@ -193,7 +193,7 @@ _nnf2cnf(bx_t const & nnf1)
 
     vector<bx_t> args;
     for (auto const & clause : clauses3)
-        args.push_back(or_s(vector<bx_t>(clause.begin(), clause.end())));
+        args.push_back(or_s(vector<bx_t>(clause.cbegin(), clause.cend())));
     return and_s(std::move(args));
 }
 
@@ -230,7 +230,7 @@ _nnf2dnf(bx_t const & nnf1)
 
     vector<bx_t> args;
     for (auto const & clause : clauses3)
-        args.push_back(and_s(vector<bx_t>(clause.begin(), clause.end())));
+        args.push_back(and_s(vector<bx_t>(clause.cbegin(), clause.cend())));
     return or_s(std::move(args));
 }
 

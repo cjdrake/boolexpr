@@ -187,7 +187,7 @@ Xnor::eqvar(var_t const & x) const
 
             vector<bx_t> fst {lits[0]};
             vector<bx_t> snd {~lits[0]};
-            for (auto it = lits.begin() + 1; it != lits.end(); ++it) {
+            for (auto it = lits.cbegin() + 1; it != lits.cend(); ++it) {
                 fst.push_back(*it);
                 snd.push_back(*it);
             }
@@ -227,7 +227,7 @@ Xor::eqvar(var_t const & x) const
 
             vector<bx_t> fst {lits[0]};
             vector<bx_t> snd {~lits[0]};
-            for (auto it = lits.begin() + 1; it != lits.end(); ++it) {
+            for (auto it = lits.cbegin() + 1; it != lits.cend(); ++it) {
                 fst.push_back(*it);
                 snd.push_back(*it);
             }

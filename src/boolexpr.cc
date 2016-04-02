@@ -133,7 +133,7 @@ boolexpr::or_(vector<bx_t> const & args)
     if (args.size() == 0)
         return Or::identity();
     else if (args.size() == 1)
-        return *args.begin();
+        return *args.cbegin();
     else
         return std::make_shared<Or>(false, args);
 }
@@ -144,7 +144,7 @@ boolexpr::or_(vector<bx_t> const && args)
     if (args.size() == 0)
         return Or::identity();
     else if (args.size() == 1)
-        return *args.begin();
+        return *args.cbegin();
     else
         return std::make_shared<Or>(false, args);
 }
@@ -167,7 +167,7 @@ boolexpr::and_(vector<bx_t> const & args)
     if (args.size() == 0)
         return And::identity();
     else if (args.size() == 1)
-        return *args.begin();
+        return *args.cbegin();
     else
         return std::make_shared<And>(false, args);
 }
@@ -178,7 +178,7 @@ boolexpr::and_(vector<bx_t> const && args)
     if (args.size() == 0)
         return And::identity();
     else if (args.size() == 1)
-        return *args.begin();
+        return *args.cbegin();
     else
         return std::make_shared<And>(false, args);
 }
@@ -201,7 +201,7 @@ boolexpr::xor_(vector<bx_t> const & args)
     if (args.size() == 0)
         return Xor::identity();
     else if (args.size() == 1)
-        return *args.begin();
+        return *args.cbegin();
     else
         return std::make_shared<Xor>(false, args);
 }
@@ -212,7 +212,7 @@ boolexpr::xor_(vector<bx_t> const && args)
     if (args.size() == 0)
         return Xor::identity();
     else if (args.size() == 1)
-        return *args.begin();
+        return *args.cbegin();
     else
         return std::make_shared<Xor>(false, args);
 }
