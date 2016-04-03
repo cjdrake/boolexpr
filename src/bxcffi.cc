@@ -32,7 +32,6 @@ struct BoolExprProxy
     bx_t const bx;
 
     BoolExprProxy(bx_t const & bx): bx {bx} {}
-    ~BoolExprProxy() {}
 };
 
 
@@ -43,7 +42,6 @@ struct VecProxy
     typename std::vector<T>::iterator it;
 
     VecProxy(vector<T> const & v): v {v} {}
-    ~VecProxy() {}
 
     void iter() { it = v.begin(); }
     void next() { ++it; }
@@ -62,7 +60,6 @@ struct SetProxy
     typename std::unordered_set<T>::iterator it;
 
     SetProxy(std::unordered_set<T> const && s): s {s} {}
-    ~SetProxy() {}
 
     void iter() { it = s.begin(); }
     void next() { ++it; }
@@ -81,7 +78,6 @@ struct MapProxy
     typename std::unordered_map<K, V>::iterator it;
 
     MapProxy(std::unordered_map<K, V> const && m): m {m} {}
-    ~MapProxy() {}
 
     void iter() { it = m.begin(); }
     void next() { ++it; }
@@ -103,7 +99,6 @@ struct SolnProxy
     soln_t soln;
 
     SolnProxy(soln_t const && soln): soln {soln} {}
-    ~SolnProxy() {}
 };
 
 
