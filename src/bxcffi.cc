@@ -113,7 +113,6 @@ struct DfsIterProxy
     dfs_iter it;
 
     DfsIterProxy(bx_t const & bx): bx {bx} {}
-    ~DfsIterProxy() {}
 
     void iter() { it = dfs_iter(bx); }
     void next() { ++it; }

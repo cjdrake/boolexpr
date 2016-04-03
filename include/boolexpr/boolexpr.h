@@ -590,12 +590,13 @@ public:
 
 class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
 {
+    enum class Color { WHITE, GRAY, BLACK };
+
+    std::unordered_map<bx_t, Color> colors;
     vector<bx_t> stack;
 
-protected:
-    enum class Color { WHITE, GRAY, BLACK };
-    std::unordered_map<bx_t, Color> colors;
     bx_t const * p;
+
     void _advance_one();
 
 public:
