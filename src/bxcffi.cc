@@ -696,6 +696,24 @@ boolexpr_BoolExpr_support(void const * c_self)
 }
 
 
+void const *
+boolexpr_Literal_ctx(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto lit = std::static_pointer_cast<Literal const>(self->bx);
+    return lit->ctx;
+}
+
+
+uint32_t
+boolexpr_Literal_id(void const * c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto lit = std::static_pointer_cast<Literal const>(self->bx);
+    return lit->id;
+}
+
+
 bool
 boolexpr_Operator_simple(void const * c_self)
 {

@@ -29,13 +29,13 @@ from _boolexpr import ffi, lib
 def _expect_bx(obj):
     """Convert a Python object to BoolExpr CData."""
     if obj == 0:
-        return lib.boolexpr_zero()
+        return ZERO.cdata
     elif obj == 1:
-        return lib.boolexpr_one()
+        return ONE.cdata
     elif obj == "x" or obj == "X":
-        return lib.boolexpr_logical()
+        return LOGICAL.cdata
     elif obj == "?":
-        return lib.boolexpr_illogical()
+        return ILLOGICAL.cdata
     elif isinstance(obj, BoolExpr):
         return obj.cdata
     else:
@@ -45,13 +45,13 @@ def _expect_bx(obj):
 def _expect_const(obj):
     """Convert a Python object to Constant CData."""
     if obj == 0:
-        return lib.boolexpr_zero()
+        return ZERO.cdata
     elif obj == 1:
-        return lib.boolexpr_one()
+        return ONE.cdata
     elif obj == "x" or obj == "X":
-        return lib.boolexpr_logical()
+        return LOGICAL.cdata
     elif obj == "?":
-        return lib.boolexpr_illogical()
+        return ILLOGICAL.cdata
     elif isinstance(obj, Constant):
         return obj.cdata
     else:
@@ -363,11 +363,23 @@ class Constant(Atom):
 class Known(Constant):
     """Boolean Known Constant"""
 
+
 class Zero(Known):
     """Boolean Zero"""
+    def __bool__(self):
+        return False
+
+    def __int__(self):
+        return 0
 
 class One(Known):
     """Boolean One"""
+    def __bool__(self):
+        return True
+
+    def __int__(self):
+        return 1
+
 
 class Unknown(Constant):
     """Boolean Unknown Constant"""
@@ -378,8 +390,18 @@ class Logical(Unknown):
 class Illogical(Unknown):
     """Boolean Illogical Unknown"""
 
+
 class Literal(Atom):
     """Boolean Literal Atom"""
+
+    @property
+    def ctx(self):
+        return lib.boolexpr_Literal_ctx(self._cdata);
+
+    @property
+    def id(self):
+        return lib.boolexpr_Literal_id(self._cdata);
+
 
 class Complement(Literal):
     """Boolean Complement"""
@@ -450,11 +472,19 @@ class IfThenElse(Operator):
     """Boolean IfThenElse Operator"""
 
 
-_KIND2CLS = {
-    lib.ZERO  : Zero,
-    lib.ONE   : One,
-    lib.LOG   : Logical,
-    lib.ILL   : Illogical,
+ZERO = Zero(lib.boolexpr_zero())
+ONE = One(lib.boolexpr_one())
+LOGICAL = Logical(lib.boolexpr_logical())
+ILLOGICAL = Illogical(lib.boolexpr_illogical())
+
+_KIND2CONST = {
+    lib.ZERO : ZERO,
+    lib.ONE  : ONE,
+    lib.LOG  : LOGICAL,
+    lib.ILL  : ILLOGICAL,
+}
+
+_KIND2OTHER = {
     lib.COMP  : Complement,
     lib.VAR   : Variable,
     lib.NOR   : Nor,
@@ -473,32 +503,10 @@ _KIND2CLS = {
 
 def _bx(cbx):
     kind = lib.boolexpr_BoolExpr_kind(cbx)
-    return _KIND2CLS[kind](cbx)
+    if kind in _KIND2CONST:
+        return _KIND2CONST[kind]
+    return _KIND2OTHER[kind](cbx)
 
-
-def zero():
-    """Return Boolean Zero."""
-    return _bx(lib.boolexpr_zero())
-
-def one():
-    """Return Boolean One."""
-    return _bx(lib.boolexpr_one())
-
-def logical():
-    """Return Boolean X, or "logical".
-
-    This is a placeholder for a "logical" Boolean value:
-    either 0 or 1, but not both.
-    """
-    return _bx(lib.boolexpr_logical())
-
-def illogical():
-    """Return Boolean ?, or "illogical".
-
-    This is a placeholder for an "illogical" Boolean value:
-    neither 0 nor 1, or possibly both.
-    """
-    return _bx(lib.boolexpr_illogical())
 
 def not_(arg):
     """Boolean Not operator."""

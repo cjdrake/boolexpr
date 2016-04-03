@@ -19,7 +19,7 @@ from boolexpr import Context
 from boolexpr import Kind
 
 from boolexpr import (
-    zero, one, logical, illogical,
+    ZERO, ONE, LOGICAL, ILLOGICAL,
     not_,
     nor, or_, nand, and_, xnor, xor, neq, eq, impl, ite,
     nor_s, or_s, nand_s, and_s, xnor_s, xor_s, neq_s, eq_s, impl_s, ite_s,
@@ -39,11 +39,6 @@ class BoolExprTest(unittest.TestCase):
     def test_basic(self):
         xs = self.xs
 
-        self.assertEqual(str(zero()), "0")
-        self.assertEqual(str(one()), "1")
-        self.assertEqual(str(logical()), "X")
-        self.assertEqual(str(illogical()), "?")
-
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         self.assertEqual(str(f), "Or(~x_0, Xor(And(x_1, ~x_2), x_3))")
         self.assertEqual(str(f), repr(f))
@@ -53,6 +48,11 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(f.op_count(), 3)
         self.assertFalse(f.is_cnf())
         self.assertFalse(f.is_dnf())
+
+        self.assertFalse(bool(ZERO))
+        self.assertTrue(bool(ONE))
+        self.assertEqual(int(ZERO), 0)
+        self.assertEqual(int(ONE), 1)
 
     def test_errors(self):
         xs = self.xs
@@ -180,7 +180,7 @@ class BoolExprTest(unittest.TestCase):
         xs = self.xs
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         g = f.restrict({xs[0]: False, xs[1]: 1, xs[2]: 'X', xs[3]: '?',
-                        xs[4]: zero(), xs[5]: one(), xs[6]: logical(), xs[7]: illogical()})
+                        xs[4]: 0, xs[5]: True, xs[6]: 'x', xs[7]: '?'})
         self.assertEqual(str(g), "?")
 
     def test_equiv(self):
