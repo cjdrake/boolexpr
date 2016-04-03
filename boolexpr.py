@@ -504,6 +504,7 @@ _KIND2OTHER = {
 def _bx(cbx):
     kind = lib.boolexpr_BoolExpr_kind(cbx)
     if kind in _KIND2CONST:
+        lib.boolexpr_BoolExpr_del(cbx)
         return _KIND2CONST[kind]
     return _KIND2OTHER[kind](cbx)
 
