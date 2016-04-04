@@ -103,3 +103,62 @@ dfs_iter::operator++()
     _advance_one();
     return *this;
 }
+
+
+point_iter::point_iter()
+    : n {0}
+{ counter.push_back(true); }
+
+
+point_iter::point_iter(vector<var_t> const & vars)
+    : n {vars.size()}, vars {vars}
+{
+    for (size_t i = 0; i <= n; ++i)
+        counter.push_back(false);
+
+    for (size_t i = 0; i < n; ++i)
+        if (counter[i])
+            point.insert({vars[i], one()});
+        else
+            point.insert({vars[i], zero()});
+}
+
+
+bool
+point_iter::operator==(point_iter const & rhs) const
+{
+    return counter[n] == rhs.counter[rhs.n];
+}
+
+
+bool
+point_iter::operator!=(point_iter const & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+point_t const &
+point_iter::operator*() const
+{
+    return point;
+}
+
+
+point_iter const &
+point_iter::operator++()
+{
+    point.clear();
+
+    // Increment the counter
+    for (size_t i = 0; i <= n; ++i)
+        if (counter[i] = (counter[i] != true)) break;
+
+    for (size_t i = 0; i < n; ++i)
+        if (counter[i])
+            point.insert({vars[i], one()});
+        else
+            point.insert({vars[i], zero()});
+
+    return *this;
+}

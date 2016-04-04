@@ -657,6 +657,25 @@ public:
 };
 
 
+class point_iter : public std::iterator<std::input_iterator_tag, point_t>
+{
+    size_t n;
+    vector<var_t> vars;
+    vector<bool> counter;
+
+    point_t point;
+
+public:
+    point_iter();
+    point_iter(vector<var_t> const &);
+
+    bool operator==(point_iter const &) const;
+    bool operator!=(point_iter const &) const;
+    point_t const & operator*() const;
+    point_iter const & operator++();
+};
+
+
 zero_t zero();
 one_t one();
 log_t logical();
