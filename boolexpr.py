@@ -27,56 +27,56 @@ from _boolexpr import ffi, lib
 
 
 def _expect_bx(obj):
-    """Convert a Python object to BoolExpr CData."""
+    """Return a BoolExpr or raise TypeError."""
     if obj == 0:
-        return ZERO.cdata
+        return ZERO
     elif obj == 1:
-        return ONE.cdata
+        return ONE
     elif obj == "x" or obj == "X":
-        return LOGICAL.cdata
+        return LOGICAL
     elif obj == "?":
-        return ILLOGICAL.cdata
+        return ILLOGICAL
     elif isinstance(obj, BoolExpr):
-        return obj.cdata
+        return obj
     else:
         raise TypeError("Expected obj to be a BoolExpr")
 
 
 def _expect_const(obj):
-    """Convert a Python object to Constant CData."""
+    """Return a Constant, or raise TypeError."""
     if obj == 0:
-        return ZERO.cdata
+        return ZERO
     elif obj == 1:
-        return ONE.cdata
+        return ONE
     elif obj == "x" or obj == "X":
-        return LOGICAL.cdata
+        return LOGICAL
     elif obj == "?":
-        return ILLOGICAL.cdata
+        return ILLOGICAL
     elif isinstance(obj, Constant):
-        return obj.cdata
+        return obj
     else:
         raise TypeError("Expected obj to be a Constant")
 
 
 def _expect_var(obj):
-    """Convert a Python object to Variable CData."""
+    """Return a Variable, or raise TypeError."""
     if isinstance(obj, Variable):
-        return obj.cdata
+        return obj
     else:
         raise TypeError("Expected obj to be a Variable")
 
 
 def _convert_args(args):
-    """Convert a sequence of Python objects to BoolExpr CData."""
+    """Convert a sequence of Python BoolExpr to a C [BoolExpr]."""
     num = len(args)
     c_args = ffi.new("void const * []", num)
     for i, arg in enumerate(args):
-        c_args[i] = _expect_bx(arg)
+        c_args[i] = _expect_bx(arg).cdata
     return num, c_args
 
 
-def _convert_vec(c_vec):
-    """Convert a CData Vec object to a Python {Variable}."""
+def _bxlist(c_vec):
+    """Return a [BoolExpr], from a C Vec."""
     vec = list()
     lib.boolexpr_Vec_iter(c_vec)
     while True:
@@ -88,21 +88,21 @@ def _convert_vec(c_vec):
     return vec
 
 
-def _convert_varset(c_varset):
-    """Convert a CData VarSet object to a Python {Variable}."""
-    varset = set()
+def _varset(c_varset):
+    """Return a {Variable}, from a C VarSet."""
+    vars_ = set()
     lib.boolexpr_VarSet_iter(c_varset)
     while True:
         val = lib.boolexpr_VarSet_val(c_varset)
         if val == ffi.NULL:
             break
-        varset.add(_bx(val))
+        vars_.add(_bx(val))
         lib.boolexpr_VarSet_next(c_varset)
-    return varset
+    return vars_
 
 
-def _convert_point(c_point):
-    """Convert a CData Point object to a Python {Variable: Constant}."""
+def _point(c_point):
+    """Return a {Variable: Constant}, from a C Point."""
     point = dict()
     lib.boolexpr_Point_iter(c_point)
     while True:
@@ -263,8 +263,8 @@ class BoolExpr:
         vars_ = ffi.new("void * []", num)
         bxs = ffi.new("void * []", num)
         for i, (var, bx) in enumerate(var2bx.items()):
-            vars_[i] = _expect_var(var)
-            bxs[i] = _expect_bx(bx)
+            vars_[i] = _expect_var(var).cdata
+            bxs[i] = _expect_bx(bx).cdata
         return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, num, vars_, bxs))
 
     def restrict(self, point):
@@ -273,8 +273,8 @@ class BoolExpr:
         vars_ = ffi.new("void * []", num)
         consts = ffi.new("void * []", num)
         for i, (var, const) in enumerate(point.items()):
-            vars_[i] = _expect_var(var)
-            consts[i] = _expect_const(const)
+            vars_[i] = _expect_var(var).cdata
+            consts[i] = _expect_const(const).cdata
         return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, num, vars_, consts))
 
     def sat(self):
@@ -294,7 +294,7 @@ class BoolExpr:
         finally:
             lib.boolexpr_Soln_del(soln)
         try:
-            return (True, _convert_point(c_point))
+            return (True, _point(c_point))
         finally:
             lib.boolexpr_Point_del(c_point)
 
@@ -306,7 +306,7 @@ class BoolExpr:
                 val = lib.boolexpr_SatIter_val(it)
                 if val == ffi.NULL:
                     break
-                yield _convert_point(val)
+                yield _point(val)
                 lib.boolexpr_SatIter_next(it)
         finally:
             lib.boolexpr_SatIter_del(it)
@@ -336,7 +336,7 @@ class BoolExpr:
         """Return the support set of the expression."""
         c_varset = lib.boolexpr_BoolExpr_support(self._cdata)
         try:
-            return _convert_varset(c_varset)
+            return _varset(c_varset)
         finally:
             lib.boolexpr_VarSet_del(c_varset)
 
@@ -423,7 +423,7 @@ class Operator(BoolExpr):
         """Return a tuple of the operator's arguments."""
         c_vec = lib.boolexpr_Operator_args(self._cdata)
         try:
-            return tuple(_convert_vec(c_vec))
+            return tuple(_bxlist(c_vec))
         finally:
             lib.boolexpr_Vec_del(c_vec)
 
