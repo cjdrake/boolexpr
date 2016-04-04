@@ -477,6 +477,8 @@ ONE = One(lib.boolexpr_one())
 LOGICAL = Logical(lib.boolexpr_logical())
 ILLOGICAL = Illogical(lib.boolexpr_illogical())
 
+_LITS = dict()
+
 _KIND2CONST = {
     lib.ZERO : ZERO,
     lib.ONE  : ONE,
@@ -484,9 +486,12 @@ _KIND2CONST = {
     lib.ILL  : ILLOGICAL,
 }
 
+_KIND2LIT = {
+    lib.COMP : Complement,
+    lib.VAR  : Variable,
+}
+
 _KIND2OTHER = {
-    lib.COMP  : Complement,
-    lib.VAR   : Variable,
     lib.NOR   : Nor,
     lib.OR    : Or,
     lib.NAND  : Nand,
@@ -506,6 +511,16 @@ def _bx(cbx):
     if kind in _KIND2CONST:
         lib.boolexpr_BoolExpr_del(cbx)
         return _KIND2CONST[kind]
+    if kind in _KIND2LIT:
+        k0 = int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(cbx)))
+        k1 = lib.boolexpr_Literal_id(cbx)
+        try:
+            lit = _LITS[(k0, k1)]
+        except KeyError:
+            lit = _LITS[(k0, k1)] = _KIND2LIT[kind](cbx)
+        else:
+            lib.boolexpr_BoolExpr_del(cbx)
+        return lit
     return _KIND2OTHER[kind](cbx)
 
 
