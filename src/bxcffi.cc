@@ -696,7 +696,7 @@ boolexpr_BoolExpr_support(void const * c_self)
 }
 
 
-void const *
+void *
 boolexpr_Literal_ctx(void const * c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);

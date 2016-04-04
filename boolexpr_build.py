@@ -186,7 +186,7 @@ void const * boolexpr_BoolExpr_to_nnf(void const *);
 _Bool boolexpr_BoolExpr_equiv(void const *, void const *);
 void const * boolexpr_BoolExpr_support(void const *);
 
-void const * boolexpr_Literal_ctx(void const *);
+void * boolexpr_Literal_ctx(void const *);
 uint32_t boolexpr_Literal_id(void const *);
 
 _Bool boolexpr_Operator_simple(void const *);
