@@ -676,6 +676,23 @@ public:
 };
 
 
+class cf_iter : public std::iterator<std::input_iterator_tag, bx_t>
+{
+    bx_t f;
+    point_iter it;
+    bx_t cf;
+
+public:
+    cf_iter();
+    cf_iter(bx_t const &, vector<var_t> const &);
+
+    bool operator==(cf_iter const &) const;
+    bool operator!=(cf_iter const &) const;
+    bx_t const & operator*() const;
+    cf_iter const & operator++();
+};
+
+
 zero_t zero();
 one_t one();
 log_t logical();

@@ -162,3 +162,42 @@ point_iter::operator++()
 
     return *this;
 }
+
+
+cf_iter::cf_iter() : it {point_iter()} {}
+
+
+cf_iter::cf_iter(bx_t const & f, vector<var_t> const & vars)
+    : f {f}, it {point_iter(vars)}
+{
+    cf = f->restrict_(*it);
+}
+
+
+bool
+cf_iter::operator==(cf_iter const & rhs) const
+{
+    return it == rhs.it;
+}
+
+
+bool
+cf_iter::operator!=(cf_iter const & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+bx_t const &
+cf_iter::operator*() const
+{
+    return cf;
+}
+
+
+cf_iter const &
+cf_iter::operator++()
+{
+    ++it;
+    cf = f->restrict_(*it);
+}
