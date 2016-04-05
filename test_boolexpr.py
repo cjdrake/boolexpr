@@ -218,6 +218,12 @@ class BoolExprTest(unittest.TestCase):
         expected = {"x_0", "x_1", "x_2", "x_3"}
         self.assertEqual(observed, expected)
 
+    def test_cofactors(self):
+        f = majority(*xs[:3])
+        self.assertTrue(f.smoothing([xs[0]]).equiv(xs[1]|xs[2]))
+        self.assertTrue(f.consensus([xs[0]]).equiv(xs[1]&xs[2]))
+        self.assertTrue(f.derivative([xs[0]]).equiv(xs[1]^xs[2]))
+
     def test_iter_dfs(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         observed = list(str(bx) for bx in f.iter_dfs())

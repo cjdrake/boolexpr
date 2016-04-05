@@ -186,6 +186,10 @@ void const * boolexpr_BoolExpr_to_nnf(void const *);
 _Bool boolexpr_BoolExpr_equiv(void const *, void const *);
 void const * boolexpr_BoolExpr_support(void const *);
 
+void const * boolexpr_BoolExpr_smoothing(void const *, size_t, void const **);
+void const * boolexpr_BoolExpr_consensus(void const *, size_t, void const **);
+void const * boolexpr_BoolExpr_derivative(void const *, size_t, void const **);
+
 void * boolexpr_Literal_ctx(void const *);
 uint32_t boolexpr_Literal_id(void const *);
 

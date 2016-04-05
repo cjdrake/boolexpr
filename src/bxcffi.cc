@@ -616,11 +616,11 @@ boolexpr_BoolExpr_tseytin(void const * c_self, void * c_ctx, char const * c_auxv
 
 
 void const *
-boolexpr_BoolExpr_compose(void const * c_self, int n, void const ** c_varps, void const ** c_bxps)
+boolexpr_BoolExpr_compose(void const * c_self, size_t n, void const ** c_varps, void const ** c_bxps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     auto var2bx = var2bx_t();
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
@@ -632,11 +632,11 @@ boolexpr_BoolExpr_compose(void const * c_self, int n, void const ** c_varps, voi
 
 
 void const *
-boolexpr_BoolExpr_restrict(void const * c_self, int n, void const ** c_varps, void const ** c_constps)
+boolexpr_BoolExpr_restrict(void const * c_self, size_t n, void const ** c_varps, void const ** c_constps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     auto point = point_t();
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto constp = reinterpret_cast<BoolExprProxy const *>(c_constps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
@@ -693,6 +693,48 @@ boolexpr_BoolExpr_support(void const * c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     return new SetProxy<var_t>(self->bx->support());
+}
+
+
+void const *
+boolexpr_BoolExpr_smoothing(void const * c_self, size_t n, void const ** c_varps)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    vector<var_t> vars;
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        vars.push_back(var);
+    }
+    return new BoolExprProxy(self->bx->smoothing(vars));
+}
+
+
+void const *
+boolexpr_BoolExpr_consensus(void const * c_self, size_t n, void const ** c_varps)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto vars = vector<var_t>();
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        vars.push_back(var);
+    }
+    return new BoolExprProxy(self->bx->consensus(vars));
+}
+
+
+void const *
+boolexpr_BoolExpr_derivative(void const * c_self, size_t n, void const ** c_varps)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    auto vars = vector<var_t>();
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        vars.push_back(var);
+    }
+    return new BoolExprProxy(self->bx->derivative(vars));
 }
 
 

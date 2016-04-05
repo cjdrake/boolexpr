@@ -574,48 +574,26 @@ Operator::transform(std::function<bx_t(bx_t const &)> f) const
 }
 
 
-//vector<bx_t>
-//boolexpr::cofactors(bx_t const & self, vector<var_t>& xs)
-//{
-//    vector<bx_t> cfs = {self};
-//
-//    for (var_t const & x : xs) {
-//        vector<bx_t> temps;
-//
-//        auto p0 = point_t { {x, zero()} };
-//        for (bx_t const & cf : cfs)
-//            temps.push_back(cf->restrict_(p0));
-//
-//        auto p1 = point_t { {x, one()} };
-//        for (bx_t const & cf : cfs)
-//            temps.push_back(cf->restrict_(p1));
-//
-//        std::swap(cfs, temps);
-//    }
-//
-//    return cfs;
-//}
+// FIXME(cjdrake): Implement these as reductions
+bx_t
+BoolExpr::smoothing(vector<var_t> const & xs) const
+{
+    auto self = shared_from_this();
+    return or_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
+}
 
 
-// FIXME(cjdrake): Rewrite this as a reduction
-//bx_t
-//boolexpr::smoothing(bx_t const & self, vector<var_t>& xs)
-//{
-//    return or_s(cofactors(self, xs));
-//}
+bx_t
+BoolExpr::consensus(vector<var_t> const & xs) const
+{
+    auto self = shared_from_this();
+    return and_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
+}
 
 
-// FIXME(cjdrake): Rewrite this as a reduction
-//bx_t
-//boolexpr::consensus(bx_t const & self, vector<var_t>& xs)
-//{
-//    return and_s(cofactors(self, xs));
-//}
-
-
-// FIXME(cjdrake): Rewrite this as a reduction
-//bx_t
-//boolexpr::derivative(bx_t const & self, vector<var_t>& xs)
-//{
-//    return xor_s(cofactors(self, xs));
-//}
+bx_t
+BoolExpr::derivative(vector<var_t> const & xs) const
+{
+    auto self = shared_from_this();
+    return xor_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
+}

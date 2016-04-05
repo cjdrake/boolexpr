@@ -340,6 +340,30 @@ class BoolExpr:
         finally:
             lib.boolexpr_VarSet_del(c_varset)
 
+    def smoothing(self, xs):
+        """"""
+        num = len(xs)
+        vars_ = ffi.new("void * []", num)
+        for i, x in enumerate(xs):
+            vars_[i] = _expect_var(x).cdata
+        return _bx(lib.boolexpr_BoolExpr_smoothing(self._cdata, num, vars_))
+
+    def consensus(self, xs):
+        """"""
+        num = len(xs)
+        vars_ = ffi.new("void * []", num)
+        for i, x in enumerate(xs):
+            vars_[i] = _expect_var(x).cdata
+        return _bx(lib.boolexpr_BoolExpr_consensus(self._cdata, num, vars_))
+
+    def derivative(self, xs):
+        """"""
+        num = len(xs)
+        vars_ = ffi.new("void * []", num)
+        for i, x in enumerate(xs):
+            vars_[i] = _expect_var(x).cdata
+        return _bx(lib.boolexpr_BoolExpr_derivative(self._cdata, num, vars_))
+
     def iter_dfs(self):
         """Iterate through all expression nodes in DFS order."""
         it = lib.boolexpr_DfsIter_new(self._cdata)
