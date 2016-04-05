@@ -278,17 +278,17 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, num, vars_, consts))
 
     def sat(self):
-        """Return a tuple (is_sat, point).
+        """Return a tuple (sat, point).
 
-        The is_sat value is True if the expression is satisfiable.
+        The sat value is True if the expression is satisfiable.
         If the expression is not satisfiable, the point will be None.
         Otherwise, it will return a {Variable: Constant} mapping of a
         satisfying input point.
         """
         soln = lib.boolexpr_BoolExpr_sat(self._cdata)
         try:
-            is_sat = bool(lib.boolexpr_Soln_first(soln))
-            if not is_sat:
+            sat = bool(lib.boolexpr_Soln_first(soln))
+            if not sat:
                 return (False, None)
             c_point = lib.boolexpr_Soln_second(soln)
         finally:

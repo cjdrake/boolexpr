@@ -122,17 +122,17 @@ Operator::sat() const
 
     if (sat == l_True) {
         auto model = solver.get_model();
-        point_t soln;
+        point_t point;
         for (size_t i = 0; i < solver.nVars(); ++i) {
             auto x = idx2var.find(i)->second;
             if (x->ctx != &ctx) {
                 if (model[i] == l_False)
-                    soln.insert({x, zero()});
+                    point.insert({x, zero()});
                 else if (model[i] == l_True)
-                    soln.insert({x, one()});
+                    point.insert({x, one()});
             }
         }
-        return std::make_pair(true, std::move(soln));
+        return std::make_pair(true, std::move(point));
     }
     else {
         return std::make_pair(false, boost::none);
@@ -161,7 +161,7 @@ sat_iter::sat_iter(bx_t const & bx)
     if (IS_COMP(bx)) {
         sat = l_True;
         auto x = std::static_pointer_cast<Variable const>(~bx);
-        soln.insert({x, zero()});
+        point.insert({x, zero()});
         _one_soln = true;
         return;
     }
@@ -169,7 +169,7 @@ sat_iter::sat_iter(bx_t const & bx)
     if (IS_VAR(bx)) {
         sat = l_True;
         auto x = std::static_pointer_cast<Variable const>(bx);
-        soln.insert({x, one()});
+        point.insert({x, one()});
         _one_soln = true;
         return;
     }
@@ -214,9 +214,10 @@ sat_iter::sat_iter(bx_t const & bx)
 void
 sat_iter::_get_soln()
 {
-    soln.clear();
+    point.clear();
 
     sat = _solver.solve();
+
     if (sat == l_True) {
         auto model = _solver.get_model();
         vector<CMSat::Lit> clause;
@@ -224,11 +225,11 @@ sat_iter::_get_soln()
             auto x = _idx2var.find(i)->second;
             if (x->ctx != &_ctx) {
                 if (model[i] == l_False) {
-                    soln.insert({x, zero()});
+                    point.insert({x, zero()});
                     clause.push_back(CMSat::Lit(i, false));
                 }
                 else if (model[i] == l_True) {
-                    soln.insert({x, one()});
+                    point.insert({x, one()});
                     clause.push_back(CMSat::Lit(i, true));
                 }
             }
@@ -256,7 +257,7 @@ sat_iter::operator!=(sat_iter const & rhs) const
 point_t const &
 sat_iter::operator*() const
 {
-    return soln;
+    return point;
 }
 
 
@@ -265,7 +266,7 @@ sat_iter::operator++()
 {
     if (_one_soln) {
         sat = l_False;
-        soln.clear();
+        point.clear();
     }
     else {
         _get_soln();

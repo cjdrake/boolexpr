@@ -640,7 +640,7 @@ class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
     CMSat::SATSolver _solver;
 
     CMSat::lbool sat;
-    point_t soln;
+    point_t point;
 
     bool _one_soln;
     void _get_soln();
