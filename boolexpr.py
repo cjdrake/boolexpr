@@ -341,7 +341,9 @@ class BoolExpr:
             lib.boolexpr_VarSet_del(c_varset)
 
     def smoothing(self, xs):
-        """"""
+        """Return the smoothing w.r.t. a sequence of variables."""
+        if isinstance(xs, Variable):
+            xs = [xs]
         num = len(xs)
         vars_ = ffi.new("void * []", num)
         for i, x in enumerate(xs):
@@ -349,7 +351,9 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_smoothing(self._cdata, num, vars_))
 
     def consensus(self, xs):
-        """"""
+        """Return the consensus w.r.t. a sequence of variables."""
+        if isinstance(xs, Variable):
+            xs = [xs]
         num = len(xs)
         vars_ = ffi.new("void * []", num)
         for i, x in enumerate(xs):
@@ -357,7 +361,9 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_consensus(self._cdata, num, vars_))
 
     def derivative(self, xs):
-        """"""
+        """Return the derivative w.r.t. a sequence of variables."""
+        if isinstance(xs, Variable):
+            xs = [xs]
         num = len(xs)
         vars_ = ffi.new("void * []", num)
         for i, x in enumerate(xs):
@@ -376,6 +382,25 @@ class BoolExpr:
                 lib.boolexpr_DfsIter_next(it)
         finally:
             lib.boolexpr_DfsIter_del(it)
+
+    def iter_cfs(self, xs):
+        """Iterate through all cofactors w.r.t. a sequence of variables."""
+        if isinstance(xs, Variable):
+            xs = [xs]
+        num = len(xs)
+        vars_ = ffi.new("void * []", num)
+        for i, x in enumerate(xs):
+            vars_[i] = _expect_var(x).cdata
+        it = lib.boolexpr_CofactorIter_new(self._cdata, num, vars_)
+        try:
+            while True:
+                val = lib.boolexpr_CofactorIter_val(it)
+                if val == ffi.NULL:
+                    break
+                yield _bx(val)
+                lib.boolexpr_CofactorIter_next(it)
+        finally:
+            lib.boolexpr_CofactorIter_del(it)
 
 
 class Atom(BoolExpr):

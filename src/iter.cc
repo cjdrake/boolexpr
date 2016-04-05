@@ -200,4 +200,5 @@ cf_iter::operator++()
 {
     ++it;
     cf = f->restrict_(*it);
+    return *this;
 }

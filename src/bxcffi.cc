@@ -104,6 +104,21 @@ struct SolnProxy
 };
 
 
+struct SatIterProxy
+{
+    sat_iter it;
+
+    SatIterProxy(bx_t const & bx): it {sat_iter(bx)} {}
+
+    void next() { ++it; }
+
+    MapProxy<var_t, const_t> * val() const
+    {
+        return (it == sat_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
+    }
+};
+
+
 struct DfsIterProxy
 {
     dfs_iter it;
@@ -119,17 +134,17 @@ struct DfsIterProxy
 };
 
 
-struct SatIterProxy
+struct CofactorIterProxy
 {
-    sat_iter it;
+    cf_iter it;
 
-    SatIterProxy(bx_t const & bx): it {sat_iter(bx)} {}
+    CofactorIterProxy(bx_t const & bx, vector<var_t> const & vars): it {cf_iter(bx, vars)} {}
 
     void next() { ++it; }
 
-    MapProxy<var_t, const_t> * val() const
+    BoolExprProxy * val() const
     {
-        return (it == sat_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
+        return (it == cf_iter()) ? nullptr : new BoolExprProxy(*it);
     }
 };
 
@@ -357,6 +372,44 @@ void const *
 boolexpr_DfsIter_val(void const * c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy const *>(c_self);
+    return self->val();
+}
+
+
+void const *
+boolexpr_CofactorIter_new(void const * c_bxp, size_t n, void const ** c_varps)
+{
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
+    vector<var_t> vars;
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        vars.push_back(var);
+    }
+    return new CofactorIterProxy(bxp->bx, vars);
+}
+
+
+void
+boolexpr_CofactorIter_del(void const * c_self)
+{
+    auto self = reinterpret_cast<CofactorIterProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_CofactorIter_next(void * c_self)
+{
+    auto self = reinterpret_cast<CofactorIterProxy *>(c_self);
+    self->next();
+}
+
+
+void const *
+boolexpr_CofactorIter_val(void const * c_self)
+{
+    auto self = reinterpret_cast<CofactorIterProxy const *>(c_self);
     return self->val();
 }
 
@@ -714,7 +767,7 @@ void const *
 boolexpr_BoolExpr_consensus(void const * c_self, size_t n, void const ** c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    auto vars = vector<var_t>();
+    vector<var_t> vars;
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
@@ -728,7 +781,7 @@ void const *
 boolexpr_BoolExpr_derivative(void const * c_self, size_t n, void const ** c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    auto vars = vector<var_t>();
+    vector<var_t> vars;
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);

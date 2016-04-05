@@ -813,6 +813,11 @@ extern "C"
     void boolexpr_DfsIter_next(void *);
     void const * boolexpr_DfsIter_val(void const *);
 
+    void const * boolexpr_CofactorIter_new(void const *, size_t, void const **);
+    void boolexpr_CofactorIter_del(void const *);
+    void boolexpr_CofactorIter_next(void *);
+    void const * boolexpr_CofactorIter_val(void const *);
+
     void const * boolexpr_zero(void);
     void const * boolexpr_one(void);
     void const * boolexpr_logical(void);

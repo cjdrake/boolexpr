@@ -223,6 +223,8 @@ class BoolExprTest(unittest.TestCase):
         self.assertTrue(f.smoothing([xs[0]]).equiv(xs[1]|xs[2]))
         self.assertTrue(f.consensus([xs[0]]).equiv(xs[1]&xs[2]))
         self.assertTrue(f.derivative([xs[0]]).equiv(xs[1]^xs[2]))
+        self.assertEqual(list(f.iter_cfs([xs[0], xs[1], xs[2]])),
+                         [ZERO, ZERO, ZERO, ONE, ZERO, ONE, ONE, ONE])
 
     def test_iter_dfs(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
