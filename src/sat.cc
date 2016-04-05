@@ -145,7 +145,7 @@ sat_iter::sat_iter() : sat {l_False} {}
 
 sat_iter::sat_iter(bx_t const & bx)
 {
-    _one_soln = false;
+    one_soln = false;
 
     if (IS_ZERO(bx) || IS_UNKNOWN(bx)) {
         sat = l_False;
@@ -154,7 +154,7 @@ sat_iter::sat_iter(bx_t const & bx)
 
     if (IS_ONE(bx)) {
         sat = l_True;
-        _one_soln = true;
+        one_soln = true;
         return;
     }
 
@@ -162,7 +162,7 @@ sat_iter::sat_iter(bx_t const & bx)
         sat = l_True;
         auto x = std::static_pointer_cast<Variable const>(~bx);
         point.insert({x, zero()});
-        _one_soln = true;
+        one_soln = true;
         return;
     }
 
@@ -170,22 +170,22 @@ sat_iter::sat_iter(bx_t const & bx)
         sat = l_True;
         auto x = std::static_pointer_cast<Variable const>(bx);
         point.insert({x, one()});
-        _one_soln = true;
+        one_soln = true;
         return;
     }
 
     // Operator
 
     auto op = std::static_pointer_cast<Operator const>(bx);
-    auto cnf = op->tseytin(_ctx);
+    auto cnf = op->tseytin(ctx);
 
     auto xs = cnf->support();
-    _solver.new_vars(xs.size());
+    solver.new_vars(xs.size());
     uint32_t index = 0u;
     for (var_t const & x : xs) {
-        _lit2idx.insert({~x, (index << 1) | 0u});
-        _lit2idx.insert({ x, (index << 1) | 1u});
-        _idx2var.insert({index, x});
+        lit2idx.insert({~x, (index << 1) | 0u});
+        lit2idx.insert({ x, (index << 1) | 1u});
+        idx2var.insert({index, x});
         ++index;
     }
 
@@ -194,17 +194,17 @@ sat_iter::sat_iter(bx_t const & bx)
     for (bx_t const & arg : and_op->args) {
         clause.clear();
         if (IS_LIT(arg)) {
-            auto index = _lit2idx.find(arg)->second;
+            auto index = lit2idx.find(arg)->second;
             clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
         }
         else {
             auto or_op = std::static_pointer_cast<Or const>(arg);
             for (bx_t const & lit : or_op->args) {
-                auto index = _lit2idx.find(lit)->second;
+                auto index = lit2idx.find(lit)->second;
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
         }
-        _solver.add_clause(clause);
+        solver.add_clause(clause);
     }
 
     _get_soln();
@@ -216,14 +216,14 @@ sat_iter::_get_soln()
 {
     point.clear();
 
-    sat = _solver.solve();
+    sat = solver.solve();
 
     if (sat == l_True) {
-        auto model = _solver.get_model();
+        auto model = solver.get_model();
         vector<CMSat::Lit> clause;
-        for (size_t i = 0; i < _solver.nVars(); ++i) {
-            auto x = _idx2var.find(i)->second;
-            if (x->ctx != &_ctx) {
+        for (size_t i = 0; i < solver.nVars(); ++i) {
+            auto x = idx2var.find(i)->second;
+            if (x->ctx != &ctx) {
                 if (model[i] == l_False) {
                     point.insert({x, zero()});
                     clause.push_back(CMSat::Lit(i, false));
@@ -235,7 +235,7 @@ sat_iter::_get_soln()
             }
         }
         // Block this solution
-        _solver.add_clause(clause);
+        solver.add_clause(clause);
     }
 }
 
@@ -264,7 +264,7 @@ sat_iter::operator*() const
 sat_iter const &
 sat_iter::operator++()
 {
-    if (_one_soln) {
+    if (one_soln) {
         sat = l_False;
         point.clear();
     }

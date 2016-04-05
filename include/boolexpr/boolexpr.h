@@ -633,16 +633,17 @@ public:
 
 class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
-    Context _ctx;
-    std::unordered_map<bx_t, uint32_t> _lit2idx;
-    std::unordered_map<uint32_t, var_t> _idx2var;
+    Context ctx;
+    std::unordered_map<bx_t, uint32_t> lit2idx;
+    std::unordered_map<uint32_t, var_t> idx2var;
 
-    CMSat::SATSolver _solver;
+    CMSat::SATSolver solver;
 
     CMSat::lbool sat;
     point_t point;
 
-    bool _one_soln;
+    bool one_soln;
+
     void _get_soln();
 
 public:
