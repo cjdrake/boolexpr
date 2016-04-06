@@ -46,6 +46,7 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 	@echo "  coverage   to run coverage check of the documentation (if enabled)"
+	@echo "  upload     to build and upload HTML to Google Cloud Storage"
 
 .PHONY: clean
 clean:
@@ -215,10 +216,11 @@ pseudoxml:
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
+GSUTIL := gsutil
 GCS_BUCKET := gs://www.boolexpr.org
 HTML_DIR := build/html
 
 .PHONY: upload
 upload: html
-	gsutil -m rsync -d -p -r $(HTML_DIR) $(GCS_BUCKET)
-	gsutil -m acl ch -u AllUsers:R $(GCS_BUCKET)/**
+	$(GSUTIL) -m rsync -d -p -r $(HTML_DIR) $(GCS_BUCKET)
+	$(GSUTIL) -m acl ch -u AllUsers:R $(GCS_BUCKET)/**
