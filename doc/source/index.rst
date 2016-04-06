@@ -3,6 +3,8 @@
 BoolExpr Documentation
 ======================
 
+Release: |version|
+
 BoolExpr is an open source C++ library for symbolic Boolean algebra.
 
 Contents:
@@ -10,6 +12,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   overview.rst
+   pyref.rst
    relnotes.rst
 
 Indices and Tables
