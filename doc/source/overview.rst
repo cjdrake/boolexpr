@@ -28,7 +28,7 @@ because the Python REPL is a nice way to demonstrate concepts.
 Features
 ========
 
-* Integration with the advanced, high performance `CryptMiniSAT`_
+* Integration with the advanced, high performance `CryptoMiniSAT`_
   SAT solver library
 * Tseytin transformation
 * Formal equivalence checking
