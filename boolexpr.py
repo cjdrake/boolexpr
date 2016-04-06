@@ -136,32 +136,32 @@ class Context:
         return _bx(cdata)
 
 
-class Kind(Enum):
-    """BoolExpr Kind Codes"""
-    zero = lib.ZERO
-    one = lib.ONE
-    log = lib.LOG
-    ill = lib.ILL
-    comp = lib.COMP
-    var = lib.VAR
-    nor = lib.NOR
-    or_ = lib.OR
-    nand = lib.NAND
-    and_ = lib.AND
-    xnor = lib.XNOR
-    xor = lib.XOR
-    neq = lib.NEQ
-    eq = lib.EQ
-    nimpl = lib.NIMPL
-    impl = lib.IMPL
-    nite = lib.NITE
-    ite = lib.ITE
-
-
 class BoolExpr:
     """
     Base class for Boolean expressions
     """
+
+    class Kind(Enum):
+        """BoolExpr Kind Codes"""
+        zero = lib.ZERO
+        one = lib.ONE
+        log = lib.LOG
+        ill = lib.ILL
+        comp = lib.COMP
+        var = lib.VAR
+        nor = lib.NOR
+        or_ = lib.OR
+        nand = lib.NAND
+        and_ = lib.AND
+        xnor = lib.XNOR
+        xor = lib.XOR
+        neq = lib.NEQ
+        eq = lib.EQ
+        nimpl = lib.NIMPL
+        impl = lib.IMPL
+        nite = lib.NITE
+        ite = lib.ITE
+
     def __init__(self, cdata):
         self._cdata = cdata
 
@@ -210,7 +210,7 @@ class BoolExpr:
     @property
     def kind(self):
         """Return the Kind code."""
-        return Kind(lib.boolexpr_BoolExpr_kind(self._cdata))
+        return self.Kind(lib.boolexpr_BoolExpr_kind(self._cdata))
 
     def depth(self):
         """Return the expression depth."""
@@ -445,11 +445,13 @@ class Literal(Atom):
 
     @property
     def ctx(self):
-        return lib.boolexpr_Literal_ctx(self._cdata);
+        """Return the context pointer."""
+        return lib.boolexpr_Literal_ctx(self._cdata)
 
     @property
     def id(self):
-        return lib.boolexpr_Literal_id(self._cdata);
+        """Return the id number."""
+        return lib.boolexpr_Literal_id(self._cdata)
 
 
 class Complement(Literal):
@@ -561,12 +563,12 @@ def _bx(cbx):
         lib.boolexpr_BoolExpr_del(cbx)
         return _KIND2CONST[kind]
     if kind in _KIND2LIT:
-        k0 = int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(cbx)))
-        k1 = lib.boolexpr_Literal_id(cbx)
+        key = (int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(cbx))),
+               lib.boolexpr_Literal_id(cbx))
         try:
-            lit = _LITS[(k0, k1)]
+            lit = _LITS[key]
         except KeyError:
-            lit = _LITS[(k0, k1)] = _KIND2LIT[kind](cbx)
+            lit = _LITS[key] = _KIND2LIT[kind](cbx)
         else:
             lib.boolexpr_BoolExpr_del(cbx)
         return lit

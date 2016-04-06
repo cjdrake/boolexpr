@@ -16,7 +16,7 @@
 import unittest
 
 from boolexpr import Context
-from boolexpr import Kind
+from boolexpr import BoolExpr
 
 from boolexpr import (
     ZERO, ONE, LOGICAL, ILLOGICAL,
@@ -71,29 +71,29 @@ class BoolExprTest(unittest.TestCase):
             f.compose({xs[0] & xs[1]: False})
 
     def test_ops1(self):
-        self.assertEqual(not_(xs[0]).kind, Kind.comp)
+        self.assertEqual(not_(xs[0]).kind, BoolExpr.Kind.comp)
 
-        self.assertEqual(nor(*xs[:4]).kind, Kind.nor)
-        self.assertEqual(or_(*xs[:4]).kind, Kind.or_)
-        self.assertEqual(nand(*xs[:4]).kind, Kind.nand)
-        self.assertEqual(and_(*xs[:4]).kind, Kind.and_)
-        self.assertEqual(xnor(*xs[:4]).kind, Kind.xnor)
-        self.assertEqual(xor(*xs[:4]).kind, Kind.xor)
-        self.assertEqual(neq(*xs[:4]).kind, Kind.neq)
-        self.assertEqual(eq(*xs[:4]).kind, Kind.eq)
-        self.assertEqual(impl(xs[0], xs[1]).kind, Kind.impl)
-        self.assertEqual(ite(xs[0], xs[1], xs[2]).kind, Kind.ite)
+        self.assertEqual(nor(*xs[:4]).kind, BoolExpr.Kind.nor)
+        self.assertEqual(or_(*xs[:4]).kind, BoolExpr.Kind.or_)
+        self.assertEqual(nand(*xs[:4]).kind, BoolExpr.Kind.nand)
+        self.assertEqual(and_(*xs[:4]).kind, BoolExpr.Kind.and_)
+        self.assertEqual(xnor(*xs[:4]).kind, BoolExpr.Kind.xnor)
+        self.assertEqual(xor(*xs[:4]).kind, BoolExpr.Kind.xor)
+        self.assertEqual(neq(*xs[:4]).kind, BoolExpr.Kind.neq)
+        self.assertEqual(eq(*xs[:4]).kind, BoolExpr.Kind.eq)
+        self.assertEqual(impl(xs[0], xs[1]).kind, BoolExpr.Kind.impl)
+        self.assertEqual(ite(xs[0], xs[1], xs[2]).kind, BoolExpr.Kind.ite)
 
-        self.assertEqual(nor_s(*xs[:4]).kind, Kind.nor)
-        self.assertEqual(or_s(*xs[:4]).kind, Kind.or_)
-        self.assertEqual(nand_s(*xs[:4]).kind, Kind.nand)
-        self.assertEqual(and_s(*xs[:4]).kind, Kind.and_)
-        self.assertEqual(xnor_s(*xs[:4]).kind, Kind.xnor)
-        self.assertEqual(xor_s(*xs[:4]).kind, Kind.xor)
-        self.assertEqual(neq_s(*xs[:4]).kind, Kind.neq)
-        self.assertEqual(eq_s(*xs[:4]).kind, Kind.eq)
-        self.assertEqual(impl_s(xs[0], xs[1]).kind, Kind.impl)
-        self.assertEqual(ite_s(xs[0], xs[1], xs[2]).kind, Kind.ite)
+        self.assertEqual(nor_s(*xs[:4]).kind, BoolExpr.Kind.nor)
+        self.assertEqual(or_s(*xs[:4]).kind, BoolExpr.Kind.or_)
+        self.assertEqual(nand_s(*xs[:4]).kind, BoolExpr.Kind.nand)
+        self.assertEqual(and_s(*xs[:4]).kind, BoolExpr.Kind.and_)
+        self.assertEqual(xnor_s(*xs[:4]).kind, BoolExpr.Kind.xnor)
+        self.assertEqual(xor_s(*xs[:4]).kind, BoolExpr.Kind.xor)
+        self.assertEqual(neq_s(*xs[:4]).kind, BoolExpr.Kind.neq)
+        self.assertEqual(eq_s(*xs[:4]).kind, BoolExpr.Kind.eq)
+        self.assertEqual(impl_s(xs[0], xs[1]).kind, BoolExpr.Kind.impl)
+        self.assertEqual(ite_s(xs[0], xs[1], xs[2]).kind, BoolExpr.Kind.ite)
 
     def test_ops2(self):
         self.assertEqual(str(xs[0] | 'X'), "Or(x_0, X)")
@@ -105,25 +105,25 @@ class BoolExprTest(unittest.TestCase):
 
     def test_ops3(self):
         f0 = onehot0(*xs[:8], conj=False)
-        self.assertEqual(f0.kind, Kind.or_)
+        self.assertEqual(f0.kind, BoolExpr.Kind.or_)
         f1 = onehot0(*xs[:8], conj=True)
-        self.assertEqual(f1.kind, Kind.and_)
+        self.assertEqual(f1.kind, BoolExpr.Kind.and_)
         self.assertTrue(f0.equiv(f1))
 
         f2 = onehot(*xs[:8], conj=False)
-        self.assertEqual(f2.kind, Kind.or_)
+        self.assertEqual(f2.kind, BoolExpr.Kind.or_)
         f3 = onehot(*xs[:8], conj=True)
-        self.assertEqual(f3.kind, Kind.and_)
+        self.assertEqual(f3.kind, BoolExpr.Kind.and_)
         self.assertTrue(f2.equiv(f3))
 
         f4 = majority(*xs[:8], conj=False)
-        self.assertEqual(f4.kind, Kind.or_)
+        self.assertEqual(f4.kind, BoolExpr.Kind.or_)
         f5 = majority(*xs[:8], conj=True)
-        self.assertEqual(f5.kind, Kind.and_)
+        self.assertEqual(f5.kind, BoolExpr.Kind.and_)
         self.assertTrue(f4.equiv(f5))
 
         f6 = achilles_heel(*xs[:8])
-        self.assertEqual(f6.kind, Kind.and_)
+        self.assertEqual(f6.kind, BoolExpr.Kind.and_)
 
         with self.assertRaises(ValueError):
             achilles_heel(*xs[:7])
@@ -157,7 +157,7 @@ class BoolExprTest(unittest.TestCase):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         g = f.tseytin(ctx)
         self.assertEqual(g.depth(), 2)
-        self.assertEqual(g.kind, Kind.and_)
+        self.assertEqual(g.kind, BoolExpr.Kind.and_)
 
     def test_compose(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
@@ -195,18 +195,19 @@ class BoolExprTest(unittest.TestCase):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         g = f.to_cnf()
         self.assertEqual(g.depth(), 2)
-        self.assertEqual(g.kind, Kind.and_)
+        self.assertEqual(g.kind, BoolExpr.Kind.and_)
 
     def test_dnf(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         g = f.to_dnf()
         self.assertTrue(g.depth(), 2)
-        self.assertEqual(g.kind, Kind.or_)
+        self.assertEqual(g.kind, BoolExpr.Kind.or_)
 
     def test_nnf(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         g = f.to_nnf()
-        NNF_KINDS = {Kind.or_, Kind.and_, Kind.comp, Kind.var}
+        NNF_KINDS = {BoolExpr.Kind.or_, BoolExpr.Kind.and_,
+                     BoolExpr.Kind.comp, BoolExpr.Kind.var}
         for bx in g.iter_dfs():
             self.assertTrue(bx.kind in NNF_KINDS)
 
