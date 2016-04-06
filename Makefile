@@ -18,6 +18,7 @@ help:
 	@printf "    cover           Collect C++ coverage\n"
 	@printf "    pytest          Run Python unit tests\n"
 	@printf "    pycov           Collect C++ coverage\n"
+	@printf "    pylint          Run Python lint\n"
 
 .PHONY: test
 test: build/test/a.out
@@ -50,6 +51,11 @@ pycov: test_boolexpr.py
 	@./setup.py build_ext -i
 	@coverage run test_boolexpr.py
 	@coverage html
+
+.PHONY: pylint
+pylint:
+	@./setup.py build_ext -i
+	@pylint boolexpr
 
 #===============================================================================
 # Source Code
