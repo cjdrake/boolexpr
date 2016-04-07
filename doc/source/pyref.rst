@@ -63,6 +63,7 @@ Base Class
              support,
              smoothing, consensus, derivative,
              iter_dfs,
+             iter_domain,
              iter_cfs
 
 Atom Nodes
