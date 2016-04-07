@@ -295,7 +295,7 @@ boolexpr_Soln_del(SOLN c_self)
 }
 
 
-_Bool
+bool
 boolexpr_Soln_first(SOLN c_self)
 {
     auto self = reinterpret_cast<SolnProxy const *>(c_self);
@@ -610,7 +610,7 @@ boolexpr_BoolExpr_op_count(BX c_self)
 }
 
 
-_Bool
+bool
 boolexpr_BoolExpr_is_cnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
@@ -618,7 +618,7 @@ boolexpr_BoolExpr_is_cnf(BX c_self)
 }
 
 
-_Bool
+bool
 boolexpr_BoolExpr_is_dnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
@@ -732,7 +732,7 @@ boolexpr_BoolExpr_to_nnf(BX c_self)
 }
 
 
-_Bool
+bool
 boolexpr_BoolExpr_equiv(BX c_self, BX c_other)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
@@ -809,7 +809,7 @@ boolexpr_Literal_id(BX c_self)
 }
 
 
-_Bool
+bool
 boolexpr_Operator_simple(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
@@ -827,7 +827,7 @@ boolexpr_Operator_args(BX c_self)
 }
 
 
-_Bool
+bool
 boolexpr_Operator_is_clause(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);

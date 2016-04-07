@@ -778,8 +778,6 @@ std::ostream& operator<<(std::ostream&, bx_t const &);
 extern "C"
 {
 
-#include <stdbool.h> // _Bool
-
 #define STRING   char const * const
 #define CONTEXT  void * const
 #define BX       void const * const
@@ -817,7 +815,7 @@ BX boolexpr_Point_key(POINT);
 BX boolexpr_Point_val(POINT);
 
 void boolexpr_Soln_del(SOLN);
-_Bool boolexpr_Soln_first(SOLN);
+bool boolexpr_Soln_first(SOLN);
 POINT boolexpr_Soln_second(SOLN);
 
 SAT_ITER boolexpr_SatIter_new(BX);
@@ -870,8 +868,8 @@ uint32_t boolexpr_BoolExpr_depth(BX);
 uint32_t boolexpr_BoolExpr_size(BX);
 uint32_t boolexpr_BoolExpr_atom_count(BX);
 uint32_t boolexpr_BoolExpr_op_count(BX);
-_Bool boolexpr_BoolExpr_is_cnf(BX);
-_Bool boolexpr_BoolExpr_is_dnf(BX);
+bool boolexpr_BoolExpr_is_cnf(BX);
+bool boolexpr_BoolExpr_is_dnf(BX);
 BX boolexpr_BoolExpr_pushdown_not(BX);
 BX boolexpr_BoolExpr_simplify(BX);
 BX boolexpr_BoolExpr_to_binop(BX);
@@ -883,7 +881,7 @@ BX boolexpr_BoolExpr_sat(BX);
 BX boolexpr_BoolExpr_to_cnf(BX);
 BX boolexpr_BoolExpr_to_dnf(BX);
 BX boolexpr_BoolExpr_to_nnf(BX);
-_Bool boolexpr_BoolExpr_equiv(BX, BX);
+bool boolexpr_BoolExpr_equiv(BX, BX);
 VARSET boolexpr_BoolExpr_support(BX);
 
 BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
@@ -893,9 +891,9 @@ BX boolexpr_BoolExpr_derivative(BX, size_t, VARS);
 CONTEXT boolexpr_Literal_ctx(BX);
 uint32_t boolexpr_Literal_id(BX);
 
-_Bool boolexpr_Operator_simple(BX);
+bool boolexpr_Operator_simple(BX);
 VEC boolexpr_Operator_args(BX);
-_Bool boolexpr_Operator_is_clause(BX);
+bool boolexpr_Operator_is_clause(BX);
 
 } // extern "C"
 
