@@ -680,6 +680,21 @@ public:
 };
 
 
+class domain_iter : public std::iterator<std::input_iterator_tag, point_t>
+{
+    point_iter it;
+
+public:
+    domain_iter();
+    domain_iter(bx_t const &);
+
+    bool operator==(domain_iter const &) const;
+    bool operator!=(domain_iter const &) const;
+    point_t const & operator*() const;
+    domain_iter const & operator++();
+};
+
+
 class cf_iter : public std::iterator<std::input_iterator_tag, bx_t>
 {
     bx_t f;
@@ -790,6 +805,7 @@ extern "C"
 #define SOLN     void * const
 #define SAT_ITER void * const
 #define DFS_ITER void * const
+#define DOM_ITER void * const
 #define CF_ITER  void * const
 
 CONTEXT boolexpr_Context_new(void);
@@ -827,6 +843,11 @@ DFS_ITER boolexpr_DfsIter_new(BX);
 void boolexpr_DfsIter_del(DFS_ITER);
 void boolexpr_DfsIter_next(DFS_ITER);
 BX boolexpr_DfsIter_val(DFS_ITER);
+
+DOM_ITER boolexpr_DomainIter_new(BX);
+void boolexpr_DomainIter_del(DOM_ITER);
+void boolexpr_DomainIter_next(DOM_ITER);
+POINT boolexpr_DomainIter_val(DOM_ITER);
 
 CF_ITER boolexpr_CofactorIter_new(BX, size_t, VARS);
 void boolexpr_CofactorIter_del(CF_ITER);

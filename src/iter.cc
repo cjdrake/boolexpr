@@ -164,6 +164,45 @@ point_iter::operator++()
 }
 
 
+domain_iter::domain_iter() : it {point_iter()} {}
+
+
+domain_iter::domain_iter(bx_t const & f)
+{
+    auto s = f->support();
+    it = point_iter(vector<var_t>(s.begin(), s.end()));
+}
+
+
+bool
+domain_iter::operator==(domain_iter const & rhs) const
+{
+    return it == rhs.it;
+}
+
+
+bool
+domain_iter::operator!=(domain_iter const & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+point_t const &
+domain_iter::operator*() const
+{
+    return *it;
+}
+
+
+domain_iter const &
+domain_iter::operator++()
+{
+    ++it;
+    return *this;
+}
+
+
 cf_iter::cf_iter() : it {point_iter()} {}
 
 

@@ -90,6 +90,7 @@ DEFINES = {
     "SOLN"     : "void * const",
     "SAT_ITER" : "void * const",
     "DFS_ITER" : "void * const",
+    "DOM_ITER" : "void * const",
     "CF_ITER"  : "void * const",
 }
 
@@ -151,6 +152,11 @@ void boolexpr_SatIter_next({SAT_ITER});
 void boolexpr_DfsIter_del({DFS_ITER});
 void boolexpr_DfsIter_next({DFS_ITER});
 {BX} boolexpr_DfsIter_val({DFS_ITER});
+
+{DOM_ITER} boolexpr_DomainIter_new({BX});
+void boolexpr_DomainIter_del({DOM_ITER});
+void boolexpr_DomainIter_next({DOM_ITER});
+{POINT} boolexpr_DomainIter_val({DOM_ITER});
 
 {CF_ITER} boolexpr_CofactorIter_new({BX}, size_t, {VARS});
 void boolexpr_CofactorIter_del({CF_ITER});

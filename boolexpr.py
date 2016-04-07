@@ -383,6 +383,19 @@ class BoolExpr:
         finally:
             lib.boolexpr_DfsIter_del(it)
 
+    def iter_domain(self):
+        """Iterate through all points in the domain."""
+        it = lib.boolexpr_DomainIter_new(self._cdata)
+        try:
+            while True:
+                val = lib.boolexpr_DomainIter_val(it)
+                if val == ffi.NULL:
+                    break
+                yield _point(val)
+                lib.boolexpr_DomainIter_next(it)
+        finally:
+            lib.boolexpr_DomainIter_del(it)
+
     def iter_cfs(self, xs):
         """Iterate through all cofactors w.r.t. a sequence of variables."""
         if isinstance(xs, Variable):

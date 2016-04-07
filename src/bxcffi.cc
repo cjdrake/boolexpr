@@ -134,6 +134,21 @@ struct DfsIterProxy
 };
 
 
+struct DomainIterProxy
+{
+    domain_iter it;
+
+    DomainIterProxy(bx_t const & bx): it {domain_iter(bx)} {}
+
+    void next() { ++it; }
+
+    MapProxy<var_t, const_t> * val() const
+    {
+        return (it == domain_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
+    }
+};
+
+
 struct CofactorIterProxy
 {
     cf_iter it;
@@ -372,6 +387,38 @@ BX
 boolexpr_DfsIter_val(DFS_ITER c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy const *>(c_self);
+    return self->val();
+}
+
+
+DOM_ITER
+boolexpr_DomainIter_new(BX c_bxp)
+{
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
+    return new DomainIterProxy(bxp->bx);
+}
+
+
+void
+boolexpr_DomainIter_del(DOM_ITER c_self)
+{
+    auto self = reinterpret_cast<DomainIterProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_DomainIter_next(DOM_ITER c_self)
+{
+    auto self = reinterpret_cast<DomainIterProxy *>(c_self);
+    self->next();
+}
+
+
+POINT
+boolexpr_DomainIter_val(DOM_ITER c_self)
+{
+    auto self = reinterpret_cast<DomainIterProxy const *>(c_self);
     return self->val();
 }
 
