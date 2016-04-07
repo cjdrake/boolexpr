@@ -26,95 +26,6 @@ from enum import Enum
 from _boolexpr import ffi, lib
 
 
-def _expect_bx(obj):
-    """Return a BoolExpr or raise TypeError."""
-    if obj == 0:
-        return ZERO
-    elif obj == 1:
-        return ONE
-    elif obj == "x" or obj == "X":
-        return LOGICAL
-    elif obj == "?":
-        return ILLOGICAL
-    elif isinstance(obj, BoolExpr):
-        return obj
-    else:
-        raise TypeError("Expected obj to be a BoolExpr")
-
-
-def _expect_const(obj):
-    """Return a Constant, or raise TypeError."""
-    if obj == 0:
-        return ZERO
-    elif obj == 1:
-        return ONE
-    elif obj == "x" or obj == "X":
-        return LOGICAL
-    elif obj == "?":
-        return ILLOGICAL
-    elif isinstance(obj, Constant):
-        return obj
-    else:
-        raise TypeError("Expected obj to be a Constant")
-
-
-def _expect_var(obj):
-    """Return a Variable, or raise TypeError."""
-    if isinstance(obj, Variable):
-        return obj
-    else:
-        raise TypeError("Expected obj to be a Variable")
-
-
-def _convert_args(args):
-    """Convert a sequence of Python BoolExpr to a C [BoolExpr]."""
-    num = len(args)
-    c_args = ffi.new("void const * []", num)
-    for i, arg in enumerate(args):
-        c_args[i] = _expect_bx(arg).cdata
-    return num, c_args
-
-
-def _bxlist(c_vec):
-    """Return a [BoolExpr], from a C Vec."""
-    vec = list()
-    lib.boolexpr_Vec_iter(c_vec)
-    while True:
-        val = lib.boolexpr_Vec_val(c_vec)
-        if val == ffi.NULL:
-            break
-        vec.append(_bx(val))
-        lib.boolexpr_Vec_next(c_vec)
-    return vec
-
-
-def _varset(c_varset):
-    """Return a {Variable}, from a C VarSet."""
-    vars_ = set()
-    lib.boolexpr_VarSet_iter(c_varset)
-    while True:
-        val = lib.boolexpr_VarSet_val(c_varset)
-        if val == ffi.NULL:
-            break
-        vars_.add(_bx(val))
-        lib.boolexpr_VarSet_next(c_varset)
-    return vars_
-
-
-def _point(c_point):
-    """Return a {Variable: Constant}, from a C Point."""
-    point = dict()
-    lib.boolexpr_Point_iter(c_point)
-    while True:
-        key = lib.boolexpr_Point_key(c_point)
-        if key == ffi.NULL:
-            break
-        val = lib.boolexpr_Point_val(c_point)
-        point[_bx(key)] = _bx(val)
-        lib.boolexpr_Point_next(c_point)
-    return point
-
-
 class Context:
     """
     A context for Boolean variables
@@ -541,52 +452,6 @@ ONE = One(lib.boolexpr_one())
 LOGICAL = Logical(lib.boolexpr_logical())
 ILLOGICAL = Illogical(lib.boolexpr_illogical())
 
-_LITS = dict()
-
-_KIND2CONST = {
-    lib.ZERO : ZERO,
-    lib.ONE  : ONE,
-    lib.LOG  : LOGICAL,
-    lib.ILL  : ILLOGICAL,
-}
-
-_KIND2LIT = {
-    lib.COMP : Complement,
-    lib.VAR  : Variable,
-}
-
-_KIND2OTHER = {
-    lib.NOR   : Nor,
-    lib.OR    : Or,
-    lib.NAND  : Nand,
-    lib.AND   : And,
-    lib.XNOR  : Xnor,
-    lib.XOR   : Xor,
-    lib.NEQ   : Unequal,
-    lib.EQ    : Equal,
-    lib.NIMPL : NotImplies,
-    lib.IMPL  : Implies,
-    lib.NITE  : NotIfThenElse,
-    lib.ITE   : IfThenElse,
-}
-
-def _bx(cbx):
-    kind = lib.boolexpr_BoolExpr_kind(cbx)
-    if kind in _KIND2CONST:
-        lib.boolexpr_BoolExpr_del(cbx)
-        return _KIND2CONST[kind]
-    if kind in _KIND2LIT:
-        key = (int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(cbx))),
-               lib.boolexpr_Literal_id(cbx))
-        try:
-            lit = _LITS[key]
-        except KeyError:
-            lit = _LITS[key] = _KIND2LIT[kind](cbx)
-        else:
-            lib.boolexpr_BoolExpr_del(cbx)
-        return lit
-    return _KIND2OTHER[kind](cbx)
-
 
 def not_(arg):
     """Boolean Not operator."""
@@ -763,3 +628,140 @@ def achilles_heel(*args):
         fstr = "expected an even number of arguments, got {}"
         raise ValueError(fstr.format(num))
     return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])
+
+
+_LITS = dict()
+
+_KIND2CONST = {
+    lib.ZERO : ZERO,
+    lib.ONE  : ONE,
+    lib.LOG  : LOGICAL,
+    lib.ILL  : ILLOGICAL,
+}
+
+_KIND2LIT = {
+    lib.COMP : Complement,
+    lib.VAR  : Variable,
+}
+
+_KIND2OTHER = {
+    lib.NOR   : Nor,
+    lib.OR    : Or,
+    lib.NAND  : Nand,
+    lib.AND   : And,
+    lib.XNOR  : Xnor,
+    lib.XOR   : Xor,
+    lib.NEQ   : Unequal,
+    lib.EQ    : Equal,
+    lib.NIMPL : NotImplies,
+    lib.IMPL  : Implies,
+    lib.NITE  : NotIfThenElse,
+    lib.ITE   : IfThenElse,
+}
+
+
+def _expect_bx(obj):
+    """Return a BoolExpr or raise TypeError."""
+    if obj == 0:
+        return ZERO
+    elif obj == 1:
+        return ONE
+    elif obj == "x" or obj == "X":
+        return LOGICAL
+    elif obj == "?":
+        return ILLOGICAL
+    elif isinstance(obj, BoolExpr):
+        return obj
+    else:
+        raise TypeError("Expected obj to be a BoolExpr")
+
+
+def _expect_const(obj):
+    """Return a Constant, or raise TypeError."""
+    if obj == 0:
+        return ZERO
+    elif obj == 1:
+        return ONE
+    elif obj == "x" or obj == "X":
+        return LOGICAL
+    elif obj == "?":
+        return ILLOGICAL
+    elif isinstance(obj, Constant):
+        return obj
+    else:
+        raise TypeError("Expected obj to be a Constant")
+
+
+def _expect_var(obj):
+    """Return a Variable, or raise TypeError."""
+    if isinstance(obj, Variable):
+        return obj
+    else:
+        raise TypeError("Expected obj to be a Variable")
+
+
+def _convert_args(args):
+    """Convert a sequence of Python BoolExpr to a C [BoolExpr]."""
+    num = len(args)
+    c_args = ffi.new("void const * []", num)
+    for i, arg in enumerate(args):
+        c_args[i] = _expect_bx(arg).cdata
+    return num, c_args
+
+
+def _bx(cbx):
+    kind = lib.boolexpr_BoolExpr_kind(cbx)
+    if kind in _KIND2CONST:
+        lib.boolexpr_BoolExpr_del(cbx)
+        return _KIND2CONST[kind]
+    if kind in _KIND2LIT:
+        key = (int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(cbx))),
+               lib.boolexpr_Literal_id(cbx))
+        try:
+            lit = _LITS[key]
+        except KeyError:
+            lit = _LITS[key] = _KIND2LIT[kind](cbx)
+        else:
+            lib.boolexpr_BoolExpr_del(cbx)
+        return lit
+    return _KIND2OTHER[kind](cbx)
+
+
+def _bxlist(c_vec):
+    """Return a [BoolExpr], from a C Vec."""
+    vec = list()
+    lib.boolexpr_Vec_iter(c_vec)
+    while True:
+        val = lib.boolexpr_Vec_val(c_vec)
+        if val == ffi.NULL:
+            break
+        vec.append(_bx(val))
+        lib.boolexpr_Vec_next(c_vec)
+    return vec
+
+
+def _varset(c_varset):
+    """Return a {Variable}, from a C VarSet."""
+    vars_ = set()
+    lib.boolexpr_VarSet_iter(c_varset)
+    while True:
+        val = lib.boolexpr_VarSet_val(c_varset)
+        if val == ffi.NULL:
+            break
+        vars_.add(_bx(val))
+        lib.boolexpr_VarSet_next(c_varset)
+    return vars_
+
+
+def _point(c_point):
+    """Return a {Variable: Constant}, from a C Point."""
+    point = dict()
+    lib.boolexpr_Point_iter(c_point)
+    while True:
+        key = lib.boolexpr_Point_key(c_point)
+        if key == ffi.NULL:
+            break
+        val = lib.boolexpr_Point_val(c_point)
+        point[_bx(key)] = _bx(val)
+        lib.boolexpr_Point_next(c_point)
+    return point
