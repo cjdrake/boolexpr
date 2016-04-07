@@ -19,31 +19,27 @@ Boolean Expression Class Hierarchy
 .. graphviz::
 
    digraph bxhier {
-       BoolExpr -> Atom
-       BoolExpr -> Operator
-       Atom -> Constant
-       Atom -> Literal
-       Constant -> Known
-       Constant -> Unknown
-       Known -> Zero
-       Known -> One
-       Unknown -> Logical
-       Unknown -> Illogical
-       Literal -> Complement
-       Literal -> Variable
-       Operator -> LatticeOperator
-       LatticeOperator -> Or
-       LatticeOperator -> And
-       Operator -> Nor
-       Operator -> Nand
-       Operator -> Xnor
-       Operator -> Xor
-       Operator -> Unequal
-       Operator -> Equal
-       Operator -> NotImplies
-       Operator -> Implies
-       Operator -> NotIfThenElse
-       Operator -> IfThenElse
+       rankdir="BT"
+
+       Atom -> BoolExpr
+       Operator -> BoolExpr
+       Constant -> Atom
+       Literal -> Atom
+       Known -> Constant
+       Unknown -> Constant
+       Zero -> Known
+       One -> Known
+       Logical -> Unknown
+       Illogical -> Unknown
+       Complement -> Literal
+       Variable -> Literal
+       LatticeOperator -> Operator
+       Or -> LatticeOperator
+       And -> LatticeOperator
+       Xor -> Operator
+       Equal -> Operator
+       Implies -> Operator
+       IfThenElse -> Operator
    }
 
 Base Class
