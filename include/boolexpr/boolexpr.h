@@ -97,6 +97,27 @@ using point_t = std::unordered_map<var_t, const_t>;
 using soln_t = std::pair<bool, boost::optional<point_t>>;
 
 
+class Context
+{
+    friend class Complement;
+    friend class Variable;
+
+    id_t id;
+
+    std::unordered_map<string, var_t> vars;
+    std::unordered_map<id_t, string> id2name;
+    std::unordered_map<id_t, lit_t> id2lit;
+
+    string _get_name(id_t id) const;
+    lit_t _get_lit(id_t id) const;
+
+public:
+    Context();
+
+    var_t get_var(string name);
+};
+
+
 class BoolExpr : public std::enable_shared_from_this<BoolExpr>
 {
     friend bx_t operator~(bx_t const &);
@@ -611,27 +632,6 @@ public:
     bool operator!=(dfs_iter const &) const;
     bx_t const & operator*() const;
     dfs_iter const & operator++();
-};
-
-
-class Context
-{
-    friend class Complement;
-    friend class Variable;
-
-    id_t id;
-
-    std::unordered_map<string, var_t> vars;
-    std::unordered_map<id_t, string> id2name;
-    std::unordered_map<id_t, lit_t> id2lit;
-
-    string _get_name(id_t id) const;
-    lit_t _get_lit(id_t id) const;
-
-public:
-    Context();
-
-    var_t get_var(string name);
 };
 
 
