@@ -447,6 +447,20 @@ Operator::_op_lsh(std::ostream& s) const
 }
 
 
+string const Nor::_opname() const { return "Nor"; };
+string const Or::_opname() const { return "Or"; };
+string const Nand::_opname() const { return "Nand"; };
+string const And::_opname() const { return "And"; };
+string const Xnor::_opname() const { return "Xnor"; };
+string const Xor::_opname() const { return "Xor"; };
+string const Unequal::_opname() const { return "Unequal"; };
+string const Equal::_opname() const { return "Equal"; };
+string const NotImplies::_opname() const { return "NotImplies"; };
+string const Implies::_opname() const { return "Implies"; };
+string const NotIfThenElse::_opname() const { return "NotIfThenElse"; };
+string const IfThenElse::_opname() const { return "IfThenElse"; };
+
+
 string
 BoolExpr::to_string() const
 {

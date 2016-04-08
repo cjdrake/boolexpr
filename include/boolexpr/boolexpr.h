@@ -375,7 +375,7 @@ class Nor : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Nor"; };
+    string const _opname() const;
 
 public:
     Nor(bool simple, vector<bx_t> const & args);
@@ -394,7 +394,7 @@ class Or : public LatticeOperator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Or"; };
+    string const _opname() const;
 
 public:
     Or(bool simple, vector<bx_t> const & args);
@@ -418,7 +418,7 @@ class Nand : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Nand"; };
+    string const _opname() const;
 
 public:
     Nand(bool simple, vector<bx_t> const & args);
@@ -437,7 +437,7 @@ class And : public LatticeOperator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "And"; };
+    string const _opname() const;
 
 public:
     And(bool simple, vector<bx_t> const & args);
@@ -461,7 +461,7 @@ class Xnor : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Xnor"; };
+    string const _opname() const;
 
 public:
     Xnor(bool simple, vector<bx_t> const & args);
@@ -480,7 +480,7 @@ class Xor : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Xor"; };
+    string const _opname() const;
 
 public:
     Xor(bool simple, vector<bx_t> const & args);
@@ -502,7 +502,7 @@ class Unequal : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Unequal"; };
+    string const _opname() const;
 
 public:
     Unequal(bool simple, vector<bx_t> const & args);
@@ -521,7 +521,7 @@ class Equal : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Equal"; };
+    string const _opname() const;
 
 public:
     Equal(bool simple, vector<bx_t> const & args) : Operator(EQ, simple, args) {}
@@ -541,7 +541,7 @@ class NotImplies : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "NotImplies"; };
+    string const _opname() const;
 
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
@@ -560,7 +560,7 @@ class Implies : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "Implies"; };
+    string const _opname() const;
 
 public:
     Implies(bool simple, bx_t p, bx_t q);
@@ -579,7 +579,7 @@ class NotIfThenElse : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "NotIfThenElse"; };
+    string const _opname() const;
 
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -598,7 +598,7 @@ class IfThenElse : public Operator
 {
 protected:
     bx_t _invert() const;
-    string const _opname() const { return "IfThenElse"; };
+    string const _opname() const;
 
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
