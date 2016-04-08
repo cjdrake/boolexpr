@@ -158,13 +158,11 @@ _product(vector<std::set<lit_t>> const & clauses)
 }
 
 
-static bx_t _nnf2cnf(bx_t const &);
-static bx_t _nnf2dnf(bx_t const &);
-
-
-static bx_t
-_nnf2cnf(bx_t const & nnf1)
+bx_t
+BoolExpr::_nnf2cnf() const
 {
+    auto nnf1 = shared_from_this();
+
     if (IS_ATOM(nnf1)) return nnf1;
     auto lop1 = std::static_pointer_cast<LatticeOperator const>(nnf1);
     if (lop1->is_clause()) return lop1;
@@ -172,7 +170,7 @@ _nnf2cnf(bx_t const & nnf1)
     uint32_t mod_count = 0;
     vector<bx_t> _args;
     for (bx_t const & arg : lop1->args) {
-        auto _arg = IS_OR(lop1) ? _nnf2dnf(arg) : _nnf2cnf(arg);
+        auto _arg = IS_OR(lop1) ? arg->_nnf2dnf() : arg->_nnf2cnf();
         mod_count += (_arg != arg);
         _args.push_back(_arg);
     }
@@ -199,9 +197,11 @@ _nnf2cnf(bx_t const & nnf1)
 }
 
 
-static bx_t
-_nnf2dnf(bx_t const & nnf1)
+bx_t
+BoolExpr::_nnf2dnf() const
 {
+    auto nnf1 = shared_from_this();
+
     if (IS_ATOM(nnf1)) return nnf1;
     auto lop1 = std::static_pointer_cast<LatticeOperator const>(nnf1);
     if (lop1->is_clause()) return lop1;
@@ -209,7 +209,7 @@ _nnf2dnf(bx_t const & nnf1)
     uint32_t mod_count = 0;
     vector<bx_t> _args;
     for (bx_t const & arg : lop1->args) {
-        auto _arg = IS_OR(lop1) ? _nnf2dnf(arg) : _nnf2cnf(arg);
+        auto _arg = IS_OR(lop1) ? arg->_nnf2dnf() : arg->_nnf2cnf();
         mod_count += (_arg != arg);
         _args.push_back(_arg);
     }
@@ -239,12 +239,12 @@ _nnf2dnf(bx_t const & nnf1)
 bx_t
 BoolExpr::to_cnf() const
 {
-    return _nnf2cnf(to_nnf());
+    return to_nnf()->_nnf2cnf();
 }
 
 
 bx_t
 BoolExpr::to_dnf() const
 {
-    return _nnf2dnf(to_nnf());
+    return to_nnf()->_nnf2dnf();
 }

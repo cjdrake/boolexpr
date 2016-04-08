@@ -34,19 +34,6 @@ Atom::pushdown_not() const
 }
 
 
-static op_t
-_op_pushdown_not(Operator const * const op)
-{
-    return op->transform([](bx_t const & arg){return arg->pushdown_not();});
-}
-
-bx_t Or::pushdown_not() const { return _op_pushdown_not(this); }
-bx_t And::pushdown_not() const { return _op_pushdown_not(this); }
-bx_t Xor::pushdown_not() const { return _op_pushdown_not(this); }
-bx_t Equal::pushdown_not() const { return _op_pushdown_not(this); }
-bx_t IfThenElse::pushdown_not() const { return _op_pushdown_not(this); }
-
-
 bx_t
 Nor::pushdown_not() const
 {
@@ -60,6 +47,10 @@ Nor::pushdown_not() const
 
     return and_(std::move(_args));
 }
+
+
+bx_t Or::pushdown_not() const
+{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
 
 
 bx_t
@@ -77,6 +68,10 @@ Nand::pushdown_not() const
 }
 
 
+bx_t And::pushdown_not() const
+{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+
+
 bx_t
 Xnor::pushdown_not() const
 {
@@ -92,6 +87,10 @@ Xnor::pushdown_not() const
 }
 
 
+bx_t Xor::pushdown_not() const
+{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+
+
 bx_t
 Unequal::pushdown_not() const
 {
@@ -105,6 +104,10 @@ Unequal::pushdown_not() const
 
     return eq(std::move(_args));
 }
+
+
+bx_t Equal::pushdown_not() const
+{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
 
 
 bx_t
@@ -133,6 +136,10 @@ Implies::pushdown_not() const
 
     return pn | q;
 }
+
+
+bx_t IfThenElse::pushdown_not() const
+{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
 
 
 bx_t
