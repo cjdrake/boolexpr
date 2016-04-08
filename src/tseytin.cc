@@ -27,16 +27,12 @@
 using namespace boolexpr;
 
 
-static var_t _op2con1(op_t const &, Context&, string const &, uint32_t&, var2op_t&);
-static op_t  _op2con2(op_t const &, Context&, string const &, uint32_t&, var2op_t&);
-
-
-static var_t
-_op2con1(op_t const & op, Context& ctx, string const & auxvarname,
-         uint32_t& index, var2op_t& constraints)
+var_t
+Operator::to_con1(Context& ctx, string const & auxvarname,
+                  uint32_t& index, var2op_t& constraints) const
 {
     auto key = ctx.get_var(auxvarname + "_" + std::to_string(index++));
-    auto val = _op2con2(op, ctx, auxvarname, index, constraints);
+    auto val = to_con2(ctx, auxvarname, index, constraints);
 
     constraints.insert({key, val});
 
@@ -44,18 +40,20 @@ _op2con1(op_t const & op, Context& ctx, string const & auxvarname,
 }
 
 
-static op_t
-_op2con2(op_t const & op, Context& ctx, string const & auxvarname,
-         uint32_t& index, var2op_t& constraints)
+op_t
+Operator::to_con2(Context& ctx, string const & auxvarname,
+                  uint32_t& index, var2op_t& constraints) const
 {
     bool found_subop = false;
     vector<bx_t> _args;
 
-    for (bx_t const & arg : op->args) {
+    // NOTE: do not use transform, b/c there's mutable state
+    for (bx_t const & arg : args) {
         if (IS_OP(arg)) {
             found_subop = true;
             auto subop = std::static_pointer_cast<Operator const>(arg);
-            _args.push_back(_op2con1(subop, ctx, auxvarname, index, constraints));
+            auto x = subop->to_con1(ctx, auxvarname, index, constraints);
+            _args.push_back(x);
         }
         else {
             _args.push_back(arg);
@@ -63,9 +61,9 @@ _op2con2(op_t const & op, Context& ctx, string const & auxvarname,
     }
 
     if (found_subop)
-        return op->from_args(std::move(_args));
+        return from_args(std::move(_args));
 
-    return op;
+    return std::static_pointer_cast<Operator const>(shared_from_this());
 }
 
 
@@ -79,13 +77,10 @@ Atom::tseytin(Context&, string const &) const
 bx_t
 Operator::tseytin(Context& ctx, string const & auxvarname) const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Operator const>(self);
-
     uint32_t index {0};
     var2op_t constraints;
 
-    auto top = _op2con1(op, ctx, auxvarname, index, constraints);
+    auto top = to_con1(ctx, auxvarname, index, constraints);
 
     vector<bx_t> cnfs {top};
     for (auto const & constraint : constraints)

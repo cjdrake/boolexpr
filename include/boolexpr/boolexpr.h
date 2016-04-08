@@ -331,6 +331,9 @@ public:
 
 class Operator : public BoolExpr
 {
+    var_t to_con1(Context&, string const &, uint32_t&, var2op_t&) const;
+    op_t  to_con2(Context&, string const &, uint32_t&, var2op_t&) const;
+
 protected:
     std::ostream& op_lsh(std::ostream&) const;
     virtual string const opname() const = 0;
