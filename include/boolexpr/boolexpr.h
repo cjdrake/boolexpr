@@ -289,10 +289,10 @@ public:
 class Literal : public Atom
 {
 public:
-    Context *ctx;
+    Context * const ctx;
     id_t const id;
 
-    Literal(Kind kind, Context *ctx, id_t id);
+    Literal(Kind kind, Context * const ctx, id_t id);
 
     bool is_cnf() const;
     bool is_dnf() const;
@@ -306,7 +306,7 @@ protected:
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
-    Complement(Context *ctx, id_t id);
+    Complement(Context * const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
@@ -321,7 +321,7 @@ protected:
     std::ostream& _op_lsh(std::ostream&) const;
 
 public:
-    Variable(Context *ctx, id_t id);
+    Variable(Context * const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;

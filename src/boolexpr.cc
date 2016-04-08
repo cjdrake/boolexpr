@@ -37,9 +37,9 @@ One::One() : Known(ONE, true) {}
 Unknown::Unknown(Kind kind) : Constant(kind) {}
 Logical::Logical() : Unknown(LOG) {}
 Illogical::Illogical() : Unknown(ILL) {}
-Literal::Literal(Kind kind, Context *ctx, id_t id) : Atom(kind), ctx {ctx}, id {id} {}
-Complement::Complement(Context *ctx, id_t id) : Literal(COMP, ctx, id) {}
-Variable::Variable(Context *ctx, id_t id) : Literal(VAR, ctx, id) {}
+Literal::Literal(Kind kind, Context * const ctx, id_t id) : Atom(kind), ctx {ctx}, id {id} {}
+Complement::Complement(Context * const ctx, id_t id) : Literal(COMP, ctx, id) {}
+Variable::Variable(Context * const ctx, id_t id) : Literal(VAR, ctx, id) {}
 
 Operator::Operator(Kind kind, bool simple, vector<bx_t> const & args)
     : BoolExpr(kind)
