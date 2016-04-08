@@ -48,14 +48,14 @@ Context::get_var(string name)
 
 
 string
-Context::_get_name(id_t id) const
+Context::get_name(id_t id) const
 {
     return id2name.find(id >> 1)->second;
 }
 
 
 lit_t
-Context::_get_lit(id_t id) const
+Context::get_lit(id_t id) const
 {
     return id2lit.find(id)->second;
 }

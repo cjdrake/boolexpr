@@ -16,7 +16,8 @@
 namespace boolexpr {
 
 
-class ArgSet {
+class ArgSet
+{
 protected:
     std::unordered_set<bx_t> args;
     virtual void insert(bx_t const &) = 0;
@@ -46,7 +47,8 @@ public:
 };
 
 
-class OrArgSet : public LatticeArgSet {
+class OrArgSet : public LatticeArgSet
+{
 protected:
     bx_t to_op() const;
 
@@ -55,7 +57,8 @@ public:
 };
 
 
-class AndArgSet : public LatticeArgSet {
+class AndArgSet : public LatticeArgSet
+{
 protected:
     bx_t to_op() const;
 

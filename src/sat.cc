@@ -207,12 +207,12 @@ sat_iter::sat_iter(bx_t const & bx)
         solver.add_clause(clause);
     }
 
-    _get_soln();
+    get_soln();
 }
 
 
 void
-sat_iter::_get_soln()
+sat_iter::get_soln()
 {
     point.clear();
 
@@ -269,7 +269,7 @@ sat_iter::operator++()
         point.clear();
     }
     else {
-        _get_soln();
+        get_soln();
     }
 
     return *this;

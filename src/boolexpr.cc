@@ -397,7 +397,7 @@ boolexpr::ite_s(bx_t const & s, bx_t const & d1, bx_t const & d0)
 
 
 // Overloaded Operators
-bx_t boolexpr::operator~(bx_t const & self) { return self->_invert(); }
+bx_t boolexpr::operator~(bx_t const & self) { return self->invert(); }
 bx_t boolexpr::operator|(bx_t const & lhs, bx_t const & rhs) { return or_({lhs, rhs}); }
 bx_t boolexpr::operator&(bx_t const & lhs, bx_t const & rhs) { return and_({lhs, rhs}); }
 bx_t boolexpr::operator^(bx_t const & lhs, bx_t const & rhs) { return xor_({lhs, rhs}); }
@@ -411,34 +411,34 @@ boolexpr::operator<(lit_t const & lhs, lit_t const & rhs)
 
 
 // String conversion
-std::ostream& Zero::_op_lsh(std::ostream& s) const { return s << "0"; }
-std::ostream& One::_op_lsh(std::ostream& s) const { return s << "1"; }
-std::ostream& Logical::_op_lsh(std::ostream& s) const { return s << "X"; }
-std::ostream& Illogical::_op_lsh(std::ostream& s) const { return s << "?"; }
+std::ostream& Zero::op_lsh(std::ostream& s) const { return s << "0"; }
+std::ostream& One::op_lsh(std::ostream& s) const { return s << "1"; }
+std::ostream& Logical::op_lsh(std::ostream& s) const { return s << "X"; }
+std::ostream& Illogical::op_lsh(std::ostream& s) const { return s << "?"; }
 
 
 std::ostream&
-Complement::_op_lsh(std::ostream& s) const
+Complement::op_lsh(std::ostream& s) const
 {
     auto self = shared_from_this();
     auto xn = std::static_pointer_cast<Complement const>(self);
-    return s << "~" << xn->ctx->_get_name(xn->id);
+    return s << "~" << xn->ctx->get_name(xn->id);
 }
 
 
 std::ostream&
-Variable::_op_lsh(std::ostream& s) const
+Variable::op_lsh(std::ostream& s) const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(self);
-    return s << x->ctx->_get_name(x->id);
+    return s << x->ctx->get_name(x->id);
 }
 
 
 std::ostream&
-Operator::_op_lsh(std::ostream& s) const
+Operator::op_lsh(std::ostream& s) const
 {
-    s << _opname() << "(";
+    s << opname() << "(";
     for (size_t i = 0; i < args.size(); ++i) {
         if (i != 0) s << ", ";
         s << args[i];
@@ -447,18 +447,18 @@ Operator::_op_lsh(std::ostream& s) const
 }
 
 
-string const Nor::_opname() const { return "Nor"; };
-string const Or::_opname() const { return "Or"; };
-string const Nand::_opname() const { return "Nand"; };
-string const And::_opname() const { return "And"; };
-string const Xnor::_opname() const { return "Xnor"; };
-string const Xor::_opname() const { return "Xor"; };
-string const Unequal::_opname() const { return "Unequal"; };
-string const Equal::_opname() const { return "Equal"; };
-string const NotImplies::_opname() const { return "NotImplies"; };
-string const Implies::_opname() const { return "Implies"; };
-string const NotIfThenElse::_opname() const { return "NotIfThenElse"; };
-string const IfThenElse::_opname() const { return "IfThenElse"; };
+string const Nor::opname() const { return "Nor"; };
+string const Or::opname() const { return "Or"; };
+string const Nand::opname() const { return "Nand"; };
+string const And::opname() const { return "And"; };
+string const Xnor::opname() const { return "Xnor"; };
+string const Xor::opname() const { return "Xor"; };
+string const Unequal::opname() const { return "Unequal"; };
+string const Equal::opname() const { return "Equal"; };
+string const NotImplies::opname() const { return "NotImplies"; };
+string const Implies::opname() const { return "Implies"; };
+string const NotIfThenElse::opname() const { return "NotIfThenElse"; };
+string const IfThenElse::opname() const { return "IfThenElse"; };
 
 
 string
@@ -472,7 +472,7 @@ BoolExpr::to_string() const
 
 std::ostream&
 boolexpr::operator<<(std::ostream& s, bx_t const & bx)
-{ return bx->_op_lsh(s); }
+{ return bx->op_lsh(s); }
 
 
 op_t Nor::from_args(vector<bx_t> const && args) const { return std::make_shared<Nor>(false, args); }

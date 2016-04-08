@@ -34,12 +34,12 @@ dfs_iter::dfs_iter(bx_t const & start)
 {
     stack.push_back(start);
     colors.insert({start, Color::WHITE});
-    _advance_one();
+    advance_one();
 }
 
 
 void
-dfs_iter::_advance_one()
+dfs_iter::advance_one()
 {
     while (stack.size() > 0) {
         bx_t const & item = stack.back();
@@ -78,29 +78,23 @@ dfs_iter::_advance_one()
 
 bool
 dfs_iter::operator==(dfs_iter const & rhs) const
-{
-    return p == rhs.p;
-}
+{ return p == rhs.p; }
 
 
 bool
 dfs_iter::operator!=(dfs_iter const & rhs) const
-{
-    return !(*this == rhs);
-}
+{ return !(*this == rhs); }
 
 
 bx_t const &
 dfs_iter::operator*() const
-{
-    return *p;
-}
+{ return *p; }
 
 
 dfs_iter const &
 dfs_iter::operator++()
 {
-    _advance_one();
+    advance_one();
     return *this;
 }
 
@@ -116,33 +110,28 @@ point_iter::point_iter(vector<var_t> const & vars)
     for (size_t i = 0; i <= n; ++i)
         counter.push_back(false);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         if (counter[i])
             point.insert({vars[i], one()});
         else
             point.insert({vars[i], zero()});
+    }
 }
 
 
 bool
 point_iter::operator==(point_iter const & rhs) const
-{
-    return counter[n] == rhs.counter[rhs.n];
-}
+{ return counter[n] == rhs.counter[rhs.n]; }
 
 
 bool
 point_iter::operator!=(point_iter const & rhs) const
-{
-    return !(*this == rhs);
-}
+{ return !(*this == rhs); }
 
 
 point_t const &
 point_iter::operator*() const
-{
-    return point;
-}
+{ return point; }
 
 
 point_iter const &
@@ -154,11 +143,12 @@ point_iter::operator++()
     for (size_t i = 0; i <= n; ++i)
         if (counter[i] = (counter[i] != true)) break;
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         if (counter[i])
             point.insert({vars[i], one()});
         else
             point.insert({vars[i], zero()});
+    }
 
     return *this;
 }
@@ -168,31 +158,23 @@ domain_iter::domain_iter() : it {point_iter()} {}
 
 
 domain_iter::domain_iter(bx_t const & f)
-{
-    auto s = f->support();
-    it = point_iter(vector<var_t>(s.begin(), s.end()));
-}
+    : s {f->support()}, it {vector<var_t>(s.begin(), s.end())}
+{}
 
 
 bool
 domain_iter::operator==(domain_iter const & rhs) const
-{
-    return it == rhs.it;
-}
+{ return it == rhs.it; }
 
 
 bool
 domain_iter::operator!=(domain_iter const & rhs) const
-{
-    return !(*this == rhs);
-}
+{ return !(*this == rhs); }
 
 
 point_t const &
 domain_iter::operator*() const
-{
-    return *it;
-}
+{ return *it; }
 
 
 domain_iter const &
@@ -207,31 +189,23 @@ cf_iter::cf_iter() : it {point_iter()} {}
 
 
 cf_iter::cf_iter(bx_t const & f, vector<var_t> const & vars)
-    : f {f}, it {point_iter(vars)}
-{
-    cf = f->restrict_(*it);
-}
+    : f {f}, it {point_iter(vars)}, cf {f->restrict_(*it)}
+{}
 
 
 bool
 cf_iter::operator==(cf_iter const & rhs) const
-{
-    return it == rhs.it;
-}
+{ return it == rhs.it; }
 
 
 bool
 cf_iter::operator!=(cf_iter const & rhs) const
-{
-    return !(*this == rhs);
-}
+{ return !(*this == rhs); }
 
 
 bx_t const &
 cf_iter::operator*() const
-{
-    return cf;
-}
+{ return cf; }
 
 
 cf_iter const &

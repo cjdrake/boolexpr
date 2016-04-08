@@ -27,44 +27,44 @@
 using namespace boolexpr;
 
 
-bx_t Zero::_invert() const { return one(); }
-bx_t One::_invert()  const { return zero(); }
+bx_t Zero::invert() const { return one(); }
+bx_t One::invert()  const { return zero(); }
 
 
 bx_t
-Logical::_invert() const
+Logical::invert() const
 {
     return shared_from_this();
 }
 
 
 bx_t
-Illogical::_invert() const
+Illogical::invert() const
 {
     return shared_from_this();
 }
 
 
 bx_t
-Complement::_invert() const
+Complement::invert() const
 {
     auto self = shared_from_this();
     auto xn = std::static_pointer_cast<Complement const>(self);
-    return xn->ctx->_get_lit(xn->id + 1);
+    return xn->ctx->get_lit(xn->id + 1);
 }
 
 
 bx_t
-Variable::_invert() const
+Variable::invert() const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(self);
-    return x->ctx->_get_lit(x->id - 1);
+    return x->ctx->get_lit(x->id - 1);
 }
 
 
 bx_t
-Nor::_invert() const
+Nor::invert() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Nor const>(self);
@@ -73,7 +73,7 @@ Nor::_invert() const
 
 
 bx_t
-Or::_invert() const
+Or::invert() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<Or const>(self);
@@ -82,7 +82,7 @@ Or::_invert() const
 
 
 bx_t
-Nand::_invert() const
+Nand::invert() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Nand const>(self);
@@ -91,7 +91,7 @@ Nand::_invert() const
 
 
 bx_t
-And::_invert() const
+And::invert() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<And const>(self);
@@ -100,7 +100,7 @@ And::_invert() const
 
 
 bx_t
-Xnor::_invert() const
+Xnor::invert() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Xnor const>(self);
@@ -109,7 +109,7 @@ Xnor::_invert() const
 
 
 bx_t
-Xor::_invert() const
+Xor::invert() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<Xor const>(self);
@@ -118,7 +118,7 @@ Xor::_invert() const
 
 
 bx_t
-Unequal::_invert() const
+Unequal::invert() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Unequal const>(self);
@@ -127,7 +127,7 @@ Unequal::_invert() const
 
 
 bx_t
-Equal::_invert() const
+Equal::invert() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<Equal const>(self);
@@ -136,7 +136,7 @@ Equal::_invert() const
 
 
 bx_t
-NotImplies::_invert() const
+NotImplies::invert() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<NotImplies const>(self);
@@ -145,7 +145,7 @@ NotImplies::_invert() const
 
 
 bx_t
-Implies::_invert() const
+Implies::invert() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<Implies const>(self);
@@ -154,7 +154,7 @@ Implies::_invert() const
 
 
 bx_t
-NotIfThenElse::_invert() const
+NotIfThenElse::invert() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<NotIfThenElse const>(self);
@@ -163,7 +163,7 @@ NotIfThenElse::_invert() const
 
 
 bx_t
-IfThenElse::_invert() const
+IfThenElse::invert() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<IfThenElse const>(self);

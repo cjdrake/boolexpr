@@ -196,12 +196,14 @@ XorArgSet::insert(bx_t const & arg)
             // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
             else if (IS_XOR(arg)) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) insert(_arg);
+                for (bx_t const & _arg : op->args)
+                    insert(_arg);
             }
             // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
             else if (IS_XNOR(arg)) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) insert(_arg);
+                for (bx_t const & _arg : op->args)
+                    insert(_arg);
                 parity ^= true;
             }
             else {

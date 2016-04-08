@@ -108,8 +108,8 @@ class Context
     std::unordered_map<id_t, string> id2name;
     std::unordered_map<id_t, lit_t> id2lit;
 
-    string _get_name(id_t id) const;
-    lit_t _get_lit(id_t id) const;
+    string get_name(id_t id) const;
+    lit_t get_lit(id_t id) const;
 
 public:
     Context();
@@ -124,8 +124,8 @@ class BoolExpr : public std::enable_shared_from_this<BoolExpr>
     friend std::ostream& operator<<(std::ostream&, bx_t const &);
 
 protected:
-    virtual bx_t _invert() const = 0;
-    virtual std::ostream& _op_lsh(std::ostream&) const = 0;
+    virtual bx_t invert() const = 0;
+    virtual std::ostream& op_lsh(std::ostream&) const = 0;
 
 public:
     enum Kind {
@@ -228,8 +228,8 @@ public:
 class Zero : public Known
 {
 protected:
-    bx_t _invert() const;
-    std::ostream& _op_lsh(std::ostream&) const;
+    bx_t invert() const;
+    std::ostream& op_lsh(std::ostream&) const;
 
 public:
     Zero();
@@ -242,8 +242,8 @@ public:
 class One : public Known
 {
 protected:
-    bx_t _invert() const;
-    std::ostream& _op_lsh(std::ostream&) const;
+    bx_t invert() const;
+    std::ostream& op_lsh(std::ostream&) const;
 
 public:
     One();
@@ -263,8 +263,8 @@ public:
 class Logical : public Unknown
 {
 protected:
-    bx_t _invert() const;
-    std::ostream& _op_lsh(std::ostream&) const;
+    bx_t invert() const;
+    std::ostream& op_lsh(std::ostream&) const;
 
 public:
     Logical();
@@ -276,8 +276,8 @@ public:
 class Illogical : public Unknown
 {
 protected:
-    bx_t _invert() const;
-    std::ostream& _op_lsh(std::ostream&) const;
+    bx_t invert() const;
+    std::ostream& op_lsh(std::ostream&) const;
 
 public:
     Illogical();
@@ -302,8 +302,8 @@ public:
 class Complement : public Literal
 {
 protected:
-    bx_t _invert() const;
-    std::ostream& _op_lsh(std::ostream&) const;
+    bx_t invert() const;
+    std::ostream& op_lsh(std::ostream&) const;
 
 public:
     Complement(Context * const ctx, id_t id);
@@ -317,8 +317,8 @@ public:
 class Variable : public Literal
 {
 protected:
-    bx_t _invert() const;
-    std::ostream& _op_lsh(std::ostream&) const;
+    bx_t invert() const;
+    std::ostream& op_lsh(std::ostream&) const;
 
 public:
     Variable(Context * const ctx, id_t id);
@@ -332,8 +332,8 @@ public:
 class Operator : public BoolExpr
 {
 protected:
-    std::ostream& _op_lsh(std::ostream&) const;
-    virtual string const _opname() const = 0;
+    std::ostream& op_lsh(std::ostream&) const;
+    virtual string const opname() const = 0;
 
 public:
     bool const simple;
@@ -374,8 +374,8 @@ public:
 class Nor : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Nor(bool simple, vector<bx_t> const & args);
@@ -393,8 +393,8 @@ public:
 class Or : public LatticeOperator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Or(bool simple, vector<bx_t> const & args);
@@ -417,8 +417,8 @@ public:
 class Nand : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Nand(bool simple, vector<bx_t> const & args);
@@ -436,8 +436,8 @@ public:
 class And : public LatticeOperator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     And(bool simple, vector<bx_t> const & args);
@@ -460,8 +460,8 @@ public:
 class Xnor : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Xnor(bool simple, vector<bx_t> const & args);
@@ -479,8 +479,8 @@ public:
 class Xor : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Xor(bool simple, vector<bx_t> const & args);
@@ -501,8 +501,8 @@ public:
 class Unequal : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Unequal(bool simple, vector<bx_t> const & args);
@@ -520,8 +520,8 @@ public:
 class Equal : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Equal(bool simple, vector<bx_t> const & args) : Operator(EQ, simple, args) {}
@@ -540,8 +540,8 @@ public:
 class NotImplies : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
@@ -559,8 +559,8 @@ public:
 class Implies : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     Implies(bool simple, bx_t p, bx_t q);
@@ -578,8 +578,8 @@ public:
 class NotIfThenElse : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -597,8 +597,8 @@ public:
 class IfThenElse : public Operator
 {
 protected:
-    bx_t _invert() const;
-    string const _opname() const;
+    bx_t invert() const;
+    string const opname() const;
 
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -622,7 +622,7 @@ class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
 
     bx_t const * p;
 
-    void _advance_one();
+    void advance_one();
 
 public:
     dfs_iter();
@@ -648,7 +648,7 @@ class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
 
     bool one_soln;
 
-    void _get_soln();
+    void get_soln();
 
 public:
     sat_iter();
@@ -682,6 +682,7 @@ public:
 
 class domain_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
+    std::unordered_set<var_t> s;
     point_iter it;
 
 public:
