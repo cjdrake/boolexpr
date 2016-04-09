@@ -681,11 +681,26 @@ public:
 };
 
 
-class point_iter : public std::iterator<std::input_iterator_tag, point_t>
+class space_iter : public std::iterator<std::input_iterator_tag, vector<bool>>
 {
     size_t n;
-    vector<var_t> vars;
     vector<bool> counter;
+
+public:
+    space_iter();
+    space_iter(size_t n);
+
+    bool operator==(space_iter const &) const;
+    bool operator!=(space_iter const &) const;
+    vector<bool> const & operator*() const;
+    space_iter const & operator++();
+};
+
+
+class point_iter : public std::iterator<std::input_iterator_tag, point_t>
+{
+    space_iter it;
+    vector<var_t> vars;
 
     point_t point;
 

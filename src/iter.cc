@@ -99,29 +99,61 @@ dfs_iter::operator++()
 }
 
 
-point_iter::point_iter()
+space_iter::space_iter()
     : n {0}
 { counter.push_back(true); }
 
 
-point_iter::point_iter(vector<var_t> const & vars)
-    : n {vars.size()}, vars {vars}
+space_iter::space_iter(size_t n)
+    : n {n}
 {
     for (size_t i = 0; i <= n; ++i)
         counter.push_back(false);
+}
 
-    for (size_t i = 0; i < n; ++i) {
-        if (counter[i])
-            point.insert({vars[i], one()});
-        else
-            point.insert({vars[i], zero()});
-    }
+
+bool
+space_iter::operator==(space_iter const & rhs) const
+{ return counter[n] == rhs.counter[rhs.n]; }
+
+
+bool
+space_iter::operator!=(space_iter const & rhs) const
+{ return !(*this == rhs); }
+
+
+vector<bool> const &
+space_iter::operator*() const
+{ return counter; }
+
+
+space_iter const &
+space_iter::operator++()
+{
+    // Increment the counter
+    for (size_t i = 0; i <= n; ++i)
+        if (counter[i] = (counter[i] != true)) break;
+
+    return *this;
+}
+
+
+point_iter::point_iter()
+    : it {space_iter()}
+{}
+
+
+point_iter::point_iter(vector<var_t> const & vars)
+    : it {space_iter(vars.size())}, vars {vars}
+{
+    for (var_t const & x : vars)
+        point.insert({x, zero()});
 }
 
 
 bool
 point_iter::operator==(point_iter const & rhs) const
-{ return counter[n] == rhs.counter[rhs.n]; }
+{ return it == rhs.it; }
 
 
 bool
@@ -139,12 +171,10 @@ point_iter::operator++()
 {
     point.clear();
 
-    // Increment the counter
-    for (size_t i = 0; i <= n; ++i)
-        if (counter[i] = (counter[i] != true)) break;
+    ++it;
 
-    for (size_t i = 0; i < n; ++i) {
-        if (counter[i])
+    for (size_t i = 0; i < vars.size(); ++i) {
+        if ((*it)[i])
             point.insert({vars[i], one()});
         else
             point.insert({vars[i], zero()});
