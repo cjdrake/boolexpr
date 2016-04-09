@@ -159,36 +159,45 @@ _product(vector<std::set<lit_t>> const & clauses)
 
 
 bx_t
-BoolExpr::_nnf2cnf() const
+Atom::nnf2cnf1() const
+{ return shared_from_this(); }
+
+
+bx_t
+Operator::nnf2cnf1() const
 {
-    auto nnf1 = shared_from_this();
+    auto self = shared_from_this();
 
-    if (IS_ATOM(nnf1)) return nnf1;
-    auto lop1 = std::static_pointer_cast<LatticeOperator const>(nnf1);
-    if (lop1->is_clause()) return lop1;
+    if (is_clause())
+        return self;
 
-    uint32_t mod_count = 0;
-    vector<bx_t> _args;
-    for (bx_t const & arg : lop1->args) {
-        auto _arg = IS_OR(lop1) ? arg->_nnf2dnf() : arg->_nnf2cnf();
-        mod_count += (_arg != arg);
-        _args.push_back(_arg);
-    }
+    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
 
-    std::shared_ptr<LatticeOperator const> lop2;
-    if (mod_count) {
-        auto nnf2 = lop1->from_args(std::move(_args))->simplify();
-        if (IS_ATOM(nnf2)) return nnf2;
-        lop2 = std::move(std::static_pointer_cast<LatticeOperator const>(nnf2));
-        if (lop2->is_clause()) return lop2;
-    }
-    else {
-        lop2 = std::move(lop1);
-    }
+    auto f = IS_OR(lop) ? [](bx_t const & arg){return arg->nnf2dnf1();}
+                        : [](bx_t const & arg){return arg->nnf2cnf1();} ;
 
-    auto clauses1 = _twolvl2clauses(lop2);
+    return lop->transform(f)->simplify()->nnf2cnf2();
+}
+
+
+bx_t
+Atom::nnf2cnf2() const
+{ return shared_from_this(); }
+
+
+bx_t
+Operator::nnf2cnf2() const
+{
+    auto self = shared_from_this();
+
+    if (is_clause())
+        return self;
+
+    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
+
+    auto clauses1 = _twolvl2clauses(lop);
     auto clauses2 = _absorb(std::move(clauses1));
-    auto clauses3 = IS_OR(lop2) ? _product(clauses2) : std::move(clauses2);
+    auto clauses3 = IS_OR(lop) ? _product(clauses2) : std::move(clauses2);
 
     vector<bx_t> args;
     for (auto const & clause : clauses3)
@@ -198,36 +207,45 @@ BoolExpr::_nnf2cnf() const
 
 
 bx_t
-BoolExpr::_nnf2dnf() const
+Atom::nnf2dnf1() const
+{ return shared_from_this(); }
+
+
+bx_t
+Operator::nnf2dnf1() const
 {
-    auto nnf1 = shared_from_this();
+    auto self = shared_from_this();
 
-    if (IS_ATOM(nnf1)) return nnf1;
-    auto lop1 = std::static_pointer_cast<LatticeOperator const>(nnf1);
-    if (lop1->is_clause()) return lop1;
+    if (is_clause())
+        return self;
 
-    uint32_t mod_count = 0;
-    vector<bx_t> _args;
-    for (bx_t const & arg : lop1->args) {
-        auto _arg = IS_OR(lop1) ? arg->_nnf2dnf() : arg->_nnf2cnf();
-        mod_count += (_arg != arg);
-        _args.push_back(_arg);
-    }
+    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
 
-    std::shared_ptr<LatticeOperator const> lop2;
-    if (mod_count) {
-        auto nnf2 = lop1->from_args(std::move(_args))->simplify();
-        if (IS_ATOM(nnf2)) return nnf2;
-        lop2 = std::move(std::static_pointer_cast<LatticeOperator const>(nnf2));
-        if (lop2->is_clause()) return lop2;
-    }
-    else {
-        lop2 = std::move(lop1);
-    }
+    auto f = IS_OR(lop) ? [](bx_t const & arg){return arg->nnf2dnf1();}
+                        : [](bx_t const & arg){return arg->nnf2cnf1();} ;
 
-    auto clauses1 = _twolvl2clauses(lop2);
+    return lop->transform(f)->simplify()->nnf2dnf2();
+}
+
+
+bx_t
+Atom::nnf2dnf2() const
+{ return shared_from_this(); }
+
+
+bx_t
+Operator::nnf2dnf2() const
+{
+    auto self = shared_from_this();
+
+    if (is_clause())
+        return self;
+
+    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
+
+    auto clauses1 = _twolvl2clauses(lop);
     auto clauses2 = _absorb(std::move(clauses1));
-    auto clauses3 = IS_AND(lop2) ? _product(clauses2) : std::move(clauses2);
+    auto clauses3 = IS_AND(lop) ? _product(clauses2) : std::move(clauses2);
 
     vector<bx_t> args;
     for (auto const & clause : clauses3)
@@ -238,13 +256,9 @@ BoolExpr::_nnf2dnf() const
 
 bx_t
 BoolExpr::to_cnf() const
-{
-    return to_nnf()->_nnf2cnf();
-}
+{ return to_nnf()->nnf2cnf1(); }
 
 
 bx_t
 BoolExpr::to_dnf() const
-{
-    return to_nnf()->_nnf2dnf();
-}
+{ return to_nnf()->nnf2dnf1(); }

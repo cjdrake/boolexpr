@@ -123,12 +123,15 @@ class BoolExpr : public std::enable_shared_from_this<BoolExpr>
     friend bx_t operator~(bx_t const &);
     friend std::ostream& operator<<(std::ostream&, bx_t const &);
 
+    friend class Operator;
+
 protected:
     virtual bx_t invert() const = 0;
     virtual std::ostream& op_lsh(std::ostream&) const = 0;
-
-    bx_t _nnf2cnf() const;
-    bx_t _nnf2dnf() const;
+    virtual bx_t nnf2cnf1() const = 0;
+    virtual bx_t nnf2cnf2() const = 0;
+    virtual bx_t nnf2dnf1() const = 0;
+    virtual bx_t nnf2dnf2() const = 0;
 
 public:
     enum Kind {
@@ -192,6 +195,12 @@ public:
 
 class Atom : public BoolExpr
 {
+protected:
+    bx_t nnf2cnf1() const;
+    bx_t nnf2cnf2() const;
+    bx_t nnf2dnf1() const;
+    bx_t nnf2dnf2() const;
+
 public:
     Atom(Kind kind);
 
@@ -334,14 +343,15 @@ public:
 
 class Operator : public BoolExpr
 {
-    // NOTE: Need this so _nnf2cnf/_nnf2dnf can see transform
-    friend class BoolExpr;
-
     var_t to_con1(Context&, string const &, uint32_t&, var2op_t&) const;
     op_t  to_con2(Context&, string const &, uint32_t&, var2op_t&) const;
 
 protected:
     std::ostream& op_lsh(std::ostream&) const;
+    bx_t nnf2cnf1() const;
+    bx_t nnf2cnf2() const;
+    bx_t nnf2dnf1() const;
+    bx_t nnf2dnf2() const;
 
     virtual string const opname() const = 0;
     virtual bx_t eqvar(var_t const &) const = 0;
