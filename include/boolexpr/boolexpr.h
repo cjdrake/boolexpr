@@ -697,7 +697,7 @@ public:
 };
 
 
-class point_iter : public std::iterator<std::input_iterator_tag, point_t>
+class points_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
     space_iter it;
     vector<var_t> vars;
@@ -705,20 +705,20 @@ class point_iter : public std::iterator<std::input_iterator_tag, point_t>
     point_t point;
 
 public:
-    point_iter();
-    point_iter(vector<var_t> const &);
+    points_iter();
+    points_iter(vector<var_t> const &);
 
-    bool operator==(point_iter const &) const;
-    bool operator!=(point_iter const &) const;
+    bool operator==(points_iter const &) const;
+    bool operator!=(points_iter const &) const;
     point_t const & operator*() const;
-    point_iter const & operator++();
+    points_iter const & operator++();
 };
 
 
 class domain_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
     std::unordered_set<var_t> s;
-    point_iter it;
+    points_iter it;
 
 public:
     domain_iter();
@@ -734,7 +734,7 @@ public:
 class cf_iter : public std::iterator<std::input_iterator_tag, bx_t>
 {
     bx_t f;
-    point_iter it;
+    points_iter it;
     bx_t cf;
 
 public:

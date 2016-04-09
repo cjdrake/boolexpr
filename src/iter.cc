@@ -138,12 +138,12 @@ space_iter::operator++()
 }
 
 
-point_iter::point_iter()
+points_iter::points_iter()
     : it {space_iter()}
 {}
 
 
-point_iter::point_iter(vector<var_t> const & vars)
+points_iter::points_iter(vector<var_t> const & vars)
     : it {space_iter(vars.size())}, vars {vars}
 {
     for (var_t const & x : vars)
@@ -152,22 +152,22 @@ point_iter::point_iter(vector<var_t> const & vars)
 
 
 bool
-point_iter::operator==(point_iter const & rhs) const
+points_iter::operator==(points_iter const & rhs) const
 { return it == rhs.it; }
 
 
 bool
-point_iter::operator!=(point_iter const & rhs) const
+points_iter::operator!=(points_iter const & rhs) const
 { return !(*this == rhs); }
 
 
 point_t const &
-point_iter::operator*() const
+points_iter::operator*() const
 { return point; }
 
 
-point_iter const &
-point_iter::operator++()
+points_iter const &
+points_iter::operator++()
 {
     point.clear();
 
@@ -184,7 +184,7 @@ point_iter::operator++()
 }
 
 
-domain_iter::domain_iter() : it {point_iter()} {}
+domain_iter::domain_iter() : it {points_iter()} {}
 
 
 domain_iter::domain_iter(bx_t const & f)
@@ -215,11 +215,11 @@ domain_iter::operator++()
 }
 
 
-cf_iter::cf_iter() : it {point_iter()} {}
+cf_iter::cf_iter() : it {points_iter()} {}
 
 
 cf_iter::cf_iter(bx_t const & f, vector<var_t> const & vars)
-    : f {f}, it {point_iter(vars)}, cf {f->restrict_(*it)}
+    : f {f}, it {points_iter(vars)}, cf {f->restrict_(*it)}
 {}
 
 
