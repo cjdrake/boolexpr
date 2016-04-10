@@ -4,6 +4,17 @@
   Release Notes
 *****************
 
+Release 0.4
+===========
+
+Improved the various C++ iterator capabilities.
+Added ``iter_cfs`` and ``iter_domain`` iterator methods.
+Added ``smoothing``, ``consensus``, and ``derivative`` methods.
+Lots of miscellaneous documentation updates,
+thought this area still needs some work.
+Implemented Python ``to_ast`` and ``from_ast`` methods,
+to make it possible to convert BoolExpr objects to something pickleable.
+
 Release 0.3
 ===========
 
