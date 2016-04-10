@@ -80,10 +80,12 @@ class BoolExpr:
         lib.boolexpr_BoolExpr_del(self._cdata)
 
     def to_ast(self):
+        """Convert the BoolExpr to an abstract syntax tree (AST)."""
         raise NotImplementedError()
 
     @classmethod
     def from_ast(cls, ast):
+        """Convert an abstract syntax tree (AST) to a BoolExpr."""
         fst, rst = ast[0], ast[1:]
         return _AST[fst](rst)
 
@@ -691,24 +693,24 @@ def _var(ctx_num, name):
     return _bx(lib.boolexpr_Context_get_var(ctx, name.encode("ascii")))
 
 _AST = {
-    BoolExpr.Kind.zero  : lambda args : ZERO,
-    BoolExpr.Kind.one   : lambda args : ONE,
-    BoolExpr.Kind.log   : lambda args : LOGICAL,
-    BoolExpr.Kind.zero  : lambda args : ILLOGICAL,
-    BoolExpr.Kind.comp  : lambda args : ~_var(*args),
-    BoolExpr.Kind.var   : lambda args : _var(*args),
-    BoolExpr.Kind.nor   : lambda args : nor(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.or_   : lambda args : or_(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.nand  : lambda args : nand(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.and_  : lambda args : and_(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.xnor  : lambda args : xnor(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.xor   : lambda args : xor(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.neq   : lambda args : neq(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.eq    : lambda args : eq(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.nimpl : lambda args : nimpl(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.impl  : lambda args : impl(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.nite  : lambda args : nite(*[BoolExpr.from_ast(arg) for arg in args]),
-    BoolExpr.Kind.ite   : lambda args : ite(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.zero  : lambda args: ZERO,
+    BoolExpr.Kind.one   : lambda args: ONE,
+    BoolExpr.Kind.log   : lambda args: LOGICAL,
+    BoolExpr.Kind.zero  : lambda args: ILLOGICAL,
+    BoolExpr.Kind.comp  : lambda args: ~_var(*args),
+    BoolExpr.Kind.var   : lambda args: _var(*args),
+    BoolExpr.Kind.nor   : lambda args: nor(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.or_   : lambda args: or_(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.nand  : lambda args: nand(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.and_  : lambda args: and_(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.xnor  : lambda args: xnor(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.xor   : lambda args: xor(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.neq   : lambda args: neq(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.eq    : lambda args: eq(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.nimpl : lambda args: ~impl(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.impl  : lambda args: impl(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.nite  : lambda args: ~ite(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.ite   : lambda args: ite(*[BoolExpr.from_ast(arg) for arg in args]),
 }
 
 
