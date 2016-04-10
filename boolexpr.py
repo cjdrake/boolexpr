@@ -79,6 +79,14 @@ class BoolExpr:
     def __del__(self):
         lib.boolexpr_BoolExpr_del(self._cdata)
 
+    def to_ast(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def from_ast(cls, ast):
+        fst, rst = ast[0], ast[1:]
+        return _AST[fst](rst)
+
     @property
     def cdata(self):
         """Return the CFFI CData object."""
@@ -345,6 +353,9 @@ class Zero(Known):
     def __int__(self):
         return 0
 
+    def to_ast(self):
+        return (self.kind, )
+
 class One(Known):
     """Boolean One"""
     def __bool__(self):
@@ -353,15 +364,22 @@ class One(Known):
     def __int__(self):
         return 1
 
+    def to_ast(self):
+        return (self.kind, )
+
 
 class Unknown(Constant):
     """Boolean Unknown Constant"""
 
 class Logical(Unknown):
     """Boolean Logical Unknown"""
+    def to_ast(self):
+        return (self.kind, )
 
 class Illogical(Unknown):
     """Boolean Illogical Unknown"""
+    def to_ast(self):
+        return (self.kind, )
 
 
 class Literal(Atom):
@@ -380,13 +398,22 @@ class Literal(Atom):
 
 class Complement(Literal):
     """Boolean Complement"""
+    def to_ast(self):
+        return (self.kind, int(ffi.cast("uintptr_t", self.ctx)), str(~self))
+
 
 class Variable(Literal):
     """Boolean Variable"""
+    def to_ast(self):
+        return (self.kind, int(ffi.cast("uintptr_t", self.ctx)), self.__str__())
+
 
 
 class Operator(BoolExpr):
     """Boolean Operator"""
+
+    def to_ast(self):
+        return (self.kind, ) + tuple(arg.to_ast() for arg in self.args)
 
     @property
     def simple(self):
@@ -657,6 +684,31 @@ _KIND2OTHER = {
     lib.IMPL  : Implies,
     lib.NITE  : NotIfThenElse,
     lib.ITE   : IfThenElse,
+}
+
+def _var(ctx_num, name):
+    ctx = ffi.cast("void *", ctx_num)
+    return _bx(lib.boolexpr_Context_get_var(ctx, name.encode("ascii")))
+
+_AST = {
+    BoolExpr.Kind.zero  : lambda args : ZERO,
+    BoolExpr.Kind.one   : lambda args : ONE,
+    BoolExpr.Kind.log   : lambda args : LOGICAL,
+    BoolExpr.Kind.zero  : lambda args : ILLOGICAL,
+    BoolExpr.Kind.comp  : lambda args : ~_var(*args),
+    BoolExpr.Kind.var   : lambda args : _var(*args),
+    BoolExpr.Kind.nor   : lambda args : nor(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.or_   : lambda args : or_(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.nand  : lambda args : nand(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.and_  : lambda args : and_(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.xnor  : lambda args : xnor(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.xor   : lambda args : xor(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.neq   : lambda args : neq(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.eq    : lambda args : eq(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.nimpl : lambda args : nimpl(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.impl  : lambda args : impl(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.nite  : lambda args : nite(*[BoolExpr.from_ast(arg) for arg in args]),
+    BoolExpr.Kind.ite   : lambda args : ite(*[BoolExpr.from_ast(arg) for arg in args]),
 }
 
 
