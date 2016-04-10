@@ -30,7 +30,7 @@ using namespace boolexpr;
 
 LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
                              bx_t const & identity, bx_t const & dominator)
-    : state { State::infimum }
+    : state {State::infimum}
     , kind {kind}
     , identity {identity}
     , dominator {dominator}
@@ -162,7 +162,7 @@ AndArgSet::to_op() const
 
 
 XorArgSet::XorArgSet(vector<bx_t> const & args)
-    : state { State::basic }
+    : state {State::basic}
     , parity {true}
 {
     for (bx_t const & arg : args) insert(arg->simplify());
@@ -251,7 +251,7 @@ XorArgSet::reduce() const
 
 
 EqArgSet::EqArgSet(vector<bx_t> const & args)
-    : state { State::basic }
+    : state {State::basic}
     , has_zero {false}
     , has_one {false}
 {
