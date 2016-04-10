@@ -42,6 +42,11 @@ Boolean Expression Class Hierarchy
        IfThenElse -> Operator
    }
 
+.. note::
+   For the sake of space, this diagram omits the
+   ``Nor``, ``Nand``, ``Xnor``, ``Unequal``, ``NotImplies``, and ``NotIfThenElse`` classes.
+   They are derived from ``Operator``.
+
 Base Class
 ----------
 
