@@ -12,7 +12,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   overview.rst
+   introduction.rst
    pyref.rst
    relnotes.rst
 

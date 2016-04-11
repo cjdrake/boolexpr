@@ -1,8 +1,8 @@
 .. Copyright 2016 Chris Drake
 
-************
-  Overview
-************
+****************
+  Introduction
+****************
 
 BoolExpr is an open source C++ library for symbolic Boolean algebra.
 It implements a C foreign function interface (FFI),
