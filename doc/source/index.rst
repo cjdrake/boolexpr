@@ -13,6 +13,7 @@ Contents:
    :maxdepth: 2
 
    introduction.rst
+   installation.rst
    pyref.rst
    relnotes.rst
 
