@@ -14,6 +14,7 @@ Contents:
 
    introduction.rst
    installation.rst
+   quickstart.rst
    pyref.rst
    relnotes.rst
 

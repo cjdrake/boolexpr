@@ -40,8 +40,7 @@ Features
 Dependencies
 ============
 
-BoolExpr strives to be mostly self-contained.
-This section lists all of its various dependencies.
+This section lists all of BoolExpr's dependencies.
 
 Required:
 
@@ -54,6 +53,7 @@ Optional:
 * `CMake`_, for building `CryptoMiniSat`_ and `Google Test`_
 * `Coverage.py`_, for Python coverage measurement
 * `Doxygen`_, for building C++ API reference
+* `GNU Make`_, for basic build stuff
 * `Google Test`_, for C++ unit testing
 * `LCOV`_, for C++ coverage measurement
 * `Sphinx`_, for building documentation
@@ -91,6 +91,8 @@ Goals
 =====
 
 BoolExpr exists for its own sake.
+It could accurately be described as a
+`yak shaving <https://en.wiktionary.org/wiki/yak_shaving>`_ exercise.
 One day it might be useful for something,
 but until that time its main goal is educational.
 Use it to learn about Boolean algebra,
@@ -117,6 +119,7 @@ References
 .. _Doxygen: http://www.stack.nl/~dimitri/doxygen
 .. _Google Test: https://github.com/google/googletest
 .. _LCOV: http://ltp.sourceforge.net/coverage/lcov.php
+.. _Make: https://www.gnu.org/software/make
 .. _Maple: http://maplesoft.com
 .. _Mathematica: https://www.wolfram.com/mathematica
 .. _PyEDA: https://pyeda.readthedocs.org

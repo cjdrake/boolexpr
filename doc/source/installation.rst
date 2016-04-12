@@ -6,7 +6,7 @@
   Installation
 ****************
 
-This section describes the various ways to install BoolExpr.
+This chapter describes the various ways to install BoolExpr.
 
 Supporting multiple platforms is a resource-intensive undertaking.
 If you want support for your platform of choice,
