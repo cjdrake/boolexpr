@@ -10,8 +10,7 @@ Symbolic Variable Context
 =========================
 
 .. autoclass:: boolexpr.Context
-   :members: cdata,
-             get_var
+   :members: get_var
 
 Boolean Expression Class Hierarchy
 ==================================
@@ -52,7 +51,7 @@ Base Class
 
 .. autoclass:: boolexpr.BoolExpr
    :members: Kind,
-             cdata,
+             to_ast, from_ast,
              kind,
              depth, size, atom_count, op_count,
              is_cnf, is_dnf,
