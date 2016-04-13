@@ -141,14 +141,18 @@ In graphical form, the function ``f`` looks like this:
 
 .. graphviz::
 
-   digraph f {
+   digraph g {
+       node [shape=doublecircle] f
+       node [shape=circle]
        f -> or
-       or -> "~w"
+       not_w [label="~w"]
+       or -> not_w
        or -> xor
        xor -> and
        xor -> z
        and -> x
-       and -> "~y"
+       not_y [label="~y"]
+       and -> not_y
    }
 
 Constant Inputs
