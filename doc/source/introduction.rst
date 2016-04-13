@@ -53,7 +53,7 @@ Optional:
 * `CMake`_, for building `CryptoMiniSat`_ and `Google Test`_
 * `Coverage.py`_, for Python coverage measurement
 * `Doxygen`_, for building C++ API reference
-* `GNU Make`_, for basic build stuff
+* `Make`_, for basic build stuff
 * `Google Test`_, for C++ unit testing
 * `LCOV`_, for C++ coverage measurement
 * `Sphinx`_, for building documentation

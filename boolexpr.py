@@ -16,7 +16,44 @@
 """
 Boolean Expression Wrapper Module
 
-Use CFFI to interface the boolexpr C++ library to Python.
+Use CFFI to interface the C++ library to Python.
+
+Data Types:
+
+abstract syntax tree
+   A nested tuple of entries that represents an expression.
+   Unlike a ``BoolExpr`` object, an ast object is serializable.
+
+   It is defined recursively::
+
+      ast := (BoolExpr.Kind.zero, )
+           | (BoolExpr.Kind.one, )
+           | (BoolExpr.Kind.log, )
+           | (BoolExpr.Kind.comp, ctx, name)
+           | (BoolExpr.Kind.var, ctx, name)
+           | (BoolExpr.Kind.nor, ast, ...)
+           | (BoolExpr.Kind.or_, ast, ...)
+           | (BoolExpr.Kind.nand, ast, ...)
+           | (BoolExpr.Kind.and_, ast, ...)
+           | (BoolExpr.Kind.xnor, ast, ...)
+           | (BoolExpr.Kind.xor, ast, ...)
+           | (BoolExpr.Kind.neq, ast, ...)
+           | (BoolExpr.Kind.eq, ast, ...)
+           | (BoolExpr.Kind.nimpl, ast, ast)
+           | (BoolExpr.Kind.impl, ast, ast)
+           | (BoolExpr.Kind.nite, ast, ast, ast)
+           | (BoolExpr.Kind.ite, ast, ast, ast)
+
+      ctx := int
+
+      name := str
+
+   The ``ctx`` int is a pointer to a C++ Context object.
+   It must be re-cast to ``void *`` before being used.
+
+point
+   A dictionary of ``{Variable : Constant}`` mappings.
+   For example, ``{a: False, b: True, c: 0, d: 'X'}``.
 """
 
 
@@ -80,7 +117,7 @@ class BoolExpr:
         lib.boolexpr_BoolExpr_del(self._cdata)
 
     def to_ast(self):
-        """Convert the BoolExpr to an abstract syntax tree (AST)."""
+        """Convert to an abstract syntax tree (AST)."""
         raise NotImplementedError()
 
     @classmethod
@@ -108,21 +145,73 @@ class BoolExpr:
         return self.__bytes__().decode('utf-8')
 
     def __invert__(self):
+        """Boolean negation operator
+
+        +-----------+------------+
+        | :math:`f` | :math:`f'` |
+        +===========+============+
+        |         0 |          1 |
+        +-----------+------------+
+        |         1 |          0 |
+        +-----------+------------+
+        """
         return not_(self)
 
     def __or__(self, other):
+        """Boolean disjunction (sum, OR) operator
+
+        +-----------+-----------+---------------+
+        | :math:`f` | :math:`g` | :math:`f + g` |
+        +===========+===========+===============+
+        |         0 |         0 |             0 |
+        +-----------+-----------+---------------+
+        |         0 |         1 |             1 |
+        +-----------+-----------+---------------+
+        |         1 |         0 |             1 |
+        +-----------+-----------+---------------+
+        |         1 |         1 |             1 |
+        +-----------+-----------+---------------+
+        """
         return or_(self, other)
 
     def __ror__(self, other):
         return or_(other, self)
 
     def __and__(self, other):
+        r"""Boolean conjunction (product, AND) operator
+
+        +-----------+-----------+-------------------+
+        | :math:`f` | :math:`g` | :math:`f \cdot g` |
+        +===========+===========+===================+
+        |         0 |         0 |                 0 |
+        +-----------+-----------+-------------------+
+        |         0 |         1 |                 0 |
+        +-----------+-----------+-------------------+
+        |         1 |         0 |                 0 |
+        +-----------+-----------+-------------------+
+        |         1 |         1 |                 1 |
+        +-----------+-----------+-------------------+
+        """
         return and_(self, other)
 
     def __rand__(self, other):
         return and_(other, self)
 
     def __xor__(self, other):
+        r"""Boolean exclusive or (XOR) operator
+
+        +-----------+-----------+--------------------+
+        | :math:`f` | :math:`g` | :math:`f \oplus g` |
+        +===========+===========+====================+
+        |         0 |         0 |                  0 |
+        +-----------+-----------+--------------------+
+        |         0 |         1 |                  1 |
+        +-----------+-----------+--------------------+
+        |         1 |         0 |                  1 |
+        +-----------+-----------+--------------------+
+        |         1 |         1 |                  0 |
+        +-----------+-----------+--------------------+
+        """
         return xor(self, other)
 
     def __rxor__(self, other):
@@ -130,15 +219,30 @@ class BoolExpr:
 
     @property
     def kind(self):
-        """Return the Kind code."""
+        """Return the Kind code.
+
+        The expression "kind" is one byte of information.
+        See ``include/boolexpr/boolexpr.h`` for the full table of kinds codes.
+        For convenience, this value is wrapped by a Python Enum.
+        """
         return self.Kind(lib.boolexpr_BoolExpr_kind(self._cdata))
 
     def depth(self):
-        """Return the expression depth."""
+        """Return the depth of the expression.
+
+        1. An ``Atom`` has zero depth.
+        2. An ``Operator`` has depth equal to the maximum depth of its
+           arguments plus one.
+        """
         return lib.boolexpr_BoolExpr_depth(self._cdata)
 
     def size(self):
-        """Return the expression size."""
+        """Return the size of the expression.
+
+        1. An ``Atom`` has size one.
+        2. An ``Operator`` has size equal to the sum of its arguments' sizes
+           plus one.
+        """
         return lib.boolexpr_BoolExpr_size(self._cdata)
 
     def atom_count(self):
@@ -150,19 +254,55 @@ class BoolExpr:
         return lib.boolexpr_BoolExpr_op_count(self._cdata)
 
     def is_cnf(self):
-        """Return True if the expression is in conjunctive normal form (CNF)."""
+        """Return ``True`` if the expression is in conjunctive normal form (CNF).
+
+        A CNF is defined as a conjunction of clauses,
+        where a clause is defined as either a ``Literal``,
+        or a disjunction of literals.
+
+        Boolean True (``And`` identity) is also considered to be a CNF.
+        """
         return bool(lib.boolexpr_BoolExpr_is_cnf(self._cdata))
 
     def is_dnf(self):
-        """Return True if the expression is in disjunctive normal form (DNF)."""
+        """
+        Return ``True`` if the expression is in disjunctive normal form (DNF).
+
+        A DNF is defined as a disjunction of clauses,
+        where a clause is defined as either a ``Literal``,
+        or a disjunction of literals.
+
+        Boolean False (``Or`` identity) is also considered to be a DNF.
+        """
         return bool(lib.boolexpr_BoolExpr_is_dnf(self._cdata))
 
     def pushdown_not(self):
-        """Return an expression with all Not bubbles pushed down to the atoms."""
+        r"""Return an expression with NOT bubbles pushed down through dual ops.
+
+        Specifically, perform the following transformations:
+
+        .. math::
+
+           \overline{a + b + \ldots} &\iff \overline{a\vphantom{b}} \cdot \overline{b} \cdot \ldots
+
+           \overline{a \cdot b \cdot \ldots} &\iff \overline{a\vphantom{b}} + \overline{b} + \ldots
+
+           \overline{a \oplus b \oplus \ldots} &\iff \overline{a} \oplus b \oplus \ldots
+
+           \overline{eq(a, b, \ldots)} &\iff eq(\overline{a}, b, \ldots)
+
+           \overline{p \implies q} &\iff p \cdot \overline{q}
+
+           \overline{ite(s, d1, d0)} &\iff ite(s, \overline{d1}, \overline{d0})
+        """
         return _bx(lib.boolexpr_BoolExpr_pushdown_not(self._cdata))
 
     def simplify(self):
-        """Return a simplified expression."""
+        """Return a simplified expression.
+
+        Simplification uses Boolean algebra identities to reduce the size
+        of the expression.
+        """
         return _bx(lib.boolexpr_BoolExpr_simplify(self._cdata))
 
     def to_binop(self):
@@ -170,16 +310,31 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_to_binop(self._cdata))
 
     def to_latop(self):
-        """Return an expression that consists of Or, And, and Literals."""
+        """
+        Convert all operators to ``Or`` / ``And`` (lattice operator) form.
+        """
         return _bx(lib.boolexpr_BoolExpr_to_latop(self._cdata))
 
     def tseytin(self, ctx, auxvarname="a"):
-        """Return the Tseytin transformation."""
+        """Return the Tseytin transformation.
+
+        The ``ctx`` parameter is a ``Context`` object that will be used to
+        store auxiliary variables.
+
+        The ``auxvarname`` parameter is the prefix of auxiliary variable names.
+        The suffix will be in the form ``_0``, ``_1``, etc.
+        """
         name = auxvarname.encode("ascii")
         return _bx(lib.boolexpr_BoolExpr_tseytin(self._cdata, ctx.cdata, name))
 
     def compose(self, var2bx):
-        """Substitute a subset of support variables with other Boolean functions."""
+        r"""
+        Substitute a subset of support variables with other Boolean expressions.
+
+        Returns a new expression: :math:`f(g_i, \ldots)`
+
+        :math:`f_1 \: | \: x_i = f_2`
+        """
         num = len(var2bx)
         vars_ = ffi.new("void * []", num)
         bxs = ffi.new("void * []", num)
@@ -189,7 +344,13 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, num, vars_, bxs))
 
     def restrict(self, point):
-        """Restrict a subset of support variables to {0, 1}."""
+        r"""
+        Restrict a subset of support variables to :math:`\{0, 1\}`.
+
+        Returns a new function: :math:`f(x_i, \ldots)`
+
+        :math:`f \: | \: x_i = b`
+        """
         num = len(point)
         vars_ = ffi.new("void * []", num)
         consts = ffi.new("void * []", num)
@@ -201,10 +362,9 @@ class BoolExpr:
     def sat(self):
         """Return a tuple (sat, point).
 
-        The sat value is True if the expression is satisfiable.
-        If the expression is not satisfiable, the point will be None.
-        Otherwise, it will return a {Variable: Constant} mapping of a
-        satisfying input point.
+        The sat value is ``True`` if the expression is satisfiable.
+        If the expression is not satisfiable, the point will be ``None``.
+        Otherwise, it will return a satisfying input point.
         """
         soln = lib.boolexpr_BoolExpr_sat(self._cdata)
         try:
@@ -241,15 +401,22 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_to_dnf(self._cdata))
 
     def to_nnf(self):
-        """Convert the expression to negation normal form (NNF)."""
+        """Convert the expression to negation normal form (NNF).
+
+        Negation formal form is defined as:
+
+        * Only ``Or`` or ``And`` operators
+        * All NOT bubbles are pushed down to the literals
+        * Simple
+        """
         return _bx(lib.boolexpr_BoolExpr_to_nnf(self._cdata))
 
     def equiv(self, other):
         """Return True if the two expressions are formally equivalent.
 
-        NOTE: While in practice this check can be quite fast,
-              SAT is an NP-complete problem, so some inputs will require
-              exponential runtime.
+        .. note:: While in practice this check can be quite fast,
+                  SAT is an NP-complete problem, so some inputs will require
+                  exponential runtime.
         """
         return bool(lib.boolexpr_BoolExpr_equiv(self._cdata, other.cdata))
 
@@ -262,7 +429,17 @@ class BoolExpr:
             lib.boolexpr_VarSet_del(c_varset)
 
     def smoothing(self, xs):
-        """Return the smoothing w.r.t. a sequence of variables."""
+        r"""Return the smoothing over a sequence of N variables.
+
+        The *xs* argument is a sequence of :math:`N` Boolean variables.
+
+        The *smoothing* of :math:`f(x_1, x_2, \dots, x_i, \dots, x_n)` with
+        respect to variable :math:`x_i` is:
+        :math:`S_{x_i}(f) = f_{x_i} + f_{x_i'}`
+
+        This is the same as the existential quantification operator:
+        :math:`\exists \{x_1, x_2, \dots\} \: f`
+        """
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
@@ -272,7 +449,18 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_smoothing(self._cdata, num, vars_))
 
     def consensus(self, xs):
-        """Return the consensus w.r.t. a sequence of variables."""
+        r"""Return the consensus over a sequence of N variables.
+
+        The *xs* argument is a sequence of :math:`N` Boolean variables.
+
+        The *consensus* of :math:`f(x_1, x_2, \dots, x_i, \dots, x_n)` with
+        respect to variable :math:`x_i` is:
+        :math:`C_{x_i}(f) = f_{x_i} \cdot f_{x_i'}`
+
+        This is the same as the universal quantification operator:
+        :math:`\forall \{x_1, x_2, \dots\} \: f`
+        """
+
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
@@ -282,7 +470,16 @@ class BoolExpr:
         return _bx(lib.boolexpr_BoolExpr_consensus(self._cdata, num, vars_))
 
     def derivative(self, xs):
-        """Return the derivative w.r.t. a sequence of variables."""
+        r"""Return the derivative over a sequence of N variables.
+
+        The *xs* argument is a sequence of :math:`N` Boolean variables.
+
+        The *derivative* of :math:`f(x_1, x_2, \dots, x_i, \dots, x_n)` with
+        respect to variable :math:`x_i` is:
+        :math:`\frac{\partial}{\partial x_i} f = f_{x_i} \oplus f_{x_i'}`
+
+        This is also known as the Boolean *difference*.
+        """
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
@@ -318,7 +515,7 @@ class BoolExpr:
             lib.boolexpr_DomainIter_del(it)
 
     def iter_cfs(self, xs):
-        """Iterate through all cofactors w.r.t. a sequence of variables."""
+        """Iterate through all cofactors over a sequence of variables."""
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
@@ -387,28 +584,23 @@ class Illogical(Unknown):
 class Literal(Atom):
     """Boolean Literal Atom"""
 
-    @property
-    def ctx(self):
-        """Return the context pointer."""
-        return lib.boolexpr_Literal_ctx(self._cdata)
-
-    @property
-    def id(self):
-        """Return the id number."""
-        return lib.boolexpr_Literal_id(self._cdata)
-
-
 class Complement(Literal):
     """Boolean Complement"""
     def to_ast(self):
-        return (self.kind, int(ffi.cast("uintptr_t", self.ctx)), str(~self))
-
+        return (
+            self.kind,
+            int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(self._cdata))),
+            str(~self),
+        )
 
 class Variable(Literal):
     """Boolean Variable"""
     def to_ast(self):
-        return (self.kind, int(ffi.cast("uintptr_t", self.ctx)), self.__str__())
-
+        return (
+            self.kind,
+            int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(self._cdata))),
+            self.__str__()
+        )
 
 
 class Operator(BoolExpr):
@@ -419,7 +611,11 @@ class Operator(BoolExpr):
 
     @property
     def simple(self):
-        """Return True if the operator is simple."""
+        """Return ``True`` if the operator is simple.
+
+        An operator is only deemed simple if it has been returned by the
+        ``simplify`` method.
+        """
         return bool(lib.boolexpr_Operator_simple(self._cdata))
 
     @property
@@ -432,7 +628,10 @@ class Operator(BoolExpr):
             lib.boolexpr_Vec_del(c_vec)
 
     def is_clause(self):
-        """Return True if the operator is a clause."""
+        """Return ``True`` if the operator is a clause.
+
+        A *clause* is defined as having only ``Literal`` arguments.
+        """
         return bool(lib.boolexpr_Operator_is_clause(self._cdata))
 
 

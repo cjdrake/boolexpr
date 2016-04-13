@@ -50,10 +50,11 @@ Base Class
 ----------
 
 .. autoclass:: boolexpr.BoolExpr
-   :members: Kind,
+   :members: __invert__, __or__, __and__, __xor__,
+             Kind,
              to_ast, from_ast,
              kind,
-             depth, size, atom_count, op_count,
+             depth, size,
              is_cnf, is_dnf,
              pushdown_not, simplify, to_binop, to_latop, tseytin,
              compose, restrict,
@@ -65,6 +66,7 @@ Base Class
              iter_dfs,
              iter_domain,
              iter_cfs
+   :member-order: bysource
 
 Atom Nodes
 ----------
