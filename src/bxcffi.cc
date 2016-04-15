@@ -641,22 +641,6 @@ boolexpr_BoolExpr_size(BX c_self)
 }
 
 
-uint32_t
-boolexpr_BoolExpr_atom_count(BX c_self)
-{
-    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return self->bx->atom_count();
-}
-
-
-uint32_t
-boolexpr_BoolExpr_op_count(BX c_self)
-{
-    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return self->bx->op_count();
-}
-
-
 bool
 boolexpr_BoolExpr_is_cnf(BX c_self)
 {

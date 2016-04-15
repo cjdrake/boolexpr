@@ -41,19 +41,6 @@ but don't count on them until they are listed in the API reference.
 BoolExpr Public Data and Methods
 ================================
 
-The ``BoolExpr::atom_count`` and ``BoolExpr::op_count`` methods are
-1) almost useless, and 2) ambiguous.
-The depth and size of an expression tree are more interesting than counting
-operators and atoms.
-The number of literals is currently counted by walking through the tree and
-incrementing the count whenever it observes a literal.
-But literals are singletons.
-So, for example, if the variable ``x`` is observed ten times at the leaf-level,
-even though there's only one literal ``x``, it is counted ten times.
-The same is true of operators to some extent.
-It is possible for a particular sub-expression to be used multiple times in an
-expression tree.
-
 The ``Literal::id`` constant is currently public because the poorly-implemented
 CNF/DNF flattening algorithm relies on it for ordering.
 There's a bug open to improve the flattening algorithm.

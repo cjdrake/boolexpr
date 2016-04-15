@@ -196,8 +196,6 @@ uint8_t boolexpr_BoolExpr_kind({BX});
 {STRING} boolexpr_BoolExpr_to_string({BX});
 uint32_t boolexpr_BoolExpr_depth({BX});
 uint32_t boolexpr_BoolExpr_size({BX});
-uint32_t boolexpr_BoolExpr_atom_count({BX});
-uint32_t boolexpr_BoolExpr_op_count({BX});
 _Bool boolexpr_BoolExpr_is_cnf({BX});
 _Bool boolexpr_BoolExpr_is_dnf({BX});
 {BX} boolexpr_BoolExpr_pushdown_not({BX});

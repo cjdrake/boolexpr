@@ -163,8 +163,6 @@ public:
 
     virtual uint32_t depth() const = 0;
     virtual uint32_t size() const = 0;
-    virtual uint32_t atom_count() const = 0;
-    virtual uint32_t op_count() const = 0;
 
     virtual bool is_cnf() const = 0;
     virtual bool is_dnf() const = 0;
@@ -206,8 +204,6 @@ public:
 
     uint32_t depth() const;
     uint32_t size() const;
-    uint32_t atom_count() const;
-    uint32_t op_count() const;
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t pushdown_not() const;
@@ -368,8 +364,6 @@ public:
 
     uint32_t depth() const;
     uint32_t size() const;
-    uint32_t atom_count() const;
-    uint32_t op_count() const;
 
     bool is_cnf() const;
     bool is_dnf() const;
@@ -923,8 +917,6 @@ uint8_t boolexpr_BoolExpr_kind(BX);
 STRING boolexpr_BoolExpr_to_string(BX);
 uint32_t boolexpr_BoolExpr_depth(BX);
 uint32_t boolexpr_BoolExpr_size(BX);
-uint32_t boolexpr_BoolExpr_atom_count(BX);
-uint32_t boolexpr_BoolExpr_op_count(BX);
 bool boolexpr_BoolExpr_is_cnf(BX);
 bool boolexpr_BoolExpr_is_dnf(BX);
 BX boolexpr_BoolExpr_pushdown_not(BX);

@@ -45,8 +45,6 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(str(f), repr(f))
         self.assertEqual(f.depth(), 3)
         self.assertEqual(f.size(), 7)
-        self.assertEqual(f.atom_count(), 4)
-        self.assertEqual(f.op_count(), 3)
         self.assertFalse(f.is_cnf())
         self.assertFalse(f.is_dnf())
 

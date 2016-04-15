@@ -248,14 +248,6 @@ class BoolExpr:
         """
         return lib.boolexpr_BoolExpr_size(self._cdata)
 
-    def atom_count(self):
-        """Return the count of atoms in the expression."""
-        return lib.boolexpr_BoolExpr_atom_count(self._cdata)
-
-    def op_count(self):
-        """Return the count of operators in the expression."""
-        return lib.boolexpr_BoolExpr_op_count(self._cdata)
-
     def is_cnf(self):
         """Return ``True`` if the expression is in conjunctive normal form (CNF).
 
