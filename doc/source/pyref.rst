@@ -11,6 +11,7 @@ Symbolic Variable Context
 
 .. autoclass:: boolexpr.Context
    :members: get_var
+   :member-order: bysource
 
 Boolean Expression Class Hierarchy
 ==================================
@@ -108,6 +109,7 @@ Atom Nodes
    :members: simple,
              args,
              is_clause
+   :member-order: bysource
 
 Operator Nodes
 --------------

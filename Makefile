@@ -7,18 +7,25 @@ LCOV := lcov
 
 CXXFLAGS := --std=c++11
 
+GSUTIL := gsutil
+GCS_BUCKET := gs://www.boolexpr.org
+HTML_DIR := build/sphinx/html
+
 .PHONY: help
 help:
-	@printf "Usage: make [options] [target] ...\n"
-	@printf "\n"
-	@printf "Valid targets:\n"
-	@printf "\n"
-	@printf "    help            Display this help message\n"
-	@printf "    test            Run C++ unit tests\n"
-	@printf "    cover           Collect C++ coverage\n"
-	@printf "    pytest          Run Python unit tests\n"
-	@printf "    pycov           Collect C++ coverage\n"
-	@printf "    pylint          Run Python lint\n"
+	@echo "Usage: make [options] [target] ..."
+	@echo
+	@echo "Valid targets:"
+	@echo ""
+	@echo "    help            Display this help message"
+	@echo
+	@echo "    cover           Collect C++ coverage"
+	@echo "    html            Build Sphinx HTML documentation"
+	@echo "    html-upload     Upload HTML to Google Cloud Storage"
+	@echo "    pycov           Collect C++ coverage"
+	@echo "    pylint          Run Python lint"
+	@echo "    pytest          Run Python unit tests"
+	@echo "    test            Run C++ unit tests"
 
 .PHONY: test
 test: build/test/a.out
@@ -41,6 +48,16 @@ do_genhtml: do_lcov
 
 .PHONY: cover
 cover: do_genhtml
+
+.PHONY: html
+html:
+	@./setup.py build_ext -i
+	@./setup.py build_sphinx
+
+.PHONY: html-upload
+html-upload: html
+	@$(GSUTIL) -m rsync -d -p -r $(HTML_DIR) $(GCS_BUCKET)
+	@$(GSUTIL) -m acl ch -u AllUsers:R $(GCS_BUCKET)/**
 
 .PHONY: pytest
 pytest:

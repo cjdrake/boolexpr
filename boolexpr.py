@@ -57,6 +57,9 @@ point
 """
 
 
+__version__ = "0.4"
+
+
 import itertools
 from enum import Enum
 
