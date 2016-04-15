@@ -1,5 +1,7 @@
 .. Copyright 2016 Chris Drake
 
+.. _relnotes:
+
 *****************
   Release Notes
 *****************

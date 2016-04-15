@@ -15,7 +15,8 @@ Contents:
    introduction.rst
    installation.rst
    quickstart.rst
-   pyref.rst
+   pyapiref.rst
+   unfeatures.rst
    relnotes.rst
 
 Indices and Tables
