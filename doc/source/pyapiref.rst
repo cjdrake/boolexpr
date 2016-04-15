@@ -32,7 +32,6 @@ Boolean Expression Class Hierarchy
        Zero -> Known
        One -> Known
        Logical -> Unknown
-       Illogical -> Unknown
        Complement -> Literal
        Variable -> Literal
        LatticeOperator -> Operator
@@ -53,9 +52,9 @@ Base Class
 ----------
 
 .. autoclass:: boolexpr.BoolExpr
-   :members: __invert__, __or__, __and__, __xor__,
-             Kind,
+   :members: Kind,
              to_ast, from_ast,
+             __invert__, __or__, __and__, __xor__,
              kind,
              depth, size,
              is_cnf, is_dnf,
@@ -93,9 +92,6 @@ Atom Nodes
    :show-inheritance: true
 
 .. autoclass:: boolexpr.Logical
-   :show-inheritance: true
-
-.. autoclass:: boolexpr.Illogical
    :show-inheritance: true
 
 .. autoclass:: boolexpr.Literal

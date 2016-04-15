@@ -46,3 +46,7 @@ CNF/DNF flattening algorithm relies on it for ordering.
 There's a bug open to improve the flattening algorithm.
 The ``id`` of a literal is an implementation detail.
 The only thing the user interface should care about is the Variable name string.
+
+The ``Illogical`` class is experimental.
+It is supposed to represent an illogical condition such as metastability,
+but the usage model is unclear right now.
