@@ -15,6 +15,7 @@ Contents:
    introduction.rst
    installation.rst
    quickstart.rst
+   advanced.rst
    pyapiref.rst
    unfeatures.rst
    relnotes.rst
