@@ -18,13 +18,11 @@ Python-only Functions
 
 The following functions are only available in the Python boolexpr.py module:
 
-* ``boolexpr.onehot0``
-* ``boolexpr.onehot``
 * ``boolexpr.majority``
 * ``boolexpr.achilles_heel``
 
 They are the only components that are not currently implemented in C++.
-The first three also use syntax that is not compatible with Python 2.
+The ``majority`` function uses syntax that is not compatible with Python 2.
 Whether or not Python 2 is ever supported is an interesting question,
 but ``boolexpr`` is a C++ library with a Python wrapper,
 not a Python library mostly implemented in C++.

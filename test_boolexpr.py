@@ -119,10 +119,8 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(len(list(f0.iter_sat())), 9)
 
         f2 = onehot(*xs[:8], conj=False)
-        self.assertEqual(f2.kind, BoolExpr.Kind.or_)
-        f3 = onehot(*xs[:8], conj=True)
-        self.assertEqual(f3.kind, BoolExpr.Kind.and_)
-        self.assertTrue(f2.equiv(f3))
+        self.assertEqual(f2.kind, BoolExpr.Kind.and_)
+        self.assertEqual(len(list(f2.iter_sat())), 8)
 
         f4 = majority(*xs[:8], conj=False)
         self.assertEqual(f4.kind, BoolExpr.Kind.or_)

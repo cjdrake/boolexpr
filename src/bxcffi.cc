@@ -552,6 +552,10 @@ BX
 boolexpr_onehot0(size_t n, BXS c_args)
 { return new BoolExprProxy(onehot0(_convert_args(n, c_args))); }
 
+BX
+boolexpr_onehot(size_t n, BXS c_args)
+{ return new BoolExprProxy(onehot(_convert_args(n, c_args))); }
+
 
 BX
 boolexpr_nor_s(size_t n, BXS c_args)

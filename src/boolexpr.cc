@@ -295,6 +295,35 @@ boolexpr::onehot0(std::initializer_list<bx_t> const args)
 
 
 bx_t
+boolexpr::onehot(vector<bx_t> const & args)
+{
+    vector<bx_t> terms;
+    for (size_t i = 0; i < (args.size()-1); ++i) {
+        for (size_t j = i+1; j < args.size(); ++j)
+            terms.push_back(~args[i] | ~args[j]);
+    }
+    terms.push_back(or_(args));
+    return and_(std::move(terms));
+}
+
+bx_t
+boolexpr::onehot(vector<bx_t> const && args)
+{
+    vector<bx_t> terms;
+    for (size_t i = 0; i < (args.size()-1); ++i) {
+        for (size_t j = i+1; j < args.size(); ++j)
+            terms.push_back(~args[i] | ~args[j]);
+    }
+    terms.push_back(or_(args));
+    return and_(std::move(terms));
+}
+
+bx_t
+boolexpr::onehot(std::initializer_list<bx_t> const args)
+{ return onehot(vector<bx_t>(args.begin(), args.end())); }
+
+
+bx_t
 boolexpr::nor_s(vector<bx_t> const & args)
 { return nor(args)->simplify(); }
 
