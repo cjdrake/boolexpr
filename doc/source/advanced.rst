@@ -377,7 +377,7 @@ the second part will contain a satisfying input point.
 
 For example:
 
-.. code-block::
+.. code-block:: pycon
 
    >>> f = (~a|~b) & (~a|b) & (a|~b) & (a|b)
    >>> f.sat()
@@ -392,7 +392,7 @@ Unsatisfiable functions will be empty.
 
 For example:
 
-.. code-block::
+.. code-block:: pycon
 
    >>> f = (~a|~b) & (~a|b) & (a|~b) & (a|b)
    >>> list(f.iter_sat())
@@ -410,14 +410,14 @@ BoolExpr provides the ``iter_cfs`` generator method.
 
 You can use it with only one input variable, the common case:
 
-.. code-block::
+.. code-block:: pycon
 
    >>> list(ite(s, d1, d0).iter_cfs(s))
    [d0, d1]
 
 Or you can view the cofactors of multiple variables simultaneously:
 
-.. code-block::
+.. code-block:: pycon
 
    >>> list(ite(s, d1, d0).iter_cfs([d1, d0]))
    [0, s, ~s, 1]
@@ -435,7 +435,7 @@ For example,
 for a function ``f`` that depends on ``a``,
 to write "there exists a variable ``a`` such that ``f`` is true":
 
-.. code-block::
+.. code-block:: pycon
 
    >>> f = onehot0(a, b, c)
    >>> f.smoothing(a)
@@ -451,7 +451,7 @@ For example,
 for a function ``f`` that depends on ``a``,
 to write "for all values of ``a``, ``f`` is true":
 
-.. code-block::
+.. code-block:: pycon
 
    >>> f = onehot0(a, b, c)
    >>> f.consensus(a)
@@ -460,7 +460,7 @@ to write "for all values of ``a``, ``f`` is true":
 The ``derivative`` method is similar to ``smoothing`` and ``consensus``.
 It is the XOR of a sequence of cofactors.
 
-.. code-block::
+.. code-block:: pycon
 
    >>> f = onehot0(a, b, c)
    >>> f.derivative(a)
