@@ -63,6 +63,19 @@ from enum import Enum
 from _boolexpr import ffi, lib
 
 
+__all__ = [
+    "Context",
+    "BoolExpr", "Atom", "Constant", "Known", "Zero", "One", "Unknown",
+    "Logical", "Illogical", "Literal", "Complement", "Variable",
+    "Operator", "LatticeOperator", "Nor", "Or", "Nand", "And", "Xnor", "Xor",
+    "Unequal", "Equal", "NotImplies", "Implies", "NotIfThenElse", "IfThenElse",
+    "ZERO", "ONE", "LOGICAL", "ILLOGICAL",
+    "not_", "nor", "or_", "nand", "and_", "xnor", "xor", "neq", "eq", "impl",
+    "ite", "nor_s", "or_s", "nand_s", "and_s", "xnor_s", "xor_s", "neq_s",
+    "eq_s", "impl_s", "ite_s",
+    "onehot0", "onehot", "majority", "achilles_heel",
+]
+
 __version__ = "0.4"
 
 
