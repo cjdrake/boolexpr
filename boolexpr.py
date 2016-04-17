@@ -747,20 +747,14 @@ def onehot0(*args):
     """
     Return an expression that means
     "at most one input function is true".
-
-    If *conj* is ``True``, return a CNF.
-    Otherwise, return a DNF.
     """
     num, c_args = _convert_args(args)
     return _bx(lib.boolexpr_onehot0(num, c_args))
 
-def onehot(*args, conj=True):
+def onehot(*args):
     """
     Return an expression that means
     "exactly one input function is true".
-
-    If *conj* is ``True``, return a CNF.
-    Otherwise, return a DNF.
     """
     num, c_args = _convert_args(args)
     return _bx(lib.boolexpr_onehot(num, c_args))

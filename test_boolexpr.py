@@ -118,7 +118,7 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(f0.kind, BoolExpr.Kind.and_)
         self.assertEqual(len(list(f0.iter_sat())), 9)
 
-        f2 = onehot(*xs[:8], conj=False)
+        f2 = onehot(*xs[:8])
         self.assertEqual(f2.kind, BoolExpr.Kind.and_)
         self.assertEqual(len(list(f2.iter_sat())), 8)
 
