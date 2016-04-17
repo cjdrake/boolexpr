@@ -57,13 +57,13 @@ point
 """
 
 
-__version__ = "0.4"
-
-
 import itertools
 from enum import Enum
 
 from _boolexpr import ffi, lib
+
+
+__version__ = "0.4"
 
 
 class Context:
