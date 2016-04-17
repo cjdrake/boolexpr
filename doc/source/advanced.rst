@@ -359,5 +359,109 @@ Variable Substitution
 Satisfiability
 ==============
 
+The question of whether a Boolean function is *satisfiable* (SAT) is one of the
+most important questions in computer science.
+To help us answer this question,
+BoolExpr has the ``sat`` and ``iter_sat`` methods.
+SAT is NP-complete,
+so it is not guaranteed that a solution can be found quickly.
+Under the hood,
+BoolExpr uses the modern, industrial-strength
+`CryptoMiniSAT <https://github.com/msoos/cryptominisat>`_
+solver to arrive at solutions as quickly as possible.
+
+The ``sat`` method returns a two-tuple.
+The first part is the ``bool`` answer to whether the function is satisfiable.
+If the function is SAT,
+the second part will contain a satisfying input point.
+
+For example:
+
+.. code-block::
+
+   >>> f = (~a|~b) & (~a|b) & (a|~b) & (a|b)
+   >>> f.sat()
+   (False, None)
+   >>> g = xor(eq(a, b), impl(p, q), ite(s, d1, d0))
+   >>> g.sat()
+   (True, {d1: 1, d0: 1, q: 1, a: 1, b: 1, s: 1, p: 1})
+
+The ``iter_sat`` method is a generator that iterates through all satisfying
+input points.
+Unsatisfiable functions will be empty.
+
+For example:
+
+.. code-block::
+
+   >>> f = (~a|~b) & (~a|b) & (a|~b) & (a|b)
+   >>> list(f.iter_sat())
+   []
+   >>> g = onehot(a, b, c)
+   >>> list(g.iter_sat())
+   [{b: 1, c: 0, a: 0}, {b: 0, c: 0, a: 1}, {b: 0, c: 1, a: 0}]
+
 Cofactors
 =========
+
+The Shannon expansion is the fundamental theorem of Boolean algebra.
+To make it easier to calculate this,
+BoolExpr provides the ``iter_cfs`` generator method.
+
+You can use it with only one input variable, the common case:
+
+.. code-block::
+
+   >>> list(ite(s, d1, d0).iter_cfs(s))
+   [d0, d1]
+
+Or you can view the cofactors of multiple variables simultaneously:
+
+.. code-block::
+
+   >>> list(ite(s, d1, d0).iter_cfs([d1, d0]))
+   [0, s, ~s, 1]
+
+Existential and Universal Quantification
+----------------------------------------
+
+Some logical statements are structured such that *there exists* a value of
+a variable :math:`x` such that the statement is true.
+This is the existential quantification operator.
+BoolExpr provides the ``smoothing`` method for this.
+The smoothing is the OR of a sequence of cofactors.
+
+For example,
+for a function ``f`` that depends on ``a``,
+to write "there exists a variable ``a`` such that ``f`` is true":
+
+.. code-block::
+
+   >>> f = onehot0(a, b, c)
+   >>> f.smoothing(a)
+   Or(And(Or(~c, ~b), ~c, ~b), ~b, ~c)
+
+Similarly, you can write logical statements structured such that *for all*
+values of a variable :math:`x` such that the statement is true.
+This is the universal quantification operator.
+BoolExpr provides the ``consensus`` method for this.
+The consensus is the AND of a sequence of cofactors.
+
+For example,
+for a function ``f`` that depends on ``a``,
+to write "for all values of ``a``, ``f`` is true":
+
+.. code-block::
+
+   >>> f = onehot0(a, b, c)
+   >>> f.consensus(a)
+   And(~c, Or(~c, ~b), ~b, Or(~c, ~b))
+
+The ``derivative`` method is similar to ``smoothing`` and ``consensus``.
+It is the XOR of a sequence of cofactors.
+
+.. code-block::
+
+   >>> f = onehot0(a, b, c)
+   >>> f.derivative(a)
+   Xor(And(Or(~c, ~b), ~c, ~b), Or(~c, ~b))
