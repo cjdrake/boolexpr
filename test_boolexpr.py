@@ -15,16 +15,8 @@
 
 import unittest
 
-from boolexpr import Context
-from boolexpr import BoolExpr
-
-from boolexpr import (
-    ZERO, ONE, LOGICAL, ILLOGICAL,
-    not_,
-    nor, or_, nand, and_, xnor, xor, neq, eq, impl, ite,
-    nor_s, or_s, nand_s, and_s, xnor_s, xor_s, neq_s, eq_s, impl_s, ite_s,
-    onehot0, onehot, majority, achilles_heel,
-)
+import boolexpr as bx
+from boolexpr import *
 
 
 ctx = Context()
@@ -52,6 +44,26 @@ class BoolExprTest(unittest.TestCase):
         self.assertTrue(bool(ONE))
         self.assertEqual(int(ZERO), 0)
         self.assertEqual(int(ONE), 1)
+
+    def test_ast(self):
+        p = int(bx.ffi.cast("uintptr_t", ctx.cdata))
+
+        self.assertEqual(ZERO.to_ast(), (BoolExpr.Kind.zero, ))
+        self.assertEqual(ONE.to_ast(), (BoolExpr.Kind.one, ))
+        self.assertEqual(LOGICAL.to_ast(), (BoolExpr.Kind.log, ))
+        self.assertEqual(ILLOGICAL.to_ast(), (BoolExpr.Kind.ill, ))
+
+        f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
+        ast = (BoolExpr.Kind.or_,
+                  (BoolExpr.Kind.comp, p, "x_0"),
+                  (BoolExpr.Kind.xor,
+                      (BoolExpr.Kind.and_,
+                          (BoolExpr.Kind.var, p, "x_1"),
+                          (BoolExpr.Kind.comp, p, "x_2")),
+                      (BoolExpr.Kind.var, p, "x_3")))
+        self.assertEqual(f.to_ast(), ast)
+        g = BoolExpr.from_ast(ast)
+        self.assertTrue(f.equiv(g))
 
     def test_errors(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
