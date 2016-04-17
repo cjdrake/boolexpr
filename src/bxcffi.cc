@@ -549,6 +549,11 @@ boolexpr_ite(BX c_s, BX c_d1, BX c_d0)
 
 
 BX
+boolexpr_onehot0(size_t n, BXS c_args)
+{ return new BoolExprProxy(onehot0(_convert_args(n, c_args))); }
+
+
+BX
 boolexpr_nor_s(size_t n, BXS c_args)
 { return new BoolExprProxy(nor_s(_convert_args(n, c_args))); }
 

@@ -152,9 +152,7 @@ boolexpr::or_(vector<bx_t> const && args)
 
 bx_t
 boolexpr::or_(std::initializer_list<bx_t> const args)
-{
-    return or_(vector<bx_t>(args.begin(), args.end()));
-}
+{ return or_(vector<bx_t>(args.begin(), args.end())); }
 
 
 bx_t boolexpr::nand(vector<bx_t> const & args) { return ~and_(args); }
@@ -186,9 +184,7 @@ boolexpr::and_(vector<bx_t> const && args)
 
 bx_t
 boolexpr::and_(std::initializer_list<bx_t> const args)
-{
-    return and_(vector<bx_t>(args.begin(), args.end()));
-}
+{ return and_(vector<bx_t>(args.begin(), args.end())); }
 
 
 bx_t boolexpr::xnor(vector<bx_t> const & args) { return ~xor_(args); }
@@ -220,9 +216,7 @@ boolexpr::xor_(vector<bx_t> const && args)
 
 bx_t
 boolexpr::xor_(std::initializer_list<bx_t> const args)
-{
-    return xor_(vector<bx_t>(args.begin(), args.end()));
-}
+{ return xor_(vector<bx_t>(args.begin(), args.end())); }
 
 
 bx_t boolexpr::neq(vector<bx_t> const & args) { return ~eq(args); }
@@ -250,37 +244,54 @@ boolexpr::eq(vector<bx_t> const && args)
 
 bx_t
 boolexpr::eq(std::initializer_list<bx_t> const args)
-{
-    return eq(vector<bx_t>(args.begin(), args.end()));
-}
+{ return eq(vector<bx_t>(args.begin(), args.end())); }
 
 
 bx_t
 boolexpr::nimpl(bx_t const & p, bx_t const & q)
-{
-    return std::make_shared<NotImplies>(false, p, q);
-}
+{ return std::make_shared<NotImplies>(false, p, q); }
 
 
 bx_t
 boolexpr::impl(bx_t const & p, bx_t const & q)
-{
-    return std::make_shared<Implies>(false, p, q);
-}
+{ return std::make_shared<Implies>(false, p, q); }
 
 
 bx_t
 boolexpr::nite(bx_t const & s, bx_t const & d1, bx_t const & d0)
-{
-    return std::make_shared<NotIfThenElse>(false, s, d1, d0);
-}
+{ return std::make_shared<NotIfThenElse>(false, s, d1, d0); }
 
 
 bx_t
 boolexpr::ite(bx_t const & s, bx_t const & d1, bx_t const & d0)
+{ return std::make_shared<IfThenElse>(false, s, d1, d0); }
+
+
+bx_t
+boolexpr::onehot0(vector<bx_t> const & args)
 {
-    return std::make_shared<IfThenElse>(false, s, d1, d0);
+    vector<bx_t> terms;
+    for (size_t i = 0; i < (args.size()-1); ++i) {
+        for (size_t j = i+1; j < args.size(); ++j)
+            terms.push_back(~args[i] | ~args[j]);
+    }
+    return and_(std::move(terms));
 }
+
+bx_t
+boolexpr::onehot0(vector<bx_t> const && args)
+{
+    vector<bx_t> terms;
+    for (size_t i = 0; i < (args.size()-1); ++i) {
+        for (size_t j = i+1; j < args.size(); ++j)
+            terms.push_back(~args[i] | ~args[j]);
+    }
+    return and_(std::move(terms));
+}
+
+bx_t
+boolexpr::onehot0(std::initializer_list<bx_t> const args)
+{ return onehot0(vector<bx_t>(args.begin(), args.end())); }
 
 
 bx_t

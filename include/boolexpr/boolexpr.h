@@ -776,6 +776,10 @@ bx_t impl(bx_t const &, bx_t const &);
 bx_t nite(bx_t const &, bx_t const &, bx_t const &);
 bx_t ite(bx_t const &, bx_t const &, bx_t const &);
 
+bx_t onehot0(vector<bx_t> const &);
+bx_t onehot0(vector<bx_t> const &&);
+bx_t onehot0(std::initializer_list<bx_t> const);
+
 bx_t nor_s(vector<bx_t> const &);
 bx_t nor_s(vector<bx_t> const &&);
 bx_t nor_s(std::initializer_list<bx_t> const);
@@ -900,6 +904,7 @@ BX boolexpr_neq(size_t, BXS);
 BX boolexpr_eq(size_t, BXS);
 BX boolexpr_impl(BX, BX);
 BX boolexpr_ite(BX, BX, BX);
+BX boolexpr_onehot0(size_t, BXS);
 
 BX boolexpr_nor_s(size_t, BXS);
 BX boolexpr_or_s(size_t, BXS);

@@ -180,6 +180,8 @@ void boolexpr_CofactorIter_next({CF_ITER});
 {BX} boolexpr_impl({BX}, {BX});
 {BX} boolexpr_ite({BX}, {BX}, {BX});
 
+{BX} boolexpr_onehot0(size_t, {BXS});
+
 {BX} boolexpr_nor_s(size_t, {BXS});
 {BX} boolexpr_or_s(size_t, {BXS});
 {BX} boolexpr_nand_s(size_t, {BXS});

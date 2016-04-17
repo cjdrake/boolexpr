@@ -743,6 +743,17 @@ def ite(s, d1, d0):
     _, c_args = _convert_args((s, d1, d0))
     return _bx(lib.boolexpr_ite(c_args[0], c_args[1], c_args[2]))
 
+def onehot0(*args):
+    """
+    Return an expression that means
+    "at most one input function is true".
+
+    If *conj* is ``True``, return a CNF.
+    Otherwise, return a DNF.
+    """
+    num, c_args = _convert_args(args)
+    return _bx(lib.boolexpr_onehot0(num, c_args))
+
 def nor_s(*args):
     """Simplifying Boolean Nor operator."""
     num, c_args = _convert_args(args)
@@ -792,25 +803,6 @@ def ite_s(s, d1, d0):
     """Simplifying Boolean IfThenElse operator."""
     _, c_args = _convert_args((s, d1, d0))
     return _bx(lib.boolexpr_ite_s(c_args[0], c_args[1], c_args[2]))
-
-
-def onehot0(*args, conj=True):
-    """
-    Return an expression that means
-    "at most one input function is true".
-
-    If *conj* is ``True``, return a CNF.
-    Otherwise, return a DNF.
-    """
-    terms = list()
-    if conj:
-        for x_0, x_1 in itertools.combinations(args, 2):
-            terms.append(or_(not_(x_0), not_(x_1)))
-        return and_(*terms)
-    else:
-        for xs in itertools.combinations(args, len(args) - 1):
-            terms.append(and_(*[not_(x) for x in xs]))
-        return or_(*terms)
 
 
 def onehot(*args, conj=True):

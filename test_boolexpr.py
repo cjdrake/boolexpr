@@ -114,11 +114,9 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(str(1 ^ xs[0]), "Xor(1, x_0)")
 
     def test_ops3(self):
-        f0 = onehot0(*xs[:8], conj=False)
-        self.assertEqual(f0.kind, BoolExpr.Kind.or_)
-        f1 = onehot0(*xs[:8], conj=True)
-        self.assertEqual(f1.kind, BoolExpr.Kind.and_)
-        self.assertTrue(f0.equiv(f1))
+        f0 = onehot0(*xs[:8])
+        self.assertEqual(f0.kind, BoolExpr.Kind.and_)
+        self.assertEqual(len(list(f0.iter_sat())), 9)
 
         f2 = onehot(*xs[:8], conj=False)
         self.assertEqual(f2.kind, BoolExpr.Kind.or_)
