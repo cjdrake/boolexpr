@@ -468,7 +468,6 @@ class BoolExpr:
         This is the same as the universal quantification operator:
         :math:`\forall \{x_1, x_2, \dots\} \: f`
         """
-
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
