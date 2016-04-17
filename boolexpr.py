@@ -57,9 +57,6 @@ point
 """
 
 
-import itertools
-from enum import Enum
-
 from _boolexpr import ffi, lib
 
 
@@ -104,6 +101,8 @@ class BoolExpr:
     """
     Base class for Boolean expressions
     """
+
+    from enum import Enum
 
     class Kind(Enum):
         """BoolExpr Kind Codes"""
@@ -818,6 +817,7 @@ def majority(*args, conj=False):
     If *conj* is ``True``, return a CNF.
     Otherwise, return a DNF.
     """
+    import itertools
     terms = list()
     if conj:
         for xs in itertools.combinations(args, (len(args) + 1) // 2):
