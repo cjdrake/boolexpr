@@ -94,6 +94,7 @@ BX_SRCS := \
     src/flatten.cc \
     src/invert.cc \
     src/iter.cc \
+    src/latop.cc \
     src/nnf.cc \
     src/posop.cc \
     src/sat.cc \
