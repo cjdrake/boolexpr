@@ -6,6 +6,18 @@
   Release Notes
 *****************
 
+Release 1.0
+===========
+
+Yay, this is good enough to stamp as 1.0.
+Most of the changes since 0.4 were to firm up questionable design decisions,
+and add documentation for anything and everything.
+
+The only new feature was to add the
+:meth:`boolexpr.BoolExpr.to_ast` and
+:meth:`boolexpr.BoolExpr.from-ast` methods to the
+:class:`boolexpr.BoolExpr` class.
+
 Release 0.4
 ===========
 
