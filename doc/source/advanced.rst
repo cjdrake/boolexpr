@@ -216,6 +216,7 @@ all the BoolExpr operators have a *dual* operator.
 Using these identities recursively,
 you can push all negated nodes in the expression graph down towards the leaves,
 where they will change 0 for 1, and :math:`\overline{x}` to :math:`x`.
+This leaves you with all positive operators in the expression.
 
 For example:
 
@@ -228,9 +229,6 @@ For example:
 As you can see,
 the NOT operator at the top of the expression is pushed all the way down to
 the literals at the leaves.
-
-The value of this transformation is that it eliminates all negative operators
-from the expression graph.
 
 Convert N-ary Ops to Binary Ops
 -------------------------------
