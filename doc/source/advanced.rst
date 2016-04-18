@@ -196,7 +196,7 @@ The most common demonstration of that principle is DeMorgan's Law:
 DeMorgan's Law demonstrates that OR is the *dual* operator of AND,
 and vice-versa.
 In fact,
-all the BoolExpr operators except for ``Implies`` have a *dual* operator.
+all the BoolExpr operators have a *dual* operator.
 
 .. code-block:: pycon
 
@@ -240,13 +240,15 @@ use the ``to_binop`` method:
    >>> or_(*xs[:8]).to_binop()
    Or(Or(Or(x_0, x_1), Or(x_2, x_3)), Or(Or(x_4, x_5), Or(x_6, x_7)))
 
+This technique might help to re-write an arbitrary expression in a language
+(such as Python REPL) that only supports binary operators.
+
 Convert All Operators to OR/AND Form
 ------------------------------------
 
 The most common basis for Boolean algebra is NOT/OR/AND.
 The ``to_latop`` transformation converts all ``Xor``, ``Equal``, ``Implies``,
-and ``IfThenElse`` operators,
-and converts them to their most obvious form using NOT/OR/AND.
+and ``IfThenElse`` operators to their most obvious form using NOT/OR/AND.
 
 For example:
 
@@ -262,7 +264,7 @@ For example:
    Or(And(s, d1), And(~s, d0))
 
 The two-level conversion from XOR to OR/AND is exponential in size,
-so ``to_latop`` chooses to return a smaller, but deeper form:
+so ``to_latop`` chooses to return a smaller, nested form:
 
 .. code-block:: pycon
 
@@ -341,7 +343,7 @@ you must provide a ``Context`` object instance to manage those new variables.
 
 Use the ``tseytin`` method to get the Tseytin transformation.
 Notice how in the following example,
-the Tseytin form is much smaller than the aforementioned CNF form.
+the Tseytin form is much smaller than its aforementioned CNF form.
 
 .. code-block:: pycon
 
@@ -431,6 +433,8 @@ This is the existential quantification operator.
 BoolExpr provides the ``smoothing`` method for this.
 The smoothing is the OR of a sequence of cofactors.
 
+For convenience, you can also use the ``exists`` function.
+
 For example,
 for a function ``f`` that depends on ``a``,
 to write "there exists a variable ``a`` such that ``f`` is true":
@@ -440,12 +444,16 @@ to write "there exists a variable ``a`` such that ``f`` is true":
    >>> f = onehot0(a, b, c)
    >>> f.smoothing(a)
    Or(And(Or(~c, ~b), ~c, ~b), ~b, ~c)
+   >>> exists(a, f)
+   Or(And(Or(~c, ~b), ~c, ~b), ~b, ~c)
 
 Similarly, you can write logical statements structured such that *for all*
 values of a variable :math:`x` such that the statement is true.
 This is the universal quantification operator.
 BoolExpr provides the ``consensus`` method for this.
 The consensus is the AND of a sequence of cofactors.
+
+For convenience, you can also use the ``forall`` function.
 
 For example,
 for a function ``f`` that depends on ``a``,
@@ -455,7 +463,9 @@ to write "for all values of ``a``, ``f`` is true":
 
    >>> f = onehot0(a, b, c)
    >>> f.consensus(a)
-   And(~c, Or(~c, ~b), ~b, Or(~c, ~b))
+   And(~c, ~b, Or(~c, ~b), Or(~c, ~b))
+   >>> forall(a, f)
+   And(~c, ~b, Or(~c, ~b), Or(~c, ~b))
 
 The ``derivative`` method is similar to ``smoothing`` and ``consensus``.
 It is the XOR of a sequence of cofactors.

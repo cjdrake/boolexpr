@@ -68,9 +68,11 @@ __all__ = [
     "Unequal", "Equal", "NotImplies", "Implies", "NotIfThenElse", "IfThenElse",
     "ZERO", "ONE", "LOGICAL", "ILLOGICAL",
     "not_", "nor", "or_", "nand", "and_", "xnor", "xor", "neq", "eq", "impl",
-    "ite", "nor_s", "or_s", "nand_s", "and_s", "xnor_s", "xor_s", "neq_s",
-    "eq_s", "impl_s", "ite_s",
+    "ite",
+    "nor_s", "or_s", "nand_s", "and_s", "xnor_s", "xor_s", "neq_s", "eq_s",
+    "impl_s", "ite_s",
     "onehot0", "onehot", "majority", "achilles_heel",
+    "exists", "forall",
 ]
 
 __version__ = "0.4"
@@ -742,22 +744,6 @@ def ite(s, d1, d0):
     _, c_args = _convert_args((s, d1, d0))
     return _bx(lib.boolexpr_ite(c_args[0], c_args[1], c_args[2]))
 
-def onehot0(*args):
-    """
-    Return an expression that means
-    "at most one input function is true".
-    """
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_onehot0(num, c_args))
-
-def onehot(*args):
-    """
-    Return an expression that means
-    "exactly one input function is true".
-    """
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_onehot(num, c_args))
-
 def nor_s(*args):
     """Simplifying Boolean Nor operator."""
     num, c_args = _convert_args(args)
@@ -809,6 +795,24 @@ def ite_s(s, d1, d0):
     return _bx(lib.boolexpr_ite_s(c_args[0], c_args[1], c_args[2]))
 
 
+def onehot0(*args):
+    """
+    Return an expression that means
+    "at most one input function is true".
+    """
+    num, c_args = _convert_args(args)
+    return _bx(lib.boolexpr_onehot0(num, c_args))
+
+
+def onehot(*args):
+    """
+    Return an expression that means
+    "exactly one input function is true".
+    """
+    num, c_args = _convert_args(args)
+    return _bx(lib.boolexpr_onehot(num, c_args))
+
+
 def majority(*args, conj=False):
     """
     Return an expression that means
@@ -839,6 +843,26 @@ def achilles_heel(*args):
         fstr = "expected an even number of arguments, got {}"
         raise ValueError(fstr.format(num))
     return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])
+
+
+def exists(xs, f):
+    """
+    Return an expression that means
+    "there exists a variable in *xs* such that *f* true."
+
+    This is identical to ``f.smoothing(xs)``.
+    """
+    return f.smoothing(xs)
+
+
+def forall(xs, f):
+    """
+    Return an expression that means
+    "for all variables in *xs*, *f* is true."
+
+    This is identical to ``f.consensus(xs)``.
+    """
+    return f.consensus(xs)
 
 
 _LITS = dict()

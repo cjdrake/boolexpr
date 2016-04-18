@@ -20,12 +20,12 @@ The following functions are only available in the Python boolexpr.py module:
 
 * ``boolexpr.majority``
 * ``boolexpr.achilles_heel``
+* ``boolexpr.exists``
+* ``boolexpr.forall``
 
 They are the only components that are not currently implemented in C++.
 The ``majority`` function uses syntax that is not compatible with Python 2.
-Whether or not Python 2 is ever supported is an interesting question,
-but ``boolexpr`` is a C++ library with a Python wrapper,
-not a Python library mostly implemented in C++.
+Whether or not Python 2 is ever supported is an interesting question.
 
 Preprocessor Usage
 ==================

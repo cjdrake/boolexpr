@@ -228,7 +228,9 @@ class BoolExprTest(unittest.TestCase):
     def test_cofactors(self):
         f = majority(*xs[:3])
         self.assertTrue(f.smoothing([xs[0]]).equiv(xs[1]|xs[2]))
+        self.assertTrue(exists(xs[0], f).equiv(xs[1]|xs[2]))
         self.assertTrue(f.consensus([xs[0]]).equiv(xs[1]&xs[2]))
+        self.assertTrue(forall(xs[0], f).equiv(xs[1]&xs[2]))
         self.assertTrue(f.derivative([xs[0]]).equiv(xs[1]^xs[2]))
         self.assertEqual(list(f.iter_cfs([xs[0], xs[1], xs[2]])),
                          [ZERO, ZERO, ZERO, ONE, ZERO, ONE, ONE, ONE])

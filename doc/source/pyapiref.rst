@@ -223,3 +223,7 @@ High Order Operators
 .. autofunction:: boolexpr.majority
 
 .. autofunction:: boolexpr.achilles_heel
+
+.. autofunction:: boolexpr.exists
+
+.. autofunction:: boolexpr.forall
