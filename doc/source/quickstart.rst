@@ -44,8 +44,8 @@ the first statement ``ctx = bx.Context()`` will be confusing.
 A variable "context" is a kind of namespace container for Boolean variables.
 It manages the creation and storage of variables.
 No two variables within the same context can have the same name.
-Therefore, asking a ``Context`` object for the same name will always return
-the same object.
+Therefore, asking a :class:`Context <boolexpr.Context>` object for the same
+name will always return the same object.
 
 .. code-block:: pycon
 
@@ -125,7 +125,7 @@ This allows you to construct expressions with the most common logical operators
 in a domain specific language.
 
 For example,
-the following code will create an expression, ``f``:
+the following code will create an expression, :math:`f`:
 
 .. code-block:: pycon
 
@@ -137,7 +137,7 @@ The name ``f`` is a Python handle.
 The expression object itself is just a pointer,
 and has no intrinsic name.
 
-In graphical form, the function ``f`` looks like this:
+In graphical form, the function :math:`f` looks like this:
 
 .. graphviz::
 
@@ -170,9 +170,9 @@ use either ``False/True``, or ``0/1`` in the expression.
    >>> 0 ^ y ^ 1
    Xor(Xor(0, y), 1)
 
-Zero and one are singletons within the ``boolexpr`` module.
+Zero and one are singletons within the :mod:`boolexpr` module.
 If you really need access to them for some reason,
-use the ``ZERO`` and ``ONE`` handles.
+use the :data:`ZERO <boolexpr.ZERO>` and :data:`ONE <boolexpr.ONE>` handles.
 
 .. code-block:: pycon
 
@@ -182,7 +182,8 @@ use the ``ZERO`` and ``ONE`` handles.
 There is also a constant called "logical".
 It represents a constant value of either zero or one.
 Since there is no handy Python analog to this value,
-you can use either ``'x'``, ``'X'``, or ``LOGICAL`` as a fill-in.
+you can use either ``'x'``, ``'X'``, or :data:`LOGICAL <boolexpr.LOGICAL>`
+as a fill-in.
 The notation ``X`` comes from Verilog four-state logic.
 
 .. code-block:: pycon
@@ -198,7 +199,9 @@ Equal, Implies, and If-Then-Else
 BoolExpr supports the "unequal, "equal", "implies" and "if-then-else"
 symbolic operators.
 Python does not have good symbols for us to use for these,
-so you must use the ``neq``, ``eq``, ``impl`` and ``ite`` functions.
+so you must use the :func:`neq <boolexpr.neq>`,
+:func:`eq <boolexpr.eq>`, :func:`impl <boolexpr.impl>`,
+and :func:`ite <boolexpr.ite>` functions.
 
 .. code-block:: pycon
 
@@ -231,7 +234,9 @@ But the OR, AND, and XOR operators are N-ary operators,
 which means they take an arbitrary number of arguments, :math:`N`.
 
 To construct expressions with flat, N-ary operators,
-use the ``or_``, ``and_``, and ``xor`` functions.
+use the :func:`or_ <boolexpr.or_>`,
+:func:`and_ <boolexpr.and_>`,
+and :func:`xor <boolexpr.xor>` functions.
 
 .. code-block:: pycon
 
@@ -243,8 +248,10 @@ use the ``or_``, ``and_``, and ``xor`` functions.
    Xor(Or(w, x), And(y, z), Implies(p, q))
 
 In addition,
-the ``nor``, ``nand``, and ``xnor`` functions provide the "negative"
-form of these N-ary operators.
+the :func:`nor <boolexpr.nor>`,
+:func:`nand <boolexpr.nand>`,
+and :func:`xnor <boolexpr.xnor>` functions provide the "negative" form of
+these N-ary operators.
 
 Simplification
 --------------
@@ -262,7 +269,8 @@ but writing out that equation will produce the following:
 
 BoolExpr purposefully does not automatically simplify these expressions by
 default,
-but you can use the ``simplify`` method to get the more obvious output.
+but you can use the :meth:`simplify <boolexpr.BoolExpr.simplify>` method to
+get the more obvious output.
 
 .. code-block:: pycon
 
@@ -270,7 +278,8 @@ but you can use the ``simplify`` method to get the more obvious output.
    >>> f.simplify()
    0
 
-The ``simplify`` method attempts to perform all sorts of transformations
+The :meth:`simplify <boolexpr.BoolExpr.simplify>` method attempts to perform
+all sorts of transformations
 with the goal of getting rid of constants,
 and sub-expressions that can easily be proven equivalent to constants.
 
@@ -304,7 +313,7 @@ First,
 given some arbitrary expression ``f``,
 what variables does it depend on?
 This set is often called the *support* set of the function.
-To get it, use the ``support()`` method:
+To get it, use the :meth:`support <boolexpr.BoolExpr.support>` method:
 
 .. code-block:: pycon
 
@@ -323,10 +332,10 @@ then :math:`B^3 = \{0, 1\}^3 = \{(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1), (1,
 :math:`B^3` is the **domain** of the function (the input part),
 and :math:`B = \{0, 1\}` is the **range** of the function (the output part).
 
-Use the ``iter_domain`` generator method to iterate through all points in
-the domain,
-The ``restrict`` method evaluates the output value of a function at one
-particular input point.
+Use the :meth:`iter_domain <boolexpr.BoolExpr.iter_domain>` generator method
+to iterate through all points in the domain,
+The :meth:`restrict <boolexpr.BoolExpr.restrict>` method evaluates the output
+value of a function at one particular input point.
 The combination of these two methods produces a truth table:
 
 .. code-block:: pycon

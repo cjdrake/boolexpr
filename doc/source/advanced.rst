@@ -77,9 +77,10 @@ Simplification
 
 There are several Boolean identities that reduce the size of an expression,
 and are very cheap to apply.
-All ``BoolExpr`` objects support simplification using the ``simplify`` method.
+All ``BoolExpr`` objects support simplification using the
+:meth:`simplify <boolexpr.BoolExpr.simplify>` method.
 It is probably more convenient to use the auto-simplifying function forms,
-e.g. ``or_s`` instead of ``or_``.
+e.g. :meth:`or_s <boolexpr.or_s>` instead of :meth:`or_ <boolexpr.or_>`.
 
 Eliminating Constants
 ^^^^^^^^^^^^^^^^^^^^^
@@ -118,7 +119,8 @@ For example:
 Unknown Propagation
 ^^^^^^^^^^^^^^^^^^^
 
-The ``Logical`` expression node represents a value that is constant,
+The :class:`Logical <boolexpr.Logical>` expression node represents a value
+that is constant,
 but the particular 0/1 value is not known.
 The simplification operator will perform *optimistic* X propagation on
 these values.
@@ -150,8 +152,10 @@ the ``1`` dominates the ``X``, resulting in a ``1`` output.
 Miscellaneous
 ^^^^^^^^^^^^^
 
-BoolExpr knows about several identities involving the ``implies`` and ``ite``
-operator as well.
+BoolExpr knows about several identities involving the
+:class:`Implies <boolexpr.Implies>` and
+:class:`IfThenElse <boolexpr.IfThenElse>`
+operators as well.
 
 For example:
 
@@ -166,8 +170,8 @@ For example:
    >>> bx.ite_s(s, d1, 1)
    Or(d1, ~s)
 
-The ``ITE`` operator is an "if-then-else",
-which is the same as a 2:1 multiplexer.
+The :class:`IfThenElse <boolexpr.IfThenElse>` operator is the same as a
+2:1 multiplexer.
 When you apply the same value to both inputs,
 it doesn't matter what the select value is.
 
@@ -233,7 +237,7 @@ Convert N-ary Ops to Binary Ops
 
 If, for some reason,
 you want to convert N-ary expressions to binary forms,
-use the ``to_binop`` method:
+use the :meth:`to_binop <boolexpr.BoolExpr.to_binop>` method:
 
 .. code-block:: pycon
 
@@ -247,8 +251,12 @@ Convert All Operators to OR/AND Form
 ------------------------------------
 
 The most common basis for Boolean algebra is NOT/OR/AND.
-The ``to_latop`` transformation converts all ``Xor``, ``Equal``, ``Implies``,
-and ``IfThenElse`` operators to their most obvious form using NOT/OR/AND.
+The :meth:`to_latop <boolexpr.BoolExpr.to_latop>` transformation converts all
+:class:`Xor <boolexpr.Xor>`,
+:class:`Equal <boolexpr.Equal>`,
+:class:`Implies <boolexpr.Implies>`,
+and :class:`IfThenElse <boolexpr.IfThenElse>` operators to their most obvious
+form using NOT/OR/AND.
 
 For example:
 
@@ -264,7 +272,8 @@ For example:
    Or(And(s, d1), And(~s, d0))
 
 The two-level conversion from XOR to OR/AND is exponential in size,
-so ``to_latop`` chooses to return a smaller, nested form:
+so :meth:`to_latop <boolexpr.BoolExpr.to_latop>` chooses to return a smaller,
+nested form:
 
 .. code-block:: pycon
 
@@ -278,9 +287,11 @@ A Boolean expression is in
 `negation normal form (NNF) <https://en.wikipedia.org/wiki/Negation_normal_form>`_
 if it contains only
 literals, and OR/AND operators.
-This is the same as converting to lattice operator (``to_latop``),
-then pushing down all NOT operators towards the leaves (``pushdown_not``).
-Use the ``to_nnf`` method to combine these transformations.
+This is the same as converting to lattice operator,
+then pushing down all NOT operators towards the leaves.
+Use the
+:meth:`to_nnf <boolexpr.BoolExpr.to_nnf>` method
+to combine these transformations.
 
 .. code-block:: pycon
 
@@ -297,7 +308,9 @@ CNF is a conjunctive (AND) of clauses,
 and DNF is a disjunction (OR) of clauses.
 
 To convert expressions to CNF and DNF,
-use the ``to_cnf``, and ``to_dnf`` methods, respectively.
+use the :meth:`to_cnf <boolexpr.BoolExpr.to_cnf>`,
+and :meth:`to_dnf <boolexpr.BoolExpr.to_dnf>` methods,
+respectively.
 
 The process of flattening an expression to two-level form causes an exponential
 blow-up of the graph size.
@@ -332,16 +345,19 @@ Tseytin Transformation
 ----------------------
 
 SAT solvers such as CryptoMiniSAT require a CNF input.
-Since the ``to_cnf`` method might require exponential memory,
+Since the :meth:`to_cnf <boolexpr.BoolExpr.to_cnf>`
+method might require exponential memory,
 we need another way to transform an arbitrary expression to a CNF that is
 *equisatisfiable* with the original.
 
 The answer is the
 `Tseytin transformation <https://en.wikipedia.org/wiki/Tseytin_transformation>`_.
 Since this transformation creates auxiliary variables,
-you must provide a ``Context`` object instance to manage those new variables.
+you must provide a :class:`Context <boolexpr.Context>`
+object instance to manage those new variables.
 
-Use the ``tseytin`` method to get the Tseytin transformation.
+Use the :meth:`tseytin <boolexpr.BoolExpr.tseytin>`
+method to get the Tseytin transformation.
 Notice how in the following example,
 the Tseytin form is much smaller than its aforementioned CNF form.
 
@@ -358,13 +374,49 @@ the Tseytin form is much smaller than its aforementioned CNF form.
 Variable Substitution
 =====================
 
+Function composition on Boolean expressions is fairly straightforward.
+Simply substitute some subset of support variables with other expressions.
+For this,
+BoolExpr provides the :meth:`compose <boolexpr.BoolExpr.compose>` method.
+It takes a ``dict`` of ``{Variable: BoolExpr}`` mappings as input,
+and *does not* auto-simplify the output.
+
+For example:
+
+.. code-block:: pycon
+
+   >>> f = a | b & c ^ d
+   >>> g = impl(p, q)
+   >>> f.compose({a: g})
+   Or(Implies(p, q), Xor(And(b, c), d))
+   >>> f.compose({d: g})
+   Or(a, Xor(And(b, c), Implies(p, q)))
+
+The :meth:`restrict <boolexpr.BoolExpr.restrict>` method
+is similar to :meth:`compose <boolexpr.BoolExpr.compose>`.
+It takes a ``dict`` of ``{Variable: Constant}`` mappings as input,
+and *does* auto-simpify the output.
+
+For example:
+
+.. code-block:: pycon
+
+   >>> f = a | b & c ^ d
+   >>> f.restrict({a: 0})
+   Xor(d, And(c, b))
+   >>> f.restrict({a: False, b: True, c: False, d: True})
+   1
+   >>> f.restrict({c: 'X'})
+   X
+
 Satisfiability
 ==============
 
 The question of whether a Boolean function is *satisfiable* (SAT) is one of the
 most important questions in computer science.
 To help us answer this question,
-BoolExpr has the ``sat`` and ``iter_sat`` methods.
+BoolExpr has the :meth:`sat <boolexpr.BoolExpr.sat>` and
+:meth:`iter_sat <boolexpr.BoolExpr.iter_sat>` methods.
 SAT is NP-complete,
 so it is not guaranteed that a solution can be found quickly.
 Under the hood,
@@ -372,7 +424,7 @@ BoolExpr uses the modern, industrial-strength
 `CryptoMiniSAT <https://github.com/msoos/cryptominisat>`_
 solver to arrive at solutions as quickly as possible.
 
-The ``sat`` method returns a two-tuple.
+The :meth:`sat <boolexpr.BoolExpr.sat>` method returns a two-tuple.
 The first part is the ``bool`` answer to whether the function is satisfiable.
 If the function is SAT,
 the second part will contain a satisfying input point.
@@ -388,8 +440,8 @@ For example:
    >>> g.sat()
    (True, {d1: 1, d0: 1, q: 1, a: 1, b: 1, s: 1, p: 1})
 
-The ``iter_sat`` method is a generator that iterates through all satisfying
-input points.
+The :meth:`iter_sat <boolexpr.BoolExpr.iter_sat>` method is a generator
+that iterates through all satisfying input points.
 Unsatisfiable functions will be empty.
 
 For example:
@@ -408,7 +460,8 @@ Cofactors
 
 The Shannon expansion is the fundamental theorem of Boolean algebra.
 To make it easier to calculate this,
-BoolExpr provides the ``iter_cfs`` generator method.
+BoolExpr provides the :meth:`iter_cfs <boolexpr.BoolExpr.iter_cfs>`
+generator method.
 
 You can use it with only one input variable, the common case:
 
@@ -430,14 +483,15 @@ Existential and Universal Quantification
 Some logical statements are structured such that *there exists* a value of
 a variable :math:`x` such that the statement is true.
 This is the existential quantification operator.
-BoolExpr provides the ``smoothing`` method for this.
+BoolExpr provides the :meth:`smoothing <boolexpr.BoolExpr.smoothing>`
+method for this.
 The smoothing is the OR of a sequence of cofactors.
 
-For convenience, you can also use the ``exists`` function.
+For convenience, you can also use the :func:`exists <boolexpr.exists>` function.
 
 For example,
-for a function ``f`` that depends on ``a``,
-to write "there exists a variable ``a`` such that ``f`` is true":
+for a function :math:`f` that depends on :math:`a`,
+to write "there exists a variable :math:`a` such that :math:`f` is true":
 
 .. code-block:: pycon
 
@@ -450,14 +504,15 @@ to write "there exists a variable ``a`` such that ``f`` is true":
 Similarly, you can write logical statements structured such that *for all*
 values of a variable :math:`x` such that the statement is true.
 This is the universal quantification operator.
-BoolExpr provides the ``consensus`` method for this.
+BoolExpr provides the :meth:`consensus <boolexpr.BoolExpr.consensus>`
+method for this.
 The consensus is the AND of a sequence of cofactors.
 
-For convenience, you can also use the ``forall`` function.
+For convenience, you can also use the :func:`forall <boolexpr.forall>` function.
 
 For example,
-for a function ``f`` that depends on ``a``,
-to write "for all values of ``a``, ``f`` is true":
+for a function :math:`f` that depends on :math:`a`,
+to write "for all values of :math`a`, :math:`f` is true":
 
 .. code-block:: pycon
 
@@ -467,7 +522,9 @@ to write "for all values of ``a``, ``f`` is true":
    >>> forall(a, f)
    And(~c, ~b, Or(~c, ~b), Or(~c, ~b))
 
-The ``derivative`` method is similar to ``smoothing`` and ``consensus``.
+The :meth:`derivative <boolexpr.BoolExpr.derivative>` method is similar to
+:meth:`smoothing <boolexpr.BoolExpr.smoothing>` and
+:meth:`consensus <boolexpr.BoolExpr.consensus>`.
 It is the XOR of a sequence of cofactors.
 
 .. code-block:: pycon

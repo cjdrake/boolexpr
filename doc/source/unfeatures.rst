@@ -25,7 +25,8 @@ The following functions are only available in the Python boolexpr.py module:
 
 They are the only components that are not currently implemented in C++.
 The ``majority`` function uses syntax that is not compatible with Python 2.
-Whether or not Python 2 is ever supported is an interesting question.
+Currently, Python 2 isn't supported,
+but there is no good reason to rule that out.
 
 Preprocessor Usage
 ==================
