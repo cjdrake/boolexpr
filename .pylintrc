@@ -199,7 +199,7 @@ notes=FIXME,XXX,TODO
 bad-functions=map,filter
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=_,i,j,k,bx,id,it,eq,p,q,s,d1,d0,x,xs
+good-names=_,i,j,k,bx,id,it,eq,p,q,s,d1,d0,x,xs,f
 
 # Bad variable names which should always be refused, separated by a comma
 bad-names=foo,bar,baz,toto,tutu,tata
