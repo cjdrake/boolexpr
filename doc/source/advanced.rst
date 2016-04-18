@@ -192,9 +192,9 @@ The most common demonstration of that principle is DeMorgan's Law:
 
 .. code-block:: pycon
 
-   >>> nor(a, b).pushdown_not()
+   >>> nor(a, b).to_posop()
    And(~a, ~b)
-   >>> nand(a, b).pushdown_not()
+   >>> nand(a, b).to_posop()
    Or(~a, ~b)
 
 DeMorgan's Law demonstrates that OR is the *dual* operator of AND,
@@ -204,13 +204,13 @@ all the BoolExpr operators have a *dual* operator.
 
 .. code-block:: pycon
 
-   >>> xnor(a, b).pushdown_not()
+   >>> xnor(a, b).to_posop()
    Xor(~a, b)
-   >>> neq(a, b).pushdown_not()
+   >>> neq(a, b).to_posop()
    Equal(~a, b)
-   >>> (~impl(p, q)).pushdown_not()
+   >>> (~impl(p, q)).to_posop()
    And(p, ~q)
-   >>> (~ite(s, d1, d0)).pushdown_not()
+   >>> (~ite(s, d1, d0)).to_posop()
    IfThenElse(s, ~d1, ~d0)
 
 Using these identities recursively,
@@ -222,7 +222,7 @@ For example:
 .. code-block:: pycon
 
    >>> f = nor(a&b, c^d)
-   >>> f.pushdown_not()
+   >>> f.to_posop()
    And(Or(~a, ~b), Xor(~c, d))
 
 As you can see,

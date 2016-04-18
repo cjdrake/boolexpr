@@ -135,5 +135,5 @@ IfThenElse::to_latop() const
 bx_t
 BoolExpr::to_nnf() const
 {
-    return to_latop()->pushdown_not()->simplify();
+    return to_latop()->to_posop()->simplify();
 }

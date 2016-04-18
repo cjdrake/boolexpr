@@ -167,10 +167,10 @@ public:
     virtual bool is_cnf() const = 0;
     virtual bool is_dnf() const = 0;
 
-    virtual bx_t pushdown_not() const = 0;
     virtual bx_t simplify() const = 0;
     virtual bx_t to_binop() const = 0;
     virtual bx_t to_latop() const = 0;
+    virtual bx_t to_posop() const = 0;
     virtual bx_t tseytin(Context&, string const & = "a") const = 0;
 
     virtual bx_t compose(var2bx_t const &) const = 0;
@@ -206,10 +206,10 @@ public:
     uint32_t size() const;
     bool is_cnf() const;
     bool is_dnf() const;
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
     bx_t tseytin(Context&, string const & = "a") const;
 };
 
@@ -397,10 +397,10 @@ protected:
 public:
     Nor(bool simple, vector<bx_t> const & args);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -422,9 +422,9 @@ public:
 
     bool is_cnf() const;
     bool is_dnf() const;
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -440,10 +440,10 @@ protected:
 public:
     Nand(bool simple, vector<bx_t> const & args);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -465,9 +465,9 @@ public:
 
     bool is_cnf() const;
     bool is_dnf() const;
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -483,10 +483,10 @@ protected:
 public:
     Xnor(bool simple, vector<bx_t> const & args);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -505,10 +505,10 @@ public:
 
     static bx_t identity();
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -524,10 +524,10 @@ protected:
 public:
     Unequal(bool simple, vector<bx_t> const & args);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -544,10 +544,10 @@ public:
     Equal(bool simple, vector<bx_t> const & args) : Operator(EQ, simple, args) {}
     Equal(bool simple, vector<bx_t> const && args) : Operator(EQ, simple, args) {}
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -563,10 +563,10 @@ protected:
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -582,10 +582,10 @@ protected:
 public:
     Implies(bool simple, bx_t p, bx_t q);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -601,10 +601,10 @@ protected:
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -620,10 +620,10 @@ protected:
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t pushdown_not() const;
     bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
+    bx_t to_posop() const;
 };
 
 
@@ -928,10 +928,10 @@ uint32_t boolexpr_BoolExpr_depth(BX);
 uint32_t boolexpr_BoolExpr_size(BX);
 bool boolexpr_BoolExpr_is_cnf(BX);
 bool boolexpr_BoolExpr_is_dnf(BX);
-BX boolexpr_BoolExpr_pushdown_not(BX);
 BX boolexpr_BoolExpr_simplify(BX);
 BX boolexpr_BoolExpr_to_binop(BX);
 BX boolexpr_BoolExpr_to_latop(BX);
+BX boolexpr_BoolExpr_to_posop(BX);
 BX boolexpr_BoolExpr_tseytin(BX, CONTEXT, STRING);
 BX boolexpr_BoolExpr_compose(BX, size_t, VARS, BXS);
 BX boolexpr_BoolExpr_restrict(BX, size_t, VARS, CONSTS);

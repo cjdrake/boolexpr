@@ -285,7 +285,25 @@ class BoolExpr:
         """
         return bool(lib.boolexpr_BoolExpr_is_dnf(self._cdata))
 
-    def pushdown_not(self):
+    def simplify(self):
+        """Return a simplified expression.
+
+        Simplification uses Boolean algebra identities to reduce the size
+        of the expression.
+        """
+        return _bx(lib.boolexpr_BoolExpr_simplify(self._cdata))
+
+    def to_binop(self):
+        """Return an expression that uses only binary operators."""
+        return _bx(lib.boolexpr_BoolExpr_to_binop(self._cdata))
+
+    def to_latop(self):
+        """
+        Convert all operators to ``Or`` / ``And`` (lattice operator) form.
+        """
+        return _bx(lib.boolexpr_BoolExpr_to_latop(self._cdata))
+
+    def to_posop(self):
         r"""Return an expression with NOT bubbles pushed down through dual ops.
 
         Specifically, perform the following transformations:
@@ -304,25 +322,7 @@ class BoolExpr:
 
            \overline{ite(s, d1, d0)} &\iff ite(s, \overline{d1}, \overline{d0})
         """
-        return _bx(lib.boolexpr_BoolExpr_pushdown_not(self._cdata))
-
-    def simplify(self):
-        """Return a simplified expression.
-
-        Simplification uses Boolean algebra identities to reduce the size
-        of the expression.
-        """
-        return _bx(lib.boolexpr_BoolExpr_simplify(self._cdata))
-
-    def to_binop(self):
-        """Return an expression that uses only binary operators."""
-        return _bx(lib.boolexpr_BoolExpr_to_binop(self._cdata))
-
-    def to_latop(self):
-        """
-        Convert all operators to ``Or`` / ``And`` (lattice operator) form.
-        """
-        return _bx(lib.boolexpr_BoolExpr_to_latop(self._cdata))
+        return _bx(lib.boolexpr_BoolExpr_to_posop(self._cdata))
 
     def tseytin(self, ctx, auxvarname="a"):
         """Return the Tseytin transformation.

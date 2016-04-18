@@ -95,7 +95,7 @@ BX_SRCS := \
     src/invert.cc \
     src/iter.cc \
     src/nnf.cc \
-    src/pushdown_not.cc \
+    src/posop.cc \
     src/sat.cc \
     src/simplify.cc \
     src/tseytin.cc \
@@ -110,7 +110,7 @@ TEST_SRCS := \
     test/count_test.cc \
     test/flatten_test.cc \
     test/nnf_test.cc \
-    test/pushdown_not_test.cc \
+    test/posop_test.cc \
     test/sat_test.cc \
     test/simplify_test.cc \
     test/tseytin_test.cc \

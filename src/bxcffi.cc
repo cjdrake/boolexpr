@@ -667,14 +667,6 @@ boolexpr_BoolExpr_is_dnf(BX c_self)
 
 
 BX
-boolexpr_BoolExpr_pushdown_not(BX c_self)
-{
-    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    return new BoolExprProxy(self->bx->pushdown_not());
-}
-
-
-BX
 boolexpr_BoolExpr_simplify(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
@@ -695,6 +687,14 @@ boolexpr_BoolExpr_to_latop(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
     return new BoolExprProxy(self->bx->to_latop());
+}
+
+
+BX
+boolexpr_BoolExpr_to_posop(BX c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
+    return new BoolExprProxy(self->bx->to_posop());
 }
 
 

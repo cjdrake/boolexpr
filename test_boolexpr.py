@@ -134,9 +134,9 @@ class BoolExprTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             achilles_heel(*xs[:7])
 
-    def test_pushdown_not(self):
+    def test_to_posop(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
-        g = f.pushdown_not()
+        g = f.to_posop()
         self.assertEqual(str(g), "Or(~x_0, Xor(And(x_1, ~x_2), x_3))")
         self.assertTrue(f.equiv(g))
 

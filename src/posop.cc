@@ -28,14 +28,14 @@ using namespace boolexpr;
 
 
 bx_t
-Atom::pushdown_not() const
+Atom::to_posop() const
 {
     return shared_from_this();
 }
 
 
 bx_t
-Nor::pushdown_not() const
+Nor::to_posop() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Nor const>(self);
@@ -43,18 +43,18 @@ Nor::pushdown_not() const
     // ~(x0 | x1 | ...) <=> ~x0 & ~x1 & ...
     vector<bx_t> _args;
     for (bx_t const & arg : nop->args)
-        _args.push_back((~arg)->pushdown_not());
+        _args.push_back((~arg)->to_posop());
 
     return and_(std::move(_args));
 }
 
 
-bx_t Or::pushdown_not() const
-{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+bx_t Or::to_posop() const
+{ return transform([](bx_t const & arg){return arg->to_posop();}); }
 
 
 bx_t
-Nand::pushdown_not() const
+Nand::to_posop() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Nand const>(self);
@@ -62,18 +62,18 @@ Nand::pushdown_not() const
     // ~(x0 & x1 & ...) <=> ~x0 | ~x1 | ...
     vector<bx_t> _args;
     for (bx_t const & arg : nop->args)
-        _args.push_back((~arg)->pushdown_not());
+        _args.push_back((~arg)->to_posop());
 
     return or_(std::move(_args));
 }
 
 
-bx_t And::pushdown_not() const
-{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+bx_t And::to_posop() const
+{ return transform([](bx_t const & arg){return arg->to_posop();}); }
 
 
 bx_t
-Xnor::pushdown_not() const
+Xnor::to_posop() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Xnor const>(self);
@@ -81,18 +81,18 @@ Xnor::pushdown_not() const
     // ~(x0 ^ x1 ^ x2 ^ ...) <=> ~x0 ^ x1 ^ x2 ^ ...
     vector<bx_t> _args {~nop->args[0]};
     for (auto it = nop->args.cbegin() + 1; it != nop->args.cend(); ++it)
-        _args.push_back((*it)->pushdown_not());
+        _args.push_back((*it)->to_posop());
 
     return xor_(std::move(_args));
 }
 
 
-bx_t Xor::pushdown_not() const
-{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+bx_t Xor::to_posop() const
+{ return transform([](bx_t const & arg){return arg->to_posop();}); }
 
 
 bx_t
-Unequal::pushdown_not() const
+Unequal::to_posop() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<Unequal const>(self);
@@ -100,58 +100,58 @@ Unequal::pushdown_not() const
     // ~eq(x0, x1, x2, ...) <=> eq(~x0, x1, x2, ...)
     vector<bx_t> _args {~nop->args[0]};
     for (auto it = nop->args.cbegin() + 1; it != nop->args.cend(); ++it)
-        _args.push_back((*it)->pushdown_not());
+        _args.push_back((*it)->to_posop());
 
     return eq(std::move(_args));
 }
 
 
-bx_t Equal::pushdown_not() const
-{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+bx_t Equal::to_posop() const
+{ return transform([](bx_t const & arg){return arg->to_posop();}); }
 
 
 bx_t
-NotImplies::pushdown_not() const
+NotImplies::to_posop() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<NotImplies const>(self);
 
     // ~(p => q) <=> p & ~q
-    auto p = (nop->args[0])->pushdown_not();
-    auto qn = (~nop->args[1])->pushdown_not();
+    auto p = (nop->args[0])->to_posop();
+    auto qn = (~nop->args[1])->to_posop();
 
     return p & qn;
 }
 
 
 bx_t
-Implies::pushdown_not() const
+Implies::to_posop() const
 {
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<Implies const>(self);
 
     // p => q <=> ~p | q
-    auto pn = (~op->args[0])->pushdown_not();
-    auto q = (op->args[1])->pushdown_not();
+    auto pn = (~op->args[0])->to_posop();
+    auto q = (op->args[1])->to_posop();
 
     return pn | q;
 }
 
 
-bx_t IfThenElse::pushdown_not() const
-{ return transform([](bx_t const & arg){return arg->pushdown_not();}); }
+bx_t IfThenElse::to_posop() const
+{ return transform([](bx_t const & arg){return arg->to_posop();}); }
 
 
 bx_t
-NotIfThenElse::pushdown_not() const
+NotIfThenElse::to_posop() const
 {
     auto self = shared_from_this();
     auto nop = std::static_pointer_cast<NotIfThenElse const>(self);
 
     // ~(s ? d1 : d0) <=> s ? ~d1 : ~d0
-    auto s = (nop->args[0])->pushdown_not();
-    auto d1n = (~nop->args[1])->pushdown_not();
-    auto d0n = (~nop->args[2])->pushdown_not();
+    auto s = (nop->args[0])->to_posop();
+    auto d1n = (~nop->args[1])->to_posop();
+    auto d0n = (~nop->args[2])->to_posop();
 
     return ite(s, d1n, d0n);
 }

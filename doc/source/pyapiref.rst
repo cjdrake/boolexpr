@@ -59,7 +59,7 @@ Base Class
              kind,
              depth, size,
              is_cnf, is_dnf,
-             pushdown_not, simplify, to_binop, to_latop, tseytin,
+             simplify, to_binop, to_latop, to_posop, tseytin,
              compose, restrict,
              sat, iter_sat,
              to_cnf, to_dnf, to_nnf,
