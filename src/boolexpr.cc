@@ -270,22 +270,30 @@ boolexpr::ite(bx_t const & s, bx_t const & d1, bx_t const & d0)
 bx_t
 boolexpr::onehot0(vector<bx_t> const & args)
 {
-    vector<bx_t> terms;
-    for (size_t i = 0; i < (args.size()-1); ++i) {
-        for (size_t j = i+1; j < args.size(); ++j)
-            terms.push_back(~args[i] | ~args[j]);
+    size_t n = args.size();
+    vector<bx_t> terms(n * (n-1) / 2);
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i+1; j < n; ++j)
+            terms[cnt++] = ~args[i] | ~args[j];
     }
+
     return and_(std::move(terms));
 }
 
 bx_t
 boolexpr::onehot0(vector<bx_t> const && args)
 {
-    vector<bx_t> terms;
-    for (size_t i = 0; i < (args.size()-1); ++i) {
-        for (size_t j = i+1; j < args.size(); ++j)
-            terms.push_back(~args[i] | ~args[j]);
+    size_t n = args.size();
+    vector<bx_t> terms(n * (n-1) / 2);
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i+1; j < n; ++j)
+            terms[cnt++] = ~args[i] | ~args[j];
     }
+
     return and_(std::move(terms));
 }
 
@@ -297,24 +305,34 @@ boolexpr::onehot0(std::initializer_list<bx_t> const args)
 bx_t
 boolexpr::onehot(vector<bx_t> const & args)
 {
-    vector<bx_t> terms;
-    for (size_t i = 0; i < (args.size()-1); ++i) {
-        for (size_t j = i+1; j < args.size(); ++j)
-            terms.push_back(~args[i] | ~args[j]);
+    size_t n = args.size();
+    vector<bx_t> terms(n * (n-1) / 2 + 1);
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i+1; j < n; ++j)
+            terms[cnt++] = ~args[i] | ~args[j];
     }
-    terms.push_back(or_(args));
+
+    terms[cnt++] = or_(args);
+
     return and_(std::move(terms));
 }
 
 bx_t
 boolexpr::onehot(vector<bx_t> const && args)
 {
-    vector<bx_t> terms;
-    for (size_t i = 0; i < (args.size()-1); ++i) {
-        for (size_t j = i+1; j < args.size(); ++j)
-            terms.push_back(~args[i] | ~args[j]);
+    size_t n = args.size();
+    vector<bx_t> terms(n * (n-1) / 2 + 1);
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i+1; j < n; ++j)
+            terms[cnt++] = ~args[i] | ~args[j];
     }
-    terms.push_back(or_(args));
+
+    terms[cnt++] = or_(args);
+
     return and_(std::move(terms));
 }
 
@@ -613,12 +631,14 @@ op_t
 Operator::transform(std::function<bx_t(bx_t const &)> f) const
 {
     uint32_t mod_count = 0;
-    vector<bx_t> _args;
+    size_t n = args.size();
+    vector<bx_t> _args(n);
 
-    for (bx_t const & arg : args) {
+    for (size_t i = 0; i < n; ++i) {
+        auto arg = args[i];
         auto _arg = f(arg);
         mod_count += (_arg != arg);
-        _args.push_back(_arg);
+        _args[i] = _arg;
     }
 
     if (mod_count)

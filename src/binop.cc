@@ -137,17 +137,20 @@ Equal::to_binop() const
     if (op->args.size() == 2)
         return transform([](bx_t const & bx){return bx->to_binop();});
 
-    vector<bx_t> _args;
-    for (bx_t const & arg : op->args)
-        _args.push_back(arg->to_binop());
+    size_t n = op->args.size();
 
-    vector<bx_t> pairs;
-    for (size_t i = 0; i < (_args.size() - 1); ++i) {
-        for (size_t j = i + 1; j < _args.size(); ++j)
-            pairs.push_back(eq({_args[i], _args[j]}));
+    vector<bx_t> _args(n);
+    for (size_t i = 0; i < n; ++i)
+        _args[i] = args[i]->to_binop();
+
+    vector<bx_t> pairs(n * (n-1) / 2);
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i + 1; j < n; ++j)
+            pairs[cnt++] = eq({_args[i], _args[j]});
     }
 
-    return and_(pairs);
+    return and_(std::move(pairs));
 }
 
 

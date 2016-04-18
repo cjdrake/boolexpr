@@ -92,13 +92,15 @@ Equal::to_latop() const
     auto self = shared_from_this();
     auto op = std::static_pointer_cast<Operator const>(self);
 
-    // eq(x0, x1, x2) <=> ~x0 & ~x1 & ~x2 | x0 & x1 & x2
-    vector<bx_t> xs, xns;
+    size_t n = op->args.size();
 
-    for (bx_t const & arg : op->args) {
-        auto x = arg->to_latop();
-        xs.push_back(x);
-        xns.push_back(~x);
+    // eq(x0, x1, x2) <=> ~x0 & ~x1 & ~x2 | x0 & x1 & x2
+    vector<bx_t> xs(n), xns(n);
+
+    for (size_t i = 0 ; i < n; ++i) {
+        auto x = args[i]->to_latop();
+        xs[i] = x;
+        xns[i] = ~x;
     }
 
     return and_(std::move(xns)) | and_(std::move(xs));
