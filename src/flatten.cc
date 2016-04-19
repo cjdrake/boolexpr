@@ -100,6 +100,9 @@ _lits_cmp(std::set<lit_t> const & xs, std::set<lit_t> const & ys)
 static vector<std::set<lit_t>>
 _absorb(vector<std::set<lit_t>> const && clauses)
 {
+    if (clauses.size() == 0)
+        return std::move(clauses);
+
     vector<bool> keep;
     for (auto const & clause : clauses)
         keep.push_back(true);
@@ -125,7 +128,7 @@ _absorb(vector<std::set<lit_t>> const && clauses)
     }
 
     if (!drop)
-        return clauses;
+        return std::move(clauses);
 
     vector<std::set<lit_t>> kept_clauses;
     for (size_t i = 0; i < clauses.size(); ++i)
@@ -160,106 +163,376 @@ _product(vector<std::set<lit_t>> const & clauses)
 
 
 bx_t
-Atom::nnf2cnf1() const
-{ return shared_from_this(); }
-
-
-bx_t
-Operator::nnf2cnf1() const
+Atom::to_cnf() const
 {
-    auto self = shared_from_this();
-
-    if (is_clause())
-        return self;
-
-    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
-
-    auto f = IS_OR(lop) ? [](bx_t const & arg){return arg->nnf2dnf1();}
-                        : [](bx_t const & arg){return arg->nnf2cnf1();} ;
-
-    return lop->transform(f)->simplify()->nnf2cnf2();
+    return shared_from_this();
 }
 
 
 bx_t
-Atom::nnf2cnf2() const
-{ return shared_from_this(); }
+Nor::to_cnf() const
+{
+    return to_posop()->to_cnf();
+}
 
 
 bx_t
-Operator::nnf2cnf2() const
+Or::to_cnf() const
 {
-    auto self = shared_from_this();
+    auto or_or_and = transform([](bx_t const & arg){return arg->to_dnf();});
+    auto bx = or_or_and->simplify();
 
-    if (is_clause())
-        return self;
+    if (IS_ATOM(bx))
+        return bx;
 
-    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
+    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
 
-    auto clauses1 = _twolvl2clauses(lop);
-    auto clauses2 = _absorb(std::move(clauses1));
-    auto clauses3 = IS_OR(lop) ? _product(clauses2) : std::move(clauses2);
+    if (lop->is_clause())
+        return lop;
+
+    auto clauses = _product(_absorb(_twolvl2clauses(lop)));
 
     vector<bx_t> args;
-    for (auto const & clause : clauses3)
+    for (auto const & clause : clauses)
         args.push_back(or_s(vector<bx_t>(clause.cbegin(), clause.cend())));
     return and_s(std::move(args));
 }
 
 
 bx_t
-Atom::nnf2dnf1() const
-{ return shared_from_this(); }
-
-
-bx_t
-Operator::nnf2dnf1() const
+Nand::to_cnf() const
 {
-    auto self = shared_from_this();
-
-    if (is_clause())
-        return self;
-
-    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
-
-    auto f = IS_OR(lop) ? [](bx_t const & arg){return arg->nnf2dnf1();}
-                        : [](bx_t const & arg){return arg->nnf2cnf1();} ;
-
-    return lop->transform(f)->simplify()->nnf2dnf2();
+    return to_posop()->to_cnf();
 }
 
 
 bx_t
-Atom::nnf2dnf2() const
+And::to_cnf() const
+{
+    auto and_and_or = transform([](bx_t const & arg){return arg->to_cnf();});
+    auto bx = and_and_or->simplify();
+
+    if (IS_ATOM(bx))
+        return bx;
+
+    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+
+    if (lop->is_clause())
+        return lop;
+
+    auto clauses = _absorb(_twolvl2clauses(lop));
+
+    vector<bx_t> args;
+    for (auto const & clause : clauses)
+        args.push_back(or_s(vector<bx_t>(clause.cbegin(), clause.cend())));
+    return and_s(std::move(args));
+}
+
+
+bx_t
+Xnor::to_cnf() const
+{
+    return to_posop()->to_cnf();
+}
+
+
+bx_t
+Xor::to_cnf() const
+{
+    vector<vector<bx_t>> stack { vector<bx_t> {args[0]} };
+
+    for (auto it1 = args.cbegin() + 1; it1 != args.cend(); ++it1) {
+        vector<vector<bx_t>> temp;
+
+        while (stack.size() > 0) {
+            auto lits = stack.back();
+
+            vector<bx_t> fst {~lits[0]};
+            vector<bx_t> snd {lits[0]};
+            for (auto it2 = lits.cbegin() + 1; it2 != lits.cend(); ++it2) {
+                fst.push_back(*it2);
+                snd.push_back(*it2);
+            }
+            fst.push_back(~*it1);
+            snd.push_back(*it1);
+
+            temp.push_back(std::move(fst));
+            temp.push_back(std::move(snd));
+
+            stack.pop_back();
+        }
+
+        stack = std::move(temp);
+    }
+
+    vector<bx_t> clauses;
+    while (stack.size() > 0) {
+        auto lits = stack.back();
+        stack.pop_back();
+        clauses.push_back(or_(std::move(lits)));
+    }
+
+    return and_(std::move(clauses))->to_cnf();
+}
+
+
+bx_t
+Unequal::to_cnf() const
+{
+    size_t n = args.size();
+
+    vector<bx_t> xs(n), xns(n);
+    for (size_t i = 0; i < n; ++i) {
+        xns[i] = ~args[i];
+        xs[i] = args[i];
+    }
+
+    return (or_(std::move(xns)) & or_(std::move(xs)))->to_cnf();
+}
+
+
+bx_t
+Equal::to_cnf() const
+{
+    size_t n = args.size();
+    vector<bx_t> terms(n * (n-1));
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i+1; j < n; ++j) {
+            terms[cnt++] = ~args[i] | args[j];
+            terms[cnt++] = args[i] | ~args[j];
+        }
+    }
+
+    return and_(std::move(terms))->to_cnf();
+}
+
+
+bx_t
+NotImplies::to_cnf() const
+{
+    auto p = args[0];
+    auto q = args[1];
+
+    return (p & ~q)->to_cnf();
+}
+
+
+bx_t
+Implies::to_cnf() const
+{
+    auto p = args[0];
+    auto q = args[1];
+
+    return (~p | q)->to_cnf();
+}
+
+
+bx_t
+NotIfThenElse::to_cnf() const
+{
+    auto s = args[0];
+    auto d1 = args[1];
+    auto d0 = args[2];
+
+    return ((~s | ~d1) & (s | ~d0))->to_cnf();
+}
+
+
+bx_t
+IfThenElse::to_cnf() const
+{
+    auto s = args[0];
+    auto d1 = args[1];
+    auto d0 = args[2];
+
+    return ((~s | d1) & (s | d0))->to_cnf();
+}
+
+
+bx_t
+Atom::to_dnf() const
 { return shared_from_this(); }
 
 
 bx_t
-Operator::nnf2dnf2() const
+Nor::to_dnf() const
 {
-    auto self = shared_from_this();
+    return to_posop()->to_dnf();
+}
 
-    if (is_clause())
-        return self;
 
-    auto lop = std::static_pointer_cast<LatticeOperator const>(self);
+bx_t
+Or::to_dnf() const
+{
+    auto or_or_and = transform([](bx_t const & arg){return arg->to_dnf();});
+    auto bx = or_or_and->simplify();
 
-    auto clauses1 = _twolvl2clauses(lop);
-    auto clauses2 = _absorb(std::move(clauses1));
-    auto clauses3 = IS_AND(lop) ? _product(clauses2) : std::move(clauses2);
+    if (IS_ATOM(bx))
+        return bx;
+
+    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+
+    if (lop->is_clause())
+        return lop;
+
+    auto clauses = _absorb(_twolvl2clauses(lop));
 
     vector<bx_t> args;
-    for (auto const & clause : clauses3)
+    for (auto const & clause : clauses)
         args.push_back(and_s(vector<bx_t>(clause.cbegin(), clause.cend())));
     return or_s(std::move(args));
 }
 
 
 bx_t
-BoolExpr::to_cnf() const
-{ return to_nnf()->nnf2cnf1(); }
+Nand::to_dnf() const
+{
+    return to_posop()->to_dnf();
+}
 
 
 bx_t
-BoolExpr::to_dnf() const
-{ return to_nnf()->nnf2dnf1(); }
+And::to_dnf() const
+{
+    auto and_and_or = transform([](bx_t const & arg){return arg->to_dnf();});
+    auto bx = and_and_or->simplify();
+
+    if (IS_ATOM(bx))
+        return bx;
+
+    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+
+    if (lop->is_clause())
+        return lop;
+
+    auto clauses = _product(_absorb(_twolvl2clauses(lop)));
+
+    vector<bx_t> args;
+    for (auto const & clause : clauses)
+        args.push_back(and_s(vector<bx_t>(clause.cbegin(), clause.cend())));
+    return or_s(std::move(args));
+}
+
+
+bx_t
+Xnor::to_dnf() const
+{
+    return to_posop()->to_dnf();
+}
+
+
+bx_t
+Xor::to_dnf() const
+{
+    vector<vector<bx_t>> stack { vector<bx_t> {args[0]} };
+
+    for (auto it1 = args.cbegin() + 1; it1 != args.cend(); ++it1) {
+        vector<vector<bx_t>> temp;
+
+        while (stack.size() > 0) {
+            auto lits = stack.back();
+
+            vector<bx_t> fst {~lits[0]};
+            vector<bx_t> snd {lits[0]};
+            for (auto it2 = lits.cbegin() + 1; it2 != lits.cend(); ++it2) {
+                fst.push_back(*it2);
+                snd.push_back(*it2);
+            }
+            fst.push_back(*it1);
+            snd.push_back(~*it1);
+
+            temp.push_back(std::move(fst));
+            temp.push_back(std::move(snd));
+
+            stack.pop_back();
+        }
+
+        stack = std::move(temp);
+    }
+
+    vector<bx_t> clauses;
+    while (stack.size() > 0) {
+        auto lits = stack.back();
+        stack.pop_back();
+        clauses.push_back(and_(std::move(lits)));
+    }
+
+    return or_(std::move(clauses))->to_dnf();
+}
+
+
+bx_t
+Unequal::to_dnf() const
+{
+    size_t n = args.size();
+    vector<bx_t> terms(n * (n-1));
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < (n-1); ++i) {
+        for (size_t j = i+1; j < n; ++j) {
+            terms[cnt++] = ~args[i] & args[j];
+            terms[cnt++] = args[i] & ~args[j];
+        }
+    }
+
+    return or_(std::move(terms))->to_dnf();
+}
+
+
+bx_t
+Equal::to_dnf() const
+{
+    size_t n = args.size();
+
+    vector<bx_t> xs(n), xns(n);
+    for (size_t i = 0; i < n; ++i) {
+        xns[i] = ~args[i];
+        xs[i] = args[i];
+    }
+
+    return (and_(std::move(xns)) | and_(std::move(xs)))->to_dnf();
+}
+
+
+bx_t
+NotImplies::to_dnf() const
+{
+    auto p = args[0];
+    auto q = args[1];
+
+    return (p & ~q)->to_dnf();
+}
+
+
+bx_t
+Implies::to_dnf() const
+{
+    auto p = args[0];
+    auto q = args[1];
+
+    return (~p | q)->to_dnf();
+}
+
+
+bx_t
+NotIfThenElse::to_dnf() const
+{
+    auto s = args[0];
+    auto d1 = args[1];
+    auto d0 = args[2];
+
+    return ((s & ~d1) | (~s & ~d0))->to_dnf();
+}
+
+
+bx_t
+IfThenElse::to_dnf() const
+{
+    auto s = args[0];
+    auto d1 = args[1];
+    auto d0 = args[2];
+
+    return ((s & d1) | (~s & d0))->to_dnf();
+}

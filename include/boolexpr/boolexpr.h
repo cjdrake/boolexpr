@@ -123,15 +123,9 @@ class BoolExpr : public std::enable_shared_from_this<BoolExpr>
     friend bx_t operator~(bx_t const &);
     friend std::ostream& operator<<(std::ostream&, bx_t const &);
 
-    friend class Operator;
-
 protected:
     virtual bx_t invert() const = 0;
     virtual std::ostream& op_lsh(std::ostream&) const = 0;
-    virtual bx_t nnf2cnf1() const = 0;
-    virtual bx_t nnf2cnf2() const = 0;
-    virtual bx_t nnf2dnf1() const = 0;
-    virtual bx_t nnf2dnf2() const = 0;
     virtual soln_t _sat() const = 0;
 
 public:
@@ -170,6 +164,8 @@ public:
 
     virtual bx_t simplify() const = 0;
     virtual bx_t to_binop() const = 0;
+    virtual bx_t to_cnf() const = 0;
+    virtual bx_t to_dnf() const = 0;
     virtual bx_t to_latop() const = 0;
     virtual bx_t to_posop() const = 0;
     virtual bx_t tseytin(Context&, string const & = "a") const = 0;
@@ -179,8 +175,6 @@ public:
 
     soln_t sat() const;
 
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
     bx_t to_nnf() const;
 
     bool equiv(bx_t const &) const;
@@ -194,12 +188,6 @@ public:
 
 class Atom : public BoolExpr
 {
-protected:
-    bx_t nnf2cnf1() const;
-    bx_t nnf2cnf2() const;
-    bx_t nnf2dnf1() const;
-    bx_t nnf2dnf2() const;
-
 public:
     Atom(Kind kind);
 
@@ -209,6 +197,8 @@ public:
     bool is_dnf() const;
     bx_t simplify() const;
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
     bx_t tseytin(Context&, string const & = "a") const;
@@ -343,10 +333,6 @@ class Operator : public BoolExpr
 
 protected:
     std::ostream& op_lsh(std::ostream&) const;
-    bx_t nnf2cnf1() const;
-    bx_t nnf2cnf2() const;
-    bx_t nnf2dnf1() const;
-    bx_t nnf2dnf2() const;
     soln_t _sat() const;
 
     virtual string const opname() const = 0;
@@ -400,6 +386,8 @@ public:
     Nor(bool simple, vector<bx_t> const & args);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -425,6 +413,8 @@ public:
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_posop() const;
 };
 
@@ -443,6 +433,8 @@ public:
     Nand(bool simple, vector<bx_t> const & args);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -468,6 +460,8 @@ public:
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_posop() const;
 };
 
@@ -486,6 +480,8 @@ public:
     Xnor(bool simple, vector<bx_t> const & args);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -508,6 +504,8 @@ public:
     static bx_t identity();
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -527,6 +525,8 @@ public:
     Unequal(bool simple, vector<bx_t> const & args);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -547,6 +547,8 @@ public:
     Equal(bool simple, vector<bx_t> const && args) : Operator(EQ, simple, args) {}
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -566,6 +568,8 @@ public:
     NotImplies(bool simple, bx_t p, bx_t q);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -585,6 +589,8 @@ public:
     Implies(bool simple, bx_t p, bx_t q);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -604,6 +610,8 @@ public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };
@@ -623,6 +631,8 @@ public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
     bx_t to_binop() const;
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
 };

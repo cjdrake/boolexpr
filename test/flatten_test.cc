@@ -52,13 +52,63 @@ TEST_F(FlattenTest, Atoms)
 
 TEST_F(FlattenTest, Xor)
 {
-    auto y0 = xor_s({xs[0], xs[1], xs[2], xs[3], xs[4], xs[5]});
+    auto y0 = xor_s({xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]});
 
     auto y1 = y0->to_cnf();
     auto y2 = std::static_pointer_cast<const Operator>(y1);
-    EXPECT_TRUE(IS_AND(y2) && y2->args.size() == 32 && y0->equiv(y2));
+    EXPECT_TRUE(y2->is_cnf() && y2->args.size() == 128 && y0->equiv(y2));
 
     auto y3 = y0->to_dnf();
     auto y4 = std::static_pointer_cast<const Operator>(y3);
-    EXPECT_TRUE(IS_OR(y4) && y4->args.size() == 32 && y0->equiv(y4));
+    EXPECT_TRUE(y4->is_dnf() && y4->args.size() == 128 && y0->equiv(y4));
+}
+
+
+TEST_F(FlattenTest, All)
+{
+    auto y0 = or_({
+                 nor({
+                     xs[2], xs[6] | xs[0], xs[0] & xs[3], xs[5] ^ xs[1],
+                 }),
+                 and_({
+                     xs[4], xs[1] | xs[0], xs[3] & xs[0], xs[1] ^ xs[2],
+                 }),
+                 xor_({
+                     xs[7], xs[4] | xs[2], xs[6] & xs[1], xs[3] ^ xs[1],
+                 }),
+                 eq({
+                     xs[0], xs[2] | xs[0], xs[7] & xs[2], xs[1] ^ xs[6],
+                 }),
+                 impl(xs[2], xs[3]),
+                 ite(xs[3], xs[7], xs[0]),
+             });
+
+    auto y1 = and_({
+                 or_({
+                     xs[3], xs[0] | xs[2], xs[1] & xs[0], xs[3] ^ xs[2],
+                 }),
+                 nand({
+                     xs[1], xs[2] | xs[3], xs[0] & xs[2], xs[1] ^ xs[3],
+                 }),
+                 xnor({
+                     xs[3], xs[1] | xs[0], xs[0] & xs[2], xs[3] ^ xs[0],
+                 }),
+                 neq({
+                     xs[0], xs[3] | xs[0], xs[0] & xs[1], xs[2] ^ xs[3],
+                 }),
+                 nimpl(xs[0], xs[2]),
+                 nite(xs[1], xs[3], xs[2]),
+              });
+
+    auto y0_cnf = y0->to_cnf();
+    auto y0_dnf = y0->to_dnf();
+
+    EXPECT_TRUE(y0_cnf->is_cnf() && y0_cnf->equiv(y0));
+    EXPECT_TRUE(y0_dnf->is_dnf() && y0_dnf->equiv(y0));
+
+    auto y1_cnf = y1->to_cnf();
+    auto y1_dnf = y1->to_dnf();
+
+    EXPECT_TRUE(y1_cnf->is_cnf() && y1_cnf->equiv(y1));
+    EXPECT_TRUE(y1_dnf->is_dnf() && y1_dnf->equiv(y1));
 }
