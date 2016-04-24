@@ -196,7 +196,7 @@ Xnor::eqvar(var_t const & x) const
             stack.pop_back();
         }
 
-        std::swap(stack, temp);
+        stack = std::move(temp);
     }
 
     vector<bx_t> clauses;
@@ -236,7 +236,7 @@ Xor::eqvar(var_t const & x) const
             stack.pop_back();
         }
 
-        std::swap(stack, temp);
+        stack = std::move(temp);
     }
 
     vector<bx_t> clauses;
