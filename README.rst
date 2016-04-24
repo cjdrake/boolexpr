@@ -66,8 +66,5 @@ To build the html::
 Contributing
 ============
 
-This software is undocumented, unoptimized for performance, feature-poor,
-and generally incompetently constructed.
-
 If you have some idea you would like to see realized,
 please email me.
