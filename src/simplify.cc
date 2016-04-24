@@ -197,7 +197,7 @@ IfThenElse::simplify() const
         return d1;
 
     // X ? d1 : d0 <=> X
-    // NOTE: If you an prove d0 <=> d1, then should return d0.
+    // NOTE: If you can prove d0 <=> d1, then should return d0.
     //       But that proof is too expensive to gate this operation.
     if (IS_LOG(s))
         return logical();
