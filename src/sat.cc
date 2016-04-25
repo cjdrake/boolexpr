@@ -79,11 +79,8 @@ Variable::sat() const
 soln_t
 Operator::sat() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Operator const>(self);
-
     auto ctx = Context();
-    auto cnf = op->tseytin(ctx);
+    auto cnf = tseytin(ctx);
 
     auto xs = cnf->support();
     std::unordered_map<bx_t, uint32_t> lit2idx;

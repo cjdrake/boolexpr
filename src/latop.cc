@@ -44,8 +44,7 @@ LatticeOperator::to_latop() const
 static bx_t
 _nop_to_latop(BoolExpr const * const bx)
 {
-    auto nop = bx->shared_from_this();
-    auto op = ~nop;
+    auto op = ~bx->shared_from_this();
     return ~op->to_latop();
 }
 
@@ -60,27 +59,24 @@ bx_t NotIfThenElse::to_latop() const { return _nop_to_latop(this); }
 bx_t
 Xor::to_latop() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Operator const>(self);
-
-    if (op->args.size() == 0)   // LCOV_EXCL_LINE
+    if (args.size() == 0)       // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
 
-    if (op->args.size() == 1)           // LCOV_EXCL_LINE
-        return op->args[0]->to_latop(); // LCOV_EXCL_LINE
+    if (args.size() == 1)           // LCOV_EXCL_LINE
+        return args[0]->to_latop(); // LCOV_EXCL_LINE
 
-    if (op->args.size() == 2) {
+    if (args.size() == 2) {
         // x0 ^ x1 <=> ~x0 & x1 | x0 & ~x1
-        auto x0 = op->args[0]->to_latop();
-        auto x1 = op->args[1]->to_latop();
+        auto x0 = args[0]->to_latop();
+        auto x1 = args[1]->to_latop();
         return (~x0 & x1) | (x0 & ~x1);
     }
 
     // x0 ^ x1 ^ x2 ^ x3 <=> (x0 ^ x1) ^ (x2 ^ x3)
-    size_t const mid = op->args.size() / 2;
+    size_t const mid = args.size() / 2;
 
-    auto lo = xor_(vector<bx_t>(op->args.cbegin(), op->args.cbegin() + mid));
-    auto hi = xor_(vector<bx_t>(op->args.cbegin() + mid, op->args.cend()));
+    auto lo = xor_(vector<bx_t>(args.cbegin(), args.cbegin() + mid));
+    auto hi = xor_(vector<bx_t>(args.cbegin() + mid, args.cend()));
 
     return (lo ^ hi)->to_latop();
 }
@@ -89,10 +85,7 @@ Xor::to_latop() const
 bx_t
 Equal::to_latop() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Operator const>(self);
-
-    size_t n = op->args.size();
+    size_t n = args.size();
 
     // eq(x0, x1, x2) <=> ~x0 & ~x1 & ~x2 | x0 & x1 & x2
     vector<bx_t> xs(n), xns(n);
@@ -110,11 +103,8 @@ Equal::to_latop() const
 bx_t
 Implies::to_latop() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Implies const>(self);
-
-    auto p = op->args[0]->to_latop();
-    auto q = op->args[1]->to_latop();
+    auto p = args[0]->to_latop();
+    auto q = args[1]->to_latop();
 
     return ~p | q;
 }
@@ -123,12 +113,9 @@ Implies::to_latop() const
 bx_t
 IfThenElse::to_latop() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<IfThenElse const>(self);
-
-    auto s = op->args[0]->to_latop();
-    auto d1 = op->args[1]->to_latop();
-    auto d0 = op->args[2]->to_latop();
+    auto s = args[0]->to_latop();
+    auto d1 = args[1]->to_latop();
+    auto d0 = args[2]->to_latop();
 
     return (s & d1) | (~s & d0);
 }

@@ -36,75 +36,109 @@ Atom::simplify() const
 }
 
 
-// Use the positive form to simplify inverted operators
-static bx_t
-_nop_simplify(BoolExpr const * const bx)
+bx_t
+Nor::simplify() const
 {
-    auto self = bx->shared_from_this();
-    auto nop = std::static_pointer_cast<Operator const>(self);
-    if (nop->simple) return nop;
-    auto op = ~nop;
+    if (simple)
+        return shared_from_this();
+
+    auto op = ~shared_from_this();
     return ~op->simplify();
 }
-
-bx_t Nor::simplify() const { return _nop_simplify(this); }
-bx_t Nand::simplify() const { return _nop_simplify(this); }
-bx_t Xnor::simplify() const { return _nop_simplify(this); }
-bx_t Unequal::simplify() const { return _nop_simplify(this); }
-bx_t NotImplies::simplify() const { return _nop_simplify(this); }
-bx_t NotIfThenElse::simplify() const { return _nop_simplify(this); }
 
 
 bx_t
 Or::simplify() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Or const>(self);
-    if (op->simple) return op;
-    return OrArgSet(op->args).reduce();
+    if (simple)
+        return shared_from_this();
+
+    return OrArgSet(args).reduce();
+}
+
+
+bx_t
+Nand::simplify() const
+{
+    if (simple)
+        return shared_from_this();
+
+    auto op = ~shared_from_this();
+    return ~op->simplify();
 }
 
 
 bx_t
 And::simplify() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<And const>(self);
-    if (op->simple) return op;
-    return AndArgSet(op->args).reduce();
+    if (simple)
+        return shared_from_this();
+
+    return AndArgSet(args).reduce();
+}
+
+
+bx_t
+Xnor::simplify() const
+{
+    if (simple)
+        return shared_from_this();
+
+    auto op = ~shared_from_this();
+    return ~op->simplify();
 }
 
 
 bx_t
 Xor::simplify() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Xor const>(self);
-    if (op->simple) return op;
-    return XorArgSet(op->args).reduce();
+    if (simple)
+        return shared_from_this();
+
+    return XorArgSet(args).reduce();
+}
+
+
+bx_t
+Unequal::simplify() const
+{
+    if (simple)
+        return shared_from_this();
+
+    auto op = ~shared_from_this();
+    return ~op->simplify();
 }
 
 
 bx_t
 Equal::simplify() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Equal const>(self);
-    if (op->simple) return op;
-    return EqArgSet(op->args).reduce();
+    if (simple)
+        return shared_from_this();
+
+    return EqArgSet(args).reduce();
+}
+
+
+bx_t
+NotImplies::simplify() const
+{
+    if (simple)
+        return shared_from_this();
+
+    auto op = ~shared_from_this();
+    return ~op->simplify();
 }
 
 
 bx_t
 Implies::simplify() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Implies const>(self);
+    if (simple)
+        return shared_from_this();
 
-    if (op->simple) return op;
-
-    auto p = op->args[0]->simplify();
-    auto q = op->args[1]->simplify();
+    auto p = args[0]->simplify();
+    auto q = args[1]->simplify();
 
     if (IS_ILL(p) || IS_ILL(q))
         return illogical();
@@ -138,16 +172,25 @@ Implies::simplify() const
 
 
 bx_t
+NotIfThenElse::simplify() const
+{
+    if (simple)
+        return shared_from_this();
+
+    auto op = ~shared_from_this();
+    return ~op->simplify();
+}
+
+
+bx_t
 IfThenElse::simplify() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<IfThenElse const>(self);
+    if (simple)
+        return shared_from_this();
 
-    if (op->simple) return op;
-
-    auto s = op->args[0]->simplify();
-    auto d1 = op->args[1]->simplify();
-    auto d0 = op->args[2]->simplify();
+    auto s = args[0]->simplify();
+    auto d1 = args[1]->simplify();
+    auto d0 = args[2]->simplify();
 
     if (IS_ILL(s) || IS_ILL(d1) || IS_ILL(d0))
         return illogical();

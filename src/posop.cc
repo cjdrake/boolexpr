@@ -127,12 +127,9 @@ NotImplies::to_posop() const
 bx_t
 Implies::to_posop() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Implies const>(self);
-
     // p => q <=> ~p | q
-    auto pn = (~op->args[0])->to_posop();
-    auto q = (op->args[1])->to_posop();
+    auto pn = (~args[0])->to_posop();
+    auto q = (args[1])->to_posop();
 
     return pn | q;
 }

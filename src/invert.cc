@@ -75,9 +75,7 @@ Nor::invert() const
 bx_t
 Or::invert() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Or const>(self);
-    return std::make_shared<Nor>(op->simple, op->args);
+    return std::make_shared<Nor>(simple, args);
 }
 
 
@@ -93,9 +91,7 @@ Nand::invert() const
 bx_t
 And::invert() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<And const>(self);
-    return std::make_shared<Nand>(op->simple, op->args);
+    return std::make_shared<Nand>(simple, args);
 }
 
 
@@ -111,9 +107,7 @@ Xnor::invert() const
 bx_t
 Xor::invert() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Xor const>(self);
-    return std::make_shared<Xnor>(op->simple, op->args);
+    return std::make_shared<Xnor>(simple, args);
 }
 
 
@@ -129,9 +123,7 @@ Unequal::invert() const
 bx_t
 Equal::invert() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Equal const>(self);
-    return std::make_shared<Unequal>(op->simple, op->args);
+    return std::make_shared<Unequal>(simple, args);
 }
 
 
@@ -147,9 +139,7 @@ NotImplies::invert() const
 bx_t
 Implies::invert() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<Implies const>(self);
-    return std::make_shared<NotImplies>(op->simple, op->args[0], op->args[1]);
+    return std::make_shared<NotImplies>(simple, args[0], args[1]);
 }
 
 
@@ -165,7 +155,5 @@ NotIfThenElse::invert() const
 bx_t
 IfThenElse::invert() const
 {
-    auto self = shared_from_this();
-    auto op = std::static_pointer_cast<IfThenElse const>(self);
-    return std::make_shared<NotIfThenElse>(op->simple, op->args[0], op->args[1], op->args[2]);
+    return std::make_shared<NotIfThenElse>(simple, args[0], args[1], args[2]);
 }
