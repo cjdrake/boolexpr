@@ -132,6 +132,7 @@ protected:
     virtual bx_t nnf2cnf2() const = 0;
     virtual bx_t nnf2dnf1() const = 0;
     virtual bx_t nnf2dnf2() const = 0;
+    virtual soln_t _sat() const = 0;
 
 public:
     enum Kind {
@@ -176,7 +177,7 @@ public:
     virtual bx_t compose(var2bx_t const &) const = 0;
     virtual bx_t restrict_(point_t const &) const = 0;
 
-    virtual soln_t sat() const = 0;
+    soln_t sat() const;
 
     bx_t to_cnf() const;
     bx_t to_dnf() const;
@@ -238,12 +239,12 @@ class Zero : public Known
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    soln_t _sat() const;
 
 public:
     Zero();
 
     bool is_dnf() const;
-    soln_t sat() const;
 };
 
 
@@ -252,12 +253,12 @@ class One : public Known
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    soln_t _sat() const;
 
 public:
     One();
 
     bool is_cnf() const;
-    soln_t sat() const;
 };
 
 
@@ -273,11 +274,10 @@ class Logical : public Unknown
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    soln_t _sat() const;
 
 public:
     Logical();
-
-    soln_t sat() const;
 };
 
 
@@ -286,11 +286,10 @@ class Illogical : public Unknown
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    soln_t _sat() const;
 
 public:
     Illogical();
-
-    soln_t sat() const;
 };
 
 
@@ -312,13 +311,13 @@ class Complement : public Literal
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    soln_t _sat() const;
 
 public:
     Complement(Context * const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
-    soln_t sat() const;
 };
 
 
@@ -327,13 +326,13 @@ class Variable : public Literal
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    soln_t _sat() const;
 
 public:
     Variable(Context * const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
-    soln_t sat() const;
 };
 
 
@@ -348,6 +347,7 @@ protected:
     bx_t nnf2cnf2() const;
     bx_t nnf2dnf1() const;
     bx_t nnf2dnf2() const;
+    soln_t _sat() const;
 
     virtual string const opname() const = 0;
     virtual bx_t _simplify() const = 0;
@@ -372,7 +372,6 @@ public:
     bx_t tseytin(Context&, string const & = "a") const;
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
-    soln_t sat() const;
 
     bool is_clause() const;
 };

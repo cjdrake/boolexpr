@@ -31,35 +31,32 @@ using namespace boolexpr;
 
 
 soln_t
-Zero::sat() const
-{
-    return std::make_pair(false, boost::none);
-}
+BoolExpr::sat() const
+{ return simplify()->_sat(); }
 
 
 soln_t
-One::sat() const
-{
-    return std::make_pair(true, point_t {});
-}
+Zero::_sat() const
+{ return std::make_pair(false, boost::none); }
 
 
 soln_t
-Logical::sat() const
-{
-    return std::make_pair(false, boost::none);
-}
+One::_sat() const
+{ return std::make_pair(true, point_t {}); }
 
 
 soln_t
-Illogical::sat() const
-{
-    return std::make_pair(false, boost::none);
-}
+Logical::_sat() const
+{ return std::make_pair(false, boost::none); }
 
 
 soln_t
-Complement::sat() const
+Illogical::_sat() const
+{ return std::make_pair(false, boost::none); }
+
+
+soln_t
+Complement::_sat() const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(~self);
@@ -68,7 +65,7 @@ Complement::sat() const
 
 
 soln_t
-Variable::sat() const
+Variable::_sat() const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(self);
@@ -77,12 +74,12 @@ Variable::sat() const
 
 
 soln_t
-Operator::sat() const
+Operator::_sat() const
 {
     auto ctx = Context();
-    auto cnf = tseytin(ctx);
+    auto bx = tseytin(ctx);
 
-    auto xs = cnf->support();
+    auto xs = bx->support();
     std::unordered_map<bx_t, uint32_t> lit2idx;
     std::unordered_map<uint32_t, var_t> idx2var;
 
@@ -98,7 +95,7 @@ Operator::sat() const
     vector<CMSat::Lit> clause;
     solver.new_vars(xs.size());
 
-    auto and_op = std::static_pointer_cast<And const>(cnf);
+    auto and_op = std::static_pointer_cast<And const>(bx);
     for (bx_t const & arg : and_op->args) {
         clause.clear();
         if (IS_LIT(arg)) {

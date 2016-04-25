@@ -56,6 +56,11 @@ TEST_F(BoolExprTest, Basic)
     EXPECT_EQ(lits[1]->id, 3<<1 | 1);  //  xs[3]
     EXPECT_EQ(lits[5]->id, 13<<1);     // ~xs[13]
     EXPECT_EQ(lits[6]->id, 13<<1 | 1); //  xs[13]
+
+    EXPECT_TRUE(_zero->equiv(_zero));
+    EXPECT_TRUE(_one->equiv(_one));
+    EXPECT_TRUE((~x)->equiv(~x));
+    EXPECT_TRUE(x->equiv(x));
 }
 
 
