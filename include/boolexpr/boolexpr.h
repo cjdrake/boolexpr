@@ -350,6 +350,7 @@ protected:
     bx_t nnf2dnf2() const;
 
     virtual string const opname() const = 0;
+    virtual bx_t _simplify() const = 0;
     virtual bx_t eqvar(var_t const &) const = 0;
     virtual op_t from_args(vector<bx_t> const &&) const = 0;
 
@@ -367,6 +368,7 @@ public:
 
     bool is_cnf() const;
     bool is_dnf() const;
+    bx_t simplify() const;
     bx_t tseytin(Context&, string const & = "a") const;
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
@@ -391,13 +393,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     Nor(bool simple, vector<bx_t> const & args);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -410,6 +412,7 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
@@ -422,7 +425,6 @@ public:
 
     bool is_cnf() const;
     bool is_dnf() const;
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_posop() const;
 };
@@ -434,13 +436,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     Nand(bool simple, vector<bx_t> const & args);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -453,6 +455,7 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
@@ -465,7 +468,6 @@ public:
 
     bool is_cnf() const;
     bool is_dnf() const;
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_posop() const;
 };
@@ -477,13 +479,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     Xnor(bool simple, vector<bx_t> const & args);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -496,6 +498,7 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(const vector<bx_t>&&) const;
 
@@ -505,7 +508,6 @@ public:
 
     static bx_t identity();
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -518,13 +520,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     Unequal(bool simple, vector<bx_t> const & args);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -537,6 +539,7 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
@@ -544,7 +547,6 @@ public:
     Equal(bool simple, vector<bx_t> const & args) : Operator(EQ, simple, args) {}
     Equal(bool simple, vector<bx_t> const && args) : Operator(EQ, simple, args) {}
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -557,13 +559,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -576,13 +578,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     Implies(bool simple, bx_t p, bx_t q);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -595,13 +597,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
@@ -614,13 +616,13 @@ protected:
     bx_t invert() const;
 
     string const opname() const;
+    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(vector<bx_t> const &&) const;
 
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t simplify() const;
     bx_t to_binop() const;
     bx_t to_latop() const;
     bx_t to_posop() const;

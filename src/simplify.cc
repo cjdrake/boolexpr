@@ -37,106 +37,86 @@ Atom::simplify() const
 
 
 bx_t
-Nor::simplify() const
+Operator::simplify() const
 {
     if (simple)
         return shared_from_this();
 
+    return _simplify();
+}
+
+
+bx_t
+Nor::_simplify() const
+{
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
 
 bx_t
-Or::simplify() const
+Or::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     return OrArgSet(args).reduce();
 }
 
 
 bx_t
-Nand::simplify() const
+Nand::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
 
 bx_t
-And::simplify() const
+And::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     return AndArgSet(args).reduce();
 }
 
 
 bx_t
-Xnor::simplify() const
+Xnor::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
 
 bx_t
-Xor::simplify() const
+Xor::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     return XorArgSet(args).reduce();
 }
 
 
 bx_t
-Unequal::simplify() const
+Unequal::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
 
 bx_t
-Equal::simplify() const
+Equal::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     return EqArgSet(args).reduce();
 }
 
 
 bx_t
-NotImplies::simplify() const
+NotImplies::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
 
 bx_t
-Implies::simplify() const
+Implies::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto p = args[0]->simplify();
     auto q = args[1]->simplify();
 
@@ -172,22 +152,16 @@ Implies::simplify() const
 
 
 bx_t
-NotIfThenElse::simplify() const
+NotIfThenElse::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
 
 bx_t
-IfThenElse::simplify() const
+IfThenElse::_simplify() const
 {
-    if (simple)
-        return shared_from_this();
-
     auto s = args[0]->simplify();
     auto d1 = args[1]->simplify();
     auto d0 = args[2]->simplify();
