@@ -52,7 +52,7 @@ bx_t NotIfThenElse::to_binop() const { return _nop_to_binop(this); }
 bx_t
 Or::to_binop() const
 {
-    if (args.size() == 0)  // LCOV_EXCL_LINE
+    if (args.size() == 0)      // LCOV_EXCL_LINE
         return Or::identity(); // LCOV_EXCL_LINE
 
     if (args.size() == 1)           // LCOV_EXCL_LINE
@@ -74,7 +74,7 @@ Or::to_binop() const
 bx_t
 And::to_binop() const
 {
-    if (args.size() == 0)   // LCOV_EXCL_LINE
+    if (args.size() == 0)       // LCOV_EXCL_LINE
         return And::identity(); // LCOV_EXCL_LINE
 
     if (args.size() == 1)           // LCOV_EXCL_LINE
@@ -96,7 +96,7 @@ And::to_binop() const
 bx_t
 Xor::to_binop() const
 {
-    if (args.size() == 0)   // LCOV_EXCL_LINE
+    if (args.size() == 0)       // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
 
     if (args.size() == 1)           // LCOV_EXCL_LINE
@@ -119,7 +119,7 @@ bx_t
 Equal::to_binop() const
 {
     if (args.size() < 2) // LCOV_EXCL_LINE
-        return one();        // LCOV_EXCL_LINE
+        return one();    // LCOV_EXCL_LINE
 
     if (args.size() == 2)
         return transform([](bx_t const & bx){return bx->to_binop();});

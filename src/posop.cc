@@ -37,13 +37,12 @@ Atom::to_posop() const
 bx_t
 Nor::to_posop() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Nor const>(self);
-
     // ~(x0 | x1 | ...) <=> ~x0 & ~x1 & ...
-    vector<bx_t> _args;
-    for (bx_t const & arg : nop->args)
-        _args.push_back((~arg)->to_posop());
+    size_t n = args.size();
+    vector<bx_t> _args(n);
+
+    for (size_t i = 0; i < n; ++i)
+        _args[i] = (~args[i])->to_posop();
 
     return and_(std::move(_args));
 }
@@ -56,13 +55,12 @@ bx_t Or::to_posop() const
 bx_t
 Nand::to_posop() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Nand const>(self);
-
     // ~(x0 & x1 & ...) <=> ~x0 | ~x1 | ...
-    vector<bx_t> _args;
-    for (bx_t const & arg : nop->args)
-        _args.push_back((~arg)->to_posop());
+    size_t n = args.size();
+    vector<bx_t> _args(n);
+
+    for (size_t i = 0; i < n; ++i)
+        _args[i] = (~args[i])->to_posop();
 
     return or_(std::move(_args));
 }
@@ -75,13 +73,13 @@ bx_t And::to_posop() const
 bx_t
 Xnor::to_posop() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Xnor const>(self);
-
     // ~(x0 ^ x1 ^ x2 ^ ...) <=> ~x0 ^ x1 ^ x2 ^ ...
-    vector<bx_t> _args {~nop->args[0]};
-    for (auto it = nop->args.cbegin() + 1; it != nop->args.cend(); ++it)
-        _args.push_back((*it)->to_posop());
+    size_t n = args.size();
+    vector<bx_t> _args(n);
+
+    _args[0] = (~args[0])->to_posop();
+    for (size_t i = 1; i < n; ++i)
+        _args[i] = args[i]->to_posop();
 
     return xor_(std::move(_args));
 }
@@ -94,13 +92,13 @@ bx_t Xor::to_posop() const
 bx_t
 Unequal::to_posop() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Unequal const>(self);
-
     // ~eq(x0, x1, x2, ...) <=> eq(~x0, x1, x2, ...)
-    vector<bx_t> _args {~nop->args[0]};
-    for (auto it = nop->args.cbegin() + 1; it != nop->args.cend(); ++it)
-        _args.push_back((*it)->to_posop());
+    size_t n = args.size();
+    vector<bx_t> _args(n);
+
+    _args[0] = (~args[0])->to_posop();
+    for (size_t i = 1; i < n; ++i)
+        _args[i] = args[i]->to_posop();
 
     return eq(std::move(_args));
 }
@@ -113,12 +111,9 @@ bx_t Equal::to_posop() const
 bx_t
 NotImplies::to_posop() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<NotImplies const>(self);
-
     // ~(p => q) <=> p & ~q
-    auto p = (nop->args[0])->to_posop();
-    auto qn = (~nop->args[1])->to_posop();
+    auto p = (args[0])->to_posop();
+    auto qn = (~args[1])->to_posop();
 
     return p & qn;
 }
@@ -142,13 +137,10 @@ bx_t IfThenElse::to_posop() const
 bx_t
 NotIfThenElse::to_posop() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<NotIfThenElse const>(self);
-
     // ~(s ? d1 : d0) <=> s ? ~d1 : ~d0
-    auto s = (nop->args[0])->to_posop();
-    auto d1n = (~nop->args[1])->to_posop();
-    auto d0n = (~nop->args[2])->to_posop();
+    auto s = (args[0])->to_posop();
+    auto d1n = (~args[1])->to_posop();
+    auto d0n = (~args[2])->to_posop();
 
     return ite(s, d1n, d0n);
 }

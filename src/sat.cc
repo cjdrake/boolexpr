@@ -184,6 +184,7 @@ sat_iter::sat_iter(bx_t const & bx)
     }
 
     vector<CMSat::Lit> clause;
+
     auto and_op = std::static_pointer_cast<And const>(cnf);
     for (bx_t const & arg : and_op->args) {
         clause.clear();
@@ -236,23 +237,17 @@ sat_iter::get_soln()
 
 bool
 sat_iter::operator==(sat_iter const & rhs) const
-{
-    return sat == rhs.sat;
-}
+{ return sat == rhs.sat; }
 
 
 bool
 sat_iter::operator!=(sat_iter const & rhs) const
-{
-    return !(*this == rhs);
-}
+{ return !(*this == rhs); }
 
 
 point_t const &
 sat_iter::operator*() const
-{
-    return point;
-}
+{ return point; }
 
 
 sat_iter const &

@@ -45,18 +45,19 @@ Operator::to_con2(Context& ctx, string const & auxvarname,
                   uint32_t& index, var2op_t& constraints) const
 {
     bool found_subop = false;
-    vector<bx_t> _args;
+
+    size_t n = args.size();
+    vector<bx_t> _args(n);
 
     // NOTE: do not use transform, b/c there's mutable state
-    for (bx_t const & arg : args) {
-        if (IS_OP(arg)) {
+    for (size_t i = 0; i < n; ++i) {
+        if (IS_OP(args[i])) {
             found_subop = true;
-            auto subop = std::static_pointer_cast<Operator const>(arg);
-            auto x = subop->to_con1(ctx, auxvarname, index, constraints);
-            _args.push_back(x);
+            auto subop = std::static_pointer_cast<Operator const>(args[i]);
+            _args[i] = subop->to_con1(ctx, auxvarname, index, constraints);
         }
         else {
-            _args.push_back(arg);
+            _args[i] = args[i];
         }
     }
 

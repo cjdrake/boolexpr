@@ -533,18 +533,41 @@ boolexpr::operator<<(std::ostream& s, bx_t const & bx)
 { return bx->op_lsh(s); }
 
 
-op_t Nor::from_args(vector<bx_t> const && args) const { return std::make_shared<Nor>(false, args); }
-op_t Or::from_args(vector<bx_t> const && args) const { return std::make_shared<Or>(false, args); }
-op_t Nand::from_args(vector<bx_t> const && args) const { return std::make_shared<Nand>(false, args); }
-op_t And::from_args(vector<bx_t> const && args) const { return std::make_shared<And>(false, args); }
-op_t Xnor::from_args(vector<bx_t> const && args) const { return std::make_shared<Xnor>(false, args); }
-op_t Xor::from_args(vector<bx_t> const && args) const { return std::make_shared<Xor>(false, args); }
-op_t Unequal::from_args(vector<bx_t> const && args) const { return std::make_shared<Unequal>(false, args); }
-op_t Equal::from_args(vector<bx_t> const && args) const { return std::make_shared<Equal>(false, args); }
-op_t NotImplies::from_args(vector<bx_t> const && args) const { return std::make_shared<NotImplies>(false, args[0], args[1]); }
-op_t Implies::from_args(vector<bx_t> const && args) const { return std::make_shared<Implies>(false, args[0], args[1]); }
-op_t NotIfThenElse::from_args(vector<bx_t> const && args) const { return std::make_shared<NotIfThenElse>(false, args[0], args[1], args[2]); }
-op_t IfThenElse::from_args(vector<bx_t> const && args) const { return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]); }
+op_t Nor::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Nor>(false, args); }
+
+op_t Or::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Or>(false, args); }
+
+op_t Nand::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Nand>(false, args); }
+
+op_t And::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<And>(false, args); }
+
+op_t Xnor::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Xnor>(false, args); }
+
+op_t Xor::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Xor>(false, args); }
+
+op_t Unequal::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Unequal>(false, args); }
+
+op_t Equal::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Equal>(false, args); }
+
+op_t NotImplies::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<NotImplies>(false, args[0], args[1]); }
+
+op_t Implies::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<Implies>(false, args[0], args[1]); }
+
+op_t NotIfThenElse::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<NotIfThenElse>(false, args[0], args[1], args[2]); }
+
+op_t IfThenElse::from_args(vector<bx_t> const && args) const
+{ return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]); }
 
 
 // Properties

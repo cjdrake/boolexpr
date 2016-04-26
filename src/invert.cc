@@ -48,27 +48,21 @@ Illogical::invert() const
 bx_t
 Complement::invert() const
 {
-    auto self = shared_from_this();
-    auto xn = std::static_pointer_cast<Complement const>(self);
-    return xn->ctx->get_lit(xn->id + 1);
+    return ctx->get_lit(id + 1);
 }
 
 
 bx_t
 Variable::invert() const
 {
-    auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(self);
-    return x->ctx->get_lit(x->id - 1);
+    return ctx->get_lit(id - 1);
 }
 
 
 bx_t
 Nor::invert() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Nor const>(self);
-    return std::make_shared<Or>(nop->simple, nop->args);
+    return std::make_shared<Or>(simple, args);
 }
 
 
@@ -82,9 +76,7 @@ Or::invert() const
 bx_t
 Nand::invert() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Nand const>(self);
-    return std::make_shared<And>(nop->simple, nop->args);
+    return std::make_shared<And>(simple, args);
 }
 
 
@@ -98,9 +90,7 @@ And::invert() const
 bx_t
 Xnor::invert() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Xnor const>(self);
-    return std::make_shared<Xor>(nop->simple, nop->args);
+    return std::make_shared<Xor>(simple, args);
 }
 
 
@@ -114,9 +104,7 @@ Xor::invert() const
 bx_t
 Unequal::invert() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<Unequal const>(self);
-    return std::make_shared<Equal>(nop->simple, nop->args);
+    return std::make_shared<Equal>(simple, args);
 }
 
 
@@ -130,9 +118,7 @@ Equal::invert() const
 bx_t
 NotImplies::invert() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<NotImplies const>(self);
-    return std::make_shared<Implies>(nop->simple, nop->args[0], nop->args[1]);
+    return std::make_shared<Implies>(simple, args[0], args[1]);
 }
 
 
@@ -146,9 +132,7 @@ Implies::invert() const
 bx_t
 NotIfThenElse::invert() const
 {
-    auto self = shared_from_this();
-    auto nop = std::static_pointer_cast<NotIfThenElse const>(self);
-    return std::make_shared<IfThenElse>(nop->simple, nop->args[0], nop->args[1], nop->args[2]);
+    return std::make_shared<IfThenElse>(simple, args[0], args[1], args[2]);
 }
 
 
