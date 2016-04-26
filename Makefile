@@ -110,6 +110,7 @@ TEST_SRCS := \
     test/compose_test.cc \
     test/count_test.cc \
     test/flatten_test.cc \
+    test/iter_test.cc \
     test/nnf_test.cc \
     test/posop_test.cc \
     test/sat_test.cc \

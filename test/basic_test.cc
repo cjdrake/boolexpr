@@ -300,26 +300,6 @@ TEST_F(BoolExprTest, IsDNF)
 }
 
 
-TEST_F(BoolExprTest, DFSIter)
-{
-    auto y = (~xs[0] & xs[1]) | (~xs[2] & xs[3]);
-
-    const string ans[] = {
-        "~x_0",
-        "x_1",
-        "And(~x_0, x_1)",
-        "~x_2",
-        "x_3",
-        "And(~x_2, x_3)",
-        "Or(And(~x_0, x_1), And(~x_2, x_3))",
-    };
-
-    int i = 0;
-    for (auto it = dfs_iter(y); it != dfs_iter(); ++it)
-        EXPECT_EQ((*it)->to_string(), ans[i++]);
-}
-
-
 TEST_F(BoolExprTest, Support)
 {
     auto y = (~xs[0] & xs[1]) | (~xs[2] & xs[3]);
