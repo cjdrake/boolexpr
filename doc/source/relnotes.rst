@@ -6,6 +6,13 @@
   Release Notes
 *****************
 
+Release 1.1
+===========
+
+Fixed `Issue 15 <https://github.com/cjdrake/boolexpr/issues/15>`_.
+
+Lots of other miscellaneous refactoring.
+
 Release 1.0
 ===========
 
