@@ -34,19 +34,12 @@ Atom::to_binop() const
 }
 
 
-static bx_t
-_nop_to_binop(BoolExpr const * const bx)
+bx_t
+Nor::to_binop() const
 {
-    auto op = ~bx->shared_from_this();
+    auto op = ~shared_from_this();
     return ~op->to_binop();
 }
-
-bx_t Nor::to_binop() const { return _nop_to_binop(this); }
-bx_t Nand::to_binop() const { return _nop_to_binop(this); }
-bx_t Xnor::to_binop() const { return _nop_to_binop(this); }
-bx_t Unequal::to_binop() const { return _nop_to_binop(this); }
-bx_t NotImplies::to_binop() const { return _nop_to_binop(this); }
-bx_t NotIfThenElse::to_binop() const { return _nop_to_binop(this); }
 
 
 bx_t
@@ -68,6 +61,14 @@ Or::to_binop() const
     auto hi = or_(vector<bx_t>(args.cbegin() + mid, args.cend()));
 
     return lo->to_binop() | hi->to_binop();
+}
+
+
+bx_t
+Nand::to_binop() const
+{
+    auto op = ~shared_from_this();
+    return ~op->to_binop();
 }
 
 
@@ -94,6 +95,14 @@ And::to_binop() const
 
 
 bx_t
+Xnor::to_binop() const
+{
+    auto op = ~shared_from_this();
+    return ~op->to_binop();
+}
+
+
+bx_t
 Xor::to_binop() const
 {
     if (args.size() == 0)       // LCOV_EXCL_LINE
@@ -112,6 +121,14 @@ Xor::to_binop() const
     auto hi = xor_(vector<bx_t>(args.cbegin() + mid, args.cend()));
 
     return lo->to_binop() ^ hi->to_binop();
+}
+
+
+bx_t
+Unequal::to_binop() const
+{
+    auto op = ~shared_from_this();
+    return ~op->to_binop();
 }
 
 
@@ -142,9 +159,25 @@ Equal::to_binop() const
 
 
 bx_t
+NotImplies::to_binop() const
+{
+    auto op = ~shared_from_this();
+    return ~op->to_binop();
+}
+
+
+bx_t
 Implies::to_binop() const
 {
     return transform([](bx_t const & bx){return bx->to_binop();});
+}
+
+
+bx_t
+NotIfThenElse::to_binop() const
+{
+    auto op = ~shared_from_this();
+    return ~op->to_binop();
 }
 
 
