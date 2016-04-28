@@ -49,7 +49,9 @@ Nor::to_posop() const
 
 
 bx_t Or::to_posop() const
-{ return transform([](bx_t const & arg){return arg->to_posop();}); }
+{
+    return transform([](bx_t const & arg){return arg->to_posop();});
+}
 
 
 bx_t
@@ -67,7 +69,9 @@ Nand::to_posop() const
 
 
 bx_t And::to_posop() const
-{ return transform([](bx_t const & arg){return arg->to_posop();}); }
+{
+    return transform([](bx_t const & arg){return arg->to_posop();});
+}
 
 
 bx_t
@@ -86,7 +90,9 @@ Xnor::to_posop() const
 
 
 bx_t Xor::to_posop() const
-{ return transform([](bx_t const & arg){return arg->to_posop();}); }
+{
+    return transform([](bx_t const & arg){return arg->to_posop();});
+}
 
 
 bx_t
@@ -105,7 +111,9 @@ Unequal::to_posop() const
 
 
 bx_t Equal::to_posop() const
-{ return transform([](bx_t const & arg){return arg->to_posop();}); }
+{
+    return transform([](bx_t const & arg){return arg->to_posop();});
+}
 
 
 bx_t
@@ -131,7 +139,9 @@ Implies::to_posop() const
 
 
 bx_t IfThenElse::to_posop() const
-{ return transform([](bx_t const & arg){return arg->to_posop();}); }
+{
+    return transform([](bx_t const & arg){return arg->to_posop();});
+}
 
 
 bx_t

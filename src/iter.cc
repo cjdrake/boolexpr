@@ -27,7 +27,9 @@
 using namespace boolexpr;
 
 
-dfs_iter::dfs_iter() : p {nullptr} {}
+dfs_iter::dfs_iter()
+    : p {nullptr}
+{}
 
 
 dfs_iter::dfs_iter(bx_t const & start)
@@ -184,7 +186,9 @@ points_iter::operator++()
 }
 
 
-domain_iter::domain_iter() : it {points_iter()} {}
+domain_iter::domain_iter()
+    : it {points_iter()}
+{}
 
 
 domain_iter::domain_iter(bx_t const & f)
@@ -215,7 +219,9 @@ domain_iter::operator++()
 }
 
 
-cf_iter::cf_iter() : it {points_iter()} {}
+cf_iter::cf_iter()
+    : it {points_iter()}
+{}
 
 
 cf_iter::cf_iter(bx_t const & f, vector<var_t> const & vars)

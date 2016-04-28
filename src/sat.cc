@@ -134,7 +134,9 @@ Operator::_sat() const
 }
 
 
-sat_iter::sat_iter() : sat {l_False} {}
+sat_iter::sat_iter()
+    : sat {l_False}
+{}
 
 
 sat_iter::sat_iter(bx_t const & bx)
