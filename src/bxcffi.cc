@@ -541,11 +541,28 @@ boolexpr_eq(size_t n, BXS c_args)
 { return new BoolExprProxy(eq(_convert_args(n, c_args))); }
 
 BX
+boolexpr_nimpl(BX c_p, BX c_q)
+{
+    auto p = reinterpret_cast<BoolExprProxy const *>(c_p);
+    auto q = reinterpret_cast<BoolExprProxy const *>(c_q);
+    return new BoolExprProxy(nimpl(p->bx, q->bx));
+}
+
+BX
 boolexpr_impl(BX c_p, BX c_q)
 {
     auto p = reinterpret_cast<BoolExprProxy const *>(c_p);
     auto q = reinterpret_cast<BoolExprProxy const *>(c_q);
     return new BoolExprProxy(impl(p->bx, q->bx));
+}
+
+BX
+boolexpr_nite(BX c_s, BX c_d1, BX c_d0)
+{
+    auto s = reinterpret_cast<BoolExprProxy const *>(c_s);
+    auto d1 = reinterpret_cast<BoolExprProxy const *>(c_d1);
+    auto d0 = reinterpret_cast<BoolExprProxy const *>(c_d0);
+    return new BoolExprProxy(nite(s->bx, d1->bx, d0->bx));
 }
 
 BX
@@ -600,11 +617,28 @@ boolexpr_eq_s(size_t n, BXS c_args)
 { return new BoolExprProxy(eq_s(_convert_args(n, c_args))); }
 
 BX
+boolexpr_nimpl_s(BX c_p, BX c_q)
+{
+    auto p = reinterpret_cast<BoolExprProxy const *>(c_p);
+    auto q = reinterpret_cast<BoolExprProxy const *>(c_q);
+    return new BoolExprProxy(nimpl_s(p->bx, q->bx));
+}
+
+BX
 boolexpr_impl_s(BX c_p, BX c_q)
 {
     auto p = reinterpret_cast<BoolExprProxy const *>(c_p);
     auto q = reinterpret_cast<BoolExprProxy const *>(c_q);
     return new BoolExprProxy(impl_s(p->bx, q->bx));
+}
+
+BX
+boolexpr_nite_s(BX c_s, BX c_d1, BX c_d0)
+{
+    auto s = reinterpret_cast<BoolExprProxy const *>(c_s);
+    auto d1 = reinterpret_cast<BoolExprProxy const *>(c_d1);
+    auto d0 = reinterpret_cast<BoolExprProxy const *>(c_d0);
+    return new BoolExprProxy(nite_s(s->bx, d1->bx, d0->bx));
 }
 
 BX

@@ -91,7 +91,9 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(xor(*xs[:4]).kind, BoolExpr.Kind.xor)
         self.assertEqual(neq(*xs[:4]).kind, BoolExpr.Kind.neq)
         self.assertEqual(eq(*xs[:4]).kind, BoolExpr.Kind.eq)
+        self.assertEqual(nimpl(xs[0], xs[1]).kind, BoolExpr.Kind.nimpl)
         self.assertEqual(impl(xs[0], xs[1]).kind, BoolExpr.Kind.impl)
+        self.assertEqual(nite(xs[0], xs[1], xs[2]).kind, BoolExpr.Kind.nite)
         self.assertEqual(ite(xs[0], xs[1], xs[2]).kind, BoolExpr.Kind.ite)
 
         self.assertEqual(nor_s(*xs[:4]).kind, BoolExpr.Kind.nor)
@@ -102,7 +104,9 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(xor_s(*xs[:4]).kind, BoolExpr.Kind.xor)
         self.assertEqual(neq_s(*xs[:4]).kind, BoolExpr.Kind.neq)
         self.assertEqual(eq_s(*xs[:4]).kind, BoolExpr.Kind.eq)
+        self.assertEqual(nimpl_s(xs[0], xs[1]).kind, BoolExpr.Kind.nimpl)
         self.assertEqual(impl_s(xs[0], xs[1]).kind, BoolExpr.Kind.impl)
+        self.assertEqual(nite_s(xs[0], xs[1], xs[2]).kind, BoolExpr.Kind.nite)
         self.assertEqual(ite_s(xs[0], xs[1], xs[2]).kind, BoolExpr.Kind.ite)
 
     def test_ops2(self):

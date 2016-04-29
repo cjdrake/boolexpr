@@ -175,7 +175,9 @@ BX boolexpr_xnor(size_t, BXS);
 BX boolexpr_xor(size_t, BXS);
 BX boolexpr_neq(size_t, BXS);
 BX boolexpr_eq(size_t, BXS);
+BX boolexpr_nimpl(size_t, BXS);
 BX boolexpr_impl(BX, BX);
+BX boolexpr_nite(BX, BX, BX);
 BX boolexpr_ite(BX, BX, BX);
 
 BX boolexpr_onehot0(size_t, BXS);
@@ -189,7 +191,9 @@ BX boolexpr_xnor_s(size_t, BXS);
 BX boolexpr_xor_s(size_t, BXS);
 BX boolexpr_neq_s(size_t, BXS);
 BX boolexpr_eq_s(size_t, BXS);
+BX boolexpr_nimpl_s(BX, BX);
 BX boolexpr_impl_s(BX, BX);
+BX boolexpr_nite_s(BX, BX, BX);
 BX boolexpr_ite_s(BX, BX, BX);
 
 void boolexpr_BoolExpr_del(BX);

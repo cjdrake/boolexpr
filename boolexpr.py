@@ -67,10 +67,10 @@ __all__ = [
     "Operator", "LatticeOperator", "Nor", "Or", "Nand", "And", "Xnor", "Xor",
     "Unequal", "Equal", "NotImplies", "Implies", "NotIfThenElse", "IfThenElse",
     "ZERO", "ONE", "LOGICAL", "ILLOGICAL",
-    "not_", "nor", "or_", "nand", "and_", "xnor", "xor", "neq", "eq", "impl",
-    "ite",
+    "not_", "nor", "or_", "nand", "and_", "xnor", "xor", "neq", "eq",
+    "nimpl", "impl", "nite", "ite",
     "nor_s", "or_s", "nand_s", "and_s", "xnor_s", "xor_s", "neq_s", "eq_s",
-    "impl_s", "ite_s",
+    "nimpl_s", "impl_s", "nite_s", "ite_s",
     "onehot0", "onehot", "majority", "achilles_heel",
     "exists", "forall",
 ]
@@ -734,10 +734,20 @@ def eq(*args):
     num, c_args = _convert_args(args)
     return _bx(lib.boolexpr_eq(num, c_args))
 
+def nimpl(p, q):
+    """Boolean NotImplies operator."""
+    _, c_args = _convert_args((p, q))
+    return _bx(lib.boolexpr_nimpl(c_args[0], c_args[1]))
+
 def impl(p, q):
     """Boolean Implies operator."""
     _, c_args = _convert_args((p, q))
     return _bx(lib.boolexpr_impl(c_args[0], c_args[1]))
+
+def nite(s, d1, d0):
+    """Boolean NotIfThenElse operator."""
+    _, c_args = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_nite(c_args[0], c_args[1], c_args[2]))
 
 def ite(s, d1, d0):
     """Boolean IfThenElse operator."""
@@ -784,10 +794,20 @@ def eq_s(*args):
     num, c_args = _convert_args(args)
     return _bx(lib.boolexpr_eq_s(num, c_args))
 
+def nimpl_s(p, q):
+    """Simplifying Boolean Implies operator."""
+    _, c_args = _convert_args((p, q))
+    return _bx(lib.boolexpr_nimpl_s(c_args[0], c_args[1]))
+
 def impl_s(p, q):
     """Simplifying Boolean Implies operator."""
     _, c_args = _convert_args((p, q))
     return _bx(lib.boolexpr_impl_s(c_args[0], c_args[1]))
+
+def nite_s(s, d1, d0):
+    """Simplifying Boolean IfThenElse operator."""
+    _, c_args = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_nite_s(c_args[0], c_args[1], c_args[2]))
 
 def ite_s(s, d1, d0):
     """Simplifying Boolean IfThenElse operator."""
