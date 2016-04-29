@@ -831,20 +831,20 @@ std::ostream& operator<<(std::ostream&, bx_t const &);
 extern "C"
 {
 
-#define STRING   char const * const
-#define CONTEXT  void * const
-#define BX       void const * const
-#define BXS      void const * const * const
-#define VARS     void const * const * const
-#define CONSTS   void const * const * const
-#define VEC      void * const
-#define VARSET   void * const
-#define POINT    void * const
-#define SOLN     void * const
-#define SAT_ITER void * const
-#define DFS_ITER void * const
-#define DOM_ITER void * const
-#define CF_ITER  void * const
+typedef char const * const STRING;
+typedef void * const CONTEXT;
+typedef void const * const BX;
+typedef void const * const * const BXS;
+typedef void const * const * const VARS;
+typedef void const * const * const CONSTS;
+typedef void * const VEC;
+typedef void * const VARSET;
+typedef void * const POINT;
+typedef void * const SOLN;
+typedef void * const SAT_ITER;
+typedef void * const DFS_ITER;
+typedef void * const DOM_ITER;
+typedef void * const CF_ITER;
 
 CONTEXT boolexpr_Context_new(void);
 void boolexpr_Context_del(CONTEXT);

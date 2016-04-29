@@ -77,26 +77,24 @@ SOURCES += [
 
 # C Foreign Function Interface
 
-DEFINES = {
-    "STRING"   : "char const * const",
-    "CONTEXT"  : "void * const",
-    "BX"       : "void const * const",
-    "BXS"      : "void const * const * const",
-    "VARS"     : "void const * const * const",
-    "CONSTS"   : "void const * const * const",
-    "VEC"      : "void * const",
-    "VARSET"   : "void * const",
-    "POINT"    : "void * const",
-    "SOLN"     : "void * const",
-    "SAT_ITER" : "void * const",
-    "DFS_ITER" : "void * const",
-    "DOM_ITER" : "void * const",
-    "CF_ITER"  : "void * const",
-}
-
 HEADER = """
 
-enum Kind {{
+typedef char const * const STRING;
+typedef void * const CONTEXT;
+typedef void const * const BX;
+typedef void const * const * const BXS;
+typedef void const * const * const VARS;
+typedef void const * const * const CONSTS;
+typedef void * const VEC;
+typedef void * const VARSET;
+typedef void * const POINT;
+typedef void * const SOLN;
+typedef void * const SAT_ITER;
+typedef void * const DFS_ITER;
+typedef void * const DOM_ITER;
+typedef void * const CF_ITER;
+
+enum Kind {
     ZERO  = 0x00,   // 0 0000
     ONE   = 0x01,   // 0 0001
     LOG   = 0x04,   // 0 0100
@@ -115,118 +113,118 @@ enum Kind {{
     IMPL  = 0x19,   // 1 1001
     NITE  = 0x1A,   // 1 1010
     ITE   = 0x1B,   // 1 1011
-}};
+};
 
-{CONTEXT} boolexpr_Context_new(void);
-void boolexpr_Context_del({CONTEXT});
-{BX} boolexpr_Context_get_var({CONTEXT}, {STRING});
+CONTEXT boolexpr_Context_new(void);
+void boolexpr_Context_del(CONTEXT);
+BX boolexpr_Context_get_var(CONTEXT, STRING);
 
-void boolexpr_String_del({STRING});
+void boolexpr_String_del(STRING);
 
-void boolexpr_Vec_del({VEC});
-void boolexpr_Vec_iter({VEC});
-void boolexpr_Vec_next({VEC});
-{BX} const boolexpr_Vec_val({VEC});
+void boolexpr_Vec_del(VEC);
+void boolexpr_Vec_iter(VEC);
+void boolexpr_Vec_next(VEC);
+BX const boolexpr_Vec_val(VEC);
 
-void boolexpr_VarSet_del({VARSET});
-void boolexpr_VarSet_iter({VARSET});
-void boolexpr_VarSet_next({VARSET});
-{BX} const boolexpr_VarSet_val({VARSET});
+void boolexpr_VarSet_del(VARSET);
+void boolexpr_VarSet_iter(VARSET);
+void boolexpr_VarSet_next(VARSET);
+BX const boolexpr_VarSet_val(VARSET);
 
-void boolexpr_Point_del({POINT});
-void boolexpr_Point_iter({POINT});
-void boolexpr_Point_next({POINT});
-{BX} const boolexpr_Point_key({POINT});
-{BX} const boolexpr_Point_val({POINT});
+void boolexpr_Point_del(POINT);
+void boolexpr_Point_iter(POINT);
+void boolexpr_Point_next(POINT);
+BX const boolexpr_Point_key(POINT);
+BX const boolexpr_Point_val(POINT);
 
-void boolexpr_Soln_del({SOLN});
-_Bool boolexpr_Soln_first({SOLN});
-{POINT} boolexpr_Soln_second({SOLN});
+void boolexpr_Soln_del(SOLN);
+_Bool boolexpr_Soln_first(SOLN);
+POINT boolexpr_Soln_second(SOLN);
 
-{SAT_ITER} boolexpr_SatIter_new({BX});
-void boolexpr_SatIter_del({SAT_ITER});
-void boolexpr_SatIter_next({SAT_ITER});
-{POINT} boolexpr_SatIter_val({SAT_ITER});
+SAT_ITER boolexpr_SatIter_new(BX);
+void boolexpr_SatIter_del(SAT_ITER);
+void boolexpr_SatIter_next(SAT_ITER);
+POINT boolexpr_SatIter_val(SAT_ITER);
 
-{DFS_ITER} boolexpr_DfsIter_new({BX});
-void boolexpr_DfsIter_del({DFS_ITER});
-void boolexpr_DfsIter_next({DFS_ITER});
-{BX} boolexpr_DfsIter_val({DFS_ITER});
+DFS_ITER boolexpr_DfsIter_new(BX);
+void boolexpr_DfsIter_del(DFS_ITER);
+void boolexpr_DfsIter_next(DFS_ITER);
+BX boolexpr_DfsIter_val(DFS_ITER);
 
-{DOM_ITER} boolexpr_DomainIter_new({BX});
-void boolexpr_DomainIter_del({DOM_ITER});
-void boolexpr_DomainIter_next({DOM_ITER});
-{POINT} boolexpr_DomainIter_val({DOM_ITER});
+DOM_ITER boolexpr_DomainIter_new(BX);
+void boolexpr_DomainIter_del(DOM_ITER);
+void boolexpr_DomainIter_next(DOM_ITER);
+POINT boolexpr_DomainIter_val(DOM_ITER);
 
-{CF_ITER} boolexpr_CofactorIter_new({BX}, size_t, {VARS});
-void boolexpr_CofactorIter_del({CF_ITER});
-void boolexpr_CofactorIter_next({CF_ITER});
-{BX} boolexpr_CofactorIter_val({CF_ITER});
+CF_ITER boolexpr_CofactorIter_new(BX, size_t, VARS);
+void boolexpr_CofactorIter_del(CF_ITER);
+void boolexpr_CofactorIter_next(CF_ITER);
+BX boolexpr_CofactorIter_val(CF_ITER);
 
-{BX} boolexpr_zero(void);
-{BX} boolexpr_one(void);
-{BX} boolexpr_logical(void);
-{BX} boolexpr_illogical(void);
+BX boolexpr_zero(void);
+BX boolexpr_one(void);
+BX boolexpr_logical(void);
+BX boolexpr_illogical(void);
 
-{BX} boolexpr_not({BX});
-{BX} boolexpr_nor(size_t, {BXS});
-{BX} boolexpr_or(size_t, {BXS});
-{BX} boolexpr_nand(size_t, {BXS});
-{BX} boolexpr_and(size_t, {BXS});
-{BX} boolexpr_xnor(size_t, {BXS});
-{BX} boolexpr_xor(size_t, {BXS});
-{BX} boolexpr_neq(size_t, {BXS});
-{BX} boolexpr_eq(size_t, {BXS});
-{BX} boolexpr_impl({BX}, {BX});
-{BX} boolexpr_ite({BX}, {BX}, {BX});
+BX boolexpr_not(BX);
+BX boolexpr_nor(size_t, BXS);
+BX boolexpr_or(size_t, BXS);
+BX boolexpr_nand(size_t, BXS);
+BX boolexpr_and(size_t, BXS);
+BX boolexpr_xnor(size_t, BXS);
+BX boolexpr_xor(size_t, BXS);
+BX boolexpr_neq(size_t, BXS);
+BX boolexpr_eq(size_t, BXS);
+BX boolexpr_impl(BX, BX);
+BX boolexpr_ite(BX, BX, BX);
 
-{BX} boolexpr_onehot0(size_t, {BXS});
-{BX} boolexpr_onehot(size_t, {BXS});
+BX boolexpr_onehot0(size_t, BXS);
+BX boolexpr_onehot(size_t, BXS);
 
-{BX} boolexpr_nor_s(size_t, {BXS});
-{BX} boolexpr_or_s(size_t, {BXS});
-{BX} boolexpr_nand_s(size_t, {BXS});
-{BX} boolexpr_and_s(size_t, {BXS});
-{BX} boolexpr_xnor_s(size_t, {BXS});
-{BX} boolexpr_xor_s(size_t, {BXS});
-{BX} boolexpr_neq_s(size_t, {BXS});
-{BX} boolexpr_eq_s(size_t, {BXS});
-{BX} boolexpr_impl_s({BX}, {BX});
-{BX} boolexpr_ite_s({BX}, {BX}, {BX});
+BX boolexpr_nor_s(size_t, BXS);
+BX boolexpr_or_s(size_t, BXS);
+BX boolexpr_nand_s(size_t, BXS);
+BX boolexpr_and_s(size_t, BXS);
+BX boolexpr_xnor_s(size_t, BXS);
+BX boolexpr_xor_s(size_t, BXS);
+BX boolexpr_neq_s(size_t, BXS);
+BX boolexpr_eq_s(size_t, BXS);
+BX boolexpr_impl_s(BX, BX);
+BX boolexpr_ite_s(BX, BX, BX);
 
-void boolexpr_BoolExpr_del({BX});
-uint8_t boolexpr_BoolExpr_kind({BX});
-{STRING} boolexpr_BoolExpr_to_string({BX});
-uint32_t boolexpr_BoolExpr_depth({BX});
-uint32_t boolexpr_BoolExpr_size({BX});
-_Bool boolexpr_BoolExpr_is_cnf({BX});
-_Bool boolexpr_BoolExpr_is_dnf({BX});
-{BX} boolexpr_BoolExpr_simplify({BX});
-{BX} boolexpr_BoolExpr_to_binop({BX});
-{BX} boolexpr_BoolExpr_to_latop({BX});
-{BX} boolexpr_BoolExpr_to_posop({BX});
-{BX} boolexpr_BoolExpr_tseytin({BX}, {CONTEXT}, {STRING});
-{BX} boolexpr_BoolExpr_compose({BX}, size_t, {VARS}, {BXS});
-{BX} boolexpr_BoolExpr_restrict({BX}, size_t, {VARS}, {CONSTS});
-{BX} boolexpr_BoolExpr_sat({BX});
-{BX} boolexpr_BoolExpr_to_cnf({BX});
-{BX} boolexpr_BoolExpr_to_dnf({BX});
-{BX} boolexpr_BoolExpr_to_nnf({BX});
-_Bool boolexpr_BoolExpr_equiv({BX}, {BX});
-{VARSET} boolexpr_BoolExpr_support({BX});
+void boolexpr_BoolExpr_del(BX);
+uint8_t boolexpr_BoolExpr_kind(BX);
+STRING boolexpr_BoolExpr_to_string(BX);
+uint32_t boolexpr_BoolExpr_depth(BX);
+uint32_t boolexpr_BoolExpr_size(BX);
+_Bool boolexpr_BoolExpr_is_cnf(BX);
+_Bool boolexpr_BoolExpr_is_dnf(BX);
+BX boolexpr_BoolExpr_simplify(BX);
+BX boolexpr_BoolExpr_to_binop(BX);
+BX boolexpr_BoolExpr_to_latop(BX);
+BX boolexpr_BoolExpr_to_posop(BX);
+BX boolexpr_BoolExpr_tseytin(BX, CONTEXT, STRING);
+BX boolexpr_BoolExpr_compose(BX, size_t, VARS, BXS);
+BX boolexpr_BoolExpr_restrict(BX, size_t, VARS, CONSTS);
+BX boolexpr_BoolExpr_sat(BX);
+BX boolexpr_BoolExpr_to_cnf(BX);
+BX boolexpr_BoolExpr_to_dnf(BX);
+BX boolexpr_BoolExpr_to_nnf(BX);
+_Bool boolexpr_BoolExpr_equiv(BX, BX);
+VARSET boolexpr_BoolExpr_support(BX);
 
-{BX} boolexpr_BoolExpr_smoothing({BX}, size_t, {VARS});
-{BX} boolexpr_BoolExpr_consensus({BX}, size_t, {VARS});
-{BX} boolexpr_BoolExpr_derivative({BX}, size_t, {VARS});
+BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
+BX boolexpr_BoolExpr_consensus(BX, size_t, VARS);
+BX boolexpr_BoolExpr_derivative(BX, size_t, VARS);
 
-{CONTEXT} boolexpr_Literal_ctx({BX});
-uint32_t boolexpr_Literal_id({BX});
+CONTEXT boolexpr_Literal_ctx(BX);
+uint32_t boolexpr_Literal_id(BX);
 
-_Bool boolexpr_Operator_simple({BX});
-{VEC} boolexpr_Operator_args({BX});
-_Bool boolexpr_Operator_is_clause({BX});
+_Bool boolexpr_Operator_simple(BX);
+VEC boolexpr_Operator_args(BX);
+_Bool boolexpr_Operator_is_clause(BX);
 
-""".format(**DEFINES)
+"""
 
 ffi = cffi.FFI()
 
