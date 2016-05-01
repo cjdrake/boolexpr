@@ -140,6 +140,16 @@ space_iter::operator++()
 }
 
 
+bool
+space_iter::parity() const
+{
+    auto val = false;
+    for (size_t i = 0; i < n; ++i)
+        val ^= counter[i];
+    return val;
+}
+
+
 points_iter::points_iter()
     : it {space_iter()}
 {}

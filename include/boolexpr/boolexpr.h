@@ -699,6 +699,7 @@ public:
     bool operator!=(space_iter const &) const;
     vector<bool> const & operator*() const;
     space_iter const & operator++();
+    bool parity() const;
 };
 
 

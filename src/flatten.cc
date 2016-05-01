@@ -239,37 +239,16 @@ Xnor::to_cnf() const
 bx_t
 Xor::to_cnf() const
 {
-    vector<vector<bx_t>> stack { vector<bx_t> {args[0]} };
-
-    for (auto it1 = args.cbegin() + 1; it1 != args.cend(); ++it1) {
-        vector<vector<bx_t>> temp;
-
-        while (stack.size() > 0) {
-            auto lits = stack.back();
-
-            vector<bx_t> fst {~lits[0]};
-            vector<bx_t> snd {lits[0]};
-            for (auto it2 = lits.cbegin() + 1; it2 != lits.cend(); ++it2) {
-                fst.push_back(*it2);
-                snd.push_back(*it2);
-            }
-            fst.push_back(~*it1);
-            snd.push_back(*it1);
-
-            temp.push_back(std::move(fst));
-            temp.push_back(std::move(snd));
-
-            stack.pop_back();
-        }
-
-        stack = std::move(temp);
-    }
+    size_t n = args.size();
 
     vector<bx_t> clauses;
-    while (stack.size() > 0) {
-        auto lits = stack.back();
-        stack.pop_back();
-        clauses.push_back(or_(std::move(lits)));
+    for (auto it = space_iter(n); it != space_iter(); ++it) {
+        if (!it.parity()) {
+            vector<bx_t> clause;
+            for (size_t i = 0; i < n; ++i)
+                clause.push_back((*it)[i] ? ~args[i] : args[i]);
+            clauses.push_back(or_(std::move(clause)));
+        }
     }
 
     return and_(std::move(clauses))->to_cnf();
@@ -426,37 +405,16 @@ Xnor::to_dnf() const
 bx_t
 Xor::to_dnf() const
 {
-    vector<vector<bx_t>> stack { vector<bx_t> {args[0]} };
-
-    for (auto it1 = args.cbegin() + 1; it1 != args.cend(); ++it1) {
-        vector<vector<bx_t>> temp;
-
-        while (stack.size() > 0) {
-            auto lits = stack.back();
-
-            vector<bx_t> fst {~lits[0]};
-            vector<bx_t> snd {lits[0]};
-            for (auto it2 = lits.cbegin() + 1; it2 != lits.cend(); ++it2) {
-                fst.push_back(*it2);
-                snd.push_back(*it2);
-            }
-            fst.push_back(*it1);
-            snd.push_back(~*it1);
-
-            temp.push_back(std::move(fst));
-            temp.push_back(std::move(snd));
-
-            stack.pop_back();
-        }
-
-        stack = std::move(temp);
-    }
+    size_t n = args.size();
 
     vector<bx_t> clauses;
-    while (stack.size() > 0) {
-        auto lits = stack.back();
-        stack.pop_back();
-        clauses.push_back(and_(std::move(lits)));
+    for (auto it = space_iter(n); it != space_iter(); ++it) {
+        if (it.parity()) {
+            vector<bx_t> clause;
+            for (size_t i = 0; i < n; ++i)
+                clause.push_back((*it)[i] ? args[i] : ~args[i]);
+            clauses.push_back(and_(std::move(clause)));
+        }
     }
 
     return or_(std::move(clauses))->to_dnf();

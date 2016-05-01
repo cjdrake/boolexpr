@@ -52,15 +52,150 @@ TEST_F(FlattenTest, Atoms)
 
 TEST_F(FlattenTest, Xor)
 {
-    auto y0 = xor_s({xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]});
+    for (size_t i = 0; i < 8; ++i) {
+        vector<bx_t> args;
+        for (size_t j = 0; j < i; ++j)
+            args.push_back(xs[j]);
 
-    auto y1 = y0->to_cnf();
-    auto y2 = std::static_pointer_cast<const Operator>(y1);
-    EXPECT_TRUE(y2->is_cnf() && y2->args.size() == 128 && y0->equiv(y2));
+        auto y0 = xor_s(args);
+        auto y1 = xnor_s(args);
 
-    auto y3 = y0->to_dnf();
-    auto y4 = std::static_pointer_cast<const Operator>(y3);
-    EXPECT_TRUE(y4->is_dnf() && y4->args.size() == 128 && y0->equiv(y4));
+        auto y0_cnf = y0->to_cnf();
+        auto y0_dnf = y0->to_dnf();
+
+        auto y1_cnf = y1->to_cnf();
+        auto y1_dnf = y1->to_dnf();
+
+        EXPECT_TRUE(y0->equiv(y0_cnf));
+        EXPECT_TRUE(y0->equiv(y0_dnf));
+
+        EXPECT_TRUE(y1->equiv(y1_cnf));
+        EXPECT_TRUE(y1->equiv(y1_dnf));
+
+        if (i == 0) {
+            EXPECT_EQ(y0_cnf, _zero);
+            EXPECT_EQ(y0_dnf, _zero);
+            EXPECT_EQ(y1_cnf, _one);
+            EXPECT_EQ(y1_dnf, _one);
+        }
+
+        if (i == 1) {
+            EXPECT_EQ(y0_cnf, xs[0]);
+            EXPECT_EQ(y0_dnf, xs[0]);
+            EXPECT_EQ(y1_cnf, ~xs[0]);
+            EXPECT_EQ(y1_dnf, ~xs[0]);
+        }
+
+        if (i >= 2) {
+            EXPECT_TRUE(y0_cnf->is_cnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_cnf)->args.size(), (1<<(i-1)));
+
+            EXPECT_TRUE(y0_dnf->is_dnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_dnf)->args.size(), (1<<(i-1)));
+
+            EXPECT_TRUE(y1_cnf->is_cnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_cnf)->args.size(), (1<<(i-1)));
+
+            EXPECT_TRUE(y1_dnf->is_dnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_dnf)->args.size(), (1<<(i-1)));
+        }
+    }
+}
+
+
+TEST_F(FlattenTest, Equal)
+{
+    for (size_t i = 0; i < 8; ++i) {
+        vector<bx_t> args;
+        for (size_t j = 0; j < i; ++j)
+            args.push_back(xs[j]);
+
+        auto y0 = eq_s(args);
+        auto y1 = neq_s(args);
+
+        auto y0_cnf = y0->to_cnf();
+        auto y0_dnf = y0->to_dnf();
+
+        auto y1_cnf = y1->to_cnf();
+        auto y1_dnf = y1->to_dnf();
+
+        EXPECT_TRUE(y0->equiv(y0_cnf));
+        EXPECT_TRUE(y0->equiv(y0_dnf));
+
+        EXPECT_TRUE(y1->equiv(y1_cnf));
+        EXPECT_TRUE(y1->equiv(y1_dnf));
+
+        if (i <= 1) {
+            EXPECT_EQ(y0_cnf, _one);
+            EXPECT_EQ(y0_dnf, _one);
+            EXPECT_EQ(y1_cnf, _zero);
+            EXPECT_EQ(y1_dnf, _zero);
+        }
+
+        if (i >= 2) {
+            EXPECT_TRUE(y0_cnf->is_cnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_cnf)->args.size(), i*(i-1));
+
+            EXPECT_TRUE(y0_dnf->is_dnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_dnf)->args.size(), 2);
+
+            EXPECT_TRUE(y1_cnf->is_cnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_cnf)->args.size(), 2);
+
+            EXPECT_TRUE(y1_dnf->is_dnf());
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_dnf)->args.size(), i*(i-1));
+        }
+    }
+}
+
+
+TEST_F(FlattenTest, Implies)
+{
+    auto y0 = impl(xs[0], xs[1]);
+    auto y1 = nimpl(xs[0], xs[1]);
+
+    auto y0_cnf = y0->to_cnf();
+    auto y0_dnf = y0->to_dnf();
+
+    auto y1_cnf = y1->to_cnf();
+    auto y1_dnf = y1->to_dnf();
+
+    EXPECT_TRUE(y0->equiv(y0_cnf));
+    EXPECT_TRUE(y0->equiv(y0_dnf));
+
+    EXPECT_TRUE(y0_cnf->is_cnf());
+    EXPECT_TRUE(y0_dnf->is_dnf());
+
+    EXPECT_TRUE(y1->equiv(y1_cnf));
+    EXPECT_TRUE(y1->equiv(y1_dnf));
+
+    EXPECT_TRUE(y1_cnf->is_cnf());
+    EXPECT_TRUE(y1_dnf->is_dnf());
+}
+
+
+TEST_F(FlattenTest, IfThenElse)
+{
+    auto y0 = ite(xs[0], xs[1], xs[2]);
+    auto y1 = nite(xs[0], xs[1], xs[2]);
+
+    auto y0_cnf = y0->to_cnf();
+    auto y0_dnf = y0->to_dnf();
+
+    auto y1_cnf = y1->to_cnf();
+    auto y1_dnf = y1->to_dnf();
+
+    EXPECT_TRUE(y0->equiv(y0_cnf));
+    EXPECT_TRUE(y0->equiv(y0_dnf));
+
+    EXPECT_TRUE(y0_cnf->is_cnf());
+    EXPECT_TRUE(y0_dnf->is_dnf());
+
+    EXPECT_TRUE(y1->equiv(y1_cnf));
+    EXPECT_TRUE(y1->equiv(y1_dnf));
+
+    EXPECT_TRUE(y1_cnf->is_cnf());
+    EXPECT_TRUE(y1_dnf->is_dnf());
 }
 
 
@@ -87,6 +222,7 @@ TEST_F(FlattenTest, All)
                  or_({
                      xs[3], xs[0] | xs[2], xs[1] & xs[0], xs[3] ^ xs[2],
                  }),
+                 nor({xs[3], xs[5]}),
                  nand({
                      xs[1], xs[2] | xs[3], xs[0] & xs[2], xs[1] ^ xs[3],
                  }),
