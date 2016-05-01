@@ -6,6 +6,17 @@
   Release Notes
 *****************
 
+Release 1.2
+===========
+
+Improved the performance of flattening.
+In particular,
+now you can flatten XOR with ten arguments within reasonable time.
+
+Also, brought the ``nimpl``, and ``nite`` functions to the Python level.
+I still like the way ``~impl`` and ``~ite`` look,
+but these functions can be useful.
+
 Release 1.1
 ===========
 
@@ -22,7 +33,7 @@ and add documentation for anything and everything.
 
 The only new feature was to add the
 :meth:`boolexpr.BoolExpr.to_ast` and
-:meth:`boolexpr.BoolExpr.from-ast` methods to the
+:meth:`boolexpr.BoolExpr.from_ast` methods to the
 :class:`boolexpr.BoolExpr` class.
 
 Release 0.4

@@ -75,7 +75,7 @@ __all__ = [
     "exists", "forall",
 ]
 
-__version__ = "1.1"
+__version__ = "1.2"
 
 
 class Context:
