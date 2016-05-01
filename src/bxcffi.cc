@@ -100,7 +100,9 @@ struct SolnProxy
 {
     soln_t soln;
 
-    SolnProxy(soln_t const && soln): soln {soln} {}
+    SolnProxy(soln_t const && soln)
+        : soln {soln}
+    {}
 };
 
 
@@ -108,7 +110,9 @@ struct SatIterProxy
 {
     sat_iter it;
 
-    SatIterProxy(bx_t const & bx): it {sat_iter(bx)} {}
+    SatIterProxy(bx_t const & bx)
+        : it {sat_iter(bx)}
+    {}
 
     void next() { ++it; }
 
@@ -123,7 +127,9 @@ struct DfsIterProxy
 {
     dfs_iter it;
 
-    DfsIterProxy(bx_t const & bx): it {dfs_iter(bx)} {}
+    DfsIterProxy(bx_t const & bx)
+        : it {dfs_iter(bx)}
+    {}
 
     void next() { ++it; }
 
@@ -138,7 +144,9 @@ struct DomainIterProxy
 {
     domain_iter it;
 
-    DomainIterProxy(bx_t const & bx): it {domain_iter(bx)} {}
+    DomainIterProxy(bx_t const & bx)
+        : it {domain_iter(bx)}
+    {}
 
     void next() { ++it; }
 
@@ -153,7 +161,9 @@ struct CofactorIterProxy
 {
     cf_iter it;
 
-    CofactorIterProxy(bx_t const & bx, vector<var_t> const & vars): it {cf_iter(bx, vars)} {}
+    CofactorIterProxy(bx_t const & bx, vector<var_t> const & vars)
+        : it {cf_iter(bx, vars)}
+    {}
 
     void next() { ++it; }
 
@@ -427,11 +437,11 @@ CF_ITER
 boolexpr_CofactorIter_new(BX c_bxp, size_t n, VARS c_varps)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
-    vector<var_t> vars;
+    vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
-        vars.push_back(var);
+        vars[i] = var;
     }
     return new CofactorIterProxy(bxp->bx, vars);
 }
@@ -793,11 +803,11 @@ BX
 boolexpr_BoolExpr_smoothing(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    vector<var_t> vars;
+    vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
-        vars.push_back(var);
+        vars[i] = var;
     }
     return new BoolExprProxy(self->bx->smoothing(vars));
 }
@@ -807,11 +817,11 @@ BX
 boolexpr_BoolExpr_consensus(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    vector<var_t> vars;
+    vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
-        vars.push_back(var);
+        vars[i] = var;
     }
     return new BoolExprProxy(self->bx->consensus(vars));
 }
@@ -821,11 +831,11 @@ BX
 boolexpr_BoolExpr_derivative(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const *>(c_self);
-    vector<var_t> vars;
+    vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
         auto var = std::static_pointer_cast<Variable const>(varp->bx);
-        vars.push_back(var);
+        vars[i] = var;
     }
     return new BoolExprProxy(self->bx->derivative(vars));
 }

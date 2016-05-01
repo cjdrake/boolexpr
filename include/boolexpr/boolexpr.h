@@ -62,6 +62,7 @@ using std::vector;
 
 
 // Forward declarations
+class Context;
 class BoolExpr;
 class Constant;
 class Zero;
@@ -72,7 +73,6 @@ class Literal;
 class Variable;
 class Operator;
 class LatticeOperator;
-class Context;
 
 
 using id_t = uint32_t;
