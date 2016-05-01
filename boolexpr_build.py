@@ -175,7 +175,7 @@ BX boolexpr_xnor(size_t, BXS);
 BX boolexpr_xor(size_t, BXS);
 BX boolexpr_neq(size_t, BXS);
 BX boolexpr_eq(size_t, BXS);
-BX boolexpr_nimpl(size_t, BXS);
+BX boolexpr_nimpl(BX, BX);
 BX boolexpr_impl(BX, BX);
 BX boolexpr_nite(BX, BX, BX);
 BX boolexpr_ite(BX, BX, BX);
