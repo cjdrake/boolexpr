@@ -2,30 +2,35 @@
 
 CMAKE := cmake
 COVERAGE := coverage
+DOXYGEN := doxygen
 GENHTML := genhtml
+GSUTIL := gsutil
 LCOV := lcov
 
 CXXFLAGS := --std=c++11
 
-GSUTIL := gsutil
 GCS_BUCKET := gs://www.boolexpr.org
 HTML_DIR := build/sphinx/html
 
 .PHONY: help
 help:
+	@echo
 	@echo "Usage: make [options] [target] ..."
 	@echo
 	@echo "Valid targets:"
-	@echo ""
+	@echo
 	@echo "    help            Display this help message"
 	@echo
+	@echo "    test            Run C++ unit tests"
 	@echo "    cover           Collect C++ coverage"
+	@echo
+	@echo "    pytest          Run Python unit tests"
+	@echo "    pylint          Run Python lint"
+	@echo "    pycov           Collect Python coverage"
+	@echo
 	@echo "    html            Build Sphinx HTML documentation"
 	@echo "    html-upload     Upload HTML to Google Cloud Storage"
-	@echo "    pycov           Collect C++ coverage"
-	@echo "    pylint          Run Python lint"
-	@echo "    pytest          Run Python unit tests"
-	@echo "    test            Run C++ unit tests"
+	@echo
 
 .PHONY: test
 test: build/test/a.out
@@ -51,6 +56,7 @@ cover: do_genhtml
 
 .PHONY: html
 html:
+	@$(DOXYGEN)
 	@./setup.py build_ext -i
 	@./setup.py build_sphinx
 

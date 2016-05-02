@@ -54,6 +54,7 @@
 #define IS_POS(expr)     ((expr)->kind & 1)       // * ***1
 
 
+/// Top-level namespace
 namespace boolexpr {
 
 
@@ -754,9 +755,15 @@ public:
 };
 
 
+/// Return Boolean zero.
 zero_t zero();
+
+/// Return Boolean one.
 one_t one();
+
+/// Return Boolean "logical".
 log_t logical();
+
 ill_t illogical();
 
 bx_t nor(vector<bx_t> const &);
