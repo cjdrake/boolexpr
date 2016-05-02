@@ -244,9 +244,9 @@ Xor::to_cnf() const
     vector<bx_t> clauses;
     for (auto it = space_iter(n); it != space_iter(); ++it) {
         if (!it.parity()) {
-            vector<bx_t> clause;
+            vector<bx_t> clause(n);
             for (size_t i = 0; i < n; ++i)
-                clause.push_back((*it)[i] ? ~args[i] : args[i]);
+                clause[i] = (*it)[i] ? ~args[i] : args[i];
             clauses.push_back(or_(std::move(clause)));
         }
     }
@@ -410,9 +410,9 @@ Xor::to_dnf() const
     vector<bx_t> clauses;
     for (auto it = space_iter(n); it != space_iter(); ++it) {
         if (it.parity()) {
-            vector<bx_t> clause;
+            vector<bx_t> clause(n);
             for (size_t i = 0; i < n; ++i)
-                clause.push_back((*it)[i] ? args[i] : ~args[i]);
+                clause[i] = (*it)[i] ? args[i] : ~args[i];
             clauses.push_back(and_(std::move(clause)));
         }
     }
