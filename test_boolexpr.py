@@ -19,7 +19,11 @@ from boolexpr import *
 
 
 ctx = Context()
+
 xs = [ctx.get_var("x_" + str(i)) for i in range(64)]
+
+X = ctx.get_vars("x", 4, 4, 4)
+Y = ctx.get_vars("y", 4, 4, 4)
 
 
 class BoolExprTest(unittest.TestCase):
@@ -290,6 +294,44 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(f.support(), g.support())
         # solution point
         self.assertEqual((xs[0] & xs[1]).sat(), (xs[1] & xs[0]).sat())
+
+
+ZEROS_STR = """\
+array([[[0, 0],
+        [0, 0]],
+
+       [[0, 0],
+        [0, 0]]])"""
+
+ONES_STR = """\
+array([[[1, 1],
+        [1, 1]],
+
+       [[1, 1],
+        [1, 1]]])"""
+
+
+class ArrayTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_consts(self):
+        zs = zeros(2, 2, 2)
+        self.assertEqual(str(zs), ZEROS_STR)
+
+        os = ones(2, 2, 2)
+        self.assertEqual(str(os), ONES_STR)
+
+        self.assertEqual(str(uint2exprs(42, 8)),
+                         "array([0, 1, 0, 1, 0, 1, 0, 0])")
+        self.assertEqual(str(int2exprs(42, 8)),
+                         "array([0, 1, 0, 1, 0, 1, 0, 0])")
+        self.assertEqual(str(int2exprs(-42, 8)),
+                         "array([0, 1, 1, 0, 1, 0, 1, 1])")
 
 
 if __name__ == "__main__":

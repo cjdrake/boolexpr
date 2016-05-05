@@ -127,6 +127,14 @@ from .wrap import onehot
 
 from .wrap import Array
 
+from .wrap import zeros
+from .wrap import ones
+from .wrap import logicals
+from .wrap import illogicals
+from .wrap import uint2exprs
+from .wrap import int2exprs
+from .wrap import array
+
 from .misc import majority
 from .misc import achilles_heel
 from .misc import mux

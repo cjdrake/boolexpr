@@ -18,13 +18,17 @@ CFFI _boolexpr module wrapper
 """
 
 
+import collections
 import enum
+import itertools
 import operator
+from functools import reduce
 
 # pylint: disable=no-name-in-module
 from ._boolexpr import ffi
 from ._boolexpr import lib
 # pylint: enable=no-name-in-module
+from .util import clog2
 
 
 class Context:
@@ -46,6 +50,27 @@ class Context:
         """Return a Variable with a given name."""
         cdata = lib.boolexpr_Context_get_var(self._cdata, name.encode("ascii"))
         return _bx(cdata)
+
+    def get_vars(self, name, *dims):
+        """Return a multi-dimensional array of variables.
+
+        The *name* argument is a ``str``.
+
+        The variadic *dims* input is a sequence of dimension specs.
+        A dimension spec is a two-tuple: (start index, stop index).
+        If a dimension is given as a single ``int``,
+        it will be converted to ``(0, stop)``.
+
+        The dimension starts at index ``start``,
+        and increments by one up to, but not including, ``stop``.
+        This follows the Python slice convention.
+        """
+        shape = _dims2shape(*dims)
+        objs = list()
+        for indices in itertools.product(*[range(i, j) for i, j in shape]):
+            suffix = "[" + ",".join(str(idx) for idx in indices) + "]"
+            objs.append(self.get_var(name + suffix))
+        return array(objs, shape)
 
 
 class BoolExpr:
@@ -856,6 +881,24 @@ _AST = {
 # pylint: enable=bad-builtin
 
 
+def _expect_array(obj):
+    """Return an ndarray, or raise TypeError."""
+    if obj == 0:
+        return array([ZERO])
+    elif obj == 1:
+        return array([ONE])
+    elif obj == "x" or obj == "X":
+        return array([LOGICAL])
+    elif obj == "?":
+        return array([ILLOGICAL])
+    elif isinstance(obj, BoolExpr):
+        return array([obj])
+    elif isinstance(obj, ndarray):
+        return obj
+    else:
+        raise TypeError("Expected obj to be an ndarray")
+
+
 def _expect_bx(obj):
     """Return a BoolExpr, or raise TypeError."""
     if obj == 0:
@@ -1123,3 +1166,597 @@ class Array:
         finally:
             lib.boolexpr_ArrayPair_del(cdata)
         return Array(fst), Array(snd)
+
+
+def zeros(*dims):
+    """Return a multi-dimensional array of zeros.
+
+    The variadic *dims* input is a sequence of dimension specs.
+    A dimension spec is a two-tuple: (start index, stop index).
+    If a dimension is given as a single ``int``,
+    it will be converted to ``(0, stop)``.
+
+    The dimension starts at index ``start``,
+    and increments by one up to, but not including, ``stop``.
+    This follows the Python slice convention.
+
+    For example, to create a 4x4 array of zeros::
+
+       >>> zeros(2, 4)
+       array([[0, 0, 0, 0],
+              [0, 0, 0, 0]])
+    """
+    shape = _dims2shape(*dims)
+    objs = [ZERO for _ in range(_volume(shape))]
+    return array(objs, shape)
+
+
+def ones(*dims):
+    """Return a multi-dimensional array of ones.
+
+    The variadic *dims* input is a sequence of dimension specs.
+    A dimension spec is a two-tuple: (start index, stop index).
+    If a dimension is given as a single ``int``,
+    it will be converted to ``(0, stop)``.
+
+    The dimension starts at index ``start``,
+    and increments by one up to, but not including, ``stop``.
+    This follows the Python slice convention.
+
+    For example, to create a 4x4 array of ones::
+
+       >>> ones(2, 4)
+       array([[1, 1, 1, 1],
+              [1, 1, 1, 1]])
+    """
+    shape = _dims2shape(*dims)
+    objs = [ONE for _ in range(_volume(shape))]
+    return array(objs, shape)
+
+
+def logicals(*dims):
+    """Return a multi-dimensional array of X's.
+
+    The variadic *dims* input is a sequence of dimension specs.
+    A dimension spec is a two-tuple: (start index, stop index).
+    If a dimension is given as a single ``int``,
+    it will be converted to ``(0, stop)``.
+
+    The dimension starts at index ``start``,
+    and increments by one up to, but not including, ``stop``.
+    This follows the Python slice convention.
+
+    For example, to create a 4x4 array of X's::
+
+       >>> logicals(4, 4)
+       array([[1, 1, 1, 1],
+              [1, 1, 1, 1]])
+    """
+    shape = _dims2shape(*dims)
+    objs = [LOGICAL for _ in range(_volume(shape))]
+    return array(objs, shape)
+
+
+def illogicals(*dims):
+    """Return a multi-dimensional array of X's.
+
+    The variadic *dims* input is a sequence of dimension specs.
+    A dimension spec is a two-tuple: (start index, stop index).
+    If a dimension is given as a single ``int``,
+    it will be converted to ``(0, stop)``.
+
+    The dimension starts at index ``start``,
+    and increments by one up to, but not including, ``stop``.
+    This follows the Python slice convention.
+
+    For example, to create a 4x4 array of X's::
+
+       >>> illogicals(4, 4)
+       array([[1, 1, 1, 1],
+              [1, 1, 1, 1]])
+    """
+    shape = _dims2shape(*dims)
+    objs = [ILLOGICAL for _ in range(_volume(shape))]
+    return array(objs, shape)
+
+
+def uint2exprs(num, length=None):
+    """Convert unsigned *num* to an array of expressions.
+
+    The *num* argument is a non-negative integer.
+
+    If no *length* parameter is given,
+    the return value will have the minimal required length.
+    Otherwise, the return value will be zero-extended to match *length*.
+
+    For example, to convert the byte 42 (binary ``0b00101010``)::
+
+       >>> uint2exprs(42, 8)
+       array([0, 1, 0, 1, 0, 1, 0, 0])
+    """
+    if num < 0:
+        raise ValueError("expected num >= 0")
+    else:
+        objs = _uint2objs(num, length)
+        return array(objs)
+
+
+def int2exprs(num, length=None):
+    """Convert *num* to an array of expressions.
+
+    The *num* argument is an ``int``.
+    Negative numbers will be converted using twos-complement notation.
+
+    If no *length* parameter is given,
+    the return value will have the minimal required length.
+    Otherwise, the return value will be sign-extended to match *length*.
+
+    For example, to convert the bytes 42 (binary ``0b00101010``),
+    and -42 (binary ``0b11010110``)::
+
+       >>> int2exprs(42, 8)
+       array([0, 1, 0, 1, 0, 1, 0, 0])
+       >>> int2exprs(-42, 8)
+       array([0, 1, 1, 0, 1, 0, 1, 1])
+    """
+    if num < 0:
+        req_length = clog2(abs(num)) + 1
+        objs = _uint2objs(2**req_length + num)
+    else:
+        req_length = clog2(num + 1) + 1
+        objs = _uint2objs(num, req_length)
+    if length:
+        if length < req_length:
+            fstr = "overflow: num = {} requires length >= {}, got length = {}"
+            raise ValueError(fstr.format(num, req_length, length))
+        else:
+            sign = objs[-1]
+            objs += [sign] * (length - req_length)
+    return array(objs)
+
+
+def array(objs, shape=None):
+    """Return an N-dimensional array of Boolean expressions.
+
+    The *objs* argument is a nested sequence of homogeneous Boolean expressions.
+    That is, both [a, b, c, d] and [[a, b], [c, d]] are valid inputs.
+
+    The optional *shape* parameter is a tuple of dimension specs,
+    which are ``(int, int)`` tuples.
+    It must match the volume of *objs*.
+    The shape can always be automatically determined from *objs*,
+    but you can supply it to automatically reshape a flat input.
+    """
+    items, autoshape = _itemize(objs)
+    if shape is None:
+        shape = autoshape
+    else:
+        _check_shape(shape)
+        if _volume(shape) != len(items):
+            raise ValueError("expected shape volume to match items")
+    num, c_items = _convert_args(items)
+    bxa = Array(lib.boolexpr_Array_new(num, c_items))
+    return ndarray(bxa, shape)
+
+
+class ndarray:
+    """
+    N-dimensional array of Boolean expressions
+    """
+    def __init__(self, bxa, shape):
+        self._bxa = bxa
+        self._shape = shape
+        self._nshape = tuple(stop - start for start, stop in shape)
+
+    @property
+    def bxa(self):
+        """Return the Array object."""
+        return self._bxa
+
+    @property
+    def shape(self):
+        """Return the Array shape."""
+        return self._shape
+
+    @property
+    def ndim(self):
+        """Return the number of dimensions."""
+        return len(self._shape)
+
+    def __str__(self):
+        pre, post = "array(", ")"
+        indent = " " * len(pre) + " "
+        return pre + self._str(indent) + post
+
+    def _str(self, indent=""):
+        """Helper function for __str__"""
+        if self.ndim <= 1:
+            return "[" + ", ".join(str(x) for x in self) + "]"
+        elif self.ndim == 2:
+            sep = ",\n" + indent
+            # pylint: disable=protected-access
+            return "[" + sep.join(x._str(indent + " ") for x in self) + "]"
+        else:
+            sep = ",\n\n" + indent
+            # pylint: disable=protected-access
+            return "[" + sep.join(x._str(indent + " ") for x in self) + "]"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __iter__(self):
+        for i in range(self._shape[0][0], self._shape[0][1]):
+            yield self[i]
+
+    def __len__(self):
+        return self._shape[0][1] - self._shape[0][0]
+
+    def __getitem__(self, key):
+        parts = self._key2parts(key)
+
+        ranges = list()
+        shape = list()
+        vols = list()
+        for i, part in enumerate(parts):
+            if isinstance(part, int):
+                ranges.append(range(part, part+1))
+            elif isinstance(part, slice):
+                start, stop, _ = part.indices(self._nshape[i])
+                ranges.append(range(start, stop))
+                shape.append((self._shape[i][0] + start,
+                              self._shape[i][0] + stop))
+            else:
+                assert False
+            vols.append(reduce(operator.mul, self._nshape[i+1:], 1))
+
+        items = list()
+        for coord in itertools.product(*ranges):
+            index = sum(vols[i] * coord[i] for i in range(self.ndim))
+            items.append(self._bxa[index])
+
+        if shape:
+            return array(items, tuple(shape))
+        else:
+            return items[0]
+
+    # Operators
+    def __invert__(self):
+        """Bit-wise NOT operator"""
+        return self.__class__(~self._bxa, self._shape)
+
+    def __or__(self, other):
+        """Bit-wise OR operator"""
+        shape = self._shape if self._shape == other.shape else None
+        return self.__class__(self._bxa | other.bxa, shape)
+
+    def __and__(self, other):
+        """Bit-wise AND operator"""
+        shape = self._shape if self._shape == other.shape else None
+        return self.__class__(self._bxa & other.bxa, shape)
+
+    def __xor__(self, other):
+        """Bit-wise XOR operator"""
+        shape = self._shape if self._shape == other.shape else None
+        return self.__class__(self._bxa ^ other.bxa, shape)
+
+    def __lshift__(self, num):
+        """Left shift operator
+
+        .. seealso:: :meth:`lsh`
+        """
+        return self.lsh(zeros(num))[0]
+
+    def __rshift__(self, num):
+        """Right shift operator
+
+        .. seealso:: :meth:`rsh`
+        """
+        return self.rsh(zeros(num))[1]
+
+    def __add__(self, other):
+        """Concatenation operator
+
+        The *other* argument may be a BoolExpr or ndarray.
+        """
+        other = _expect_array(other)
+        bxa = self.bxa + other.bxa
+
+        shape = ((0, len(bxa)), )
+        if (self.ndim == other.ndim > 1
+                and self._shape[1:] == other.shape[1:]):
+            # (0,x), ... + (0,y), ... = (0,x+y), ...
+            if self._shape[0][0] == other.shape[0][0] == 0:
+                shape0 = ((0, self._shape[0][1] + other.shape[0][1]), )
+                shape = shape0 + self._shape[1:]
+
+        return self.__class__(bxa, shape)
+
+    def __radd__(self, other):
+        return _expect_array(other) + self
+
+    def __mul__(self, num):
+        """Repetition operator"""
+        if num < 0:
+            raise ValueError("expected multiplier to be non-negative")
+
+        bxa = self.bxa * num
+
+        shape = ((0, len(bxa)), )
+        if self.ndim > 1:
+            # (0,x), ... * N = (0,N*x), ...
+            if self._shape[0][0] == 0:
+                shape0 = ((0, self._shape[0][1] * num), )
+                shape = shape0 + self._shape[1:]
+
+        return self.__class__(bxa, shape)
+
+    def __rmul__(self, num):
+        return self.__mul__(num)
+
+    def size(self):
+        """Return the size of the array.
+
+        The *size* of a multi-dimensional array is the product of the sizes
+        of its dimensions.
+        """
+        return len(self._bxa)
+
+    def compose(self, var2bx):
+        """Apply the ``compose`` method to all functions.
+
+        Returns a new array.
+        """
+        return self.__class__(self._bxa.compose(var2bx), self._shape)
+
+    def restrict(self, point):
+        """Apply the ``restrict`` method to all expressions.
+
+        Returns a new array.
+        """
+        return self.__class__(self._bxa.restrict(point), self._shape)
+
+    def reshape(self, *dims):
+        """Return an equivalent array with a modified shape."""
+        shape = _dims2shape(*dims)
+        if _volume(shape) != self.size():
+            raise ValueError("expected shape with equal volume")
+        return self.__class__(self._bxa, shape)
+
+    @property
+    def flat(self):
+        """Return a 1D iterator over the array."""
+        return iter(self._bxa)
+
+    def zext(self, num):
+        """Zero-extend this array by *num* bits.
+
+        Returns a new array.
+        """
+        shape = ((0, self.size()+num), )
+        return self.__class__(self._bxa.zext(num), shape)
+
+    def sext(self, num):
+        """Sign-extend this array by *num* bits.
+
+        Returns a new array.
+        """
+        shape = ((0, self.size()+num), )
+        return self.__class__(self._bxa.sext(num), shape)
+
+    # Reduction operators
+    def or_reduce(self):
+        """OR reduction operator"""
+        return self._bxa.or_reduce()
+
+    def and_reduce(self):
+        """AND reduction operator"""
+        return self._bxa.and_reduce()
+
+    def xor_reduce(self):
+        """XOR reduction operator"""
+        return self._bxa.xor_reduce()
+
+    # Shift operators
+    def lsh(self, shin):
+        """Left shift the *shin* array into this array.
+
+        Returns a two-tuple (array, array)
+        """
+        shin = _expect_array(shin)
+        if not 0 <= shin.size() <= self.size():
+            fstr = "expected 0 <= shin.size() <= {}"
+            raise ValueError(fstr.format(self.size()))
+        left, right = self._bxa.lsh(shin.bxa)
+        return (self.__class__(left, ((0, len(left)), )),
+                self.__class__(right, ((0, len(right)), )))
+
+    def rsh(self, shin):
+        """Right shift the *shin* array into this array.
+
+        Returns a two-tuple (array, array)
+        """
+        shin = _expect_array(shin)
+        if not 0 <= shin.size() <= self.size():
+            fstr = "expected 0 <= shin.size() <= {}"
+            raise ValueError(fstr.format(self.size()))
+        left, right = self._bxa.rsh(shin.bxa)
+        return (self.__class__(left, ((0, len(left)), )),
+                self.__class__(right, ((0, len(right)), )))
+
+    def arsh(self, num):
+        """Arithmetically right shift the array by *num* places.
+
+        The *num* argument must be a non-negative ``int``.
+
+        The shift-in will be the value of the most significant bit.
+
+        Returns a two-tuple (array, array)
+        """
+        if not 0 <= num <= self.size():
+            raise ValueError("expected 0 <= num <= {}".format(self.size()))
+        left, right = self._bxa.arsh(num)
+        return (self.__class__(left, ((0, len(left)), )),
+                self.__class__(right, ((0, len(right)), )))
+
+    # Subroutines of __getitem__
+    @staticmethod
+    def _part(item):
+        if item is Ellipsis:
+            return item
+        elif isinstance(item, slice):
+            return item
+        else:
+            return operator.index(item)
+
+    def _key2parts(self, key):
+        """Convert input key to a list of index parts."""
+        if isinstance(key, tuple):
+            parts = [self._part(item) for item in key]
+        else:
+            parts = [self._part(key)]
+        if len(parts) > self.ndim:
+            fstr = "expected <= {0.ndim} slice dimensions, got {1}"
+            raise ValueError(fstr.format(self, len(parts)))
+        parts = self._fill_parts(parts)
+        parts = self._norm_parts(parts)
+        return parts
+
+    def _fill_parts(self, parts):
+        """Fill all '...' and ':' slice entries."""
+        # Fill '...' entries with ':'
+        nfill = self.ndim - len(parts)
+        fparts = list()
+        for part in parts:
+            if part is Ellipsis:
+                while nfill:
+                    fparts.append(slice(None, None))
+                    nfill -= 1
+                fparts.append(slice(None, None))
+            else:
+                fparts.append(part)
+        # Append ':' to the end
+        for _ in range(self.ndim - len(fparts)):
+            fparts.append(slice(None, None))
+        return fparts
+
+    def _norm_parts(self, parts):
+        """Normalize all key parts to array shape."""
+        nparts = list()
+        for i, part in enumerate(parts):
+            if isinstance(part, int):
+                if part < 0:
+                    npart = part + self._nshape[i]
+                else:
+                    npart = part - self._shape[i][0]
+                if not 0 <= npart < self._nshape[i]:
+                    raise IndexError("ndarray index out of range")
+                nparts.append(npart)
+            elif isinstance(part, slice):
+                if part.start is not None and part.start >= 0:
+                    start = part.start - self._shape[i][0]
+                    if start < 0:
+                        raise IndexError("ndarray slice out of range")
+                else:
+                    start = part.start
+                if part.stop is not None and part.stop >= 0:
+                    stop = part.stop - self._shape[i][0]
+                    if stop < 0:
+                        raise IndexError("ndarray slice out of range")
+                else:
+                    stop = part.stop
+                if part.step is not None:
+                    raise ValueError("slice step is not supported")
+                nparts.append(slice(start, stop))
+            else:
+                assert False
+        return nparts
+
+
+def _check_dim(dim):
+    """Verify that a dimension has the right format."""
+    if not 0 <= dim[0] <= dim[1]:
+        raise ValueError("expected 0 <= low <= high dimensions")
+
+
+def _check_shape(shape):
+    """Verify that a shape has the right format."""
+    if isinstance(shape, tuple):
+        for dim in shape:
+            if _is_dim(dim):
+                _check_dim(dim)
+            else:
+                raise TypeError("expected shape dimension to be (int, int)")
+    else:
+        raise TypeError("expected shape to be tuple of (int, int)")
+
+
+def _dims2shape(*dims):
+    """Convert input dimensions to a shape."""
+    if not dims:
+        raise ValueError("expected at least one dimension spec")
+    shape = list()
+    for dim in dims:
+        if isinstance(dim, int):
+            start, stop = (0, dim)
+        elif _is_dim(dim):
+            _check_dim(dim)
+            start, stop = dim
+        else:
+            raise TypeError("expected dimension to be int or (int, int)")
+        shape.append((start, stop))
+    return tuple(shape)
+
+
+def _is_dim(obj):
+    """Return True if the object is a shape dimension."""
+    return (isinstance(obj, tuple) and len(obj) == 2
+            and isinstance(obj[0], int) and isinstance(obj[1], int))
+
+
+def _itemize(objs):
+    """Recursive helper function for array."""
+    isseq = [isinstance(obj, collections.Sequence) for obj in objs]
+    if not any(isseq):
+        return list(objs), ((0, len(objs)), )
+    elif all(isseq):
+        items = list()
+        shape = None
+        for obj in objs:
+            _items, _shape = _itemize(obj)
+            if shape is None:
+                shape = _shape
+            elif shape != _shape:
+                raise ValueError("expected uniform array dimensions")
+            items += _items
+        shape = ((0, len(objs)), ) + shape
+        return items, shape
+    else:
+        raise ValueError("expected uniform array dimensions")
+
+
+def _uint2objs(num, length=None):
+    """Convert an unsigned integer to a list of constant expressions."""
+    if num == 0:
+        objs = [ZERO]
+    else:
+        _num = num
+        objs = list()
+        while _num != 0:
+            objs.append(ONE if _num & 1 else ZERO)
+            _num >>= 1
+    if length:
+        if length < len(objs):
+            fstr = "overflow: num = {} requires length >= {}, got length = {}"
+            raise ValueError(fstr.format(num, len(objs), length))
+        else:
+            while len(objs) < length:
+                objs.append(ZERO)
+    return objs
+
+
+def _volume(shape):
+    """Return the volume of a shape."""
+    prod = 1
+    for start, stop in shape:
+        prod *= stop - start
+    return prod
