@@ -918,3 +918,18 @@ boolexpr_Operator_is_clause(BX c_self)
     auto op = std::static_pointer_cast<Operator const>(self->bx);
     return op->is_clause();
 }
+
+
+BXA
+boolexpr_Array_new(size_t n, BXS c_args)
+{
+    return new Array(_convert_args(n, c_args));
+}
+
+
+void
+boolexpr_Array_del(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    delete self;
+}

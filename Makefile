@@ -90,6 +90,7 @@ BX_HDRS := \
 
 BX_SRCS := \
     src/argset.cc \
+    src/array.cc \
     src/binop.cc \
     src/boolexpr.cc \
     src/bxcffi.cc \
@@ -109,6 +110,7 @@ BX_SRCS := \
 
 TEST_HDRS := test/boolexprtest.h
 TEST_SRCS := \
+    test/array_test.cc \
     test/basic_test.cc \
     test/binop_test.cc \
     test/boolexprtest.cc \
@@ -160,7 +162,7 @@ BLD_TEST_OBJS := \
     $(patsubst test/%.cc,build/test/%.o,$(TEST_SRCS))
 
 build/test/a.out: $(BLD_TEST_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ -g -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest -lm4ri
+	$(CXX) $(CXXFLAGS) -o $@ -g -fopenmp -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest -lm4ri
 
 # Coverage
 build/cover/: | build/

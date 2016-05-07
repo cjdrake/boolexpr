@@ -93,6 +93,7 @@ typedef void * const SAT_ITER;
 typedef void * const DFS_ITER;
 typedef void * const DOM_ITER;
 typedef void * const CF_ITER;
+typedef void * const BXA;
 
 enum Kind {
     ZERO  = 0x00,   // 0 0000
@@ -228,6 +229,9 @@ _Bool boolexpr_Operator_simple(BX);
 VEC boolexpr_Operator_args(BX);
 _Bool boolexpr_Operator_is_clause(BX);
 
+BXA boolexpr_Array_new(size_t, BXS);
+void boolexpr_Array_del(BXA);
+
 """
 
 ffi = cffi.FFI()
@@ -237,7 +241,8 @@ ffi.set_source(
     HEADER,
     language="c++",
     define_macros=[],
-    extra_compile_args=["-std=c++11"],
+    extra_compile_args=["-std=c++11", "-fopenmp"],
+    extra_link_args=["-lgomp"],
     include_dirs=INCLUDE_DIRS,
     sources=SOURCES,
 )

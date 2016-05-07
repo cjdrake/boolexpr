@@ -639,6 +639,24 @@ public:
 };
 
 
+class Array
+{
+public:
+    vector<bx_t> const items;
+
+    Array(vector<bx_t> const &);
+    Array(vector<bx_t> const &&);
+    Array(std::initializer_list<bx_t> const items);
+
+    Array compose(var2bx_t const &);
+    Array restrict_(point_t const &);
+
+    bx_t or_reduce();
+    bx_t and_reduce();
+    bx_t xor_reduce();
+};
+
+
 class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
 {
     enum class Color { WHITE, GRAY, BLACK };
@@ -863,6 +881,7 @@ typedef void * const SAT_ITER;
 typedef void * const DFS_ITER;
 typedef void * const DOM_ITER;
 typedef void * const CF_ITER;
+typedef void * const BXA;
 
 CONTEXT boolexpr_Context_new(void);
 void boolexpr_Context_del(CONTEXT);
@@ -975,6 +994,9 @@ uint32_t boolexpr_Literal_id(BX);
 bool boolexpr_Operator_simple(BX);
 VEC boolexpr_Operator_args(BX);
 bool boolexpr_Operator_is_clause(BX);
+
+BXA boolexpr_Array_new(size_t, BXS);
+void boolexpr_Array_del(BXA);
 
 } // extern "C"
 
