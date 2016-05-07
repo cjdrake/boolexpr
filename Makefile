@@ -160,7 +160,7 @@ BLD_TEST_OBJS := \
     $(patsubst test/%.cc,build/test/%.o,$(TEST_SRCS))
 
 build/test/a.out: $(BLD_TEST_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ -g -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest
+	$(CXX) $(CXXFLAGS) -o $@ -g -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest -lm4ri
 
 # Coverage
 build/cover/: | build/
@@ -177,4 +177,4 @@ BLD_COVER_OBJS := \
     $(patsubst test/%.cc,build/cover/%.o,$(TEST_SRCS))
 
 build/cover/a.out: $(BLD_COVER_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ -g --coverage -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest
+	$(CXX) $(CXXFLAGS) -o $@ -g --coverage -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest -lm4ri
