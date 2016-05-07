@@ -18,14 +18,14 @@ install:
     - pushd third_party/cryptominisat
     - git checkout $CMSAT_TAG
     - cmake .
-    - make
+    - make -j2
     - popd
     - pushd third_party/googletest
     - git checkout $GTEST_TAG
     - cmake .
-    - make
+    - make -j2
     - popd
 
 script:
-    - make test
+    - make -j2 test
     - make pytest
