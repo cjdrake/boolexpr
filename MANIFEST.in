@@ -1,3 +1,4 @@
+include LICENSE
 include VERSION
 include boolexpr_build.py
 recursive-include include *.h
