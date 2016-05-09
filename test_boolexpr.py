@@ -15,7 +15,6 @@
 
 import unittest
 
-import boolexpr as bx
 from boolexpr import *
 
 
@@ -46,7 +45,8 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(int(ONE), 1)
 
     def test_ast(self):
-        p = int(bx.ffi.cast("uintptr_t", ctx.cdata))
+        from boolexpr._boolexpr import ffi
+        p = int(ffi.cast("uintptr_t", ctx.cdata))
 
         self.assertEqual(ZERO.to_ast(), (BoolExpr.Kind.zero, ))
         self.assertEqual(ONE.to_ast(), (BoolExpr.Kind.one, ))

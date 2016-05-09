@@ -48,5 +48,5 @@ setup(
     install_requires=["cffi>=1.5.0"],
     setup_requires=["cffi>=1.5.0"],
     cffi_modules=["boolexpr_build.py:ffi"],
-    py_modules=["boolexpr"],
+    packages=["boolexpr"],
 )

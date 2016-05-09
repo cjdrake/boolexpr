@@ -233,7 +233,7 @@ _Bool boolexpr_Operator_is_clause(BX);
 ffi = cffi.FFI()
 
 ffi.set_source(
-    "_boolexpr",
+    "boolexpr._boolexpr",
     HEADER,
     language="c++",
     define_macros=[],

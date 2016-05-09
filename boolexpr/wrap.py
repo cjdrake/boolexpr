@@ -14,68 +14,13 @@
 
 
 """
-Boolean Expression Wrapper Module
-
-Use CFFI to interface the C++ library to Python.
-
-Data Types:
-
-abstract syntax tree
-   A nested tuple of entries that represents an expression.
-   Unlike a ``BoolExpr`` object, an ast object is serializable.
-
-   It is defined recursively::
-
-      ast := (BoolExpr.Kind.zero, )
-           | (BoolExpr.Kind.one, )
-           | (BoolExpr.Kind.log, )
-           | (BoolExpr.Kind.comp, ctx, name)
-           | (BoolExpr.Kind.var, ctx, name)
-           | (BoolExpr.Kind.nor, ast, ...)
-           | (BoolExpr.Kind.or_, ast, ...)
-           | (BoolExpr.Kind.nand, ast, ...)
-           | (BoolExpr.Kind.and_, ast, ...)
-           | (BoolExpr.Kind.xnor, ast, ...)
-           | (BoolExpr.Kind.xor, ast, ...)
-           | (BoolExpr.Kind.neq, ast, ...)
-           | (BoolExpr.Kind.eq, ast, ...)
-           | (BoolExpr.Kind.nimpl, ast, ast)
-           | (BoolExpr.Kind.impl, ast, ast)
-           | (BoolExpr.Kind.nite, ast, ast, ast)
-           | (BoolExpr.Kind.ite, ast, ast, ast)
-
-      ctx := int
-
-      name := str
-
-   The ``ctx`` int is a pointer to a C++ Context object.
-   It must be re-cast to ``void *`` before being used.
-
-point
-   A dictionary of ``{Variable : Constant}`` mappings.
-   For example, ``{a: False, b: True, c: 0, d: 'X'}``.
+CFFI _boolexpr module wrapper
 """
 
 
-from _boolexpr import ffi, lib
+from enum import Enum
 
-
-__all__ = [
-    "Context",
-    "BoolExpr", "Atom", "Constant", "Known", "Zero", "One", "Unknown",
-    "Logical", "Illogical", "Literal", "Complement", "Variable",
-    "Operator", "LatticeOperator", "Nor", "Or", "Nand", "And", "Xnor", "Xor",
-    "Unequal", "Equal", "NotImplies", "Implies", "NotIfThenElse", "IfThenElse",
-    "ZERO", "ONE", "LOGICAL", "ILLOGICAL",
-    "not_", "nor", "or_", "nand", "and_", "xnor", "xor", "neq", "eq",
-    "nimpl", "impl", "nite", "ite",
-    "nor_s", "or_s", "nand_s", "and_s", "xnor_s", "xor_s", "neq_s", "eq_s",
-    "nimpl_s", "impl_s", "nite_s", "ite_s",
-    "onehot0", "onehot", "majority", "achilles_heel",
-    "exists", "forall",
-]
-
-__version__ = "1.2"
+from ._boolexpr import ffi, lib
 
 
 class Context:
@@ -103,8 +48,6 @@ class BoolExpr:
     """
     Base class for Boolean expressions
     """
-
-    from enum import Enum
 
     class Kind(Enum):
         """BoolExpr Kind Codes"""
@@ -831,58 +774,6 @@ def onehot(*args):
     """
     num, c_args = _convert_args(args)
     return _bx(lib.boolexpr_onehot(num, c_args))
-
-
-def majority(*args, conj=False):
-    """
-    Return an expression that means
-    "the majority of input functions are true".
-
-    If *conj* is ``True``, return a CNF.
-    Otherwise, return a DNF.
-    """
-    import itertools
-    terms = list()
-    if conj:
-        for xs in itertools.combinations(args, (len(args) + 1) // 2):
-            terms.append(or_(*xs))
-        return and_(*terms)
-    else:
-        for xs in itertools.combinations(args, len(args) // 2 + 1):
-            terms.append(and_(*xs))
-        return or_(*terms)
-
-
-def achilles_heel(*args):
-    r"""
-    Return the Achille's Heel function, defined as:
-    :math:`\prod_{i=0}^{n/2-1}{X_{2i} + X_{2i+1}}`.
-    """
-    num = len(args)
-    if num & 1:
-        fstr = "expected an even number of arguments, got {}"
-        raise ValueError(fstr.format(num))
-    return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])
-
-
-def exists(xs, f):
-    """
-    Return an expression that means
-    "there exists a variable in *xs* such that *f* true."
-
-    This is identical to ``f.smoothing(xs)``.
-    """
-    return f.smoothing(xs)
-
-
-def forall(xs, f):
-    """
-    Return an expression that means
-    "for all variables in *xs*, *f* is true."
-
-    This is identical to ``f.consensus(xs)``.
-    """
-    return f.consensus(xs)
 
 
 _LITS = dict()
