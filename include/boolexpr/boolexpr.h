@@ -648,12 +648,12 @@ public:
     Array(vector<bx_t> const &&);
     Array(std::initializer_list<bx_t> const items);
 
-    Array compose(var2bx_t const &);
-    Array restrict_(point_t const &);
+    Array compose(var2bx_t const &) const;
+    Array restrict_(point_t const &) const;
 
-    bx_t or_reduce();
-    bx_t and_reduce();
-    bx_t xor_reduce();
+    bx_t or_reduce() const;
+    bx_t and_reduce() const;
+    bx_t xor_reduce() const;
 };
 
 

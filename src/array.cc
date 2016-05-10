@@ -45,7 +45,7 @@ Array::Array(std::initializer_list<bx_t> const items)
 
 
 Array
-Array::compose(var2bx_t const & var2bx)
+Array::compose(var2bx_t const & var2bx) const
 {
     size_t n = this->items.size();
     vector<bx_t> items(n);
@@ -59,7 +59,7 @@ Array::compose(var2bx_t const & var2bx)
 
 
 Array
-Array::restrict_(point_t const & point)
+Array::restrict_(point_t const & point) const
 {
     size_t n = this->items.size();
     vector<bx_t> items(n);
@@ -73,21 +73,21 @@ Array::restrict_(point_t const & point)
 
 
 bx_t
-Array::or_reduce()
+Array::or_reduce() const
 {
     return or_(items);
 }
 
 
 bx_t
-Array::and_reduce()
+Array::and_reduce() const
 {
     return and_(items);
 }
 
 
 bx_t
-Array::xor_reduce()
+Array::xor_reduce() const
 {
     return xor_(items);
 }
