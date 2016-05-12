@@ -997,6 +997,8 @@ bool boolexpr_Operator_is_clause(BX);
 
 BXA boolexpr_Array_new(size_t, BXS);
 void boolexpr_Array_del(BXA);
+size_t boolexpr_Array_size(BXA);
+BX boolexpr_Array_getitem(BXA, size_t);
 
 } // extern "C"
 

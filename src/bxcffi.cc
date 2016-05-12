@@ -933,3 +933,19 @@ boolexpr_Array_del(BXA c_self)
     auto self = reinterpret_cast<Array const *>(c_self);
     delete self;
 }
+
+
+size_t
+boolexpr_Array_size(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return self->items.size();
+}
+
+
+BX
+boolexpr_Array_getitem(BXA c_self, size_t index)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return new BoolExprProxy(self->items[index]);
+}

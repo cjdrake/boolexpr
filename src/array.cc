@@ -20,7 +20,6 @@
 
 #include <boost/optional.hpp>
 #include <cryptominisat4/cryptominisat.h>
-#include <omp.h>
 
 #include "boolexpr/boolexpr.h"
 #include "argset.h"
@@ -50,7 +49,6 @@ Array::compose(var2bx_t const & var2bx) const
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
-    #pragma omp parallel for
     for (size_t i = 0; i < n; ++i)
         items[i] = this->items[i]->compose(var2bx);
 
@@ -64,7 +62,6 @@ Array::restrict_(point_t const & point) const
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
-    #pragma omp parallel for
     for (size_t i = 0; i < n; ++i)
         items[i] = this->items[i]->restrict_(point);
 
