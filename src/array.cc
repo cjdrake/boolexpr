@@ -44,6 +44,82 @@ Array::Array(std::initializer_list<bx_t> const items)
 
 
 Array
+boolexpr::operator~(Array const & self)
+{
+    size_t n = self.items.size();
+    vector<bx_t> items(n);
+
+    for (size_t i = 0; i < n; ++i)
+        items[i] = ~self.items[i];
+
+    return Array(std::move(items));
+}
+
+
+Array
+boolexpr::operator|(Array const & lhs, Array const & rhs)
+{
+    vector<bx_t> items;
+
+    auto lhs_it = lhs.items.begin();
+    auto rhs_it = rhs.items.begin();
+
+    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
+        items.push_back(*lhs_it | *rhs_it);
+
+    while (lhs_it != lhs.items.end())
+        items.push_back(*lhs_it);
+
+    while (rhs_it != rhs.items.end())
+        items.push_back(*rhs_it);
+
+    return Array(std::move(items));
+}
+
+
+Array
+boolexpr::operator&(Array const & lhs, Array const & rhs)
+{
+    vector<bx_t> items;
+
+    auto lhs_it = lhs.items.begin();
+    auto rhs_it = rhs.items.begin();
+
+    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
+        items.push_back(*lhs_it & *rhs_it);
+
+    while (lhs_it != lhs.items.end())
+        items.push_back(*lhs_it);
+
+    while (rhs_it != rhs.items.end())
+        items.push_back(*rhs_it);
+
+    return Array(std::move(items));
+}
+
+
+Array
+boolexpr::operator^(Array const & lhs, Array const & rhs)
+{
+    vector<bx_t> items;
+
+    auto lhs_it = lhs.items.begin();
+    auto rhs_it = rhs.items.begin();
+
+    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
+        items.push_back(*lhs_it ^ *rhs_it);
+
+    while (lhs_it != lhs.items.end())
+        items.push_back(*lhs_it);
+
+    while (rhs_it != rhs.items.end())
+        items.push_back(*rhs_it);
+
+    return Array(std::move(items));
+}
+
+
+Array
 Array::compose(var2bx_t const & var2bx) const
 {
     size_t n = this->items.size();
@@ -66,6 +142,21 @@ Array::restrict_(point_t const & point) const
         items[i] = this->items[i]->restrict_(point);
 
     return Array(std::move(items));
+}
+
+
+bool
+Array::equiv(Array const & other) const
+{
+
+    if (this->items.size() != other.items.size())
+        return false;
+
+    for (size_t i = 0; i < this->items.size(); ++i)
+        if (!this->items[i]->equiv(other.items[i]))
+            return false;
+
+    return true;
 }
 
 

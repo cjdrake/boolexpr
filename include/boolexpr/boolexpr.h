@@ -641,6 +641,11 @@ public:
 
 class Array
 {
+    friend Array operator~(Array const &);
+    friend Array operator|(Array const &, Array const &);
+    friend Array operator&(Array const &, Array const &);
+    friend Array operator^(Array const &, Array const &);
+
 public:
     vector<bx_t> const items;
 
@@ -650,6 +655,7 @@ public:
 
     Array compose(var2bx_t const &) const;
     Array restrict_(point_t const &) const;
+    bool equiv(Array const &) const;
 
     bx_t or_reduce() const;
     bx_t and_reduce() const;
@@ -856,6 +862,11 @@ bx_t operator^(bx_t const &, bx_t const &);
 bool operator<(lit_t const &, lit_t const &);
 std::ostream& operator<<(std::ostream&, bx_t const &);
 
+Array operator~(Array const &);
+Array operator|(Array const &, Array const &);
+Array operator&(Array const &, Array const &);
+Array operator^(Array const &, Array const &);
+
 
 } // namespace boolexpr
 
@@ -999,6 +1010,11 @@ BXA boolexpr_Array_new(size_t, BXS);
 void boolexpr_Array_del(BXA);
 size_t boolexpr_Array_size(BXA);
 BX boolexpr_Array_getitem(BXA, size_t);
+BXA boolexpr_Array_invert(BXA);
+BXA boolexpr_Array_or(BXA, BXA);
+BXA boolexpr_Array_and(BXA, BXA);
+BXA boolexpr_Array_xor(BXA, BXA);
+bool boolexpr_Array_equiv(BXA, BXA);
 
 } // extern "C"
 

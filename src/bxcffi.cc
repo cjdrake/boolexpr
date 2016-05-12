@@ -935,6 +935,40 @@ boolexpr_Array_del(BXA c_self)
 }
 
 
+BXA
+boolexpr_Array_invert(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+}
+
+
+BXA
+boolexpr_Array_or(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return new Array(*self | *other);
+}
+
+
+BXA
+boolexpr_Array_and(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return new Array(*self & *other);
+}
+
+
+BXA
+boolexpr_Array_xor(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return new Array(*self ^ *other);
+}
+
+
 size_t
 boolexpr_Array_size(BXA c_self)
 {
@@ -948,4 +982,13 @@ boolexpr_Array_getitem(BXA c_self, size_t index)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return new BoolExprProxy(self->items[index]);
+}
+
+
+bool
+boolexpr_Array_equiv(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return self->equiv(*other);
 }

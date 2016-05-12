@@ -231,6 +231,13 @@ _Bool boolexpr_Operator_is_clause(BX);
 
 BXA boolexpr_Array_new(size_t, BXS);
 void boolexpr_Array_del(BXA);
+size_t boolexpr_Array_size(BXA);
+BX boolexpr_Array_getitem(BXA, size_t);
+BXA boolexpr_Array_invert(BXA);
+BXA boolexpr_Array_or(BXA);
+BXA boolexpr_Array_and(BXA);
+BXA boolexpr_Array_xor(BXA);
+_Bool boolexpr_Array_equiv(BXA, BXA);
 
 """
 
@@ -241,8 +248,8 @@ ffi.set_source(
     HEADER,
     language="c++",
     define_macros=[],
-    extra_compile_args=["-std=c++11", "-fopenmp"],
-    extra_link_args=["-lgomp"],
+    extra_compile_args=["-std=c++11"],
+    extra_link_args=[],
     include_dirs=INCLUDE_DIRS,
     sources=SOURCES,
 )

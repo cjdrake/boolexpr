@@ -83,3 +83,18 @@ TEST_F(ArrayTest, Reduce)
     auto y2 = bxa.xor_reduce();
     EXPECT_TRUE(y2->equiv(~xs[0] ^ xs[1] ^ ~xs[2] ^ xs[3]));
 }
+
+
+TEST_F(ArrayTest, Equiv)
+{
+    auto bxa1 = Array({xs[0], xs[1] ^ xs[2], eq({xs[3], xs[4]}),
+                       impl(xs[5], xs[6]), ite(xs[7], xs[8], xs[9])});
+    auto bxa2 = Array({xs[0], ~xs[1] & xs[2] | xs[1] & ~xs[2], ~xs[3] & ~xs[4] | xs[3] & xs[4],
+                      ~xs[5] | xs[6], xs[7] & xs[8] | ~xs[7] & xs[9]});
+    auto bxa3 = Array({xs[0], xs[1]});
+    auto bxa4 = Array({xs[0], xs[1], xs[2], xs[3], xs[4]});
+
+    EXPECT_TRUE(bxa1.equiv(bxa2));
+    EXPECT_FALSE(bxa1.equiv(bxa3));
+    EXPECT_FALSE(bxa1.equiv(bxa4));
+}
