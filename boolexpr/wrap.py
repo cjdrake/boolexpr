@@ -46,7 +46,7 @@ class Context:
 
 class BoolExpr:
     """
-    Base class for Boolean expressions
+    Wrap boolexpr::BoolExpr class
     """
 
     class Kind(Enum):
@@ -936,3 +936,91 @@ def _point(c_point):
         point[_bx(key)] = _bx(val)
         lib.boolexpr_Point_next(c_point)
     return point
+
+
+class Array:
+    """
+    Wrap boolexpr::Array class
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+        self._length = lib.boolexpr_Array_size(self._cdata)
+        self._items = tuple(lib.boolexpr_Array_getitem(self._cdata, i)
+                            for i in range(self._length))
+
+    def __del__(self):
+        lib.boolexpr_Array_del(self._cdata)
+
+    @property
+    def cdata(self):
+        """Return the CFFI CData object."""
+        return self._cdata
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        parts = list()
+        for item in self._items:
+            c_str = lib.boolexpr_BoolExpr_to_string(item)
+            try:
+                parts.append(ffi.string(c_str).decode("utf-8"))
+            finally:
+                lib.boolexpr_String_del(c_str)
+        return "(" + ", ".join(parts) + ")"
+
+    def __len__(self):
+        return self._length
+
+    def __getitem__(self, key):
+        val = self._items[key]
+        if isinstance(val, tuple):
+            num = len(val)
+            c_items = ffi.new("void const * []", num)
+            for i, item in enumerate(val):
+                c_items[i] = item
+            return Array(lib.boolexpr_Array_new(num, c_items))
+        else:
+            return _bx(val)
+
+    def __invert__(self):
+        return Array(lib.boolexpr_Array_invert(self._cdata))
+
+    def __or__(self, other):
+        return Array(lib.boolexpr_Array_or(self._cdata, other.cdata))
+
+    def __and__(self, other):
+        return Array(lib.boolexpr_Array_and(self._cdata, other.cdata))
+
+    def __xor__(self, other):
+        return Array(lib.boolexpr_Array_xor(self._cdata, other.cdata))
+
+    def compose(self, var2bx):
+        num = len(var2bx)
+        vars_ = ffi.new("void * []", num)
+        bxs = ffi.new("void * []", num)
+        for i, (var, bx) in enumerate(var2bx.items()):
+            vars_[i] = _expect_var(var).cdata
+            bxs[i] = _expect_bx(bx).cdata
+        return Array(lib.boolexpr_Array_compose(self._cdata, num, vars_, bxs))
+
+    def restrict(self, point):
+        num = len(point)
+        vars_ = ffi.new("void * []", num)
+        consts = ffi.new("void * []", num)
+        for i, (var, const) in enumerate(point.items()):
+            vars_[i] = _expect_var(var).cdata
+            consts[i] = _expect_const(const).cdata
+        return Array((lib.boolexpr_Array_restrict(self._cdata, num, vars_, consts)))
+
+    def equiv(self, other):
+        return bool(lib.boolexpr_Array_equiv(self._cdata, other.cdata))
+
+    def or_reduce(self):
+        return _bx(lib.boolexpr_Array_or_reduce(self._cdata))
+
+    def and_reduce(self):
+        return _bx(lib.boolexpr_Array_and_reduce(self._cdata))
+
+    def xor_reduce(self):
+        return _bx(lib.boolexpr_Array_xor_reduce(self._cdata))
