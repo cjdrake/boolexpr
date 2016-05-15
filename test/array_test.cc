@@ -34,7 +34,7 @@ class ArrayTest : public BoolExprTest {};
 
 TEST_F(ArrayTest, Compose)
 {
-    auto bxa = Array({~xs[0], xs[1], ~xs[2], xs[3]});
+    Array X {~xs[0], xs[1], ~xs[2], xs[3]};
 
     auto var2bx = var2bx_t {
         {xs[0], xs[4] | xs[5]},
@@ -43,17 +43,22 @@ TEST_F(ArrayTest, Compose)
         {xs[3], impl(xs[10], xs[11])},
     };
 
-    auto bxa1 = bxa.compose(var2bx);
-    EXPECT_TRUE(bxa1.items[0]->equiv(nor({xs[4], xs[5]})));
-    EXPECT_TRUE(bxa1.items[1]->equiv(xs[6] & xs[7]));
-    EXPECT_TRUE(bxa1.items[2]->equiv(xnor({xs[8], xs[9]})));
-    EXPECT_TRUE(bxa1.items[3]->equiv(impl(xs[10], xs[11])));
+    auto Y = X.compose(var2bx);
+    EXPECT_TRUE(Y->items[0]->equiv(nor({xs[4], xs[5]})));
+    EXPECT_TRUE(Y->items[1]->equiv(xs[6] & xs[7]));
+    EXPECT_TRUE(Y->items[2]->equiv(xnor({xs[8], xs[9]})));
+    EXPECT_TRUE(Y->items[3]->equiv(impl(xs[10], xs[11])));
 }
 
 
 TEST_F(ArrayTest, Restrict)
 {
-    auto bxa = Array({xs[0] | xs[1], xs[1] & xs[2], xs[2] ^ xs[3], impl(xs[3], xs[0])});
+    Array X {
+        xs[0] | xs[1],
+        xs[1] & xs[2],
+        xs[2] ^ xs[3],
+        impl(xs[3], xs[0])
+    };
 
     auto p = point_t {
         {xs[0], _zero},
@@ -62,39 +67,39 @@ TEST_F(ArrayTest, Restrict)
         {xs[3], _one},
     };
 
-    auto bxa1 = bxa.restrict_(p);
-    EXPECT_EQ(bxa1.items[0], _one);
-    EXPECT_EQ(bxa1.items[1], _zero);
-    EXPECT_EQ(bxa1.items[2], _one);
-    EXPECT_EQ(bxa1.items[3], _zero);
+    auto Y = X.restrict_(p);
+    EXPECT_EQ(Y->items[0], _one);
+    EXPECT_EQ(Y->items[1], _zero);
+    EXPECT_EQ(Y->items[2], _one);
+    EXPECT_EQ(Y->items[3], _zero);
 }
 
 
 TEST_F(ArrayTest, Reduce)
 {
-    auto bxa = Array({~xs[0], xs[1], ~xs[2], xs[3]});
+    Array X {~xs[0], xs[1], ~xs[2], xs[3]};
 
-    auto y0 = bxa.or_reduce();
-    EXPECT_TRUE(y0->equiv(~xs[0] | xs[1] | ~xs[2] | xs[3]));
+    auto Y0 = X.or_reduce();
+    EXPECT_TRUE(Y0->equiv(~xs[0] | xs[1] | ~xs[2] | xs[3]));
 
-    auto y1 = bxa.and_reduce();
-    EXPECT_TRUE(y1->equiv(~xs[0] & xs[1] & ~xs[2] & xs[3]));
+    auto Y1 = X.and_reduce();
+    EXPECT_TRUE(Y1->equiv(~xs[0] & xs[1] & ~xs[2] & xs[3]));
 
-    auto y2 = bxa.xor_reduce();
-    EXPECT_TRUE(y2->equiv(~xs[0] ^ xs[1] ^ ~xs[2] ^ xs[3]));
+    auto Y2 = X.xor_reduce();
+    EXPECT_TRUE(Y2->equiv(~xs[0] ^ xs[1] ^ ~xs[2] ^ xs[3]));
 }
 
 
 TEST_F(ArrayTest, Equiv)
 {
-    auto bxa1 = Array({xs[0], xs[1] ^ xs[2], eq({xs[3], xs[4]}),
-                       impl(xs[5], xs[6]), ite(xs[7], xs[8], xs[9])});
-    auto bxa2 = Array({xs[0], ~xs[1] & xs[2] | xs[1] & ~xs[2], ~xs[3] & ~xs[4] | xs[3] & xs[4],
-                      ~xs[5] | xs[6], xs[7] & xs[8] | ~xs[7] & xs[9]});
-    auto bxa3 = Array({xs[0], xs[1]});
-    auto bxa4 = Array({xs[0], xs[1], xs[2], xs[3], xs[4]});
+    Array X0 {xs[0], xs[1] ^ xs[2], eq({xs[3], xs[4]}),
+              impl(xs[5], xs[6]), ite(xs[7], xs[8], xs[9])};
+    Array X1 {xs[0], ~xs[1] & xs[2] | xs[1] & ~xs[2], ~xs[3] & ~xs[4] | xs[3] & xs[4],
+              ~xs[5] | xs[6], xs[7] & xs[8] | ~xs[7] & xs[9]};
+    Array X2 {xs[0], xs[1]};
+    Array X3 {xs[0], xs[1], xs[2], xs[3], xs[4]};
 
-    EXPECT_TRUE(bxa1.equiv(bxa2));
-    EXPECT_FALSE(bxa1.equiv(bxa3));
-    EXPECT_FALSE(bxa1.equiv(bxa4));
+    EXPECT_TRUE(X0.equiv(X1));
+    EXPECT_FALSE(X0.equiv(X2));
+    EXPECT_FALSE(X0.equiv(X3));
 }

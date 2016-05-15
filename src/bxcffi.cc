@@ -935,40 +935,6 @@ boolexpr_Array_del(BXA c_self)
 }
 
 
-BXA
-boolexpr_Array_invert(BXA c_self)
-{
-    auto self = reinterpret_cast<Array const *>(c_self);
-}
-
-
-BXA
-boolexpr_Array_or(BXA c_self, BXA c_other)
-{
-    auto self = reinterpret_cast<Array const *>(c_self);
-    auto other = reinterpret_cast<Array const *>(c_other);
-    return new Array(*self | *other);
-}
-
-
-BXA
-boolexpr_Array_and(BXA c_self, BXA c_other)
-{
-    auto self = reinterpret_cast<Array const *>(c_self);
-    auto other = reinterpret_cast<Array const *>(c_other);
-    return new Array(*self & *other);
-}
-
-
-BXA
-boolexpr_Array_xor(BXA c_self, BXA c_other)
-{
-    auto self = reinterpret_cast<Array const *>(c_self);
-    auto other = reinterpret_cast<Array const *>(c_other);
-    return new Array(*self ^ *other);
-}
-
-
 size_t
 boolexpr_Array_size(BXA c_self)
 {
@@ -985,10 +951,101 @@ boolexpr_Array_getitem(BXA c_self, size_t index)
 }
 
 
+BXA
+boolexpr_Array_invert(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return ~(*self);
+}
+
+
+BXA
+boolexpr_Array_or(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return *self | *other;
+}
+
+
+BXA
+boolexpr_Array_and(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return *self & *other;
+}
+
+
+BXA
+boolexpr_Array_xor(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return *self ^ *other;
+}
+
+
+BXA
+boolexpr_Array_compose(BXA c_self, size_t n, VARS c_varps, BXS c_bxps)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto var2bx = var2bx_t();
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto bx = bxp->bx;
+        var2bx.insert({var, bx});
+    }
+    return self->compose(var2bx);
+}
+
+
+BXA
+boolexpr_Array_restrict(BXA c_self, size_t n, VARS c_varps, CONSTS c_constps)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto point = point_t();
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto constp = reinterpret_cast<BoolExprProxy const *>(c_constps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto const_ = std::static_pointer_cast<Constant const>(constp->bx);
+        point.insert({var, const_});
+    }
+    return self->restrict_(point);
+}
+
+
 bool
 boolexpr_Array_equiv(BXA c_self, BXA c_other)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto other = reinterpret_cast<Array const *>(c_other);
     return self->equiv(*other);
+}
+
+
+BX
+boolexpr_Array_or_reduce(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return new BoolExprProxy(self->or_reduce());
+}
+
+
+BX
+boolexpr_Array_and_reduce(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return new BoolExprProxy(self->and_reduce());
+}
+
+
+BX
+boolexpr_Array_xor_reduce(BXA c_self)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return new BoolExprProxy(self->xor_reduce());
 }

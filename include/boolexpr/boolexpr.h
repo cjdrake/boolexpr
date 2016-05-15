@@ -74,6 +74,7 @@ class Literal;
 class Variable;
 class Operator;
 class LatticeOperator;
+class Array;
 
 
 using id_t = uint32_t;
@@ -641,10 +642,10 @@ public:
 
 class Array
 {
-    friend Array operator~(Array const &);
-    friend Array operator|(Array const &, Array const &);
-    friend Array operator&(Array const &, Array const &);
-    friend Array operator^(Array const &, Array const &);
+    friend Array * operator~(Array const &);
+    friend Array * operator|(Array const &, Array const &);
+    friend Array * operator&(Array const &, Array const &);
+    friend Array * operator^(Array const &, Array const &);
 
 public:
     vector<bx_t> const items;
@@ -653,8 +654,8 @@ public:
     Array(vector<bx_t> const &&);
     Array(std::initializer_list<bx_t> const items);
 
-    Array compose(var2bx_t const &) const;
-    Array restrict_(point_t const &) const;
+    Array * compose(var2bx_t const &) const;
+    Array * restrict_(point_t const &) const;
     bool equiv(Array const &) const;
 
     bx_t or_reduce() const;
@@ -862,10 +863,10 @@ bx_t operator^(bx_t const &, bx_t const &);
 bool operator<(lit_t const &, lit_t const &);
 std::ostream& operator<<(std::ostream&, bx_t const &);
 
-Array operator~(Array const &);
-Array operator|(Array const &, Array const &);
-Array operator&(Array const &, Array const &);
-Array operator^(Array const &, Array const &);
+Array * operator~(Array const &);
+Array * operator|(Array const &, Array const &);
+Array * operator&(Array const &, Array const &);
+Array * operator^(Array const &, Array const &);
 
 
 } // namespace boolexpr
@@ -1014,7 +1015,12 @@ BXA boolexpr_Array_invert(BXA);
 BXA boolexpr_Array_or(BXA, BXA);
 BXA boolexpr_Array_and(BXA, BXA);
 BXA boolexpr_Array_xor(BXA, BXA);
+BXA boolexpr_Array_compose(BXA, size_t, VARS, BXS);
+BXA boolexpr_Array_restrict(BXA, size_t, VARS, CONSTS);
 bool boolexpr_Array_equiv(BXA, BXA);
+BX boolexpr_Array_or_reduce(BXA);
+BX boolexpr_Array_and_reduce(BXA);
+BX boolexpr_Array_xor_reduce(BXA);
 
 } // extern "C"
 

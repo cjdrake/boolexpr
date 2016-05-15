@@ -43,7 +43,7 @@ Array::Array(std::initializer_list<bx_t> const items)
 {}
 
 
-Array
+Array *
 boolexpr::operator~(Array const & self)
 {
     size_t n = self.items.size();
@@ -52,11 +52,11 @@ boolexpr::operator~(Array const & self)
     for (size_t i = 0; i < n; ++i)
         items[i] = ~self.items[i];
 
-    return Array(std::move(items));
+    return new Array(std::move(items));
 }
 
 
-Array
+Array *
 boolexpr::operator|(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
@@ -73,11 +73,11 @@ boolexpr::operator|(Array const & lhs, Array const & rhs)
     while (rhs_it != rhs.items.end())
         items.push_back(*rhs_it);
 
-    return Array(std::move(items));
+    return new Array(std::move(items));
 }
 
 
-Array
+Array *
 boolexpr::operator&(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
@@ -94,11 +94,11 @@ boolexpr::operator&(Array const & lhs, Array const & rhs)
     while (rhs_it != rhs.items.end())
         items.push_back(*rhs_it);
 
-    return Array(std::move(items));
+    return new Array(std::move(items));
 }
 
 
-Array
+Array *
 boolexpr::operator^(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
@@ -115,11 +115,11 @@ boolexpr::operator^(Array const & lhs, Array const & rhs)
     while (rhs_it != rhs.items.end())
         items.push_back(*rhs_it);
 
-    return Array(std::move(items));
+    return new Array(std::move(items));
 }
 
 
-Array
+Array *
 Array::compose(var2bx_t const & var2bx) const
 {
     size_t n = this->items.size();
@@ -128,11 +128,11 @@ Array::compose(var2bx_t const & var2bx) const
     for (size_t i = 0; i < n; ++i)
         items[i] = this->items[i]->compose(var2bx);
 
-    return Array(std::move(items));
+    return new Array(std::move(items));
 }
 
 
-Array
+Array *
 Array::restrict_(point_t const & point) const
 {
     size_t n = this->items.size();
@@ -141,7 +141,7 @@ Array::restrict_(point_t const & point) const
     for (size_t i = 0; i < n; ++i)
         items[i] = this->items[i]->restrict_(point);
 
-    return Array(std::move(items));
+    return new Array(std::move(items));
 }
 
 
