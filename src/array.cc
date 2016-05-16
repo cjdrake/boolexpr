@@ -65,13 +65,13 @@ boolexpr::operator|(Array const & lhs, Array const & rhs)
     auto rhs_it = rhs.items.begin();
 
     while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
-        items.push_back(*lhs_it | *rhs_it);
+        items.push_back(*lhs_it++ | *rhs_it++);
 
     while (lhs_it != lhs.items.end())
-        items.push_back(*lhs_it);
+        items.push_back(*lhs_it++);
 
     while (rhs_it != rhs.items.end())
-        items.push_back(*rhs_it);
+        items.push_back(*rhs_it++);
 
     return new Array(std::move(items));
 }
@@ -86,13 +86,13 @@ boolexpr::operator&(Array const & lhs, Array const & rhs)
     auto rhs_it = rhs.items.begin();
 
     while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
-        items.push_back(*lhs_it & *rhs_it);
+        items.push_back(*lhs_it++ & *rhs_it++);
 
     while (lhs_it != lhs.items.end())
-        items.push_back(*lhs_it);
+        items.push_back(*lhs_it++);
 
     while (rhs_it != rhs.items.end())
-        items.push_back(*rhs_it);
+        items.push_back(*rhs_it++);
 
     return new Array(std::move(items));
 }
@@ -107,13 +107,13 @@ boolexpr::operator^(Array const & lhs, Array const & rhs)
     auto rhs_it = rhs.items.begin();
 
     while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
-        items.push_back(*lhs_it ^ *rhs_it);
+        items.push_back(*lhs_it++ ^ *rhs_it++);
 
     while (lhs_it != lhs.items.end())
-        items.push_back(*lhs_it);
+        items.push_back(*lhs_it++);
 
     while (rhs_it != rhs.items.end())
-        items.push_back(*rhs_it);
+        items.push_back(*rhs_it++);
 
     return new Array(std::move(items));
 }

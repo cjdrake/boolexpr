@@ -938,15 +938,17 @@ def _point(c_point):
     return point
 
 
+def myarray(args):
+    num, c_args = _convert_args(args)
+    return Array(lib.boolexpr_Array_new(num, c_args))
+
+
 class Array:
     """
     Wrap boolexpr::Array class
     """
     def __init__(self, cdata):
         self._cdata = cdata
-        self._length = lib.boolexpr_Array_size(self._cdata)
-        self._items = tuple(lib.boolexpr_Array_getitem(self._cdata, i)
-                            for i in range(self._length))
 
     def __del__(self):
         lib.boolexpr_Array_del(self._cdata)
@@ -960,28 +962,18 @@ class Array:
         return self.__str__()
 
     def __str__(self):
-        parts = list()
-        for item in self._items:
-            c_str = lib.boolexpr_BoolExpr_to_string(item)
-            try:
-                parts.append(ffi.string(c_str).decode("utf-8"))
-            finally:
-                lib.boolexpr_String_del(c_str)
-        return "(" + ", ".join(parts) + ")"
+        return "(" + ", ".join(str(item) for item in self) + ")"
 
     def __len__(self):
-        return self._length
+        return lib.boolexpr_Array_size(self._cdata)
 
-    def __getitem__(self, key):
-        val = self._items[key]
-        if isinstance(val, tuple):
-            num = len(val)
-            c_items = ffi.new("void const * []", num)
-            for i, item in enumerate(val):
-                c_items[i] = item
-            return Array(lib.boolexpr_Array_new(num, c_items))
-        else:
-            return _bx(val)
+    def __getitem__(self, index):
+        assert 0 <= index < self.__len__()
+        return _bx(lib.boolexpr_Array_getitem(self._cdata, index))
+
+    def __iter__(self):
+        for i in range(self.__len__()):
+            yield self.__getitem__(i)
 
     def __invert__(self):
         return Array(lib.boolexpr_Array_invert(self._cdata))
