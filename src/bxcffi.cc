@@ -106,23 +106,6 @@ struct SolnProxy
 };
 
 
-struct SatIterProxy
-{
-    sat_iter it;
-
-    SatIterProxy(bx_t const & bx)
-        : it {sat_iter(bx)}
-    {}
-
-    void next() { ++it; }
-
-    MapProxy<var_t, const_t> * val() const
-    {
-        return (it == sat_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
-    }
-};
-
-
 struct DfsIterProxy
 {
     dfs_iter it;
@@ -136,6 +119,23 @@ struct DfsIterProxy
     BoolExprProxy * val() const
     {
         return (it == dfs_iter()) ? nullptr : new BoolExprProxy(*it);
+    }
+};
+
+
+struct SatIterProxy
+{
+    sat_iter it;
+
+    SatIterProxy(bx_t const & bx)
+        : it {sat_iter(bx)}
+    {}
+
+    void next() { ++it; }
+
+    MapProxy<var_t, const_t> * val() const
+    {
+        return (it == sat_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
     }
 };
 
@@ -337,38 +337,6 @@ boolexpr_Soln_second(SOLN c_self)
 }
 
 
-SAT_ITER
-boolexpr_SatIter_new(BX c_bxp)
-{
-    auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
-    return new SatIterProxy(bxp->bx);
-}
-
-
-void
-boolexpr_SatIter_del(SAT_ITER c_self)
-{
-    auto self = reinterpret_cast<SatIterProxy const *>(c_self);
-    delete self;
-}
-
-
-void
-boolexpr_SatIter_next(SAT_ITER c_self)
-{
-    auto self = reinterpret_cast<SatIterProxy *>(c_self);
-    self->next();
-}
-
-
-POINT
-boolexpr_SatIter_val(SAT_ITER c_self)
-{
-    auto self = reinterpret_cast<SatIterProxy const *>(c_self);
-    return self->val();
-}
-
-
 DFS_ITER
 boolexpr_DfsIter_new(BX c_bxp)
 {
@@ -397,6 +365,38 @@ BX
 boolexpr_DfsIter_val(DFS_ITER c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy const *>(c_self);
+    return self->val();
+}
+
+
+SAT_ITER
+boolexpr_SatIter_new(BX c_bxp)
+{
+    auto bxp = reinterpret_cast<BoolExprProxy const *>(c_bxp);
+    return new SatIterProxy(bxp->bx);
+}
+
+
+void
+boolexpr_SatIter_del(SAT_ITER c_self)
+{
+    auto self = reinterpret_cast<SatIterProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_SatIter_next(SAT_ITER c_self)
+{
+    auto self = reinterpret_cast<SatIterProxy *>(c_self);
+    self->next();
+}
+
+
+POINT
+boolexpr_SatIter_val(SAT_ITER c_self)
+{
+    auto self = reinterpret_cast<SatIterProxy const *>(c_self);
     return self->val();
 }
 

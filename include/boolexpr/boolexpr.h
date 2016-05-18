@@ -889,8 +889,8 @@ typedef void * const VEC;
 typedef void * const VARSET;
 typedef void * const POINT;
 typedef void * const SOLN;
-typedef void * const SAT_ITER;
 typedef void * const DFS_ITER;
+typedef void * const SAT_ITER;
 typedef void * const DOM_ITER;
 typedef void * const CF_ITER;
 typedef void * const BXA;
@@ -921,15 +921,15 @@ void boolexpr_Soln_del(SOLN);
 bool boolexpr_Soln_first(SOLN);
 POINT boolexpr_Soln_second(SOLN);
 
-SAT_ITER boolexpr_SatIter_new(BX);
-void boolexpr_SatIter_del(SAT_ITER);
-void boolexpr_SatIter_next(SAT_ITER);
-POINT boolexpr_SatIter_val(SAT_ITER);
-
 DFS_ITER boolexpr_DfsIter_new(BX);
 void boolexpr_DfsIter_del(DFS_ITER);
 void boolexpr_DfsIter_next(DFS_ITER);
 BX boolexpr_DfsIter_val(DFS_ITER);
+
+SAT_ITER boolexpr_SatIter_new(BX);
+void boolexpr_SatIter_del(SAT_ITER);
+void boolexpr_SatIter_next(SAT_ITER);
+POINT boolexpr_SatIter_val(SAT_ITER);
 
 DOM_ITER boolexpr_DomainIter_new(BX);
 void boolexpr_DomainIter_del(DOM_ITER);
