@@ -253,6 +253,13 @@ class BoolExprTest(unittest.TestCase):
         ]
         self.assertEqual(observed, expected)
 
+    def test_iter_points(self):
+        it = iter_points(xs[:2])
+        self.assertEqual(next(it), {xs[0]: ZERO, xs[1]: ZERO})
+        self.assertEqual(next(it), {xs[0]: ONE, xs[1]: ZERO})
+        self.assertEqual(next(it), {xs[0]: ZERO, xs[1]: ONE})
+        self.assertEqual(next(it), {xs[0]: ONE, xs[1]: ONE})
+
     def test_iter_domain(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         self.assertEqual(len(list(f.iter_domain())), 2**4)

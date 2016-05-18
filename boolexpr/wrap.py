@@ -632,6 +632,26 @@ LOGICAL = Logical(lib.boolexpr_logical())
 ILLOGICAL = Illogical(lib.boolexpr_illogical())
 
 
+def iter_points(xs):
+    """Iterate through all points in a Boolean space."""
+    if isinstance(xs, Variable):
+        xs = [xs]
+    num = len(xs)
+    vars_ = ffi.new("void * []", num)
+    for i, x in enumerate(xs):
+        vars_[i] = _expect_var(x).cdata
+    it = lib.boolexpr_PointsIter_new(len(vars_), vars_)
+    try:
+        while True:
+            val = lib.boolexpr_PointsIter_val(it)
+            if val == ffi.NULL:
+                break
+            yield _point(val)
+            lib.boolexpr_PointsIter_next(it)
+    finally:
+        lib.boolexpr_PointsIter_del(it)
+
+
 def not_(arg):
     """Boolean Not operator."""
     _, c_args = _convert_args((arg, ))

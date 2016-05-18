@@ -140,6 +140,23 @@ struct SatIterProxy
 };
 
 
+struct PointsIterProxy
+{
+    points_iter it;
+
+    PointsIterProxy(vector<var_t> const & xs)
+        : it {xs}
+    {}
+
+    void next() { ++it; }
+
+    MapProxy<var_t, const_t> * val() const
+    {
+        return (it == points_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
+    }
+};
+
+
 struct DomainIterProxy
 {
     domain_iter it;
@@ -397,6 +414,43 @@ POINT
 boolexpr_SatIter_val(SAT_ITER c_self)
 {
     auto self = reinterpret_cast<SatIterProxy const *>(c_self);
+    return self->val();
+}
+
+
+PTS_ITER
+boolexpr_PointsIter_new(size_t n, VARS c_varps)
+{
+    vector<var_t> vars(n);
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const *>(c_varps[i]);
+        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        vars[i] = var;
+    }
+    return new PointsIterProxy(vars);
+}
+
+
+void
+boolexpr_PointsIter_del(PTS_ITER c_self)
+{
+    auto self = reinterpret_cast<PointsIterProxy const *>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_PointsIter_next(PTS_ITER c_self)
+{
+    auto self = reinterpret_cast<PointsIterProxy *>(c_self);
+    self->next();
+}
+
+
+POINT
+boolexpr_PointsIter_val(PTS_ITER c_self)
+{
+    auto self = reinterpret_cast<PointsIterProxy const *>(c_self);
     return self->val();
 }
 

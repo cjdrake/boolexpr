@@ -93,6 +93,8 @@ from .wrap import ONE
 from .wrap import LOGICAL
 from .wrap import ILLOGICAL
 
+from .wrap import iter_points
+
 from .wrap import not_
 from .wrap import nor
 from .wrap import or_
