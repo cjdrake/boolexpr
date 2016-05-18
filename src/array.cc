@@ -120,6 +120,53 @@ boolexpr::operator^(Array const & lhs, Array const & rhs)
 
 
 Array *
+boolexpr::operator+(Array const & lhs, Array const & rhs)
+{
+    vector<bx_t> items(lhs.items.size() + rhs.items.size());
+
+    size_t cnt = 0;
+
+    for (size_t i = 0; i < lhs.items.size(); ++i)
+        items[cnt++] = lhs.items[i];
+
+    for (size_t i = 0; i < rhs.items.size(); ++i)
+        items[cnt++] = rhs.items[i];
+
+    return new Array(std::move(items));
+}
+
+
+Array *
+boolexpr::operator*(Array const & lhs, size_t num)
+{
+    vector<bx_t> items(num * lhs.items.size());
+
+    size_t cnt = 0;
+
+    for (size_t i = 0; i < num; ++i)
+        for (size_t j = 0; j < lhs.items.size(); ++j)
+            items[cnt++] = lhs.items[j];
+
+    return new Array(std::move(items));
+}
+
+
+Array *
+boolexpr::operator*(size_t num, Array const & rhs)
+{
+    vector<bx_t> items(num * rhs.items.size());
+
+    size_t cnt = 0;
+
+    for (size_t i = 0; i < num; ++i)
+        for (size_t j = 0; j < rhs.items.size(); ++j)
+            items[cnt++] = rhs.items[j];
+
+    return new Array(std::move(items));
+}
+
+
+Array *
 Array::compose(var2bx_t const & var2bx) const
 {
     size_t n = this->items.size();

@@ -1041,6 +1041,23 @@ boolexpr_Array_xor(BXA c_self, BXA c_other)
 
 
 BXA
+boolexpr_Array_plus(BXA c_self, BXA c_other)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto other = reinterpret_cast<Array const *>(c_other);
+    return *self + *other;
+}
+
+
+BXA
+boolexpr_Array_mul(BXA c_self, size_t num)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return *self * num;
+}
+
+
+BXA
 boolexpr_Array_compose(BXA c_self, size_t n, VARS c_varps, BXS c_bxps)
 {
     auto self = reinterpret_cast<Array const *>(c_self);

@@ -1007,6 +1007,15 @@ class Array:
     def __xor__(self, other):
         return Array(lib.boolexpr_Array_xor(self._cdata, other.cdata))
 
+    def __add__(self, other):
+        return Array(lib.boolexpr_Array_plus(self._cdata, other.cdata))
+
+    def __mul__(self, num):
+        return Array(lib.boolexpr_Array_mul(self._cdata, num))
+
+    def __rmul__(self, num):
+        return Array(lib.boolexpr_Array_mul(self._cdata, num))
+
     def compose(self, var2bx):
         r"""
         Substitute a subset of support variables with other Boolean expressions.

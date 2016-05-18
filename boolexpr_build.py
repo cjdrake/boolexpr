@@ -243,6 +243,8 @@ BXA boolexpr_Array_invert(BXA);
 BXA boolexpr_Array_or(BXA, BXA);
 BXA boolexpr_Array_and(BXA, BXA);
 BXA boolexpr_Array_xor(BXA, BXA);
+BXA boolexpr_Array_plus(BXA, BXA);
+BXA boolexpr_Array_mul(BXA, size_t);
 BXA boolexpr_Array_compose(BXA, size_t, VARS, BXS);
 BXA boolexpr_Array_restrict(BXA, size_t, VARS, CONSTS);
 _Bool boolexpr_Array_equiv(BXA, BXA);

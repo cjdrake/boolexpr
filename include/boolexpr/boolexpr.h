@@ -647,6 +647,10 @@ class Array
     friend Array * operator&(Array const &, Array const &);
     friend Array * operator^(Array const &, Array const &);
 
+    friend Array * operator+(Array const &, Array const &);
+    friend Array * operator*(Array const &, size_t);
+    friend Array * operator*(size_t, Array const &);
+
 public:
     vector<bx_t> const items;
 
@@ -867,6 +871,9 @@ Array * operator~(Array const &);
 Array * operator|(Array const &, Array const &);
 Array * operator&(Array const &, Array const &);
 Array * operator^(Array const &, Array const &);
+Array * operator+(Array const &, Array const &);
+Array * operator*(Array const &, size_t);
+Array * operator*(size_t, Array const &);
 
 
 } // namespace boolexpr
@@ -1021,6 +1028,8 @@ BXA boolexpr_Array_invert(BXA);
 BXA boolexpr_Array_or(BXA, BXA);
 BXA boolexpr_Array_and(BXA, BXA);
 BXA boolexpr_Array_xor(BXA, BXA);
+BXA boolexpr_Array_plus(BXA, BXA);
+BXA boolexpr_Array_mul(BXA, size_t);
 BXA boolexpr_Array_compose(BXA, size_t, VARS, BXS);
 BXA boolexpr_Array_restrict(BXA, size_t, VARS, CONSTS);
 bool boolexpr_Array_equiv(BXA, BXA);
