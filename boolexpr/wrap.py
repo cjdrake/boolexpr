@@ -18,7 +18,7 @@ CFFI _boolexpr module wrapper
 """
 
 
-from enum import Enum
+import enum
 
 from ._boolexpr import ffi, lib
 
@@ -49,7 +49,7 @@ class BoolExpr:
     Wrap boolexpr::BoolExpr class
     """
 
-    class Kind(Enum):
+    class Kind(enum.Enum):
         """BoolExpr Kind Codes"""
         zero = lib.ZERO
         one = lib.ONE
@@ -102,7 +102,7 @@ class BoolExpr:
             lib.boolexpr_String_del(c_str)
 
     def __str__(self):
-        return self.__bytes__().decode('utf-8')
+        return self.__bytes__().decode("utf-8")
 
     def __invert__(self):
         """Boolean negation operator
@@ -1008,6 +1008,13 @@ class Array:
         return Array(lib.boolexpr_Array_xor(self._cdata, other.cdata))
 
     def compose(self, var2bx):
+        r"""
+        Substitute a subset of support variables with other Boolean expressions.
+
+        Returns a new expression: :math:`f(g_i, \ldots)`
+
+        :math:`f_1 \: | \: x_i = f_2`
+        """
         num = len(var2bx)
         vars_ = ffi.new("void * []", num)
         bxs = ffi.new("void * []", num)
@@ -1017,6 +1024,13 @@ class Array:
         return Array(lib.boolexpr_Array_compose(self._cdata, num, vars_, bxs))
 
     def restrict(self, point):
+        r"""
+        Substitute a subset of support variables with other Boolean expressions.
+
+        Returns a new expression: :math:`f(g_i, \ldots)`
+
+        :math:`f_1 \: | \: x_i = f_2`
+        """
         num = len(point)
         vars_ = ffi.new("void * []", num)
         consts = ffi.new("void * []", num)
@@ -1026,13 +1040,22 @@ class Array:
         return Array((lib.boolexpr_Array_restrict(self._cdata, num, vars_, consts)))
 
     def equiv(self, other):
+        """Return True if two arrays are equivalent.
+
+        .. note:: While in practice this check can be quite fast,
+                  SAT is an NP-complete problem, so some inputs will require
+                  exponential runtime.
+        """
         return bool(lib.boolexpr_Array_equiv(self._cdata, other.cdata))
 
     def or_reduce(self):
+        """Reduce items of the array using the OR operator."""
         return _bx(lib.boolexpr_Array_or_reduce(self._cdata))
 
     def and_reduce(self):
+        """Reduce items of the array using the AND operator."""
         return _bx(lib.boolexpr_Array_and_reduce(self._cdata))
 
     def xor_reduce(self):
+        """Reduce items of the array using the XOR operator."""
         return _bx(lib.boolexpr_Array_xor_reduce(self._cdata))
