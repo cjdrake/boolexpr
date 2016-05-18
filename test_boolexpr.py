@@ -239,6 +239,13 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(list(f.iter_cfs([xs[0], xs[1], xs[2]])),
                          [ZERO, ZERO, ZERO, ONE, ZERO, ONE, ONE, ONE])
 
+    def test_mux(self):
+        f = mux(xs[3:7], [xs[0], xs[1], xs[2]])
+        self.assertTrue(f.args[0].equiv(xs[3] & ~xs[0] & ~xs[1] & ~xs[2]))
+        self.assertTrue(f.args[1].equiv(xs[4] & xs[0] & ~xs[1] & ~xs[2]))
+        self.assertTrue(f.args[2].equiv(xs[5] & ~xs[0] & xs[1] & ~xs[2]))
+        self.assertTrue(f.args[3].equiv(xs[6] & xs[0] & xs[1] & ~xs[2]))
+
     def test_iter_dfs(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
         observed = list(str(bx) for bx in f.iter_dfs())

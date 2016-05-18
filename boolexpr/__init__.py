@@ -130,6 +130,7 @@ from .wrap import Array
 
 from .misc import majority
 from .misc import achilles_heel
+from .misc import mux
 from .misc import exists
 from .misc import forall
 

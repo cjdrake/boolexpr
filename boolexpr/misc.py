@@ -20,7 +20,8 @@ Miscellaneous features not implemented in C++ API
 
 import itertools
 
-from .wrap import or_, and_
+from .util import clog2
+from .wrap import BoolExpr, iter_points, or_, and_
 
 
 def majority(*args, conj=False):
@@ -52,6 +53,22 @@ def achilles_heel(*args):
         fstr = "expected an even number of arguments, got {}"
         raise ValueError(fstr.format(num))
     return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])
+
+
+def mux(args, sel):
+    """
+    Return an expression that multiplexes a sequence of input functions over a
+    sequence of select functions.
+    """
+    # convert mux([a, b], x) to mux([a, b], [x])
+    if isinstance(sel, BoolExpr):
+        sel = [BoolExpr]
+    if len(sel) < clog2(len(args)):
+        fstr = "expected at least {} select bits, got {}"
+        raise ValueError(fstr.format(clog2(len(args)), len(sel)))
+    it = (tuple(v if val else ~v for v, val in point.items())
+          for point in iter_points(sel))
+    return or_(*[and_(arg, *next(it)) for arg in args])
 
 
 def exists(xs, f):
