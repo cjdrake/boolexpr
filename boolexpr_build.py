@@ -249,6 +249,8 @@ BXA boolexpr_Array_mul(BXA, size_t);
 BXA boolexpr_Array_compose(BXA, size_t, VARS, BXS);
 BXA boolexpr_Array_restrict(BXA, size_t, VARS, CONSTS);
 _Bool boolexpr_Array_equiv(BXA, BXA);
+BXA boolexpr_Array_zext(BXA, size_t);
+BXA boolexpr_Array_sext(BXA, size_t);
 BX boolexpr_Array_or_reduce(BXA);
 BX boolexpr_Array_and_reduce(BXA);
 BX boolexpr_Array_xor_reduce(BXA);

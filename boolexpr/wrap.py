@@ -1068,6 +1068,14 @@ class Array:
         """
         return bool(lib.boolexpr_Array_equiv(self._cdata, other.cdata))
 
+    def zext(self, num):
+        """Zero-extend this array by *num* bits."""
+        return Array(lib.boolexpr_Array_zext(self._cdata, num))
+
+    def sext(self, num):
+        """Sign-extend this array by *num* bits."""
+        return Array(lib.boolexpr_Array_sext(self._cdata, num))
+
     def or_reduce(self):
         """Reduce items of the array using the OR operator."""
         return _bx(lib.boolexpr_Array_or_reduce(self._cdata))

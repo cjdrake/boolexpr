@@ -207,6 +207,39 @@ Array::equiv(Array const & other) const
 }
 
 
+Array *
+Array::zext(size_t num) const
+{
+    std::vector<bx_t> items(this->items.size() + num);
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < this->items.size(); ++i)
+        items[cnt++] = this->items[i];
+
+    for (size_t i = 0; i < num; ++i)
+        items[cnt++] = zero();
+
+    return new Array(std::move(items));
+}
+
+
+Array *
+Array::sext(size_t num) const
+{
+    std::vector<bx_t> items(this->items.size() + num);
+
+    size_t cnt = 0;
+    for (size_t i = 0; i < this->items.size(); ++i)
+        items[cnt++] = this->items[i];
+
+    auto sign = this->items[this->items.size()-1];
+    for (size_t i = 0; i < num; ++i)
+        items[cnt++] = sign;
+
+    return new Array(std::move(items));
+}
+
+
 bx_t
 Array::or_reduce() const
 {

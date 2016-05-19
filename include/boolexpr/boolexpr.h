@@ -662,6 +662,9 @@ public:
     Array * restrict_(point_t const &) const;
     bool equiv(Array const &) const;
 
+    Array * zext(size_t num) const;
+    Array * sext(size_t num) const;
+
     bx_t or_reduce() const;
     bx_t and_reduce() const;
     bx_t xor_reduce() const;
@@ -1034,6 +1037,8 @@ BXA boolexpr_Array_mul(BXA, size_t);
 BXA boolexpr_Array_compose(BXA, size_t, VARS, BXS);
 BXA boolexpr_Array_restrict(BXA, size_t, VARS, CONSTS);
 bool boolexpr_Array_equiv(BXA, BXA);
+BXA boolexpr_Array_zext(BXA, size_t);
+BXA boolexpr_Array_sext(BXA, size_t);
 BX boolexpr_Array_or_reduce(BXA);
 BX boolexpr_Array_and_reduce(BXA);
 BX boolexpr_Array_xor_reduce(BXA);

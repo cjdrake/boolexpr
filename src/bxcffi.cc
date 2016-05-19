@@ -1111,6 +1111,22 @@ boolexpr_Array_equiv(BXA c_self, BXA c_other)
 }
 
 
+BXA
+boolexpr_Array_zext(BXA c_self, size_t num)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return self->zext(num);
+}
+
+
+BXA
+boolexpr_Array_sext(BXA c_self, size_t num)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    return self->sext(num);
+}
+
+
 BX
 boolexpr_Array_or_reduce(BXA c_self)
 {
