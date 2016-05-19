@@ -1024,6 +1024,7 @@ BXA boolexpr_Array_new(size_t, BXS);
 void boolexpr_Array_del(BXA);
 size_t boolexpr_Array_size(BXA);
 BX boolexpr_Array_getitem(BXA, size_t);
+BXA boolexpr_Array_getslice(BXA, size_t, size_t);
 BXA boolexpr_Array_invert(BXA);
 BXA boolexpr_Array_or(BXA, BXA);
 BXA boolexpr_Array_and(BXA, BXA);

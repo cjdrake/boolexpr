@@ -987,9 +987,20 @@ class Array:
     def __len__(self):
         return lib.boolexpr_Array_size(self._cdata)
 
-    def __getitem__(self, index):
-        assert 0 <= index < self.__len__()
-        return _bx(lib.boolexpr_Array_getitem(self._cdata, index))
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            assert 0 <= key < self.__len__()
+            return _bx(lib.boolexpr_Array_getitem(self._cdata, key))
+        elif isinstance(key, slice):
+            start = 0 if key.start is None else key.start
+            stop = self.__len__() if key.stop is None else key.stop
+            if key.step is not None:
+                raise ValueError("slice step is not supported")
+            assert 0 <= start <= stop <= self.__len__()
+            cdata = lib.boolexpr_Array_getslice(self._cdata, start, stop)
+            return Array(cdata)
+        else:
+            raise TypeError("expected key to be an int or slice")
 
     def __iter__(self):
         for i in range(self.__len__()):
