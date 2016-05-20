@@ -810,7 +810,7 @@ _KIND2LIT = {
     lib.VAR  : Variable,
 }
 
-_KIND2OTHER = {
+_KIND2OP = {
     lib.NOR   : Nor,
     lib.OR    : Or,
     lib.NAND  : Nand,
@@ -915,7 +915,7 @@ def _bx(cbx):
         else:
             lib.boolexpr_BoolExpr_del(cbx)
         return lit
-    return _KIND2OTHER[kind](cbx)
+    return _KIND2OP[kind](cbx)
 
 
 def _bxlist(c_vec):
