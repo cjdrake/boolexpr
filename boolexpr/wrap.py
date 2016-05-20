@@ -19,6 +19,7 @@ CFFI _boolexpr module wrapper
 
 
 import enum
+import operator
 
 from ._boolexpr import ffi, lib
 
@@ -989,18 +990,27 @@ class Array:
 
     def __getitem__(self, key):
         if isinstance(key, int):
-            assert 0 <= key < self.__len__()
-            return _bx(lib.boolexpr_Array_getitem(self._cdata, key))
+            index = self._key2index(key)
+            return _bx(lib.boolexpr_Array_getitem(self._cdata, index))
         elif isinstance(key, slice):
-            start = 0 if key.start is None else key.start
-            stop = self.__len__() if key.stop is None else key.stop
-            if key.step is not None:
-                raise ValueError("slice step is not supported")
-            assert 0 <= start <= stop <= self.__len__()
+            start, stop, _ = self._key2indices(key)
             cdata = lib.boolexpr_Array_getslice(self._cdata, start, stop)
             return Array(cdata)
         else:
             raise TypeError("expected key to be an int or slice")
+
+    def _key2index(self, key):
+        index = operator.index(key)
+        if index < 0:
+            index += self.__len__()
+        if not (0 <= index < self.__len__()):
+            raise IndexError("Array index out of range")
+        return index
+
+    def _key2indices(self, key):
+        if key.step is not None:
+            raise ValueError("Array slice step is not supported")
+        return key.indices(self.__len__())
 
     def __iter__(self):
         for i in range(self.__len__()):
