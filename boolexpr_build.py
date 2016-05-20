@@ -254,6 +254,9 @@ BXA boolexpr_Array_sext(BXA, size_t);
 BX boolexpr_Array_or_reduce(BXA);
 BX boolexpr_Array_and_reduce(BXA);
 BX boolexpr_Array_xor_reduce(BXA);
+void * boolexpr_Array_lsh(BXA, BXA);
+void * boolexpr_Array_rsh(BXA, BXA);
+void * boolexpr_Array_arsh(BXA, size_t);
 
 """
 

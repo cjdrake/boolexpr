@@ -1149,3 +1149,50 @@ boolexpr_Array_xor_reduce(BXA c_self)
     auto self = reinterpret_cast<Array const *>(c_self);
     return new BoolExprProxy(self->xor_reduce());
 }
+
+
+void *
+boolexpr_Array_lsh(BXA c_self, BXA c_sin)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto si = reinterpret_cast<Array const *>(c_sin);
+
+    auto p = self->lsh(*si);
+
+    auto ret = new Array* [2];
+    ret[0] = p.first;
+    ret[1] = p.second;
+
+    return ret;
+}
+
+
+void *
+boolexpr_Array_rsh(BXA c_self, BXA c_sin)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+    auto si = reinterpret_cast<Array const *>(c_sin);
+
+    auto p = self->rsh(*si);
+
+    auto ret = new Array* [2];
+    ret[0] = p.first;
+    ret[1] = p.second;
+
+    return ret;
+}
+
+
+void *
+boolexpr_Array_arsh(BXA c_self, size_t n)
+{
+    auto self = reinterpret_cast<Array const *>(c_self);
+
+    auto p = self->arsh(n);
+
+    auto ret = new Array* [2];
+    ret[0] = p.first;
+    ret[1] = p.second;
+
+    return ret;
+}

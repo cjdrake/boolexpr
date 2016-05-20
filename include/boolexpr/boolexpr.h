@@ -654,6 +654,7 @@ class Array
 public:
     vector<bx_t> const items;
 
+    Array();
     Array(vector<bx_t> const &);
     Array(vector<bx_t> const &&);
     Array(std::initializer_list<bx_t> const items);
@@ -668,6 +669,10 @@ public:
     bx_t or_reduce() const;
     bx_t and_reduce() const;
     bx_t xor_reduce() const;
+
+    std::pair<Array*, Array*> lsh(Array const &) const;
+    std::pair<Array*, Array*> rsh(Array const &) const;
+    std::pair<Array*, Array*> arsh(size_t) const;
 };
 
 
@@ -1042,6 +1047,9 @@ BXA boolexpr_Array_sext(BXA, size_t);
 BX boolexpr_Array_or_reduce(BXA);
 BX boolexpr_Array_and_reduce(BXA);
 BX boolexpr_Array_xor_reduce(BXA);
+void * boolexpr_Array_lsh(BXA, BXA);
+void * boolexpr_Array_rsh(BXA, BXA);
+void * boolexpr_Array_arsh(BXA, size_t);
 
 } // extern "C"
 

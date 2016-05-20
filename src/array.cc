@@ -28,6 +28,11 @@
 using namespace boolexpr;
 
 
+Array::Array()
+    : items {}
+{}
+
+
 Array::Array(vector<bx_t> const & items)
     : items {items}
 {}
@@ -258,4 +263,78 @@ bx_t
 Array::xor_reduce() const
 {
     return xor_(items);
+}
+
+
+std::pair<Array*, Array*>
+Array::lsh(Array const & si) const
+{
+    auto m = this->items.size();
+    auto n = si.items.size();
+
+    assert(m >= n);
+
+    vector<bx_t> items(m);
+    vector<bx_t> so(n);
+
+    for (size_t i = 0; i < n; ++i)
+        items[i] = si.items[i];
+
+    for (size_t i = n; i < m; ++i)
+        items[i] = this->items[i-n];
+
+    for (size_t i = 0; i < n; ++i)
+        so[i] = this->items[i+m-n];
+
+    return std::make_pair(new Array(std::move(items)),
+                          new Array(std::move(so)));
+}
+
+
+std::pair<Array*, Array*>
+Array::rsh(Array const & si) const
+{
+    auto m = this->items.size();
+    auto n = si.items.size();
+
+    assert(m >= n);
+
+    vector<bx_t> items(m);
+    vector<bx_t> so(n);
+
+    for (size_t i = 0; i < n; ++i)
+        so[i] = this->items[i];
+
+    for (size_t i = 0; i < (m-n); ++i)
+        items[i] = this->items[i+n];
+
+    for (size_t i = (m-n); i < m; ++i)
+        items[i] = si.items[i-m+n];
+
+    return std::make_pair(new Array(std::move(so)),
+                          new Array(std::move(items)));
+}
+
+
+std::pair<Array*, Array*>
+Array::arsh(size_t n) const
+{
+    auto m = this->items.size();
+
+    assert(m >= n);
+
+    vector<bx_t> items(m);
+    vector<bx_t> so(n);
+
+    for (size_t i = 0; i < n; ++i)
+        so[i] = this->items[i];
+
+    for (size_t i = 0; i < (m-n); ++i)
+        items[i] = this->items[i+n];
+
+    for (size_t i = (m-n); i < m; ++i)
+        items[i] = this->items[m-1];
+
+    return std::make_pair(new Array(std::move(so)),
+                          new Array(std::move(items)));
 }

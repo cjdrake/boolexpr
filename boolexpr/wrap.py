@@ -1097,3 +1097,21 @@ class Array:
     def xor_reduce(self):
         """Reduce items of the array using the XOR operator."""
         return _bx(lib.boolexpr_Array_xor_reduce(self._cdata))
+
+    def lsh(self, si):
+        """Left shift operator"""
+        cdata = lib.boolexpr_Array_lsh(self._cdata, si.cdata)
+        cdata = ffi.cast("void * [2]", cdata)
+        return Array(cdata[0]), Array(cdata[1])
+
+    def rsh(self, si):
+        """Right shift operator"""
+        cdata = lib.boolexpr_Array_rsh(self._cdata, si.cdata)
+        cdata = ffi.cast("void * [2]", cdata)
+        return Array(cdata[0]), Array(cdata[1])
+
+    def arsh(self, num):
+        """Arithmetic right shift operator"""
+        cdata = lib.boolexpr_Array_arsh(self._cdata, num)
+        cdata = ffi.cast("void * [2]", cdata)
+        return Array(cdata[0]), Array(cdata[1])

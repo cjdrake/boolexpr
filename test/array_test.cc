@@ -103,3 +103,45 @@ TEST_F(ArrayTest, Equiv)
     EXPECT_FALSE(X0.equiv(X2));
     EXPECT_FALSE(X0.equiv(X3));
 }
+
+
+TEST_F(ArrayTest, LeftShift)
+{
+    Array A {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]};
+    Array si {xs[10], xs[11], xs[12]};
+
+    Array B {xs[10], xs[11], xs[12], xs[0], xs[1], xs[2], xs[3], xs[4]};
+    Array so {xs[5], xs[6], xs[7]};
+
+    auto p = A.lsh(si);
+    EXPECT_TRUE(p.first->equiv(B));
+    EXPECT_TRUE(p.second->equiv(so));
+
+}
+
+
+TEST_F(ArrayTest, RightShift)
+{
+    Array A {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]};
+    Array si {xs[10], xs[11], xs[12]};
+
+    Array B {xs[3], xs[4], xs[5], xs[6], xs[7], xs[10], xs[11], xs[12]};
+    Array so {xs[0], xs[1], xs[2]};
+
+    auto p = A.rsh(si);
+    EXPECT_TRUE(p.first->equiv(B));
+    EXPECT_TRUE(p.second->equiv(so));
+}
+
+
+TEST_F(ArrayTest, ArithmeticRightShift)
+{
+    Array A {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5], xs[6], xs[7]};
+
+    Array B {xs[3], xs[4], xs[5], xs[6], xs[7], xs[7], xs[7], xs[7]};
+    Array so {xs[0], xs[1], xs[2]};
+
+    auto p = A.arsh(3);
+    EXPECT_TRUE(p.first->equiv(B));
+    EXPECT_TRUE(p.second->equiv(so));
+}
