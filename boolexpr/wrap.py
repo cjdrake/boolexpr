@@ -76,6 +76,11 @@ class BoolExpr:
     def __del__(self):
         lib.boolexpr_BoolExpr_del(self._cdata)
 
+    @property
+    def cdata(self):
+        """Return the CFFI CData object."""
+        return self._cdata
+
     def to_ast(self):
         """Convert to an abstract syntax tree (AST)."""
         raise NotImplementedError()
@@ -85,11 +90,6 @@ class BoolExpr:
         """Convert an abstract syntax tree (AST) to a BoolExpr."""
         fst, rst = ast[0], ast[1:]
         return _AST[fst](rst)
-
-    @property
-    def cdata(self):
-        """Return the CFFI CData object."""
-        return self._cdata
 
     def __repr__(self):
         return self.__str__()
@@ -852,7 +852,7 @@ _AST = {
 
 
 def _expect_bx(obj):
-    """Return a BoolExpr or raise TypeError."""
+    """Return a BoolExpr, or raise TypeError."""
     if obj == 0:
         return ZERO
     elif obj == 1:
