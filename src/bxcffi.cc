@@ -41,7 +41,7 @@ template <typename T>
 struct VecProxy
 {
     vector<T> v;
-    typename std::vector<T>::iterator it;
+    typename vector<T>::iterator it;
 
     VecProxy(vector<T> const & v): v {v} {}
 
@@ -1012,8 +1012,8 @@ boolexpr_Array_getslice(BXA c_self, size_t start, size_t stop)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     assert((0 <= start) && (start <= stop) && (stop <= self->items.size()));
-    auto items = std::vector<bx_t>(self->items.begin() + start,
-                                   self->items.begin() + stop);
+    auto items = vector<bx_t>(self->items.begin() + start,
+                              self->items.begin() + stop);
     return new Array(std::move(items));
 }
 

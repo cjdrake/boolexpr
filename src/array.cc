@@ -210,7 +210,7 @@ Array::equiv(Array const & other) const
 Array *
 Array::zext(size_t num) const
 {
-    std::vector<bx_t> items(this->items.size() + num);
+    vector<bx_t> items(this->items.size() + num);
 
     size_t cnt = 0;
     for (size_t i = 0; i < this->items.size(); ++i)
@@ -226,7 +226,7 @@ Array::zext(size_t num) const
 Array *
 Array::sext(size_t num) const
 {
-    std::vector<bx_t> items(this->items.size() + num);
+    vector<bx_t> items(this->items.size() + num);
 
     size_t cnt = 0;
     for (size_t i = 0; i < this->items.size(); ++i)
