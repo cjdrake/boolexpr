@@ -129,8 +129,8 @@ TEST_F(ArrayTest, RightShift)
     Array so {xs[0], xs[1], xs[2]};
 
     auto p = A.rsh(si);
-    EXPECT_TRUE(p.first->equiv(B));
-    EXPECT_TRUE(p.second->equiv(so));
+    EXPECT_TRUE(p.first->equiv(so));
+    EXPECT_TRUE(p.second->equiv(B));
 }
 
 
@@ -142,6 +142,6 @@ TEST_F(ArrayTest, ArithmeticRightShift)
     Array so {xs[0], xs[1], xs[2]};
 
     auto p = A.arsh(3);
-    EXPECT_TRUE(p.first->equiv(B));
-    EXPECT_TRUE(p.second->equiv(so));
+    EXPECT_TRUE(p.first->equiv(so));
+    EXPECT_TRUE(p.second->equiv(B));
 }
