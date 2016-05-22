@@ -989,15 +989,12 @@ class Array:
         return lib.boolexpr_Array_size(self._cdata)
 
     def __getitem__(self, key):
-        if isinstance(key, int):
-            index = self._key2index(key)
-            return _bx(lib.boolexpr_Array_getitem(self._cdata, index))
-        elif isinstance(key, slice):
+        if isinstance(key, slice):
             start, stop, _ = self._key2indices(key)
             cdata = lib.boolexpr_Array_getslice(self._cdata, start, stop)
             return Array(cdata)
-        else:
-            raise TypeError("expected key to be an int or slice")
+        index = self._key2index(key)
+        return _bx(lib.boolexpr_Array_getitem(self._cdata, index))
 
     def _key2index(self, key):
         index = operator.index(key)
