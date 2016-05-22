@@ -83,6 +83,7 @@ typedef char const * const STRING;
 typedef void * const CONTEXT;
 typedef void const * const BX;
 typedef void const * const ARRAY;
+typedef void const * const ARRAY_PAIR;
 typedef void const * const * const BXS;
 typedef void const * const * const VARS;
 typedef void const * const * const CONSTS;
@@ -254,9 +255,12 @@ ARRAY boolexpr_Array_sext(ARRAY, size_t);
 BX boolexpr_Array_or_reduce(ARRAY);
 BX boolexpr_Array_and_reduce(ARRAY);
 BX boolexpr_Array_xor_reduce(ARRAY);
-void * boolexpr_Array_lsh(ARRAY, ARRAY);
-void * boolexpr_Array_rsh(ARRAY, ARRAY);
-void * boolexpr_Array_arsh(ARRAY, size_t);
+ARRAY boolexpr_ArrayPair_fst(ARRAY_PAIR);
+ARRAY boolexpr_ArrayPair_snd(ARRAY_PAIR);
+void boolexpr_ArrayPair_del(ARRAY_PAIR);
+ARRAY_PAIR boolexpr_Array_lsh(ARRAY, ARRAY);
+ARRAY_PAIR boolexpr_Array_rsh(ARRAY, ARRAY);
+ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 
 """
 

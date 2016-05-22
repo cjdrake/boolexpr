@@ -1098,17 +1098,29 @@ class Array:
     def lsh(self, si):
         """Left shift operator"""
         cdata = lib.boolexpr_Array_lsh(self._cdata, si.cdata)
-        cdata = ffi.cast("void * [2]", cdata)
-        return Array(cdata[0]), Array(cdata[1])
+        try:
+            fst = lib.boolexpr_ArrayPair_fst(cdata)
+            snd = lib.boolexpr_ArrayPair_snd(cdata)
+        finally:
+            lib.boolexpr_ArrayPair_del(cdata)
+        return Array(fst), Array(snd)
 
     def rsh(self, si):
         """Right shift operator"""
         cdata = lib.boolexpr_Array_rsh(self._cdata, si.cdata)
-        cdata = ffi.cast("void * [2]", cdata)
-        return Array(cdata[0]), Array(cdata[1])
+        try:
+            fst = lib.boolexpr_ArrayPair_fst(cdata)
+            snd = lib.boolexpr_ArrayPair_snd(cdata)
+        finally:
+            lib.boolexpr_ArrayPair_del(cdata)
+        return Array(fst), Array(snd)
 
     def arsh(self, num):
         """Arithmetic right shift operator"""
         cdata = lib.boolexpr_Array_arsh(self._cdata, num)
-        cdata = ffi.cast("void * [2]", cdata)
-        return Array(cdata[0]), Array(cdata[1])
+        try:
+            fst = lib.boolexpr_ArrayPair_fst(cdata)
+            snd = lib.boolexpr_ArrayPair_snd(cdata)
+        finally:
+            lib.boolexpr_ArrayPair_del(cdata)
+        return Array(fst), Array(snd)
