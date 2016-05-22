@@ -975,7 +975,7 @@ boolexpr_Operator_is_clause(BX c_self)
 }
 
 
-BXA
+ARRAY
 boolexpr_Array_new(size_t n, BXS c_args)
 {
     return new Array(_convert_args(n, c_args));
@@ -983,7 +983,7 @@ boolexpr_Array_new(size_t n, BXS c_args)
 
 
 void
-boolexpr_Array_del(BXA c_self)
+boolexpr_Array_del(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     delete self;
@@ -991,7 +991,7 @@ boolexpr_Array_del(BXA c_self)
 
 
 size_t
-boolexpr_Array_size(BXA c_self)
+boolexpr_Array_size(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return self->items.size();
@@ -999,7 +999,7 @@ boolexpr_Array_size(BXA c_self)
 
 
 BX
-boolexpr_Array_getitem(BXA c_self, size_t index)
+boolexpr_Array_getitem(ARRAY c_self, size_t index)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     assert(index < self->items.size());
@@ -1007,8 +1007,8 @@ boolexpr_Array_getitem(BXA c_self, size_t index)
 }
 
 
-BXA
-boolexpr_Array_getslice(BXA c_self, size_t start, size_t stop)
+ARRAY
+boolexpr_Array_getslice(ARRAY c_self, size_t start, size_t stop)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     assert((0 <= start) && (start <= stop) && (stop <= self->items.size()));
@@ -1018,16 +1018,16 @@ boolexpr_Array_getslice(BXA c_self, size_t start, size_t stop)
 }
 
 
-BXA
-boolexpr_Array_invert(BXA c_self)
+ARRAY
+boolexpr_Array_invert(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return ~(*self);
 }
 
 
-BXA
-boolexpr_Array_or(BXA c_self, BXA c_other)
+ARRAY
+boolexpr_Array_or(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto other = reinterpret_cast<Array const *>(c_other);
@@ -1035,8 +1035,8 @@ boolexpr_Array_or(BXA c_self, BXA c_other)
 }
 
 
-BXA
-boolexpr_Array_and(BXA c_self, BXA c_other)
+ARRAY
+boolexpr_Array_and(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto other = reinterpret_cast<Array const *>(c_other);
@@ -1044,8 +1044,8 @@ boolexpr_Array_and(BXA c_self, BXA c_other)
 }
 
 
-BXA
-boolexpr_Array_xor(BXA c_self, BXA c_other)
+ARRAY
+boolexpr_Array_xor(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto other = reinterpret_cast<Array const *>(c_other);
@@ -1053,8 +1053,8 @@ boolexpr_Array_xor(BXA c_self, BXA c_other)
 }
 
 
-BXA
-boolexpr_Array_plus(BXA c_self, BXA c_other)
+ARRAY
+boolexpr_Array_plus(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto other = reinterpret_cast<Array const *>(c_other);
@@ -1062,16 +1062,16 @@ boolexpr_Array_plus(BXA c_self, BXA c_other)
 }
 
 
-BXA
-boolexpr_Array_mul(BXA c_self, size_t num)
+ARRAY
+boolexpr_Array_mul(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return *self * num;
 }
 
 
-BXA
-boolexpr_Array_compose(BXA c_self, size_t n, VARS c_varps, BXS c_bxps)
+ARRAY
+boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto var2bx = var2bx_t();
@@ -1086,8 +1086,8 @@ boolexpr_Array_compose(BXA c_self, size_t n, VARS c_varps, BXS c_bxps)
 }
 
 
-BXA
-boolexpr_Array_restrict(BXA c_self, size_t n, VARS c_varps, CONSTS c_constps)
+ARRAY
+boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto point = point_t();
@@ -1103,7 +1103,7 @@ boolexpr_Array_restrict(BXA c_self, size_t n, VARS c_varps, CONSTS c_constps)
 
 
 bool
-boolexpr_Array_equiv(BXA c_self, BXA c_other)
+boolexpr_Array_equiv(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto other = reinterpret_cast<Array const *>(c_other);
@@ -1111,16 +1111,16 @@ boolexpr_Array_equiv(BXA c_self, BXA c_other)
 }
 
 
-BXA
-boolexpr_Array_zext(BXA c_self, size_t num)
+ARRAY
+boolexpr_Array_zext(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return self->zext(num);
 }
 
 
-BXA
-boolexpr_Array_sext(BXA c_self, size_t num)
+ARRAY
+boolexpr_Array_sext(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return self->sext(num);
@@ -1128,7 +1128,7 @@ boolexpr_Array_sext(BXA c_self, size_t num)
 
 
 BX
-boolexpr_Array_or_reduce(BXA c_self)
+boolexpr_Array_or_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return new BoolExprProxy(self->or_reduce());
@@ -1136,7 +1136,7 @@ boolexpr_Array_or_reduce(BXA c_self)
 
 
 BX
-boolexpr_Array_and_reduce(BXA c_self)
+boolexpr_Array_and_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return new BoolExprProxy(self->and_reduce());
@@ -1144,7 +1144,7 @@ boolexpr_Array_and_reduce(BXA c_self)
 
 
 BX
-boolexpr_Array_xor_reduce(BXA c_self)
+boolexpr_Array_xor_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     return new BoolExprProxy(self->xor_reduce());
@@ -1152,7 +1152,7 @@ boolexpr_Array_xor_reduce(BXA c_self)
 
 
 void *
-boolexpr_Array_lsh(BXA c_self, BXA c_sin)
+boolexpr_Array_lsh(ARRAY c_self, ARRAY c_sin)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto si = reinterpret_cast<Array const *>(c_sin);
@@ -1168,7 +1168,7 @@ boolexpr_Array_lsh(BXA c_self, BXA c_sin)
 
 
 void *
-boolexpr_Array_rsh(BXA c_self, BXA c_sin)
+boolexpr_Array_rsh(ARRAY c_self, ARRAY c_sin)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
     auto si = reinterpret_cast<Array const *>(c_sin);
@@ -1184,7 +1184,7 @@ boolexpr_Array_rsh(BXA c_self, BXA c_sin)
 
 
 void *
-boolexpr_Array_arsh(BXA c_self, size_t n)
+boolexpr_Array_arsh(ARRAY c_self, size_t n)
 {
     auto self = reinterpret_cast<Array const *>(c_self);
 

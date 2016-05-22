@@ -82,6 +82,7 @@ HEADER = """
 typedef char const * const STRING;
 typedef void * const CONTEXT;
 typedef void const * const BX;
+typedef void const * const ARRAY;
 typedef void const * const * const BXS;
 typedef void const * const * const VARS;
 typedef void const * const * const CONSTS;
@@ -94,7 +95,6 @@ typedef void * const SAT_ITER;
 typedef void * const PTS_ITER;
 typedef void * const DOM_ITER;
 typedef void * const CF_ITER;
-typedef void * const BXA;
 
 enum Kind {
     ZERO  = 0x00,   // 0 0000
@@ -235,28 +235,28 @@ _Bool boolexpr_Operator_simple(BX);
 VEC boolexpr_Operator_args(BX);
 _Bool boolexpr_Operator_is_clause(BX);
 
-BXA boolexpr_Array_new(size_t, BXS);
-void boolexpr_Array_del(BXA);
-size_t boolexpr_Array_size(BXA);
-BX boolexpr_Array_getitem(BXA, size_t);
-BXA boolexpr_Array_getslice(BXA, size_t, size_t);
-BXA boolexpr_Array_invert(BXA);
-BXA boolexpr_Array_or(BXA, BXA);
-BXA boolexpr_Array_and(BXA, BXA);
-BXA boolexpr_Array_xor(BXA, BXA);
-BXA boolexpr_Array_plus(BXA, BXA);
-BXA boolexpr_Array_mul(BXA, size_t);
-BXA boolexpr_Array_compose(BXA, size_t, VARS, BXS);
-BXA boolexpr_Array_restrict(BXA, size_t, VARS, CONSTS);
-_Bool boolexpr_Array_equiv(BXA, BXA);
-BXA boolexpr_Array_zext(BXA, size_t);
-BXA boolexpr_Array_sext(BXA, size_t);
-BX boolexpr_Array_or_reduce(BXA);
-BX boolexpr_Array_and_reduce(BXA);
-BX boolexpr_Array_xor_reduce(BXA);
-void * boolexpr_Array_lsh(BXA, BXA);
-void * boolexpr_Array_rsh(BXA, BXA);
-void * boolexpr_Array_arsh(BXA, size_t);
+ARRAY boolexpr_Array_new(size_t, BXS);
+void boolexpr_Array_del(ARRAY);
+size_t boolexpr_Array_size(ARRAY);
+BX boolexpr_Array_getitem(ARRAY, size_t);
+ARRAY boolexpr_Array_getslice(ARRAY, size_t, size_t);
+ARRAY boolexpr_Array_invert(ARRAY);
+ARRAY boolexpr_Array_or(ARRAY, ARRAY);
+ARRAY boolexpr_Array_and(ARRAY, ARRAY);
+ARRAY boolexpr_Array_xor(ARRAY, ARRAY);
+ARRAY boolexpr_Array_plus(ARRAY, ARRAY);
+ARRAY boolexpr_Array_mul(ARRAY, size_t);
+ARRAY boolexpr_Array_compose(ARRAY, size_t, VARS, BXS);
+ARRAY boolexpr_Array_restrict(ARRAY, size_t, VARS, CONSTS);
+_Bool boolexpr_Array_equiv(ARRAY, ARRAY);
+ARRAY boolexpr_Array_zext(ARRAY, size_t);
+ARRAY boolexpr_Array_sext(ARRAY, size_t);
+BX boolexpr_Array_or_reduce(ARRAY);
+BX boolexpr_Array_and_reduce(ARRAY);
+BX boolexpr_Array_xor_reduce(ARRAY);
+void * boolexpr_Array_lsh(ARRAY, ARRAY);
+void * boolexpr_Array_rsh(ARRAY, ARRAY);
+void * boolexpr_Array_arsh(ARRAY, size_t);
 
 """
 
