@@ -21,7 +21,10 @@ Miscellaneous features not implemented in C++ API
 import itertools
 
 from .util import clog2
-from .wrap import BoolExpr, iter_points, or_, and_
+from .wrap import BoolExpr
+from .wrap import iter_points
+from .wrap import or_
+from .wrap import and_
 
 
 def majority(*args, conj=False):

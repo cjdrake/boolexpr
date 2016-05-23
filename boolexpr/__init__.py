@@ -125,7 +125,6 @@ from .wrap import ite_s
 from .wrap import onehot0
 from .wrap import onehot
 
-from .wrap import myarray
 from .wrap import Array
 
 from .misc import majority

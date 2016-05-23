@@ -21,7 +21,10 @@ CFFI _boolexpr module wrapper
 import enum
 import operator
 
-from ._boolexpr import ffi, lib
+# pylint: disable=no-name-in-module
+from ._boolexpr import ffi
+from ._boolexpr import lib
+# pylint: enable=no-name-in-module
 
 
 class Context:
@@ -84,7 +87,6 @@ class BoolExpr:
 
     def to_ast(self):
         """Convert to an abstract syntax tree (AST)."""
-        raise NotImplementedError()
 
     @classmethod
     def from_ast(cls, ast):
@@ -830,6 +832,7 @@ def _var(ctx_num, name):
     ctx = ffi.cast("void *", ctx_num)
     return _bx(lib.boolexpr_Context_get_var(ctx, name.encode("ascii")))
 
+# pylint: disable=bad-builtin
 _AST = {
     BoolExpr.Kind.zero  : lambda _: ZERO,
     BoolExpr.Kind.one   : lambda _: ONE,
@@ -850,6 +853,7 @@ _AST = {
     BoolExpr.Kind.nite  : lambda asts: nite(*map(BoolExpr.from_ast, asts)),
     BoolExpr.Kind.ite   : lambda asts: ite(*map(BoolExpr.from_ast, asts)),
 }
+# pylint: enable=bad-builtin
 
 
 def _expect_bx(obj):
@@ -959,11 +963,6 @@ def _point(c_point):
     return point
 
 
-def myarray(args):
-    num, c_args = _convert_args(args)
-    return Array(lib.boolexpr_Array_new(num, c_args))
-
-
 class Array:
     """
     Wrap boolexpr::Array class
@@ -1000,7 +999,7 @@ class Array:
         index = operator.index(key)
         if index < 0:
             index += self.__len__()
-        if not (0 <= index < self.__len__()):
+        if not 0 <= index < self.__len__():
             raise IndexError("Array index out of range")
         return index
 
@@ -1095,9 +1094,9 @@ class Array:
         """Reduce items of the array using the XOR operator."""
         return _bx(lib.boolexpr_Array_xor_reduce(self._cdata))
 
-    def lsh(self, si):
+    def lsh(self, shin):
         """Left shift operator"""
-        cdata = lib.boolexpr_Array_lsh(self._cdata, si.cdata)
+        cdata = lib.boolexpr_Array_lsh(self._cdata, shin.cdata)
         try:
             fst = lib.boolexpr_ArrayPair_fst(cdata)
             snd = lib.boolexpr_ArrayPair_snd(cdata)
@@ -1105,9 +1104,9 @@ class Array:
             lib.boolexpr_ArrayPair_del(cdata)
         return Array(fst), Array(snd)
 
-    def rsh(self, si):
+    def rsh(self, shin):
         """Right shift operator"""
-        cdata = lib.boolexpr_Array_rsh(self._cdata, si.cdata)
+        cdata = lib.boolexpr_Array_rsh(self._cdata, shin.cdata)
         try:
             fst = lib.boolexpr_ArrayPair_fst(cdata)
             snd = lib.boolexpr_ArrayPair_snd(cdata)
