@@ -26,6 +26,20 @@ X = ctx.get_vars("x", 4, 4, 4)
 Y = ctx.get_vars("y", 4, 4, 4)
 
 
+class ContextTest(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_constructor(self):
+        ctx1 = Context()
+        a, b, c, d = map(ctx1.get_var, "abcd")
+        del ctx1
+
+
 class BoolExprTest(unittest.TestCase):
 
     def setUp(self):
@@ -235,11 +249,17 @@ class BoolExprTest(unittest.TestCase):
 
     def test_cofactors(self):
         f = majority(*xs[:3])
+        self.assertTrue(f.smoothing(xs[0]).equiv(xs[1]|xs[2]))
         self.assertTrue(f.smoothing([xs[0]]).equiv(xs[1]|xs[2]))
         self.assertTrue(exists(xs[0], f).equiv(xs[1]|xs[2]))
+        self.assertTrue(f.consensus(xs[0]).equiv(xs[1]&xs[2]))
         self.assertTrue(f.consensus([xs[0]]).equiv(xs[1]&xs[2]))
         self.assertTrue(forall(xs[0], f).equiv(xs[1]&xs[2]))
+        self.assertTrue(f.derivative(xs[0]).equiv(xs[1]^xs[2]))
         self.assertTrue(f.derivative([xs[0]]).equiv(xs[1]^xs[2]))
+        left, right = f.iter_cfs(xs[0])
+        self.assertTrue(left.equiv(xs[1] & xs[2]))
+        self.assertTrue(right.equiv(xs[1] | xs[2]))
         self.assertEqual(list(f.iter_cfs([xs[0], xs[1], xs[2]])),
                          [ZERO, ZERO, ZERO, ONE, ZERO, ONE, ONE, ONE])
 
@@ -265,11 +285,19 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(observed, expected)
 
     def test_iter_points(self):
-        it = iter_points(xs[:2])
-        self.assertEqual(next(it), {xs[0]: ZERO, xs[1]: ZERO})
-        self.assertEqual(next(it), {xs[0]: ONE, xs[1]: ZERO})
-        self.assertEqual(next(it), {xs[0]: ZERO, xs[1]: ONE})
-        self.assertEqual(next(it), {xs[0]: ONE, xs[1]: ONE})
+        it1 = iter_points(xs[:2])
+        self.assertEqual(next(it1), {xs[0]: ZERO, xs[1]: ZERO})
+        self.assertEqual(next(it1), {xs[0]: ONE, xs[1]: ZERO})
+        self.assertEqual(next(it1), {xs[0]: ZERO, xs[1]: ONE})
+        self.assertEqual(next(it1), {xs[0]: ONE, xs[1]: ONE})
+        with self.assertRaises(StopIteration):
+            next(it1)
+
+        it2 = iter_points(xs[0])
+        self.assertEqual(next(it2), {xs[0]: ZERO})
+        self.assertEqual(next(it2), {xs[0]: ONE})
+        with self.assertRaises(StopIteration):
+            next(it2)
 
     def test_iter_domain(self):
         f = ~xs[0] | xs[1] & ~xs[2] ^ xs[3]
@@ -310,6 +338,20 @@ array([[[1, 1],
        [[1, 1],
         [1, 1]]])"""
 
+LOGS_STR = """\
+array([[[X, X],
+        [X, X]],
+
+       [[X, X],
+        [X, X]]])"""
+
+ILLS_STR = """\
+array([[[?, ?],
+        [?, ?]],
+
+       [[?, ?],
+        [?, ?]]])"""
+
 
 class ArrayTest(unittest.TestCase):
 
@@ -320,11 +362,10 @@ class ArrayTest(unittest.TestCase):
         pass
 
     def test_consts(self):
-        zs = zeros(2, 2, 2)
-        self.assertEqual(str(zs), ZEROS_STR)
-
-        os = ones(2, 2, 2)
-        self.assertEqual(str(os), ONES_STR)
+        self.assertEqual(str(zeros(2, 2, 2)), ZEROS_STR)
+        self.assertEqual(str(ones(2, 2, 2)), ONES_STR)
+        self.assertEqual(str(logicals(2, 2, 2)), LOGS_STR)
+        self.assertEqual(str(illogicals(2, 2, 2)), ILLS_STR)
 
         self.assertEqual(str(uint2exprs(42, 8)),
                          "array([0, 1, 0, 1, 0, 1, 0, 0])")
@@ -332,6 +373,12 @@ class ArrayTest(unittest.TestCase):
                          "array([0, 1, 0, 1, 0, 1, 0, 0])")
         self.assertEqual(str(int2exprs(-42, 8)),
                          "array([0, 1, 1, 0, 1, 0, 1, 1])")
+
+        with self.assertRaises(ValueError):
+            uint2exprs(-42)
+
+        with self.assertRaises(ValueError):
+            int2exprs(42, 2)
 
 
 if __name__ == "__main__":
