@@ -1589,6 +1589,7 @@ class ndarray:
     def __rmul__(self, num):
         return self.__mul__(num)
 
+    @property
     def size(self):
         """Return the size of the array.
 
@@ -1614,7 +1615,7 @@ class ndarray:
     def reshape(self, *dims):
         """Return an equivalent array with a modified shape."""
         shape = _dims2shape(*dims)
-        if _volume(shape) != self.size():
+        if _volume(shape) != self.size:
             raise ValueError("expected shape with equal volume")
         return self.__class__(self._bxa, shape)
 
@@ -1628,7 +1629,7 @@ class ndarray:
 
         Returns a new array.
         """
-        shape = ((0, self.size()+num), )
+        shape = ((0, self.size+num), )
         return self.__class__(self._bxa.zext(num), shape)
 
     def sext(self, num):
@@ -1636,7 +1637,7 @@ class ndarray:
 
         Returns a new array.
         """
-        shape = ((0, self.size()+num), )
+        shape = ((0, self.size+num), )
         return self.__class__(self._bxa.sext(num), shape)
 
     # Reduction operators
@@ -1659,9 +1660,9 @@ class ndarray:
         Returns a two-tuple (array, array)
         """
         shin = _expect_array(shin)
-        if not 0 <= shin.size() <= self.size():
-            fstr = "expected 0 <= shin.size() <= {}"
-            raise ValueError(fstr.format(self.size()))
+        if not 0 <= shin.size <= self.size:
+            fstr = "expected 0 <= shin.size <= {}"
+            raise ValueError(fstr.format(self.size))
         left, right = self._bxa.lsh(shin.bxa)
         return (self.__class__(left, ((0, len(left)), )),
                 self.__class__(right, ((0, len(right)), )))
@@ -1672,9 +1673,9 @@ class ndarray:
         Returns a two-tuple (array, array)
         """
         shin = _expect_array(shin)
-        if not 0 <= shin.size() <= self.size():
-            fstr = "expected 0 <= shin.size() <= {}"
-            raise ValueError(fstr.format(self.size()))
+        if not 0 <= shin.size <= self.size:
+            fstr = "expected 0 <= shin.size <= {}"
+            raise ValueError(fstr.format(self.size))
         left, right = self._bxa.rsh(shin.bxa)
         return (self.__class__(left, ((0, len(left)), )),
                 self.__class__(right, ((0, len(right)), )))
@@ -1688,8 +1689,8 @@ class ndarray:
 
         Returns a two-tuple (array, array)
         """
-        if not 0 <= num <= self.size():
-            raise ValueError("expected 0 <= num <= {}".format(self.size()))
+        if not 0 <= num <= self.size:
+            raise ValueError("expected 0 <= num <= {}".format(self.size))
         left, right = self._bxa.arsh(num)
         return (self.__class__(left, ((0, len(left)), )),
                 self.__class__(right, ((0, len(right)), )))
