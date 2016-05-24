@@ -118,16 +118,19 @@ class _Soln:
 
     @property
     def sat(self):
+        """Return True if the solution is satisfiable."""
         return bool(lib.boolexpr_Soln_first(self._cdata))
 
     @property
     def point(self):
+        """Return a satisfying input point, or None."""
         if not self.sat:
             return None
         return dict(_Point(lib.boolexpr_Soln_second(self._cdata)))
 
     @property
     def t(self):
+        """Return the solution formatted as a tuple."""
         return (self.sat, self.point)
 
 
@@ -238,14 +241,17 @@ class _ArrayPair:
 
     @property
     def fst(self):
+        """Return the first element of the pair."""
         return Array(lib.boolexpr_ArrayPair_fst(self._cdata))
 
     @property
     def snd(self):
+        """Return the second element of the pair."""
         return Array(lib.boolexpr_ArrayPair_snd(self._cdata))
 
     @property
     def t(self):
+        """Return the pair formatted as a tuple."""
         return (self.fst, self.snd)
 
 
@@ -1248,14 +1254,14 @@ class Array:
         """Reduce items of the array using the XOR operator."""
         return _bx(lib.boolexpr_Array_xor_reduce(self._cdata))
 
-    def lsh(self, shin):
+    def lsh(self, a):
         """Left shift operator"""
-        cdata = lib.boolexpr_Array_lsh(self._cdata, shin.cdata)
+        cdata = lib.boolexpr_Array_lsh(self._cdata, a.cdata)
         return _ArrayPair(cdata).t
 
-    def rsh(self, shin):
+    def rsh(self, a):
         """Right shift operator"""
-        cdata = lib.boolexpr_Array_rsh(self._cdata, shin.cdata)
+        cdata = lib.boolexpr_Array_rsh(self._cdata, a.cdata)
         return _ArrayPair(cdata).t
 
     def arsh(self, num):
@@ -1654,29 +1660,29 @@ class ndarray:
         return self._bxa.xor_reduce()
 
     # Shift operators
-    def lsh(self, shin):
-        """Left shift the *shin* array into this array.
+    def lsh(self, a):
+        """Left shift the *a* array into this array.
 
         Returns a two-tuple (array, array)
         """
-        shin = _expect_array(shin)
-        if not 0 <= shin.size <= self.size:
-            fstr = "expected 0 <= shin.size <= {}"
+        a = _expect_array(a)
+        if not 0 <= a.size <= self.size:
+            fstr = "expected 0 <= a.size <= {}"
             raise ValueError(fstr.format(self.size))
-        left, right = self._bxa.lsh(shin.bxa)
+        left, right = self._bxa.lsh(a.bxa)
         return (self.__class__(left, ((0, len(left)), )),
                 self.__class__(right, ((0, len(right)), )))
 
-    def rsh(self, shin):
-        """Right shift the *shin* array into this array.
+    def rsh(self, a):
+        """Right shift the *a* array into this array.
 
         Returns a two-tuple (array, array)
         """
-        shin = _expect_array(shin)
-        if not 0 <= shin.size <= self.size:
-            fstr = "expected 0 <= shin.size <= {}"
+        a = _expect_array(a)
+        if not 0 <= a.size <= self.size:
+            fstr = "expected 0 <= a.size <= {}"
             raise ValueError(fstr.format(self.size))
-        left, right = self._bxa.rsh(shin.bxa)
+        left, right = self._bxa.rsh(a.bxa)
         return (self.__class__(left, ((0, len(left)), )),
                 self.__class__(right, ((0, len(right)), )))
 

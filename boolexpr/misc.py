@@ -69,9 +69,9 @@ def mux(args, sel):
     if len(sel) < clog2(len(args)):
         fstr = "expected at least {} select bits, got {}"
         raise ValueError(fstr.format(clog2(len(args)), len(sel)))
-    it = (tuple(v if val else ~v for v, val in point.items())
-          for point in iter_points(sel))
-    return or_(*[and_(arg, *next(it)) for arg in args])
+    gen = (tuple(v if val else ~v for v, val in point.items())
+           for point in iter_points(sel))
+    return or_(*[and_(arg, *next(gen)) for arg in args])
 
 
 def exists(xs, f):
