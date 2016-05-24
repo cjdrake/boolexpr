@@ -31,6 +31,224 @@ from ._boolexpr import lib
 from .util import clog2
 
 
+class _String:
+    """
+    Wrap C char *
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_String_del(self._cdata)
+
+    def __bytes__(self):
+        return ffi.string(self._cdata)
+
+
+class _Vec:
+    """
+    Wrap C Vec
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_Vec_del(self._cdata)
+
+    def __iter__(self):
+        lib.boolexpr_Vec_iter(self._cdata)
+        while True:
+            val = lib.boolexpr_Vec_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield _bx(val)
+            lib.boolexpr_Vec_next(self._cdata)
+
+
+class _VarSet:
+    """
+    Wrap C VarSet
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_VarSet_del(self._cdata)
+
+    def __iter__(self):
+        lib.boolexpr_VarSet_iter(self._cdata)
+        while True:
+            val = lib.boolexpr_VarSet_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield _bx(val)
+            lib.boolexpr_VarSet_next(self._cdata)
+
+
+class _Point:
+    """
+    Wrap C Point
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_Point_del(self._cdata)
+
+    def __iter__(self):
+        lib.boolexpr_Point_iter(self._cdata)
+        while True:
+            key = lib.boolexpr_Point_key(self._cdata)
+            if key == ffi.NULL:
+                break
+            val = lib.boolexpr_Point_val(self._cdata)
+            yield _bx(key), _bx(val)
+            lib.boolexpr_Point_next(self._cdata)
+
+
+class _Soln:
+    """
+    Wrap C Soln
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_Soln_del(self._cdata)
+
+    @property
+    def sat(self):
+        return bool(lib.boolexpr_Soln_first(self._cdata))
+
+    @property
+    def point(self):
+        if not self.sat:
+            return None
+        return dict(_Point(lib.boolexpr_Soln_second(self._cdata)))
+
+    @property
+    def t(self):
+        return (self.sat, self.point)
+
+
+class _DfsIter:
+    """
+    Wrap C DfsIter
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_DfsIter_del(self._cdata)
+
+    def __iter__(self):
+        while True:
+            val = lib.boolexpr_DfsIter_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield _bx(val)
+            lib.boolexpr_DfsIter_next(self._cdata)
+
+
+class _SatIter:
+    """
+    Wrap C SatIter
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_SatIter_del(self._cdata)
+
+    def __iter__(self):
+        while True:
+            val = lib.boolexpr_SatIter_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield dict(_Point(val))
+            lib.boolexpr_SatIter_next(self._cdata)
+
+
+class _PointsIter:
+    """
+    Wrap C PointsIter
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_PointsIter_del(self._cdata)
+
+    def __iter__(self):
+        while True:
+            val = lib.boolexpr_PointsIter_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield dict(_Point(val))
+            lib.boolexpr_PointsIter_next(self._cdata)
+
+
+class _DomainIter:
+    """
+    Wrap C DomainIter
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_DomainIter_del(self._cdata)
+
+    def __iter__(self):
+        while True:
+            val = lib.boolexpr_DomainIter_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield dict(_Point(val))
+            lib.boolexpr_DomainIter_next(self._cdata)
+
+
+class _CofactorIter:
+    """
+    Wrap C CofactorIter
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_CofactorIter_del(self._cdata)
+
+    def __iter__(self):
+        while True:
+            val = lib.boolexpr_CofactorIter_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield _bx(val)
+            lib.boolexpr_CofactorIter_next(self._cdata)
+
+
+class _ArrayPair:
+    """
+    Wrap C ArrayPair
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_ArrayPair_del(self._cdata)
+
+    @property
+    def fst(self):
+        return Array(lib.boolexpr_ArrayPair_fst(self._cdata))
+
+    @property
+    def snd(self):
+        return Array(lib.boolexpr_ArrayPair_snd(self._cdata))
+
+    @property
+    def t(self):
+        return (self.fst, self.snd)
+
+
 class Context:
     """
     A context for Boolean variables
@@ -123,11 +341,7 @@ class BoolExpr:
         return self.__str__()
 
     def __bytes__(self):
-        c_str = lib.boolexpr_BoolExpr_to_string(self._cdata)
-        try:
-            return ffi.string(c_str)
-        finally:
-            lib.boolexpr_String_del(c_str)
+        return bytes(_String(lib.boolexpr_BoolExpr_to_string(self._cdata)))
 
     def __str__(self):
         return self.__bytes__().decode("utf-8")
@@ -316,12 +530,12 @@ class BoolExpr:
         :math:`f_1 \: | \: x_i = f_2`
         """
         num = len(var2bx)
-        vars_ = ffi.new("void * []", num)
-        bxs = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
+        c_bxs = ffi.new("void * []", num)
         for i, (var, bx) in enumerate(var2bx.items()):
-            vars_[i] = _expect_var(var).cdata
-            bxs[i] = _expect_bx(bx).cdata
-        return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, num, vars_, bxs))
+            c_vars[i] = _expect_var(var).cdata
+            c_bxs[i] = _expect_bx(bx).cdata
+        return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, num, c_vars, c_bxs))
 
     def restrict(self, point):
         r"""
@@ -332,12 +546,12 @@ class BoolExpr:
         :math:`f \: | \: x_i = b`
         """
         num = len(point)
-        vars_ = ffi.new("void * []", num)
-        consts = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
+        c_consts = ffi.new("void * []", num)
         for i, (var, const) in enumerate(point.items()):
-            vars_[i] = _expect_var(var).cdata
-            consts[i] = _expect_const(const).cdata
-        return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, num, vars_, consts))
+            c_vars[i] = _expect_var(var).cdata
+            c_consts[i] = _expect_const(const).cdata
+        return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, num, c_vars, c_consts))
 
     def sat(self):
         """Return a tuple (sat, point).
@@ -346,31 +560,11 @@ class BoolExpr:
         If the expression is not satisfiable, the point will be ``None``.
         Otherwise, it will return a satisfying input point.
         """
-        soln = lib.boolexpr_BoolExpr_sat(self._cdata)
-        try:
-            sat = bool(lib.boolexpr_Soln_first(soln))
-            if not sat:
-                return (False, None)
-            c_point = lib.boolexpr_Soln_second(soln)
-        finally:
-            lib.boolexpr_Soln_del(soln)
-        try:
-            return (True, _point(c_point))
-        finally:
-            lib.boolexpr_Point_del(c_point)
+        return _Soln(lib.boolexpr_BoolExpr_sat(self._cdata)).t
 
     def iter_sat(self):
         """Iterate through all satisfying input points."""
-        it = lib.boolexpr_SatIter_new(self._cdata)
-        try:
-            while True:
-                val = lib.boolexpr_SatIter_val(it)
-                if val == ffi.NULL:
-                    break
-                yield _point(val)
-                lib.boolexpr_SatIter_next(it)
-        finally:
-            lib.boolexpr_SatIter_del(it)
+        yield from _SatIter(lib.boolexpr_SatIter_new(self._cdata))
 
     def to_cnf(self):
         """Convert the expression to conjunctive normal form (CNF)."""
@@ -402,11 +596,7 @@ class BoolExpr:
 
     def support(self):
         """Return the support set of the expression."""
-        c_varset = lib.boolexpr_BoolExpr_support(self._cdata)
-        try:
-            return _varset(c_varset)
-        finally:
-            lib.boolexpr_VarSet_del(c_varset)
+        return set(_VarSet(lib.boolexpr_BoolExpr_support(self._cdata)))
 
     def smoothing(self, xs):
         r"""Return the smoothing over a sequence of N variables.
@@ -423,10 +613,10 @@ class BoolExpr:
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
-        vars_ = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            vars_[i] = _expect_var(x).cdata
-        return _bx(lib.boolexpr_BoolExpr_smoothing(self._cdata, num, vars_))
+            c_vars[i] = _expect_var(x).cdata
+        return _bx(lib.boolexpr_BoolExpr_smoothing(self._cdata, num, c_vars))
 
     def consensus(self, xs):
         r"""Return the consensus over a sequence of N variables.
@@ -443,10 +633,10 @@ class BoolExpr:
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
-        vars_ = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            vars_[i] = _expect_var(x).cdata
-        return _bx(lib.boolexpr_BoolExpr_consensus(self._cdata, num, vars_))
+            c_vars[i] = _expect_var(x).cdata
+        return _bx(lib.boolexpr_BoolExpr_consensus(self._cdata, num, c_vars))
 
     def derivative(self, xs):
         r"""Return the derivative over a sequence of N variables.
@@ -462,55 +652,29 @@ class BoolExpr:
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
-        vars_ = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            vars_[i] = _expect_var(x).cdata
-        return _bx(lib.boolexpr_BoolExpr_derivative(self._cdata, num, vars_))
+            c_vars[i] = _expect_var(x).cdata
+        return _bx(lib.boolexpr_BoolExpr_derivative(self._cdata, num, c_vars))
 
     def iter_dfs(self):
         """Iterate through all expression nodes in DFS order."""
-        it = lib.boolexpr_DfsIter_new(self._cdata)
-        try:
-            while True:
-                val = lib.boolexpr_DfsIter_val(it)
-                if val == ffi.NULL:
-                    break
-                yield _bx(val)
-                lib.boolexpr_DfsIter_next(it)
-        finally:
-            lib.boolexpr_DfsIter_del(it)
+        yield from _DfsIter(lib.boolexpr_DfsIter_new(self._cdata))
 
     def iter_domain(self):
         """Iterate through all points in the domain."""
-        it = lib.boolexpr_DomainIter_new(self._cdata)
-        try:
-            while True:
-                val = lib.boolexpr_DomainIter_val(it)
-                if val == ffi.NULL:
-                    break
-                yield _point(val)
-                lib.boolexpr_DomainIter_next(it)
-        finally:
-            lib.boolexpr_DomainIter_del(it)
+        yield from _DomainIter(lib.boolexpr_DomainIter_new(self._cdata))
 
     def iter_cfs(self, xs):
         """Iterate through all cofactors over a sequence of variables."""
         if isinstance(xs, Variable):
             xs = [xs]
         num = len(xs)
-        vars_ = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            vars_[i] = _expect_var(x).cdata
-        it = lib.boolexpr_CofactorIter_new(self._cdata, num, vars_)
-        try:
-            while True:
-                val = lib.boolexpr_CofactorIter_val(it)
-                if val == ffi.NULL:
-                    break
-                yield _bx(val)
-                lib.boolexpr_CofactorIter_next(it)
-        finally:
-            lib.boolexpr_CofactorIter_del(it)
+            c_vars[i] = _expect_var(x).cdata
+        cdata = lib.boolexpr_CofactorIter_new(self._cdata, num, c_vars)
+        yield from _CofactorIter(cdata)
 
 
 class Atom(BoolExpr):
@@ -600,11 +764,7 @@ class Operator(BoolExpr):
     @property
     def args(self):
         """Return a tuple of the operator's arguments."""
-        c_vec = lib.boolexpr_Operator_args(self._cdata)
-        try:
-            return tuple(_bxlist(c_vec))
-        finally:
-            lib.boolexpr_Vec_del(c_vec)
+        return tuple(_Vec(lib.boolexpr_Operator_args(self._cdata)))
 
     def is_clause(self):
         """Return ``True`` if the operator is a clause.
@@ -665,145 +825,136 @@ def iter_points(xs):
     if isinstance(xs, Variable):
         xs = [xs]
     num = len(xs)
-    vars_ = ffi.new("void * []", num)
+    c_vars = ffi.new("void * []", num)
     for i, x in enumerate(xs):
-        vars_[i] = _expect_var(x).cdata
-    it = lib.boolexpr_PointsIter_new(len(vars_), vars_)
-    try:
-        while True:
-            val = lib.boolexpr_PointsIter_val(it)
-            if val == ffi.NULL:
-                break
-            yield _point(val)
-            lib.boolexpr_PointsIter_next(it)
-    finally:
-        lib.boolexpr_PointsIter_del(it)
+        c_vars[i] = _expect_var(x).cdata
+    yield from _PointsIter(lib.boolexpr_PointsIter_new(len(c_vars), c_vars))
 
 
 def not_(arg):
     """Boolean Not operator."""
-    _, c_args = _convert_args((arg, ))
-    return _bx(lib.boolexpr_not(c_args[0]))
+    _, c_bxs = _convert_args((arg, ))
+    return _bx(lib.boolexpr_not(c_bxs[0]))
 
 def nor(*args):
     """Boolean Nor operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_nor(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_nor(num, c_bxs))
 
 def or_(*args):
     """Boolean Or operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_or(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_or(num, c_bxs))
 
 def nand(*args):
     """Boolean Nand operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_nand(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_nand(num, c_bxs))
 
 def and_(*args):
     """Boolean And operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_and(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_and(num, c_bxs))
 
 def xnor(*args):
     """Boolean Xnor operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_xnor(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_xnor(num, c_bxs))
 
 def xor(*args):
     """Boolean Xor operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_xor(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_xor(num, c_bxs))
 
 def neq(*args):
     """Boolean Unequal operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_neq(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_neq(num, c_bxs))
 
 def eq(*args):
     """Boolean Equal operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_eq(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_eq(num, c_bxs))
 
 def nimpl(p, q):
     """Boolean NotImplies operator."""
-    _, c_args = _convert_args((p, q))
-    return _bx(lib.boolexpr_nimpl(c_args[0], c_args[1]))
+    _, c_bxs = _convert_args((p, q))
+    return _bx(lib.boolexpr_nimpl(c_bxs[0], c_bxs[1]))
 
 def impl(p, q):
     """Boolean Implies operator."""
-    _, c_args = _convert_args((p, q))
-    return _bx(lib.boolexpr_impl(c_args[0], c_args[1]))
+    _, c_bxs = _convert_args((p, q))
+    return _bx(lib.boolexpr_impl(c_bxs[0], c_bxs[1]))
 
 def nite(s, d1, d0):
     """Boolean NotIfThenElse operator."""
-    _, c_args = _convert_args((s, d1, d0))
-    return _bx(lib.boolexpr_nite(c_args[0], c_args[1], c_args[2]))
+    _, c_bxs = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_nite(c_bxs[0], c_bxs[1], c_bxs[2]))
 
 def ite(s, d1, d0):
     """Boolean IfThenElse operator."""
-    _, c_args = _convert_args((s, d1, d0))
-    return _bx(lib.boolexpr_ite(c_args[0], c_args[1], c_args[2]))
+    _, c_bxs = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_ite(c_bxs[0], c_bxs[1], c_bxs[2]))
 
 def nor_s(*args):
     """Simplifying Boolean Nor operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_nor_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_nor_s(num, c_bxs))
 
 def or_s(*args):
     """Simplifying Boolean Or operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_or_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_or_s(num, c_bxs))
 
 def nand_s(*args):
     """Simplifying Boolean Nand operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_nand_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_nand_s(num, c_bxs))
 
 def and_s(*args):
     """Simplifying Boolean And operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_and_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_and_s(num, c_bxs))
 
 def xnor_s(*args):
     """Simplifying Boolean Xnor operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_xnor_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_xnor_s(num, c_bxs))
 
 def xor_s(*args):
     """Simplifying Boolean Xor operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_xor_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_xor_s(num, c_bxs))
 
 def neq_s(*args):
     """Simplifying Boolean Unequal operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_neq_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_neq_s(num, c_bxs))
 
 def eq_s(*args):
     """Simplifying Boolean Equal operator."""
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_eq_s(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_eq_s(num, c_bxs))
 
 def nimpl_s(p, q):
     """Simplifying Boolean Implies operator."""
-    _, c_args = _convert_args((p, q))
-    return _bx(lib.boolexpr_nimpl_s(c_args[0], c_args[1]))
+    _, c_bxs = _convert_args((p, q))
+    return _bx(lib.boolexpr_nimpl_s(c_bxs[0], c_bxs[1]))
 
 def impl_s(p, q):
     """Simplifying Boolean Implies operator."""
-    _, c_args = _convert_args((p, q))
-    return _bx(lib.boolexpr_impl_s(c_args[0], c_args[1]))
+    _, c_bxs = _convert_args((p, q))
+    return _bx(lib.boolexpr_impl_s(c_bxs[0], c_bxs[1]))
 
 def nite_s(s, d1, d0):
     """Simplifying Boolean IfThenElse operator."""
-    _, c_args = _convert_args((s, d1, d0))
-    return _bx(lib.boolexpr_nite_s(c_args[0], c_args[1], c_args[2]))
+    _, c_bxs = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_nite_s(c_bxs[0], c_bxs[1], c_bxs[2]))
 
 def ite_s(s, d1, d0):
     """Simplifying Boolean IfThenElse operator."""
-    _, c_args = _convert_args((s, d1, d0))
-    return _bx(lib.boolexpr_ite_s(c_args[0], c_args[1], c_args[2]))
+    _, c_bxs = _convert_args((s, d1, d0))
+    return _bx(lib.boolexpr_ite_s(c_bxs[0], c_bxs[1], c_bxs[2]))
 
 
 def onehot0(*args):
@@ -811,8 +962,8 @@ def onehot0(*args):
     Return an expression that means
     "at most one input function is true".
     """
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_onehot0(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_onehot0(num, c_bxs))
 
 
 def onehot(*args):
@@ -820,8 +971,8 @@ def onehot(*args):
     Return an expression that means
     "exactly one input function is true".
     """
-    num, c_args = _convert_args(args)
-    return _bx(lib.boolexpr_onehot(num, c_args))
+    num, c_bxs = _convert_args(args)
+    return _bx(lib.boolexpr_onehot(num, c_bxs))
 
 
 _LITS = dict()
@@ -966,46 +1117,6 @@ def _bx(cbx):
     return _KIND2OP[kind](cbx)
 
 
-def _bxlist(c_vec):
-    """Return a [BoolExpr], from a C Vec."""
-    vec = list()
-    lib.boolexpr_Vec_iter(c_vec)
-    while True:
-        val = lib.boolexpr_Vec_val(c_vec)
-        if val == ffi.NULL:
-            break
-        vec.append(_bx(val))
-        lib.boolexpr_Vec_next(c_vec)
-    return vec
-
-
-def _varset(c_varset):
-    """Return a {Variable}, from a C VarSet."""
-    vars_ = set()
-    lib.boolexpr_VarSet_iter(c_varset)
-    while True:
-        val = lib.boolexpr_VarSet_val(c_varset)
-        if val == ffi.NULL:
-            break
-        vars_.add(_bx(val))
-        lib.boolexpr_VarSet_next(c_varset)
-    return vars_
-
-
-def _point(c_point):
-    """Return a {Variable: Constant}, from a C Point."""
-    point = dict()
-    lib.boolexpr_Point_iter(c_point)
-    while True:
-        key = lib.boolexpr_Point_key(c_point)
-        if key == ffi.NULL:
-            break
-        val = lib.boolexpr_Point_val(c_point)
-        point[_bx(key)] = _bx(val)
-        lib.boolexpr_Point_next(c_point)
-    return point
-
-
 class Array:
     """
     Wrap boolexpr::Array class
@@ -1085,12 +1196,12 @@ class Array:
         :math:`f_1 \: | \: x_i = f_2`
         """
         num = len(var2bx)
-        vars_ = ffi.new("void * []", num)
-        bxs = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
+        c_bxs = ffi.new("void * []", num)
         for i, (var, bx) in enumerate(var2bx.items()):
-            vars_[i] = _expect_var(var).cdata
-            bxs[i] = _expect_bx(bx).cdata
-        return Array(lib.boolexpr_Array_compose(self._cdata, num, vars_, bxs))
+            c_vars[i] = _expect_var(var).cdata
+            c_bxs[i] = _expect_bx(bx).cdata
+        return Array(lib.boolexpr_Array_compose(self._cdata, num, c_vars, c_bxs))
 
     def restrict(self, point):
         r"""
@@ -1101,12 +1212,12 @@ class Array:
         :math:`f_1 \: | \: x_i = f_2`
         """
         num = len(point)
-        vars_ = ffi.new("void * []", num)
-        consts = ffi.new("void * []", num)
+        c_vars = ffi.new("void * []", num)
+        c_consts = ffi.new("void * []", num)
         for i, (var, const) in enumerate(point.items()):
-            vars_[i] = _expect_var(var).cdata
-            consts[i] = _expect_const(const).cdata
-        return Array((lib.boolexpr_Array_restrict(self._cdata, num, vars_, consts)))
+            c_vars[i] = _expect_var(var).cdata
+            c_consts[i] = _expect_const(const).cdata
+        return Array(lib.boolexpr_Array_restrict(self._cdata, num, c_vars, c_consts))
 
     def equiv(self, other):
         """Return True if two arrays are equivalent.
@@ -1140,32 +1251,17 @@ class Array:
     def lsh(self, shin):
         """Left shift operator"""
         cdata = lib.boolexpr_Array_lsh(self._cdata, shin.cdata)
-        try:
-            fst = lib.boolexpr_ArrayPair_fst(cdata)
-            snd = lib.boolexpr_ArrayPair_snd(cdata)
-        finally:
-            lib.boolexpr_ArrayPair_del(cdata)
-        return Array(fst), Array(snd)
+        return _ArrayPair(cdata).t
 
     def rsh(self, shin):
         """Right shift operator"""
         cdata = lib.boolexpr_Array_rsh(self._cdata, shin.cdata)
-        try:
-            fst = lib.boolexpr_ArrayPair_fst(cdata)
-            snd = lib.boolexpr_ArrayPair_snd(cdata)
-        finally:
-            lib.boolexpr_ArrayPair_del(cdata)
-        return Array(fst), Array(snd)
+        return _ArrayPair(cdata).t
 
     def arsh(self, num):
         """Arithmetic right shift operator"""
         cdata = lib.boolexpr_Array_arsh(self._cdata, num)
-        try:
-            fst = lib.boolexpr_ArrayPair_fst(cdata)
-            snd = lib.boolexpr_ArrayPair_snd(cdata)
-        finally:
-            lib.boolexpr_ArrayPair_del(cdata)
-        return Array(fst), Array(snd)
+        return _ArrayPair(cdata).t
 
 
 def zeros(*dims):
@@ -1334,8 +1430,8 @@ def array(objs, shape=None):
         _check_shape(shape)
         if _volume(shape) != len(items):
             raise ValueError("expected shape volume to match items")
-    num, c_items = _convert_args(items)
-    bxa = Array(lib.boolexpr_Array_new(num, c_items))
+    num, c_bxs = _convert_args(items)
+    bxa = Array(lib.boolexpr_Array_new(num, c_bxs))
     return ndarray(bxa, shape)
 
 
