@@ -1181,7 +1181,7 @@ boolexpr_Array_lsh(ARRAY c_self, ARRAY c_sin)
 
     auto p = self->lsh(*si);
 
-    return new Array* [2] { p.first, p.second };
+    return new Array const * [2] { p.first, p.second };
 }
 
 
@@ -1193,7 +1193,7 @@ boolexpr_Array_rsh(ARRAY c_self, ARRAY c_sin)
 
     auto p = self->rsh(*si);
 
-    return new Array* [2] { p.first, p.second };
+    return new Array const * [2] { p.first, p.second };
 }
 
 
@@ -1204,5 +1204,5 @@ boolexpr_Array_arsh(ARRAY c_self, size_t n)
 
     auto p = self->arsh(n);
 
-    return new Array* [2] { p.first, p.second };
+    return new Array const * [2] { p.first, p.second };
 }

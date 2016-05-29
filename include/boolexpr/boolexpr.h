@@ -642,14 +642,14 @@ public:
 
 class Array
 {
-    friend Array * operator~(Array const &);
-    friend Array * operator|(Array const &, Array const &);
-    friend Array * operator&(Array const &, Array const &);
-    friend Array * operator^(Array const &, Array const &);
+    friend Array const * operator~(Array const &);
+    friend Array const * operator|(Array const &, Array const &);
+    friend Array const * operator&(Array const &, Array const &);
+    friend Array const * operator^(Array const &, Array const &);
 
-    friend Array * operator+(Array const &, Array const &);
-    friend Array * operator*(Array const &, size_t);
-    friend Array * operator*(size_t, Array const &);
+    friend Array const * operator+(Array const &, Array const &);
+    friend Array const * operator*(Array const &, size_t);
+    friend Array const * operator*(size_t, Array const &);
 
 public:
     vector<bx_t> const items;
@@ -659,20 +659,20 @@ public:
     Array(vector<bx_t> const &&);
     Array(std::initializer_list<bx_t> const items);
 
-    Array * compose(var2bx_t const &) const;
-    Array * restrict_(point_t const &) const;
+    Array const * compose(var2bx_t const &) const;
+    Array const * restrict_(point_t const &) const;
     bool equiv(Array const &) const;
 
-    Array * zext(size_t num) const;
-    Array * sext(size_t num) const;
+    Array const * zext(size_t num) const;
+    Array const * sext(size_t num) const;
 
     bx_t or_reduce() const;
     bx_t and_reduce() const;
     bx_t xor_reduce() const;
 
-    std::pair<Array*, Array*> lsh(Array const &) const;
-    std::pair<Array*, Array*> rsh(Array const &) const;
-    std::pair<Array*, Array*> arsh(size_t) const;
+    std::pair<Array const *, Array const *> lsh(Array const &) const;
+    std::pair<Array const *, Array const *> rsh(Array const &) const;
+    std::pair<Array const *, Array const *> arsh(size_t) const;
 };
 
 
@@ -875,13 +875,13 @@ bx_t operator^(bx_t const &, bx_t const &);
 bool operator<(lit_t const &, lit_t const &);
 std::ostream& operator<<(std::ostream&, bx_t const &);
 
-Array * operator~(Array const &);
-Array * operator|(Array const &, Array const &);
-Array * operator&(Array const &, Array const &);
-Array * operator^(Array const &, Array const &);
-Array * operator+(Array const &, Array const &);
-Array * operator*(Array const &, size_t);
-Array * operator*(size_t, Array const &);
+Array const * operator~(Array const &);
+Array const * operator|(Array const &, Array const &);
+Array const * operator&(Array const &, Array const &);
+Array const * operator^(Array const &, Array const &);
+Array const * operator+(Array const &, Array const &);
+Array const * operator*(Array const &, size_t);
+Array const * operator*(size_t, Array const &);
 
 
 } // namespace boolexpr
