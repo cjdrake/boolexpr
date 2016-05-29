@@ -92,10 +92,19 @@ TEST_F(ArrayTest, Reduce)
 
 TEST_F(ArrayTest, Equiv)
 {
-    Array X0 {xs[0], xs[1] ^ xs[2], eq({xs[3], xs[4]}),
-              impl(xs[5], xs[6]), ite(xs[7], xs[8], xs[9])};
-    Array X1 {xs[0], ~xs[1] & xs[2] | xs[1] & ~xs[2], ~xs[3] & ~xs[4] | xs[3] & xs[4],
-              ~xs[5] | xs[6], xs[7] & xs[8] | ~xs[7] & xs[9]};
+    Array X0 {
+        xs[0], xs[1] ^ xs[2],
+        eq({xs[3], xs[4]}),
+        impl(xs[5], xs[6]),
+        ite(xs[7], xs[8], xs[9])
+    };
+    Array X1 {
+        xs[0],
+        (~xs[1] & xs[2]) | (xs[1] & ~xs[2]),
+        (~xs[3] & ~xs[4]) | (xs[3] & xs[4]),
+        ~xs[5] | xs[6],
+        (xs[7] & xs[8]) | (~xs[7] & xs[9])
+    };
     Array X2 {xs[0], xs[1]};
     Array X3 {xs[0], xs[1], xs[2], xs[3], xs[4]};
 
