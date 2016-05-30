@@ -29,19 +29,22 @@
 using namespace boolexpr;
 
 
-void
-BoolExprTest::SetUp()
+BoolExprTest::BoolExprTest()
+    : _zero {zero()}
+    , _one {one()}
+    , _log {logical()}
+    , _ill {illogical()}
 {
-    _zero = zero();
-    _one = one();
-    _log = logical();
-    _ill = illogical();
-
-    // Initialize local literals
     for (int i = 0; i < N; ++i)
         xs.push_back(ctx.get_var("x_" + std::to_string(i)));
 }
 
 
 void
-BoolExprTest::TearDown() {}
+BoolExprTest::SetUp()
+{}
+
+
+void
+BoolExprTest::TearDown()
+{}
