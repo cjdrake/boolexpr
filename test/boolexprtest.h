@@ -27,7 +27,11 @@ protected:
     ill_t _ill;
 
     Context ctx;
+
     vector<var_t> xs;
+
+    var_t p, q;
+    var_t s, d1, d0;
 
     virtual void SetUp();
     virtual void TearDown();

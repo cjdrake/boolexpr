@@ -60,14 +60,14 @@ TEST_F(ArrayTest, Restrict)
         impl(xs[3], xs[0])
     };
 
-    auto p = point_t {
+    auto point = point_t {
         {xs[0], _zero},
         {xs[1], _one},
         {xs[2], _zero},
         {xs[3], _one},
     };
 
-    auto Y = X.restrict_(p);
+    auto Y = X.restrict_(point);
     EXPECT_EQ(Y->items[0], _one);
     EXPECT_EQ(Y->items[1], _zero);
     EXPECT_EQ(Y->items[2], _one);
@@ -122,9 +122,9 @@ TEST_F(ArrayTest, LeftShift)
     Array B {xs[10], xs[11], xs[12], xs[0], xs[1], xs[2], xs[3], xs[4]};
     Array so {xs[5], xs[6], xs[7]};
 
-    auto p = A.lsh(si);
-    EXPECT_TRUE(p.first->equiv(B));
-    EXPECT_TRUE(p.second->equiv(so));
+    auto pair = A.lsh(si);
+    EXPECT_TRUE(pair.first->equiv(B));
+    EXPECT_TRUE(pair.second->equiv(so));
 
 }
 
@@ -137,9 +137,9 @@ TEST_F(ArrayTest, RightShift)
     Array B {xs[3], xs[4], xs[5], xs[6], xs[7], xs[10], xs[11], xs[12]};
     Array so {xs[0], xs[1], xs[2]};
 
-    auto p = A.rsh(si);
-    EXPECT_TRUE(p.first->equiv(so));
-    EXPECT_TRUE(p.second->equiv(B));
+    auto pair = A.rsh(si);
+    EXPECT_TRUE(pair.first->equiv(so));
+    EXPECT_TRUE(pair.second->equiv(B));
 }
 
 
@@ -150,7 +150,7 @@ TEST_F(ArrayTest, ArithmeticRightShift)
     Array B {xs[3], xs[4], xs[5], xs[6], xs[7], xs[7], xs[7], xs[7]};
     Array so {xs[0], xs[1], xs[2]};
 
-    auto p = A.arsh(3);
-    EXPECT_TRUE(p.first->equiv(so));
-    EXPECT_TRUE(p.second->equiv(B));
+    auto pair = A.arsh(3);
+    EXPECT_TRUE(pair.first->equiv(so));
+    EXPECT_TRUE(pair.second->equiv(B));
 }

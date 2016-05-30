@@ -34,6 +34,11 @@ BoolExprTest::BoolExprTest()
     , _one {one()}
     , _log {logical()}
     , _ill {illogical()}
+    , p {ctx.get_var("p")}
+    , q {ctx.get_var("q")}
+    , s {ctx.get_var("s")}
+    , d1 {ctx.get_var("d1")}
+    , d0 {ctx.get_var("d0")}
 {
     for (int i = 0; i < N; ++i)
         xs.push_back(ctx.get_var("x_" + std::to_string(i)));

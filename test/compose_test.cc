@@ -55,20 +55,20 @@ TEST_F(ComposeTest, Basic)
 
 TEST_F(ComposeTest, Restrict)
 {
-    auto p = point_t {
+    auto point = point_t {
         {xs[0], _zero},
         {xs[1], _one},
         {xs[2], _zero},
         {xs[3], _one},
     };
 
-    auto g0 = _zero->restrict_(p);
+    auto g0 = _zero->restrict_(point);
     EXPECT_EQ(g0, _zero);
 
-    auto g1 = _one->restrict_(p);
+    auto g1 = _one->restrict_(point);
     EXPECT_EQ(g1, _one);
 
     auto f2 = ~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]);
-    auto g2 = f2->restrict_(p);
+    auto g2 = f2->restrict_(point);
     EXPECT_EQ(g2, _one);
 }
