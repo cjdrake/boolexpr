@@ -29,14 +29,6 @@
 using namespace boolexpr;
 
 
-struct BoolExprProxy {
-    bx_t const bx;
-
-    BoolExprProxy(bx_t const & bx): bx {bx} {}
-    ~BoolExprProxy() {}
-};
-
-
 TEST(CFFI, Basic)
 {
     auto zero = boolexpr_zero();
@@ -45,16 +37,16 @@ TEST(CFFI, Basic)
     auto ill = boolexpr_illogical();
 
     auto cstr_0 = boolexpr_BoolExpr_to_string(zero);
-    EXPECT_TRUE(strcmp(cstr_0, "0") == 0);
+    EXPECT_STREQ(cstr_0, "0");
 
     auto cstr_1 = boolexpr_BoolExpr_to_string(one);
-    EXPECT_TRUE(strcmp(cstr_1, "1") == 0);
+    EXPECT_STREQ(cstr_1, "1");
 
     auto cstr_x = boolexpr_BoolExpr_to_string(log);
-    EXPECT_TRUE(strcmp(cstr_x, "X") == 0);
+    EXPECT_STREQ(cstr_x, "X");
 
     auto cstr_xx = boolexpr_BoolExpr_to_string(ill);
-    EXPECT_TRUE(strcmp(cstr_xx, "?") == 0);
+    EXPECT_STREQ(cstr_xx, "?");
 
     auto ctx = boolexpr_Context_new();
 
@@ -72,19 +64,19 @@ TEST(CFFI, Basic)
     auto cstr_b = boolexpr_BoolExpr_to_string(b);
     auto cstr_c = boolexpr_BoolExpr_to_string(c);
     auto cstr_d = boolexpr_BoolExpr_to_string(d);
-    EXPECT_TRUE(strcmp(cstr_a, "a") == 0);
-    EXPECT_TRUE(strcmp(cstr_b, "b") == 0);
-    EXPECT_TRUE(strcmp(cstr_c, "c") == 0);
-    EXPECT_TRUE(strcmp(cstr_d, "d") == 0);
+    EXPECT_STREQ(cstr_a, "a");
+    EXPECT_STREQ(cstr_b, "b");
+    EXPECT_STREQ(cstr_c, "c");
+    EXPECT_STREQ(cstr_d, "d");
 
     auto cstr_an = boolexpr_BoolExpr_to_string(an);
     auto cstr_bn = boolexpr_BoolExpr_to_string(bn);
     auto cstr_cn = boolexpr_BoolExpr_to_string(cn);
     auto cstr_dn = boolexpr_BoolExpr_to_string(dn);
-    EXPECT_TRUE(strcmp(cstr_an, "~a") == 0);
-    EXPECT_TRUE(strcmp(cstr_bn, "~b") == 0);
-    EXPECT_TRUE(strcmp(cstr_cn, "~c") == 0);
-    EXPECT_TRUE(strcmp(cstr_dn, "~d") == 0);
+    EXPECT_STREQ(cstr_an, "~a");
+    EXPECT_STREQ(cstr_bn, "~b");
+    EXPECT_STREQ(cstr_cn, "~c");
+    EXPECT_STREQ(cstr_dn, "~d");
 
     void const * args[] = {an, b, cn, d};
 
@@ -116,12 +108,12 @@ TEST(CFFI, Basic)
     auto cstr_y4 = boolexpr_BoolExpr_to_string(y4);
     auto cstr_y5 = boolexpr_BoolExpr_to_string(y5);
 
-    EXPECT_TRUE(strcmp(cstr_y0, "Or(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(cstr_y1, "And(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(cstr_y2, "Xor(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(cstr_y3, "Equal(~a, b, ~c, d)") == 0);
-    EXPECT_TRUE(strcmp(cstr_y4, "Implies(~a, b)") == 0);
-    EXPECT_TRUE(strcmp(cstr_y5, "IfThenElse(~a, b, ~c)") == 0);
+    EXPECT_STREQ(cstr_y0, "Or(~a, b, ~c, d)");
+    EXPECT_STREQ(cstr_y1, "And(~a, b, ~c, d)");
+    EXPECT_STREQ(cstr_y2, "Xor(~a, b, ~c, d)");
+    EXPECT_STREQ(cstr_y3, "Equal(~a, b, ~c, d)");
+    EXPECT_STREQ(cstr_y4, "Implies(~a, b)");
+    EXPECT_STREQ(cstr_y5, "IfThenElse(~a, b, ~c)");
 
     boolexpr_String_del(cstr_0);
     boolexpr_String_del(cstr_1);

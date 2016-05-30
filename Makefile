@@ -7,7 +7,14 @@ GENHTML := genhtml
 GSUTIL := gsutil
 LCOV := lcov
 
+CMSAT := third_party/cryptominisat
+GTEST := third_party/googletest
+
+# Currently, coverage only works with GCC
+CXX := g++
 CXXFLAGS := --std=c++11
+LDFLAGS := -L$(CMSAT)/lib -L$(GTEST)
+LDLIBS := -lcryptominisat4 -lgtest -lm4ri
 
 GCS_BUCKET := gs://www.boolexpr.org
 HTML_DIR := build/sphinx/html
@@ -127,15 +134,11 @@ TEST_SRCS := \
     test/main.cc \
 
 #===============================================================================
-# Third Party
+# Third Party Libraries
 #===============================================================================
-
-CMSAT := third_party/cryptominisat
 
 $(CMSAT)/lib/libcryptominisat4.a:
 	@cd $(CMSAT) && $(CMAKE) . && $(MAKE)
-
-GTEST := third_party/googletest
 
 $(GTEST)/libgtest.a:
 	@cd $(GTEST) && $(CMAKE) . && $(MAKE)
@@ -162,14 +165,14 @@ BLD_TEST_OBJS := \
     $(patsubst test/%.cc,build/test/%.o,$(TEST_SRCS))
 
 build/test/a.out: $(BLD_TEST_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ -g -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest -lm4ri
+	$(CXX) $(CXXFLAGS) -o $@ -g -pthread -static $(LDFLAGS) $^ $(LDLIBS)
 
 # Coverage
 build/cover/: | build/
 	@mkdir $@
 
 build/cover/%.o: src/%.cc $(BX_HDRS) | build/cover/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g --coverage -I$(CMSAT)/include -Iinclude $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g --coverage -I$(CMSAT)/include -Iinclude -Isrc $<
 
 build/cover/%.o: test/%.cc $(BX_HDRS) $(TEST_HDRS) | build/cover/
 	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -I$(GTEST)/include -Iinclude -Itest $<
@@ -179,4 +182,4 @@ BLD_COVER_OBJS := \
     $(patsubst test/%.cc,build/cover/%.o,$(TEST_SRCS))
 
 build/cover/a.out: $(BLD_COVER_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ -g --coverage -pthread -static -L$(CMSAT)/lib -L$(GTEST) $^ -lcryptominisat4 -lgtest -lm4ri
+	$(CXX) $(CXXFLAGS) -o $@ -g --coverage -pthread -static $(LDFLAGS) $^ $(LDLIBS)

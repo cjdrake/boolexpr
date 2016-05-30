@@ -13,6 +13,12 @@
 // limitations under the License.
 
 
+// WARNING:
+//     The contents of this file are implementation details.
+//     Do not use these declarations for anything,
+//     because they may change without notice.
+
+
 namespace boolexpr {
 
 
