@@ -134,7 +134,8 @@ space_iter::operator++()
 {
     // Increment the counter
     for (size_t i = 0; i <= n; ++i)
-        if (counter[i] = (counter[i] != true)) break;
+        if ((counter[i] = (counter[i] != true)))
+            break;
 
     return *this;
 }
