@@ -1495,7 +1495,7 @@ class ndarray:
                 shape.append((self._shape[i][0] + start,
                               self._shape[i][0] + stop))
             else:
-                assert False
+                assert False # pragma: no cover
             vols.append(reduce(operator.mul, self._nshape[i+1:], 1))
 
         items = list()
@@ -1765,7 +1765,7 @@ class ndarray:
                     raise ValueError("slice step is not supported")
                 nparts.append(slice(start, stop))
             else:
-                assert False
+                assert False # pragma: no cover
         return nparts
 
 

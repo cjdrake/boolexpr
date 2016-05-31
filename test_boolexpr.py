@@ -60,6 +60,7 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(int(ONE), 1)
 
     def test_ast(self):
+        """BoolExpr to_ast/from_ast methods"""
         from boolexpr._boolexpr import ffi
         p = int(ffi.cast("uintptr_t", ctx._cdata))
 
@@ -76,6 +77,7 @@ class BoolExprTest(unittest.TestCase):
                           (BoolExpr.Kind.var, p, "x_1"),
                           (BoolExpr.Kind.comp, p, "x_2")),
                       (BoolExpr.Kind.var, p, "x_3")))
+
         self.assertEqual(f.to_ast(), ast)
         g = BoolExpr.from_ast(ast)
         self.assertTrue(f.equiv(g))
@@ -323,35 +325,7 @@ class BoolExprTest(unittest.TestCase):
 
 A = ctx.get_vars("a", 4)
 X = ctx.get_vars("x", 4, 4, 4)
-
-
-ZEROS_STR = """\
-array([[[0, 0],
-        [0, 0]],
-
-       [[0, 0],
-        [0, 0]]])"""
-
-ONES_STR = """\
-array([[[1, 1],
-        [1, 1]],
-
-       [[1, 1],
-        [1, 1]]])"""
-
-LOGS_STR = """\
-array([[[X, X],
-        [X, X]],
-
-       [[X, X],
-        [X, X]]])"""
-
-ILLS_STR = """\
-array([[[?, ?],
-        [?, ?]],
-
-       [[?, ?],
-        [?, ?]]])"""
+Y = ctx.get_vars("x", (1,5), (3,7), (5,9))
 
 
 class ArrayTest(unittest.TestCase):
@@ -371,10 +345,37 @@ class ArrayTest(unittest.TestCase):
 
     def test_consts(self):
         """ndarray constant factory functions"""
-        self.assertEqual(str(zeros(2, 2, 2)), ZEROS_STR)
-        self.assertEqual(str(ones(2, 2, 2)), ONES_STR)
-        self.assertEqual(str(logicals(2, 2, 2)), LOGS_STR)
-        self.assertEqual(str(illogicals(2, 2, 2)), ILLS_STR)
+        self.assertEqual(str(zeros(2, 2, 2)),
+                         """\
+array([[[0, 0],
+        [0, 0]],
+
+       [[0, 0],
+        [0, 0]]])""")
+
+        self.assertEqual(str(ones(2, 2, 2)),
+                         """\
+array([[[1, 1],
+        [1, 1]],
+
+       [[1, 1],
+        [1, 1]]])""")
+
+        self.assertEqual(str(logicals(2, 2, 2)),
+                         """\
+array([[[X, X],
+        [X, X]],
+
+       [[X, X],
+        [X, X]]])""")
+
+        self.assertEqual(str(illogicals(2, 2, 2)),
+                         """\
+array([[[?, ?],
+        [?, ?]],
+
+       [[?, ?],
+        [?, ?]]])""")
 
     def test_numeric(self):
         """ndarray numeric factory functions"""
@@ -389,14 +390,14 @@ class ArrayTest(unittest.TestCase):
 
         self.assertEqual(str(uint2nda(0)), "array([0])")
 
+    def test_numeric_errors(self):
+        """ndarray numeric factory function errors"""
         # expected num >= 0
         with self.assertRaises(ValueError):
             uint2nda(-42)
-
         # overflow: num = 42 requires length >= ?, got length = 2
         with self.assertRaises(ValueError):
             uint2nda(42, 2)
-
         # overflow: num = 42 requires length >= ?, got length = 2
         with self.assertRaises(ValueError):
             int2nda(42, 2)
@@ -406,12 +407,16 @@ class ArrayTest(unittest.TestCase):
         # expected shape volume to match items
         with self.assertRaises(ValueError):
             array([[xs[0], xs[1]], [xs[2], xs[3]]], shape=((0, 3), (0, 3)))
-
         # expected uniform array dimensions
         with self.assertRaises(ValueError):
             array([xs[0], [xs[1], xs[2]]])
         with self.assertRaises(ValueError):
             array([[xs[0], xs[1]], [xs[2], xs[3], xs[4]]])
+        # expected shape dimensions to be (int, int)
+        with self.assertRaises(TypeError):
+            array([xs[0], xs[1]], shape="foo")
+        with self.assertRaises(TypeError):
+            array([xs[0], xs[1]], shape=("foo", "bar"))
 
     def test_ops(self):
         """ndarray operators"""
@@ -424,6 +429,9 @@ class ArrayTest(unittest.TestCase):
         self.assertEqual(str(A^B), "array([Xor(a[0], b[0]), Xor(a[1], b[1]), Xor(a[2], b[2]), Xor(a[3], b[3])])")
         self.assertEqual(str(A<<2), "array([0, 0, a[0], a[1]])")
         self.assertEqual(str(A>>2), "array([a[2], a[3], 0, 0])")
+        left, right = A.arsh(2)
+        self.assertEqual(str(left), "array([a[0], a[1]])")
+        self.assertEqual(str(right), "array([a[2], a[3], a[3], a[3]])")
         self.assertEqual(str(A+B), "array([a[0], a[1], a[2], a[3], b[0], b[1], b[2], b[3]])")
         self.assertEqual(str(0+A), "array([0, a[0], a[1], a[2], a[3]])")
         self.assertEqual(str(C+D), """\
@@ -465,9 +473,14 @@ array([[c[0,0], c[0,1]],
         XX = X.reshape((1, 5), (2, 6), (3, 7))
         self.assertTrue(X.equiv(XX))
 
+    def test_reshape_errors(self):
         # expected shape with equal volume
         with self.assertRaises(ValueError):
+            XX = X.reshape()
+        with self.assertRaises(ValueError):
             XX = X.reshape((1, 8), (2, 6), (3, 7))
+        with self.assertRaises(TypeError):
+            XX = X.reshape("foo", "bar")
 
     def test_flat(self):
         """ndarray flat iterator"""
@@ -486,6 +499,42 @@ array([[c[0,0], c[0,1]],
         self.assertTrue(A.or_reduce().equiv(A[0]|A[1]|A[2]|A[3]))
         self.assertTrue(A.and_reduce().equiv(A[0]&A[1]&A[2]&A[3]))
         self.assertTrue(A.xor_reduce().equiv(A[0]^A[1]^A[2]^A[3]))
+
+    def test_shift_errors(self):
+        """ndarray lsh/rsh/arsh errors"""
+        with self.assertRaises(ValueError):
+            A.lsh(X)
+        with self.assertRaises(ValueError):
+            A.rsh(X)
+        with self.assertRaises(ValueError):
+            A.arsh(42)
+
+    def test_index(self):
+        self.assertEqual(str(Y[3,5,7]), "x[3,5,7]")
+        self.assertEqual(str(Y[3,:,7]), """array([x[3,3,7], x[3,4,7], x[3,5,7], x[3,6,7]])""")
+        self.assertEqual(str(Y[3,...]), """\
+array([[x[3,3,5], x[3,3,6], x[3,3,7], x[3,3,8]],
+       [x[3,4,5], x[3,4,6], x[3,4,7], x[3,4,8]],
+       [x[3,5,5], x[3,5,6], x[3,5,7], x[3,5,8]],
+       [x[3,6,5], x[3,6,6], x[3,6,7], x[3,6,8]]])""")
+        self.assertEqual(str(Y[...,7]), """\
+array([[x[1,3,7], x[1,4,7], x[1,5,7], x[1,6,7]],
+       [x[2,3,7], x[2,4,7], x[2,5,7], x[2,6,7]],
+       [x[3,3,7], x[3,4,7], x[3,5,7], x[3,6,7]],
+       [x[4,3,7], x[4,4,7], x[4,5,7], x[4,6,7]]])""")
+        self.assertEqual(str(Y[-1,-1,-1]), "x[4,6,8]")
+
+    def test_index_error(self):
+        with self.assertRaises(ValueError):
+            Y[2:,:6,8:,:]
+        with self.assertRaises(IndexError):
+            Y[0:,...]
+        with self.assertRaises(ValueError):
+            Y[1:5:2,...]
+        with self.assertRaises(IndexError):
+            Y[0,...]
+        with self.assertRaises(IndexError):
+            Y[:0,...]
 
 
 if __name__ == "__main__":
