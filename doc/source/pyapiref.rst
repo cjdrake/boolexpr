@@ -225,12 +225,26 @@ High Order Operators
 
 .. autofunction:: boolexpr.achilles_heel
 
+.. autofunction:: boolexpr.mux
+
 .. autofunction:: boolexpr.exists
 
 .. autofunction:: boolexpr.forall
 
 Multidimensional Arrays
 =======================
+
+.. autofunction:: boolexpr.zeros
+
+.. autofunction:: boolexpr.ones
+
+.. autofunction:: boolexpr.logicals
+
+.. autofunction:: boolexpr.uint2nda
+
+.. autofunction:: boolexpr.int2nda
+
+.. autofunction:: boolexpr.array
 
 .. autoclass:: boolexpr.ndarray
    :members: shape,

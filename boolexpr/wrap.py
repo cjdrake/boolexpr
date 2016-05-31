@@ -1347,7 +1347,7 @@ def illogicals(*dims):
     return array(objs, shape)
 
 
-def uint2exprs(num, length=None):
+def uint2nda(num, length=None):
     """Convert unsigned *num* to an array of expressions.
 
     The *num* argument is a non-negative integer.
@@ -1358,7 +1358,7 @@ def uint2exprs(num, length=None):
 
     For example, to convert the byte 42 (binary ``0b00101010``)::
 
-       >>> uint2exprs(42, 8)
+       >>> uint2nda(42, 8)
        array([0, 1, 0, 1, 0, 1, 0, 0])
     """
     if num < 0:
@@ -1368,7 +1368,7 @@ def uint2exprs(num, length=None):
         return array(objs)
 
 
-def int2exprs(num, length=None):
+def int2nda(num, length=None):
     """Convert *num* to an array of expressions.
 
     The *num* argument is an ``int``.
@@ -1381,9 +1381,9 @@ def int2exprs(num, length=None):
     For example, to convert the bytes 42 (binary ``0b00101010``),
     and -42 (binary ``0b11010110``)::
 
-       >>> int2exprs(42, 8)
+       >>> int2nda(42, 8)
        array([0, 1, 0, 1, 0, 1, 0, 0])
-       >>> int2exprs(-42, 8)
+       >>> int2nda(-42, 8)
        array([0, 1, 1, 0, 1, 0, 1, 1])
     """
     if num < 0:

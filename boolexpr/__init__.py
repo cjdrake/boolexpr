@@ -131,8 +131,8 @@ from .wrap import zeros
 from .wrap import ones
 from .wrap import logicals
 from .wrap import illogicals
-from .wrap import uint2exprs
-from .wrap import int2exprs
+from .wrap import uint2nda
+from .wrap import int2nda
 from .wrap import array
 
 from .wrap import ndarray

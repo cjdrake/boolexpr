@@ -367,18 +367,18 @@ class ArrayTest(unittest.TestCase):
         self.assertEqual(str(logicals(2, 2, 2)), LOGS_STR)
         self.assertEqual(str(illogicals(2, 2, 2)), ILLS_STR)
 
-        self.assertEqual(str(uint2exprs(42, 8)),
+        self.assertEqual(str(uint2nda(42, 8)),
                          "array([0, 1, 0, 1, 0, 1, 0, 0])")
-        self.assertEqual(str(int2exprs(42, 8)),
+        self.assertEqual(str(int2nda(42, 8)),
                          "array([0, 1, 0, 1, 0, 1, 0, 0])")
-        self.assertEqual(str(int2exprs(-42, 8)),
+        self.assertEqual(str(int2nda(-42, 8)),
                          "array([0, 1, 1, 0, 1, 0, 1, 1])")
 
         with self.assertRaises(ValueError):
-            uint2exprs(-42)
+            uint2nda(-42)
 
         with self.assertRaises(ValueError):
-            int2exprs(42, 2)
+            int2nda(42, 2)
 
 
 if __name__ == "__main__":
