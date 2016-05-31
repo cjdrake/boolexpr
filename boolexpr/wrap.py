@@ -265,11 +265,6 @@ class Context:
     def __del__(self):
         lib.boolexpr_Context_del(self._cdata)
 
-    @property
-    def cdata(self):
-        """Return the CFFI CData object."""
-        return self._cdata
-
     def get_var(self, name):
         """Return a Variable with a given name."""
         cdata = lib.boolexpr_Context_get_var(self._cdata, name.encode("ascii"))
@@ -328,11 +323,6 @@ class BoolExpr:
 
     def __del__(self):
         lib.boolexpr_BoolExpr_del(self._cdata)
-
-    @property
-    def cdata(self):
-        """Return the CFFI CData object."""
-        return self._cdata
 
     def to_ast(self):
         """Convert to an abstract syntax tree (AST)."""
@@ -525,7 +515,7 @@ class BoolExpr:
         The suffix will be in the form ``_0``, ``_1``, etc.
         """
         name = auxvarname.encode("ascii")
-        return _bx(lib.boolexpr_BoolExpr_tseytin(self._cdata, ctx.cdata, name))
+        return _bx(lib.boolexpr_BoolExpr_tseytin(self._cdata, ctx._cdata, name))
 
     def compose(self, var2bx):
         r"""
@@ -539,8 +529,8 @@ class BoolExpr:
         c_vars = ffi.new("void * []", num)
         c_bxs = ffi.new("void * []", num)
         for i, (var, bx) in enumerate(var2bx.items()):
-            c_vars[i] = _expect_var(var).cdata
-            c_bxs[i] = _expect_bx(bx).cdata
+            c_vars[i] = _expect_var(var)._cdata
+            c_bxs[i] = _expect_bx(bx)._cdata
         return _bx(lib.boolexpr_BoolExpr_compose(self._cdata, num, c_vars, c_bxs))
 
     def restrict(self, point):
@@ -555,8 +545,8 @@ class BoolExpr:
         c_vars = ffi.new("void * []", num)
         c_consts = ffi.new("void * []", num)
         for i, (var, const) in enumerate(point.items()):
-            c_vars[i] = _expect_var(var).cdata
-            c_consts[i] = _expect_const(const).cdata
+            c_vars[i] = _expect_var(var)._cdata
+            c_consts[i] = _expect_const(const)._cdata
         return _bx(lib.boolexpr_BoolExpr_restrict(self._cdata, num, c_vars, c_consts))
 
     def sat(self):
@@ -598,7 +588,7 @@ class BoolExpr:
                   SAT is an NP-complete problem, so some inputs will require
                   exponential runtime.
         """
-        return bool(lib.boolexpr_BoolExpr_equiv(self._cdata, other.cdata))
+        return bool(lib.boolexpr_BoolExpr_equiv(self._cdata, other._cdata))
 
     def support(self):
         """Return the support set of the expression."""
@@ -621,7 +611,7 @@ class BoolExpr:
         num = len(xs)
         c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            c_vars[i] = _expect_var(x).cdata
+            c_vars[i] = _expect_var(x)._cdata
         return _bx(lib.boolexpr_BoolExpr_smoothing(self._cdata, num, c_vars))
 
     def consensus(self, xs):
@@ -641,7 +631,7 @@ class BoolExpr:
         num = len(xs)
         c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            c_vars[i] = _expect_var(x).cdata
+            c_vars[i] = _expect_var(x)._cdata
         return _bx(lib.boolexpr_BoolExpr_consensus(self._cdata, num, c_vars))
 
     def derivative(self, xs):
@@ -660,7 +650,7 @@ class BoolExpr:
         num = len(xs)
         c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            c_vars[i] = _expect_var(x).cdata
+            c_vars[i] = _expect_var(x)._cdata
         return _bx(lib.boolexpr_BoolExpr_derivative(self._cdata, num, c_vars))
 
     def iter_dfs(self):
@@ -678,7 +668,7 @@ class BoolExpr:
         num = len(xs)
         c_vars = ffi.new("void * []", num)
         for i, x in enumerate(xs):
-            c_vars[i] = _expect_var(x).cdata
+            c_vars[i] = _expect_var(x)._cdata
         cdata = lib.boolexpr_CofactorIter_new(self._cdata, num, c_vars)
         yield from _CofactorIter(cdata)
 
@@ -833,7 +823,7 @@ def iter_points(xs):
     num = len(xs)
     c_vars = ffi.new("void * []", num)
     for i, x in enumerate(xs):
-        c_vars[i] = _expect_var(x).cdata
+        c_vars[i] = _expect_var(x)._cdata
     yield from _PointsIter(lib.boolexpr_PointsIter_new(len(c_vars), c_vars))
 
 
@@ -1101,7 +1091,7 @@ def _convert_args(args):
     num = len(args)
     c_args = ffi.new("void const * []", num)
     for i, arg in enumerate(args):
-        c_args[i] = _expect_bx(arg).cdata
+        c_args[i] = _expect_bx(arg)._cdata
     return num, c_args
 
 
@@ -1132,11 +1122,6 @@ class Array:
 
     def __del__(self):
         lib.boolexpr_Array_del(self._cdata)
-
-    @property
-    def cdata(self):
-        """Return the CFFI CData object."""
-        return self._cdata
 
     def __repr__(self):
         return self.__str__()
@@ -1176,16 +1161,16 @@ class Array:
         return Array(lib.boolexpr_Array_invert(self._cdata))
 
     def __or__(self, other):
-        return Array(lib.boolexpr_Array_or(self._cdata, other.cdata))
+        return Array(lib.boolexpr_Array_or(self._cdata, other._cdata))
 
     def __and__(self, other):
-        return Array(lib.boolexpr_Array_and(self._cdata, other.cdata))
+        return Array(lib.boolexpr_Array_and(self._cdata, other._cdata))
 
     def __xor__(self, other):
-        return Array(lib.boolexpr_Array_xor(self._cdata, other.cdata))
+        return Array(lib.boolexpr_Array_xor(self._cdata, other._cdata))
 
     def __add__(self, other):
-        return Array(lib.boolexpr_Array_plus(self._cdata, other.cdata))
+        return Array(lib.boolexpr_Array_plus(self._cdata, other._cdata))
 
     def __mul__(self, num):
         return Array(lib.boolexpr_Array_mul(self._cdata, num))
@@ -1205,8 +1190,8 @@ class Array:
         c_vars = ffi.new("void * []", num)
         c_bxs = ffi.new("void * []", num)
         for i, (var, bx) in enumerate(var2bx.items()):
-            c_vars[i] = _expect_var(var).cdata
-            c_bxs[i] = _expect_bx(bx).cdata
+            c_vars[i] = _expect_var(var)._cdata
+            c_bxs[i] = _expect_bx(bx)._cdata
         return Array(lib.boolexpr_Array_compose(self._cdata, num, c_vars, c_bxs))
 
     def restrict(self, point):
@@ -1221,8 +1206,8 @@ class Array:
         c_vars = ffi.new("void * []", num)
         c_consts = ffi.new("void * []", num)
         for i, (var, const) in enumerate(point.items()):
-            c_vars[i] = _expect_var(var).cdata
-            c_consts[i] = _expect_const(const).cdata
+            c_vars[i] = _expect_var(var)._cdata
+            c_consts[i] = _expect_const(const)._cdata
         return Array(lib.boolexpr_Array_restrict(self._cdata, num, c_vars, c_consts))
 
     def equiv(self, other):
@@ -1232,7 +1217,7 @@ class Array:
                   SAT is an NP-complete problem, so some inputs will require
                   exponential runtime.
         """
-        return bool(lib.boolexpr_Array_equiv(self._cdata, other.cdata))
+        return bool(lib.boolexpr_Array_equiv(self._cdata, other._cdata))
 
     def zext(self, num):
         """Zero-extend this array by *num* bits."""
@@ -1256,12 +1241,12 @@ class Array:
 
     def lsh(self, a):
         """Left shift operator"""
-        cdata = lib.boolexpr_Array_lsh(self._cdata, a.cdata)
+        cdata = lib.boolexpr_Array_lsh(self._cdata, a._cdata)
         return _ArrayPair(cdata).t
 
     def rsh(self, a):
         """Right shift operator"""
-        cdata = lib.boolexpr_Array_rsh(self._cdata, a.cdata)
+        cdata = lib.boolexpr_Array_rsh(self._cdata, a._cdata)
         return _ArrayPair(cdata).t
 
     def arsh(self, num):
