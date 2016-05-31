@@ -228,3 +228,23 @@ High Order Operators
 .. autofunction:: boolexpr.exists
 
 .. autofunction:: boolexpr.forall
+
+Multidimensional Arrays
+=======================
+
+.. autoclass:: boolexpr.ndarray
+   :members: shape,
+             reshape,
+             __iter__,
+             __len__,
+             __getitem__,
+             __invert__, __or__, __and__, __xor__,
+             __lshift__, __rshift__,
+             __add__, __mul__,
+             ndim, size, flat,
+             compose, restrict,
+             equiv,
+             zext, sext,
+             or_reduce, and_reduce, xor_reduce,
+             lsh, rsh, arsh
+   :member-order: bysource

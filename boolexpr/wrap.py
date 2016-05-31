@@ -1445,10 +1445,12 @@ class ndarray:
         """Return the Array shape."""
         return self._shape
 
-    @property
-    def ndim(self):
-        """Return the number of dimensions."""
-        return len(self._shape)
+    def reshape(self, *dims):
+        """Return an equivalent array with a modified shape."""
+        shape = _dims2shape(*dims)
+        if _volume(shape) != self.size:
+            raise ValueError("expected shape with equal volume")
+        return self.__class__(self._bxa, shape)
 
     def __str__(self):
         pre, post = "array(", ")"
@@ -1581,6 +1583,11 @@ class ndarray:
         return self.__mul__(num)
 
     @property
+    def ndim(self):
+        """Return the number of dimensions."""
+        return len(self._shape)
+
+    @property
     def size(self):
         """Return the size of the array.
 
@@ -1588,6 +1595,11 @@ class ndarray:
         of its dimensions.
         """
         return len(self._bxa)
+
+    @property
+    def flat(self):
+        """Return a 1D iterator over the array."""
+        return iter(self._bxa)
 
     def compose(self, var2bx):
         """Apply the ``compose`` method to all functions.
@@ -1611,18 +1623,6 @@ class ndarray:
                   exponential runtime.
         """
         return self._bxa.equiv(other.bxa)
-
-    def reshape(self, *dims):
-        """Return an equivalent array with a modified shape."""
-        shape = _dims2shape(*dims)
-        if _volume(shape) != self.size:
-            raise ValueError("expected shape with equal volume")
-        return self.__class__(self._bxa, shape)
-
-    @property
-    def flat(self):
-        """Return a 1D iterator over the array."""
-        return iter(self._bxa)
 
     def zext(self, num):
         """Zero-extend this array by *num* bits.

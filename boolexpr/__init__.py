@@ -135,6 +135,8 @@ from .wrap import uint2exprs
 from .wrap import int2exprs
 from .wrap import array
 
+from .wrap import ndarray
+
 from .misc import majority
 from .misc import achilles_heel
 from .misc import mux
