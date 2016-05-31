@@ -1330,9 +1330,9 @@ def logicals(*dims):
 
     For example, to create a 4x4 array of X's::
 
-       >>> logicals(4, 4)
-       array([[1, 1, 1, 1],
-              [1, 1, 1, 1]])
+       >>> logicals(2, 4)
+       array([[X, X, X, X],
+              [X, X, X, X]])
     """
     shape = _dims2shape(*dims)
     objs = [LOGICAL for _ in range(_volume(shape))]
@@ -1353,9 +1353,9 @@ def illogicals(*dims):
 
     For example, to create a 4x4 array of X's::
 
-       >>> illogicals(4, 4)
-       array([[1, 1, 1, 1],
-              [1, 1, 1, 1]])
+       >>> illogicals(2, 4)
+       array([[?, ?, ?, ?],
+              [?, ?, ?, ?]])
     """
     shape = _dims2shape(*dims)
     objs = [ILLOGICAL for _ in range(_volume(shape))]
