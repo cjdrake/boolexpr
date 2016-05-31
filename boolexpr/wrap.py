@@ -1603,6 +1603,15 @@ class ndarray:
         """
         return self.__class__(self._bxa.restrict(point), self._shape)
 
+    def equiv(self, other):
+        """Return True if two arrays are equivalent.
+
+        .. note:: While in practice this check can be quite fast,
+                  SAT is an NP-complete problem, so some inputs will require
+                  exponential runtime.
+        """
+        return self._bxa.equiv(other.bxa)
+
     def reshape(self, *dims):
         """Return an equivalent array with a modified shape."""
         shape = _dims2shape(*dims)
