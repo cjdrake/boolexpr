@@ -18,12 +18,9 @@ import unittest
 from boolexpr import *
 
 
+# It's convenient to just reuse several global variables
 ctx = Context()
-
 xs = [ctx.get_var("x_" + str(i)) for i in range(64)]
-
-X = ctx.get_vars("x", 4, 4, 4)
-Y = ctx.get_vars("y", 4, 4, 4)
 
 
 class ContextTest(unittest.TestCase):
@@ -34,10 +31,10 @@ class ContextTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_constructor(self):
-        ctx1 = Context()
-        a, b, c, d = map(ctx1.get_var, "abcd")
-        del ctx1
+    def test_basic(self):
+        """Context constructor/destructor"""
+        ctx = Context()
+        del ctx
 
 
 class BoolExprTest(unittest.TestCase):
@@ -324,6 +321,10 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual((xs[0] & xs[1]).sat(), (xs[1] & xs[0]).sat())
 
 
+A = ctx.get_vars("a", 4)
+X = ctx.get_vars("x", 4, 4, 4)
+
+
 ZEROS_STR = """\
 array([[[0, 0],
         [0, 0]],
@@ -361,24 +362,130 @@ class ArrayTest(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_basic(self):
+        """ndarray basic properties"""
+        self.assertEqual(X.ndim, 3)
+        self.assertEqual(str(X), repr(X))
+        self.assertEqual(len(X), 4)
+        self.assertEqual(X.size, 4*4*4)
+
     def test_consts(self):
+        """ndarray constant factory functions"""
         self.assertEqual(str(zeros(2, 2, 2)), ZEROS_STR)
         self.assertEqual(str(ones(2, 2, 2)), ONES_STR)
         self.assertEqual(str(logicals(2, 2, 2)), LOGS_STR)
         self.assertEqual(str(illogicals(2, 2, 2)), ILLS_STR)
 
+    def test_numeric(self):
+        """ndarray numeric factory functions"""
         self.assertEqual(str(uint2nda(42, 8)),
                          "array([0, 1, 0, 1, 0, 1, 0, 0])")
+        self.assertEqual(str(int2nda(42)),
+                         "array([0, 1, 0, 1, 0, 1, 0])")
         self.assertEqual(str(int2nda(42, 8)),
                          "array([0, 1, 0, 1, 0, 1, 0, 0])")
         self.assertEqual(str(int2nda(-42, 8)),
                          "array([0, 1, 1, 0, 1, 0, 1, 1])")
 
+        self.assertEqual(str(uint2nda(0)), "array([0])")
+
+        # expected num >= 0
         with self.assertRaises(ValueError):
             uint2nda(-42)
 
+        # overflow: num = 42 requires length >= ?, got length = 2
+        with self.assertRaises(ValueError):
+            uint2nda(42, 2)
+
+        # overflow: num = 42 requires length >= ?, got length = 2
         with self.assertRaises(ValueError):
             int2nda(42, 2)
+
+    def test_array_errors(self):
+        """array() factory function errors"""
+        # expected shape volume to match items
+        with self.assertRaises(ValueError):
+            array([[xs[0], xs[1]], [xs[2], xs[3]]], shape=((0, 3), (0, 3)))
+
+        # expected uniform array dimensions
+        with self.assertRaises(ValueError):
+            array([xs[0], [xs[1], xs[2]]])
+        with self.assertRaises(ValueError):
+            array([[xs[0], xs[1]], [xs[2], xs[3], xs[4]]])
+
+    def test_ops(self):
+        """ndarray operators"""
+        B = ctx.get_vars("b", 4)
+        C = ctx.get_vars("c", 2, 2)
+        D = ctx.get_vars("d", 2, 2)
+        self.assertEqual(str(~A), "array([~a[0], ~a[1], ~a[2], ~a[3]])")
+        self.assertEqual(str(A|B), "array([Or(a[0], b[0]), Or(a[1], b[1]), Or(a[2], b[2]), Or(a[3], b[3])])")
+        self.assertEqual(str(A&B), "array([And(a[0], b[0]), And(a[1], b[1]), And(a[2], b[2]), And(a[3], b[3])])")
+        self.assertEqual(str(A^B), "array([Xor(a[0], b[0]), Xor(a[1], b[1]), Xor(a[2], b[2]), Xor(a[3], b[3])])")
+        self.assertEqual(str(A<<2), "array([0, 0, a[0], a[1]])")
+        self.assertEqual(str(A>>2), "array([a[2], a[3], 0, 0])")
+        self.assertEqual(str(A+B), "array([a[0], a[1], a[2], a[3], b[0], b[1], b[2], b[3]])")
+        self.assertEqual(str(0+A), "array([0, a[0], a[1], a[2], a[3]])")
+        self.assertEqual(str(C+D), """\
+array([[c[0,0], c[0,1]],
+       [c[1,0], c[1,1]],
+       [d[0,0], d[0,1]],
+       [d[1,0], d[1,1]]])""")
+        self.assertEqual(str(2*A), "array([a[0], a[1], a[2], a[3], a[0], a[1], a[2], a[3]])")
+        self.assertEqual(str(A*2), "array([a[0], a[1], a[2], a[3], a[0], a[1], a[2], a[3]])")
+        self.assertEqual(str(2*C), """\
+array([[c[0,0], c[0,1]],
+       [c[1,0], c[1,1]],
+       [c[0,0], c[0,1]],
+       [c[1,0], c[1,1]]])""")
+
+    def test_op_errors(self):
+        """ndarray op errors"""
+        with self.assertRaises(ValueError):
+            -1 * A
+        with self.assertRaises(ValueError):
+            A * -5
+        with self.assertRaises(ValueError):
+            A << -1
+        with self.assertRaises(ValueError):
+            A >> -1
+
+    def test_compose(self):
+        """ndarray compose method"""
+        self.assertEqual(str(A.compose({A[0]: A[1], A[1]: A[2], A[2]: A[3], A[3]: A[0]})),
+                         "array([a[1], a[2], a[3], a[0]])")
+
+    def test_restrict(self):
+        """ndarray restrict method"""
+        self.assertEqual(str(A.restrict({A[0]: 0, A[1]: 1, A[2]: "X", A[3]: "?"})),
+                         "array([0, 1, X, ?])")
+
+    def test_reshape(self):
+        """ndarray reshape method"""
+        XX = X.reshape((1, 5), (2, 6), (3, 7))
+        self.assertTrue(X.equiv(XX))
+
+        # expected shape with equal volume
+        with self.assertRaises(ValueError):
+            XX = X.reshape((1, 8), (2, 6), (3, 7))
+
+    def test_flat(self):
+        """ndarray flat iterator"""
+        self.assertEqual(len(list(X.flat)), 4*4*4)
+
+    def test_zext(self):
+        """ndarray zext method"""
+        self.assertEqual(str(A.zext(2)), "array([a[0], a[1], a[2], a[3], 0, 0])")
+
+    def test_sext(self):
+        """ndarray sext method"""
+        self.assertEqual(str(A.sext(2)), "array([a[0], a[1], a[2], a[3], a[3], a[3]])")
+
+    def test_reductions(self):
+        """ndarray or/and/xor reduce methods"""
+        self.assertTrue(A.or_reduce().equiv(A[0]|A[1]|A[2]|A[3]))
+        self.assertTrue(A.and_reduce().equiv(A[0]&A[1]&A[2]&A[3]))
+        self.assertTrue(A.xor_reduce().equiv(A[0]^A[1]^A[2]^A[3]))
 
 
 if __name__ == "__main__":
