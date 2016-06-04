@@ -823,7 +823,7 @@ boolexpr_Array_new(size_t n, BXS c_args)
 void
 boolexpr_Array_del(ARRAY c_self)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     delete self;
 }
 
@@ -831,27 +831,37 @@ boolexpr_Array_del(ARRAY c_self)
 size_t
 boolexpr_Array_size(ARRAY c_self)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    return self->items.size();
+    auto self = reinterpret_cast<Array * const>(c_self);
+    return self->size();
 }
 
 
 BX
 boolexpr_Array_getitem(ARRAY c_self, size_t index)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    assert(index < self->items.size());
-    return new BoolExprProxy(self->items[index]);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    assert(index < self->size());
+    return new BoolExprProxy((*self)[index]);
+}
+
+
+void
+boolexpr_Array_setitem(ARRAY c_self, size_t index, BX c_item)
+{
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto item = reinterpret_cast<BoolExprProxy const * const>(c_item);
+    assert(index < self->size());
+    (*self)[index] = item->bx;
 }
 
 
 ARRAY
 boolexpr_Array_getslice(ARRAY c_self, size_t start, size_t stop)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    assert((0 <= start) && (start <= stop) && (stop <= self->items.size()));
-    auto items = vector<bx_t>(self->items.begin() + start,
-                              self->items.begin() + stop);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    assert((0 <= start) && (start <= stop) && (stop <= self->size()));
+    auto items = vector<bx_t>(self->begin() + start,
+                              self->begin() + stop);
     return new Array(std::move(items));
 }
 
@@ -859,7 +869,7 @@ boolexpr_Array_getslice(ARRAY c_self, size_t start, size_t stop)
 ARRAY
 boolexpr_Array_invert(ARRAY c_self)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return ~(*self);
 }
 
@@ -867,8 +877,8 @@ boolexpr_Array_invert(ARRAY c_self)
 ARRAY
 boolexpr_Array_or(ARRAY c_self, ARRAY c_other)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto other = reinterpret_cast<Array const * const>(c_other);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto other = reinterpret_cast<Array * const>(c_other);
     return *self | *other;
 }
 
@@ -876,8 +886,8 @@ boolexpr_Array_or(ARRAY c_self, ARRAY c_other)
 ARRAY
 boolexpr_Array_and(ARRAY c_self, ARRAY c_other)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto other = reinterpret_cast<Array const * const>(c_other);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto other = reinterpret_cast<Array * const>(c_other);
     return *self & *other;
 }
 
@@ -885,8 +895,8 @@ boolexpr_Array_and(ARRAY c_self, ARRAY c_other)
 ARRAY
 boolexpr_Array_xor(ARRAY c_self, ARRAY c_other)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto other = reinterpret_cast<Array const * const>(c_other);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto other = reinterpret_cast<Array * const>(c_other);
     return *self ^ *other;
 }
 
@@ -894,8 +904,8 @@ boolexpr_Array_xor(ARRAY c_self, ARRAY c_other)
 ARRAY
 boolexpr_Array_plus(ARRAY c_self, ARRAY c_other)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto other = reinterpret_cast<Array const * const>(c_other);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto other = reinterpret_cast<Array * const>(c_other);
     return *self + *other;
 }
 
@@ -903,7 +913,7 @@ boolexpr_Array_plus(ARRAY c_self, ARRAY c_other)
 ARRAY
 boolexpr_Array_mul(ARRAY c_self, size_t num)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return *self * num;
 }
 
@@ -911,7 +921,7 @@ boolexpr_Array_mul(ARRAY c_self, size_t num)
 ARRAY
 boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     auto var2bx = var2bx_t();
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
@@ -927,7 +937,7 @@ boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
 ARRAY
 boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     auto point = point_t();
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
@@ -943,8 +953,8 @@ boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
 bool
 boolexpr_Array_equiv(ARRAY c_self, ARRAY c_other)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto other = reinterpret_cast<Array const * const>(c_other);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto other = reinterpret_cast<Array * const>(c_other);
     return self->equiv(*other);
 }
 
@@ -952,7 +962,7 @@ boolexpr_Array_equiv(ARRAY c_self, ARRAY c_other)
 ARRAY
 boolexpr_Array_zext(ARRAY c_self, size_t num)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return self->zext(num);
 }
 
@@ -960,7 +970,7 @@ boolexpr_Array_zext(ARRAY c_self, size_t num)
 ARRAY
 boolexpr_Array_sext(ARRAY c_self, size_t num)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return self->sext(num);
 }
 
@@ -968,7 +978,7 @@ boolexpr_Array_sext(ARRAY c_self, size_t num)
 BX
 boolexpr_Array_or_reduce(ARRAY c_self)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return new BoolExprProxy(self->or_reduce());
 }
 
@@ -976,7 +986,7 @@ boolexpr_Array_or_reduce(ARRAY c_self)
 BX
 boolexpr_Array_and_reduce(ARRAY c_self)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return new BoolExprProxy(self->and_reduce());
 }
 
@@ -984,7 +994,7 @@ boolexpr_Array_and_reduce(ARRAY c_self)
 BX
 boolexpr_Array_xor_reduce(ARRAY c_self)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
     return new BoolExprProxy(self->xor_reduce());
 }
 
@@ -992,21 +1002,21 @@ boolexpr_Array_xor_reduce(ARRAY c_self)
 ARRAY
 boolexpr_ArrayPair_fst(ARRAY_PAIR c_self)
 {
-    auto self = reinterpret_cast<Array const * const * const>(c_self);
+    auto self = reinterpret_cast<Array * const * const>(c_self);
     return self[0];
 }
 
 ARRAY
 boolexpr_ArrayPair_snd(ARRAY_PAIR c_self)
 {
-    auto self = reinterpret_cast<Array const * const * const>(c_self);
+    auto self = reinterpret_cast<Array * const * const>(c_self);
     return self[1];
 }
 
 void
 boolexpr_ArrayPair_del(ARRAY_PAIR c_self)
 {
-    auto self = reinterpret_cast<Array const * const * const>(c_self);
+    auto self = reinterpret_cast<Array * const * const>(c_self);
     delete [] self;
 }
 
@@ -1014,33 +1024,33 @@ boolexpr_ArrayPair_del(ARRAY_PAIR c_self)
 ARRAY_PAIR
 boolexpr_Array_lsh(ARRAY c_self, ARRAY c_sin)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto si = reinterpret_cast<Array const * const>(c_sin);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto si = reinterpret_cast<Array * const>(c_sin);
 
     auto p = self->lsh(*si);
 
-    return new Array const * [2] { p.first, p.second };
+    return new Array * [2] { p.first, p.second };
 }
 
 
 ARRAY_PAIR
 boolexpr_Array_rsh(ARRAY c_self, ARRAY c_sin)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
-    auto si = reinterpret_cast<Array const * const>(c_sin);
+    auto self = reinterpret_cast<Array * const>(c_self);
+    auto si = reinterpret_cast<Array * const>(c_sin);
 
     auto p = self->rsh(*si);
 
-    return new Array const * [2] { p.first, p.second };
+    return new Array * [2] { p.first, p.second };
 }
 
 
 ARRAY_PAIR
 boolexpr_Array_arsh(ARRAY c_self, size_t n)
 {
-    auto self = reinterpret_cast<Array const * const>(c_self);
+    auto self = reinterpret_cast<Array * const>(c_self);
 
     auto p = self->arsh(n);
 
-    return new Array const * [2] { p.first, p.second };
+    return new Array * [2] { p.first, p.second };
 }

@@ -1140,6 +1140,10 @@ class Array:
         index = self._key2index(key)
         return _bx(lib.boolexpr_Array_getitem(self._cdata, index))
 
+    def __setitem__(self, key, val):
+        index = self._key2index(key)
+        lib.boolexpr_Array_setitem(self._cdata, index, val._cdata)
+
     def _key2index(self, key):
         index = operator.index(key)
         if index < 0:
@@ -1482,31 +1486,27 @@ class ndarray:
 
     def __getitem__(self, key):
         parts = self._key2parts(key)
-
-        ranges = list()
-        shape = list()
-        vols = list()
-        for i, part in enumerate(parts):
-            if isinstance(part, int):
-                ranges.append(range(part, part+1))
-            elif isinstance(part, slice):
-                start, stop, _ = part.indices(self._nshape[i])
-                ranges.append(range(start, stop))
-                shape.append((self._shape[i][0] + start,
-                              self._shape[i][0] + stop))
-            else:
-                assert False # pragma: no cover
-            vols.append(reduce(operator.mul, self._nshape[i+1:], 1))
-
+        ranges, shape, vols = self._walk_parts(parts)
         items = list()
         for coord in itertools.product(*ranges):
             index = sum(vols[i] * coord[i] for i in range(self.ndim))
             items.append(self._bxa[index])
-
         if shape:
             return array(items, tuple(shape))
         else:
             return items[0]
+
+    def __setitem__(self, key, val):
+        parts = self._key2parts(key)
+        ranges, _, vols = self._walk_parts(parts)
+        val = _expect_array(val)
+        coords = list(itertools.product(*ranges))
+        if val.size != len(coords):
+            fstr = "expected val.size = {}, got {}"
+            raise ValueError(fstr.format(len(coords), val.size))
+        for coord, _val in zip(coords, val.flat):
+            index = sum(vols[i] * coord[i] for i in range(self.ndim))
+            self._bxa[index] = _val
 
     # Operators
     def __invert__(self):
@@ -1695,7 +1695,7 @@ class ndarray:
         return (self.__class__(left, ((0, len(left)), )),
                 self.__class__(right, ((0, len(right)), )))
 
-    # Subroutines of __getitem__
+    # Subroutines of __getitem__, __setitem__
     @staticmethod
     def _part(item):
         if item is Ellipsis:
@@ -1767,6 +1767,24 @@ class ndarray:
             else:
                 assert False # pragma: no cover
         return nparts
+
+    def _walk_parts(self, parts):
+        """Walk through slice parts, and get characteristic info."""
+        ranges = list()
+        shape = list()
+        vols = list()
+        for i, part in enumerate(parts):
+            if isinstance(part, int):
+                ranges.append(range(part, part+1))
+            elif isinstance(part, slice):
+                start, stop, _ = part.indices(self._nshape[i])
+                ranges.append(range(start, stop))
+                shape.append((self._shape[i][0] + start,
+                              self._shape[i][0] + stop))
+            else:
+                assert False # pragma: no cover
+            vols.append(reduce(operator.mul, self._nshape[i+1:], 1))
+        return ranges, shape, vols
 
 
 def _check_dim(dim):

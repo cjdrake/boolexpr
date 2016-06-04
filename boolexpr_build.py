@@ -82,8 +82,8 @@ HEADER = """
 typedef char const * const STRING;
 typedef void * const CONTEXT;
 typedef void const * const BX;
-typedef void const * const ARRAY;
-typedef void const * const ARRAY_PAIR;
+typedef void * const ARRAY;
+typedef void * const ARRAY_PAIR;
 typedef void const * const * const BXS;
 typedef void const * const * const VARS;
 typedef void const * const * const CONSTS;
@@ -240,6 +240,7 @@ ARRAY boolexpr_Array_new(size_t, BXS);
 void boolexpr_Array_del(ARRAY);
 size_t boolexpr_Array_size(ARRAY);
 BX boolexpr_Array_getitem(ARRAY, size_t);
+void boolexpr_Array_setitem(ARRAY, size_t, BX);
 ARRAY boolexpr_Array_getslice(ARRAY, size_t, size_t);
 ARRAY boolexpr_Array_invert(ARRAY);
 ARRAY boolexpr_Array_or(ARRAY, ARRAY);

@@ -48,7 +48,7 @@ Array::Array(std::initializer_list<bx_t> const items)
 {}
 
 
-Array const *
+Array *
 boolexpr::operator~(Array const & self)
 {
     size_t n = self.items.size();
@@ -61,7 +61,7 @@ boolexpr::operator~(Array const & self)
 }
 
 
-Array const *
+Array *
 boolexpr::operator|(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
@@ -82,7 +82,7 @@ boolexpr::operator|(Array const & lhs, Array const & rhs)
 }
 
 
-Array const *
+Array *
 boolexpr::operator&(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
@@ -103,7 +103,7 @@ boolexpr::operator&(Array const & lhs, Array const & rhs)
 }
 
 
-Array const *
+Array *
 boolexpr::operator^(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
@@ -124,7 +124,7 @@ boolexpr::operator^(Array const & lhs, Array const & rhs)
 }
 
 
-Array const *
+Array *
 boolexpr::operator+(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items(lhs.items.size() + rhs.items.size());
@@ -141,7 +141,7 @@ boolexpr::operator+(Array const & lhs, Array const & rhs)
 }
 
 
-Array const *
+Array *
 boolexpr::operator*(Array const & lhs, size_t num)
 {
     vector<bx_t> items(num * lhs.items.size());
@@ -156,7 +156,7 @@ boolexpr::operator*(Array const & lhs, size_t num)
 }
 
 
-Array const *
+Array *
 boolexpr::operator*(size_t num, Array const & rhs)
 {
     vector<bx_t> items(num * rhs.items.size());
@@ -171,7 +171,42 @@ boolexpr::operator*(size_t num, Array const & rhs)
 }
 
 
-Array const *
+bx_t const &
+Array::operator[](size_t index) const
+{
+    return this->items[index];
+}
+
+
+bx_t &
+Array::operator[](size_t index)
+{
+    return this->items[index];
+}
+
+
+size_t
+Array::size() const
+{
+    return this->items.size();
+}
+
+
+vector<bx_t>::const_iterator
+Array::begin() const
+{
+    return this->items.begin();
+}
+
+
+vector<bx_t>::const_iterator
+Array::end() const
+{
+    return this->items.end();
+}
+
+
+Array *
 Array::compose(var2bx_t const & var2bx) const
 {
     size_t n = this->items.size();
@@ -184,7 +219,7 @@ Array::compose(var2bx_t const & var2bx) const
 }
 
 
-Array const *
+Array *
 Array::restrict_(point_t const & point) const
 {
     size_t n = this->items.size();
@@ -212,7 +247,7 @@ Array::equiv(Array const & other) const
 }
 
 
-Array const *
+Array *
 Array::zext(size_t num) const
 {
     vector<bx_t> items(this->items.size() + num);
@@ -228,7 +263,7 @@ Array::zext(size_t num) const
 }
 
 
-Array const *
+Array *
 Array::sext(size_t num) const
 {
     vector<bx_t> items(this->items.size() + num);
@@ -266,7 +301,7 @@ Array::xor_reduce() const
 }
 
 
-std::pair<Array const *, Array const *>
+std::pair<Array *, Array *>
 Array::lsh(Array const & si) const
 {
     auto m = this->items.size();
@@ -291,7 +326,7 @@ Array::lsh(Array const & si) const
 }
 
 
-std::pair<Array const *, Array const *>
+std::pair<Array *, Array *>
 Array::rsh(Array const & si) const
 {
     auto m = this->items.size();
@@ -316,7 +351,7 @@ Array::rsh(Array const & si) const
 }
 
 
-std::pair<Array const *, Array const *>
+std::pair<Array *, Array *>
 Array::arsh(size_t n) const
 {
     auto m = this->items.size();
