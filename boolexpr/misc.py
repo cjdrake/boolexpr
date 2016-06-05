@@ -21,11 +21,11 @@ Miscellaneous features not implemented in C++ API
 import itertools
 
 from .util import clog2
-from .wrap import BoolExpr
 from .wrap import iter_points
 from .wrap import not_
 from .wrap import or_
 from .wrap import and_
+from .wrap import _expect_array
 
 
 def nhot(n, *args):
@@ -75,20 +75,19 @@ def achilles_heel(*args):
     return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])
 
 
-def mux(args, sel):
+def mux(xs, sel):
     """
     Return an expression that multiplexes a sequence of input functions over a
     sequence of select functions.
     """
-    # convert mux([a, b], x) to mux([a, b], [x])
-    if isinstance(sel, BoolExpr):
-        sel = [BoolExpr]
-    if len(sel) < clog2(len(args)):
+    xs = _expect_array(xs)
+    sel = _expect_array(sel)
+    if sel.size < clog2(xs.size):
         fstr = "expected at least {} select bits, got {}"
-        raise ValueError(fstr.format(clog2(len(args)), len(sel)))
-    gen = (tuple(v if val else ~v for v, val in point.items())
+        raise ValueError(fstr.format(clog2(xs.size), sel.size))
+    gen = (tuple(var if val else ~var for var, val in point.items())
            for point in iter_points(sel))
-    return or_(*[and_(arg, *next(gen)) for arg in args])
+    return or_(*[and_(x, *next(gen)) for x in xs])
 
 
 def exists(xs, f):
