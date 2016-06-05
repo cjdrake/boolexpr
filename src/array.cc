@@ -302,52 +302,52 @@ Array::xor_reduce() const
 
 
 std::pair<Array *, Array *>
-Array::lsh(Array const & si) const
+Array::lsh(Array const & a) const
 {
     auto m = this->items.size();
-    auto n = si.items.size();
+    auto n = a.items.size();
 
     assert(m >= n);
 
-    vector<bx_t> items(m);
-    vector<bx_t> so(n);
+    vector<bx_t> left(m);
+    vector<bx_t> right(n);
 
     for (size_t i = 0; i < n; ++i)
-        items[i] = si.items[i];
+        left[i] = a.items[i];
 
     for (size_t i = n; i < m; ++i)
-        items[i] = this->items[i-n];
+        left[i] = this->items[i-n];
 
     for (size_t i = 0; i < n; ++i)
-        so[i] = this->items[i+m-n];
+        right[i] = this->items[i+m-n];
 
-    return std::make_pair(new Array(std::move(items)),
-                          new Array(std::move(so)));
+    return std::make_pair(new Array(std::move(left)),
+                          new Array(std::move(right)));
 }
 
 
 std::pair<Array *, Array *>
-Array::rsh(Array const & si) const
+Array::rsh(Array const & a) const
 {
     auto m = this->items.size();
-    auto n = si.items.size();
+    auto n = a.items.size();
 
     assert(m >= n);
 
-    vector<bx_t> items(m);
-    vector<bx_t> so(n);
+    vector<bx_t> left(n);
+    vector<bx_t> right(m);
 
     for (size_t i = 0; i < n; ++i)
-        so[i] = this->items[i];
+        left[i] = this->items[i];
 
     for (size_t i = 0; i < (m-n); ++i)
-        items[i] = this->items[i+n];
+        right[i] = this->items[i+n];
 
     for (size_t i = (m-n); i < m; ++i)
-        items[i] = si.items[i-m+n];
+        right[i] = a.items[i-m+n];
 
-    return std::make_pair(new Array(std::move(so)),
-                          new Array(std::move(items)));
+    return std::make_pair(new Array(std::move(left)),
+                          new Array(std::move(right)));
 }
 
 
@@ -358,18 +358,18 @@ Array::arsh(size_t n) const
 
     assert(m >= n);
 
-    vector<bx_t> items(m);
-    vector<bx_t> so(n);
+    vector<bx_t> left(n);
+    vector<bx_t> right(m);
 
     for (size_t i = 0; i < n; ++i)
-        so[i] = this->items[i];
+        left[i] = this->items[i];
 
     for (size_t i = 0; i < (m-n); ++i)
-        items[i] = this->items[i+n];
+        right[i] = this->items[i+n];
 
     for (size_t i = (m-n); i < m; ++i)
-        items[i] = this->items[m-1];
+        right[i] = this->items[m-1];
 
-    return std::make_pair(new Array(std::move(so)),
-                          new Array(std::move(items)));
+    return std::make_pair(new Array(std::move(left)),
+                          new Array(std::move(right)));
 }
