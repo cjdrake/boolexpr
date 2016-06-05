@@ -263,7 +263,7 @@ class BoolExprTest(unittest.TestCase):
                          [ZERO, ZERO, ZERO, ONE, ZERO, ONE, ONE, ONE])
 
     def test_mux(self):
-        f = mux(xs[3:7], [xs[0], xs[1], xs[2]])
+        f = mux(array(xs[3:7]), array([xs[0], xs[1], xs[2]]))
         self.assertTrue(f.args[0].equiv(xs[3] & ~xs[0] & ~xs[1] & ~xs[2]))
         self.assertTrue(f.args[1].equiv(xs[4] & xs[0] & ~xs[1] & ~xs[2]))
         self.assertTrue(f.args[2].equiv(xs[5] & ~xs[0] & xs[1] & ~xs[2]))
