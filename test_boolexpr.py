@@ -324,6 +324,7 @@ class BoolExprTest(unittest.TestCase):
 
 
 A = ctx.get_vars("a", 4)
+B = ctx.get_vars("b", 8)
 X = ctx.get_vars("x", 4, 4, 4)
 Y = ctx.get_vars("x", (1,5), (3,7), (5,9))
 
@@ -537,13 +538,19 @@ array([[x[1,3,7], x[1,4,7], x[1,5,7], x[1,6,7]],
             Y[:0,...]
 
     def test_nhot(self):
-        for i in range(5):
-            f = nhot(i, *A)
+        for i in range(6):
+            f = nhot(i, *B)
             for pnt in f.iter_sat():
                 cnt = 0
                 for k, v in pnt.items():
-                    if v: cnt += 1
+                    cnt += bool(v)
                 self.assertEqual(cnt, i)
+
+    def test_nhot_error(self):
+        with self.assertRaises(ValueError):
+            nhot(-1, *B)
+        with self.assertRaises(ValueError):
+            nhot(9, *B)
 
 
 if __name__ == "__main__":
