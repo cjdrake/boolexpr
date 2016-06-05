@@ -425,6 +425,18 @@ class BoolExpr:
     def __rxor__(self, other):
         return xor(other, self)
 
+    def __add__(self, other):
+        return array([self]) + other
+
+    def __radd__(self, other):
+        return array([other]) + self
+
+    def __mul__(self, num):
+        return array([self]) * num
+
+    def __rmul__(self, num):
+        return self.__mul__(num)
+
     @property
     def kind(self):
         """Return the Kind code.
@@ -1559,15 +1571,12 @@ class ndarray: # pylint: disable=invalid-name
         """
         other = _expect_array(other)
         bxa = self.bxa + other.bxa
-
         shape = ((0, len(bxa)), )
         if (self.ndim == other.ndim > 1
-                and self._shape[1:] == other.shape[1:]):
-            # (0,x), ... + (0,y), ... = (0,x+y), ...
-            if self._shape[0][0] == other.shape[0][0] == 0:
-                shape0 = ((0, self._shape[0][1] + other.shape[0][1]), )
-                shape = shape0 + self._shape[1:]
-
+                and self._shape[1:] == other.shape[1:]
+                and self._shape[0][0] == other.shape[0][0] == 0):
+            shape0 = ((0, self._shape[0][1] + other.shape[0][1]), )
+            shape = shape0 + self._shape[1:]
         return self.__class__(bxa, shape)
 
     def __radd__(self, other):
@@ -1577,16 +1586,11 @@ class ndarray: # pylint: disable=invalid-name
         """Repetition operator"""
         if num < 0:
             raise ValueError("expected multiplier to be non-negative")
-
         bxa = self.bxa * num
-
         shape = ((0, len(bxa)), )
-        if self.ndim > 1:
-            # (0,x), ... * N = (0,N*x), ...
-            if self._shape[0][0] == 0:
-                shape0 = ((0, self._shape[0][1] * num), )
-                shape = shape0 + self._shape[1:]
-
+        if self.ndim > 1 and self._shape[0][0] == 0:
+            shape0 = ((0, self._shape[0][1] * num), )
+            shape = shape0 + self._shape[1:]
         return self.__class__(bxa, shape)
 
     def __rmul__(self, num):
