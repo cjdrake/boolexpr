@@ -18,6 +18,16 @@ CFFI _boolexpr module wrapper
 """
 
 
+# Ignore several instances of accessing obj._cdata
+# pylint: disable=protected-access
+
+# Some of the wrapper classes have only __dunder__ methods
+# pylint: disable=too-few-public-methods
+
+# This module needs to be a bit long
+# pylint: disable=too-many-lines
+
+
 import collections
 import enum
 import itertools
@@ -1430,7 +1440,7 @@ def array(objs, shape=None):
     return ndarray(bxa, shape)
 
 
-class ndarray:
+class ndarray: # pylint: disable=invalid-name
     """
     N-dimensional array of Boolean expressions
     """
@@ -1741,32 +1751,38 @@ class ndarray:
         nparts = list()
         for i, part in enumerate(parts):
             if isinstance(part, int):
-                if part < 0:
-                    npart = part + self._nshape[i]
-                else:
-                    npart = part - self._shape[i][0]
-                if not 0 <= npart < self._nshape[i]:
-                    raise IndexError("ndarray index out of range")
-                nparts.append(npart)
+                nparts.append(self._norm_int(i, part))
             elif isinstance(part, slice):
-                if part.start is not None and part.start >= 0:
-                    start = part.start - self._shape[i][0]
-                    if start < 0:
-                        raise IndexError("ndarray slice out of range")
-                else:
-                    start = part.start
-                if part.stop is not None and part.stop >= 0:
-                    stop = part.stop - self._shape[i][0]
-                    if stop < 0:
-                        raise IndexError("ndarray slice out of range")
-                else:
-                    stop = part.stop
-                if part.step is not None:
-                    raise ValueError("slice step is not supported")
-                nparts.append(slice(start, stop))
+                nparts.append(self._norm_slice(i, part))
             else:
                 assert False # pragma: no cover
         return nparts
+
+    def _norm_int(self, i, part):
+        if part < 0:
+            npart = part + self._nshape[i]
+        else:
+            npart = part - self._shape[i][0]
+        if not 0 <= npart < self._nshape[i]:
+            raise IndexError("ndarray index out of range")
+        return npart
+
+    def _norm_slice(self, i, part):
+        if part.start is not None and part.start >= 0:
+            start = part.start - self._shape[i][0]
+            if start < 0:
+                raise IndexError("ndarray slice out of range")
+        else:
+            start = part.start
+        if part.stop is not None and part.stop >= 0:
+            stop = part.stop - self._shape[i][0]
+            if stop < 0:
+                raise IndexError("ndarray slice out of range")
+        else:
+            stop = part.stop
+        if part.step is not None:
+            raise ValueError("slice step is not supported")
+        return slice(start, stop)
 
     def _walk_parts(self, parts):
         """Walk through slice parts, and get characteristic info."""
