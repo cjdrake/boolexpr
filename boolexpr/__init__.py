@@ -137,6 +137,7 @@ from .wrap import array
 
 from .wrap import ndarray
 
+from .misc import nhot
 from .misc import majority
 from .misc import achilles_heel
 from .misc import mux

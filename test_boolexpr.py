@@ -536,6 +536,15 @@ array([[x[1,3,7], x[1,4,7], x[1,5,7], x[1,6,7]],
         with self.assertRaises(IndexError):
             Y[:0,...]
 
+    def test_nhot(self):
+        for i in range(5):
+            f = nhot(i, *A)
+            for pnt in f.iter_sat():
+                cnt = 0
+                for k, v in pnt.items():
+                    if v: cnt += 1
+                self.assertEqual(cnt, i)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -23,8 +23,25 @@ import itertools
 from .util import clog2
 from .wrap import BoolExpr
 from .wrap import iter_points
+from .wrap import not_
 from .wrap import or_
 from .wrap import and_
+
+
+def nhot(n, *args):
+    """
+    Return a CNF expression that means
+    "exactly N input functions are true".
+    """
+    if not 0 <= n <= len(args):
+        fstr = "expected 0 <= n <= {}, got {}"
+        raise ValueError(fstr.format(len(args), n))
+    terms = list()
+    for xs in itertools.combinations(args, n+1):
+        terms.append(or_(*[not_(x) for x in xs]))
+    for xs in itertools.combinations(args, (len(args)+1)-n):
+        terms.append(or_(*xs))
+    return and_(*terms)
 
 
 def majority(*args, conj=False):
