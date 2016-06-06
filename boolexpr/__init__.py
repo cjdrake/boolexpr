@@ -145,4 +145,4 @@ from .misc import exists
 from .misc import forall
 
 
-__version__ = "1.2"
+__version__ = "1.3"

@@ -26,17 +26,20 @@ help:
 	@echo
 	@echo "Valid targets:"
 	@echo
-	@echo "    help            Display this help message"
+	@echo "    help                Display this help message"
 	@echo
-	@echo "    test            Run C++ unit tests"
-	@echo "    cover           Collect C++ coverage"
+	@echo "    test                Run C++ unit tests"
+	@echo "    cover               Collect C++ coverage"
 	@echo
-	@echo "    pytest          Run Python unit tests"
-	@echo "    pylint          Run Python lint"
-	@echo "    pycov           Collect Python coverage"
+	@echo "    pytest              Run Python unit tests"
+	@echo "    pylint              Run Python lint"
+	@echo "    pycov               Collect Python coverage"
 	@echo
-	@echo "    html            Build Sphinx HTML documentation"
-	@echo "    html-upload     Upload HTML to Google Cloud Storage"
+	@echo "    html                Build Sphinx HTML documentation"
+	@echo "    html-upload         Upload HTML to Google Cloud Storage"
+	@echo
+	@echo "    pypi-upload-src     Upload source to Python Package Index"
+	@echo "    pypi-upload-whl     Upload wheel to Python Package Index"
 	@echo
 
 .PHONY: test
@@ -61,6 +64,21 @@ do_genhtml: do_lcov
 .PHONY: cover
 cover: do_genhtml
 
+.PHONY: pytest
+pytest:
+	@./setup.py test
+
+.PHONY: pylint
+pylint:
+	@./setup.py build_ext -i
+	@pylint boolexpr
+
+.PHONY: pycov
+pycov: test_boolexpr.py
+	@./setup.py build_ext -i
+	@coverage run test_boolexpr.py
+	@coverage html
+
 .PHONY: html
 html:
 	@$(DOXYGEN)
@@ -72,20 +90,13 @@ html-upload: html
 	@$(GSUTIL) -m rsync -d -p -r $(HTML_DIR) $(GCS_BUCKET)
 	@$(GSUTIL) -m acl ch -u AllUsers:R $(GCS_BUCKET)/**
 
-.PHONY: pytest
-pytest:
-	@./setup.py test
+.PHONY: pypi-upload-src
+pypi-upload-src:
+	@./setup.py sdist --formats=gztar,zip upload
 
-.PHONY: pycov
-pycov: test_boolexpr.py
-	@./setup.py build_ext -i
-	@coverage run test_boolexpr.py
-	@coverage html
-
-.PHONY: pylint
-pylint:
-	@./setup.py build_ext -i
-	@pylint boolexpr
+.PHONY: pypi-upload-whl
+pypi-upload-whl:
+	@./setup.py bdist_wheel upload
 
 #===============================================================================
 # Source Code

@@ -6,6 +6,35 @@
   Release Notes
 *****************
 
+Release 1.3
+===========
+
+This release contains most of the new stuff that's going into 2.0.
+Most of it is still undocumented,
+but it seemed complete enough to push out the door for testing purposes.
+
+Short list of new stuff:
+
+* faster XOR flattening
+* New C++ ``Array`` data type, and Python wrapper
+* ``iter_points`` function,
+  for iterating through all points in a space
+* ``mux`` function,
+  for multiplexing an array of inputs.
+* ``nhot`` function,
+  which returns a CNF guaranteeing N bits are "hot".
+* The ``boolexpr.ndarray`` N-dimensional array wrapper class,
+  which adds a bunch of fancy Python whiz-bang to the ``Array`` type.
+* ``zeros``, ``ones``, ``logicals``, ``uint2nda``, ``int2nda``,
+  for creating arrays of constant values.
+* ``array`` method,
+  for a general-purpose ``ndarray`` factory function.
+* ``Context.get_vars`` method,
+  for creating N-dimensional arrays of variables.
+
+Also lots of new improvements in testing, code coverage,
+API documentation, and lint waivers.
+
 Release 1.2
 ===========
 
