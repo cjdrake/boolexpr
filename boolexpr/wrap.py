@@ -1532,43 +1532,27 @@ class ndarray: # pylint: disable=invalid-name
 
     # Operators
     def __invert__(self):
-        """Bit-wise NOT operator"""
         return self.__class__(~self._bxa, self._shape)
 
     def __or__(self, other):
-        """Bit-wise OR operator"""
         shape = self._shape if self._shape == other.shape else None
         return self.__class__(self._bxa | other.bxa, shape)
 
     def __and__(self, other):
-        """Bit-wise AND operator"""
         shape = self._shape if self._shape == other.shape else None
         return self.__class__(self._bxa & other.bxa, shape)
 
     def __xor__(self, other):
-        """Bit-wise XOR operator"""
         shape = self._shape if self._shape == other.shape else None
         return self.__class__(self._bxa ^ other.bxa, shape)
 
     def __lshift__(self, num):
-        """Left shift operator
-
-        .. seealso:: :meth:`lsh`
-        """
         return self.lsh(zeros(num))[0]
 
     def __rshift__(self, num):
-        """Right shift operator
-
-        .. seealso:: :meth:`rsh`
-        """
         return self.rsh(zeros(num))[1]
 
     def __add__(self, other):
-        """Concatenation operator
-
-        The *other* argument may be a BoolExpr or ndarray.
-        """
         other = _expect_array(other)
         bxa = self.bxa + other.bxa
         shape = ((0, len(bxa)), )
@@ -1583,7 +1567,6 @@ class ndarray: # pylint: disable=invalid-name
         return _expect_array(other) + self
 
     def __mul__(self, num):
-        """Repetition operator"""
         if num < 0:
             raise ValueError("expected multiplier to be non-negative")
         bxa = self.bxa * num

@@ -36,12 +36,12 @@ def nhot(n, *args):
     if not 0 <= n <= len(args):
         fstr = "expected 0 <= n <= {}, got {}"
         raise ValueError(fstr.format(len(args), n))
-    terms = list()
+    clauses = list()
     for xs in itertools.combinations(args, n+1):
-        terms.append(or_(*[not_(x) for x in xs]))
+        clauses.append(or_(*[not_(x) for x in xs]))
     for xs in itertools.combinations(args, (len(args)+1)-n):
-        terms.append(or_(*xs))
-    return and_(*terms)
+        clauses.append(or_(*xs))
+    return and_(*clauses)
 
 
 def majority(*args, conj=False):
@@ -52,15 +52,15 @@ def majority(*args, conj=False):
     If *conj* is ``True``, return a CNF.
     Otherwise, return a DNF.
     """
-    terms = list()
+    clauses = list()
     if conj:
         for xs in itertools.combinations(args, (len(args) + 1) // 2):
-            terms.append(or_(*xs))
-        return and_(*terms)
+            clauses.append(or_(*xs))
+        return and_(*clauses)
     else:
         for xs in itertools.combinations(args, len(args) // 2 + 1):
-            terms.append(and_(*xs))
-        return or_(*terms)
+            clauses.append(and_(*xs))
+        return or_(*clauses)
 
 
 def achilles_heel(*args):
@@ -85,9 +85,9 @@ def mux(xs, sel):
     if sel.size < clog2(xs.size):
         fstr = "expected at least {} select bits, got {}"
         raise ValueError(fstr.format(clog2(xs.size), sel.size))
-    gen = (tuple(var if val else ~var for var, val in point.items())
-           for point in iter_points(sel))
-    return or_(*[and_(x, *next(gen)) for x in xs])
+    terms = (tuple(var if val else ~var for var, val in point.items())
+             for point in iter_points(sel))
+    return or_(*[and_(x, *term) for (x, term) in zip(xs, terms)])
 
 
 def exists(xs, f):
