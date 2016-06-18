@@ -141,3 +141,17 @@ IfThenElse::invert() const
 {
     return std::make_shared<NotIfThenElse>(simple, args[0], args[1], args[2]);
 }
+
+
+lit_t
+Complement::abs() const
+{
+    return ctx->get_lit(id + 1);
+}
+
+
+lit_t
+Variable::abs() const
+{
+    return std::static_pointer_cast<Literal const>(shared_from_this());
+}

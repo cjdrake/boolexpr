@@ -481,6 +481,11 @@ bx_t boolexpr::operator&(bx_t const & lhs, bx_t const & rhs) { return and_({lhs,
 bx_t boolexpr::operator^(bx_t const & lhs, bx_t const & rhs) { return xor_({lhs, rhs}); }
 
 
+lit_t
+boolexpr::abs(lit_t const & self)
+{ return self->abs(); }
+
+
 bool
 boolexpr::operator<(lit_t const & lhs, lit_t const & rhs)
 {

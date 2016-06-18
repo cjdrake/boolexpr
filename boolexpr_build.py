@@ -82,6 +82,7 @@ HEADER = """
 typedef char const * const STRING;
 typedef void * const CONTEXT;
 typedef void const * const BX;
+typedef void const * const LIT;
 typedef void * const ARRAY;
 typedef void * const ARRAY_PAIR;
 typedef void const * const * const BXS;
@@ -175,6 +176,7 @@ BX boolexpr_logical(void);
 BX boolexpr_illogical(void);
 
 BX boolexpr_not(BX);
+LIT boolexpr_abs(LIT);
 BX boolexpr_nor(size_t, BXS);
 BX boolexpr_or(size_t, BXS);
 BX boolexpr_nand(size_t, BXS);

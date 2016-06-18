@@ -389,6 +389,14 @@ boolexpr_not(BX c_arg)
 }
 
 
+LIT
+boolexpr_abs(LIT c_arg)
+{
+    auto arg = reinterpret_cast<LiteralProxy const * const>(c_arg);
+    return new LiteralProxy(abs(arg->lit));
+}
+
+
 static vector<bx_t>
 _convert_args(size_t n, BXS c_args)
 {

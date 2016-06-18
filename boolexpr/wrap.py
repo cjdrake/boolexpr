@@ -744,6 +744,9 @@ class Illogical(Unknown):
 
 class Literal(Atom):
     """Boolean Literal Atom"""
+    def __abs__(self):
+        return _bx(lib.boolexpr_abs(self._cdata))
+
 
 class Complement(Literal):
     """Boolean Complement"""

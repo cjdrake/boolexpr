@@ -30,6 +30,14 @@ struct BoolExprProxy
 };
 
 
+struct LiteralProxy
+{
+    lit_t const lit;
+
+    LiteralProxy(lit_t const & lit): lit {lit} {}
+};
+
+
 template <typename T>
 struct VecProxy
 {

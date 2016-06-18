@@ -287,6 +287,11 @@ public:
 
 class Literal : public Atom
 {
+    friend lit_t abs(lit_t const &);
+
+protected:
+    virtual lit_t abs() const = 0;
+
 public:
     Context * const ctx;
     id_t const id;
@@ -301,6 +306,7 @@ public:
 class Complement : public Literal
 {
 protected:
+    lit_t abs() const;
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
     soln_t _sat() const;
@@ -316,6 +322,7 @@ public:
 class Variable : public Literal
 {
 protected:
+    lit_t abs() const;
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
     soln_t _sat() const;
@@ -880,6 +887,7 @@ bx_t operator~(bx_t const &);
 bx_t operator|(bx_t const &, bx_t const &);
 bx_t operator&(bx_t const &, bx_t const &);
 bx_t operator^(bx_t const &, bx_t const &);
+lit_t abs(lit_t const &);
 bool operator<(lit_t const &, lit_t const &);
 std::ostream& operator<<(std::ostream&, bx_t const &);
 
@@ -905,6 +913,7 @@ extern "C"
 typedef char const * const STRING;
 typedef void * const CONTEXT;
 typedef void const * const BX;
+typedef void const * const LIT;
 typedef void * const ARRAY;
 typedef void * const ARRAY_PAIR;
 typedef void const * const * const BXS;
@@ -977,6 +986,7 @@ BX boolexpr_logical(void);
 BX boolexpr_illogical(void);
 
 BX boolexpr_not(BX);
+LIT boolexpr_abs(LIT);
 BX boolexpr_nor(size_t, BXS);
 BX boolexpr_or(size_t, BXS);
 BX boolexpr_nand(size_t, BXS);
