@@ -122,6 +122,7 @@ BX_SRCS := \
     src/latop.cc \
     src/nnf.cc \
     src/posop.cc \
+    src/restrict.cc \
     src/sat.cc \
     src/simplify.cc \
     src/tseytin.cc \

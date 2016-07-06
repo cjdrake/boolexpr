@@ -28,34 +28,35 @@ using namespace boolexpr;
 
 
 bx_t
-Constant::compose(var2bx_t const &) const
+Constant::restrict_(point_t const &) const
 {
     return shared_from_this();
 }
 
 
 bx_t
-Complement::compose(var2bx_t const & var2bx) const
+Complement::restrict_(point_t const & point) const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(~self);
-    auto search = var2bx.find(x);
-    return (search == var2bx.end()) ? self : ~(search->second);
+    auto search = point.find(x);
+    return (search == point.end()) ? self : ~(search->second);
 }
 
 
 bx_t
-Variable::compose(var2bx_t const & var2bx) const
+Variable::restrict_(point_t const & point) const
 {
     auto self = shared_from_this();
     auto x = std::static_pointer_cast<Variable const>(self);
-    auto search = var2bx.find(x);
-    return (search == var2bx.end()) ? self : search->second;
+    auto search = point.find(x);
+    return (search == point.end()) ? self : search->second;
 }
 
 
 bx_t
-Operator::compose(var2bx_t const & var2bx) const
+Operator::restrict_(point_t const & point) const
 {
-    return transform([&var2bx](bx_t const & bx){return bx->compose(var2bx);});
+    auto f = [&point] (bx_t const & bx) { return bx->restrict_(point); };
+    return transform(f)->simplify();
 }
