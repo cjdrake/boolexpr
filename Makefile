@@ -113,6 +113,7 @@ BX_SRCS := \
     src/boolexpr.cc \
     src/bxcffi.cc \
     src/compose.cc \
+    src/constants.cc \
     src/context.cc \
     src/count.cc \
     src/equivalent.cc \
@@ -121,10 +122,12 @@ BX_SRCS := \
     src/iter.cc \
     src/latop.cc \
     src/nnf.cc \
+    src/operators.cc \
     src/posop.cc \
     src/restrict.cc \
     src/sat.cc \
     src/simplify.cc \
+    src/tostr.cc \
     src/tseytin.cc \
 
 TEST_HDRS := test/boolexprtest.h
