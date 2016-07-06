@@ -33,27 +33,37 @@ using namespace boolexpr;
 
 soln_t
 BoolExpr::sat() const
-{ return simplify()->_sat(); }
+{
+    return simplify()->_sat();
+}
 
 
 soln_t
 Zero::_sat() const
-{ return std::make_pair(false, boost::none); }
+{
+    return std::make_pair(false, boost::none);
+}
 
 
 soln_t
 One::_sat() const
-{ return std::make_pair(true, point_t {}); }
+{
+    return std::make_pair(true, point_t {});
+}
 
 
 soln_t
 Logical::_sat() const
-{ return std::make_pair(false, boost::none); }
+{
+    return std::make_pair(false, boost::none);
+}
 
 
 soln_t
 Illogical::_sat() const
-{ return std::make_pair(false, boost::none); }
+{
+    return std::make_pair(false, boost::none);
+}
 
 
 soln_t
@@ -267,17 +277,23 @@ sat_iter::get_soln()
 
 bool
 sat_iter::operator==(sat_iter const & rhs) const
-{ return sat == rhs.sat; }
+{
+    return sat == rhs.sat;
+}
 
 
 bool
 sat_iter::operator!=(sat_iter const & rhs) const
-{ return !(*this == rhs); }
+{
+    return !(*this == rhs);
+}
 
 
 point_t const &
 sat_iter::operator*() const
-{ return point; }
+{
+    return point;
+}
 
 
 sat_iter const &

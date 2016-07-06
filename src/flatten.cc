@@ -348,7 +348,9 @@ IfThenElse::to_cnf() const
 
 bx_t
 Atom::to_dnf() const
-{ return shared_from_this(); }
+{
+    return shared_from_this();
+}
 
 
 bx_t

@@ -27,8 +27,18 @@
 using namespace boolexpr;
 
 
-bx_t Zero::invert() const { return one(); }
-bx_t One::invert()  const { return zero(); }
+bx_t
+Zero::invert() const
+{
+    return one();
+}
+
+
+bx_t
+One::invert() const
+{
+    return zero();
+}
 
 
 bx_t

@@ -80,17 +80,23 @@ dfs_iter::advance_one()
 
 bool
 dfs_iter::operator==(dfs_iter const & rhs) const
-{ return p == rhs.p; }
+{
+    return p == rhs.p;
+}
 
 
 bool
 dfs_iter::operator!=(dfs_iter const & rhs) const
-{ return !(*this == rhs); }
+{
+    return !(*this == rhs);
+}
 
 
 bx_t const &
 dfs_iter::operator*() const
-{ return *p; }
+{
+    return *p;
+}
 
 
 dfs_iter const &
@@ -103,7 +109,9 @@ dfs_iter::operator++()
 
 space_iter::space_iter()
     : n {0}
-{ counter.push_back(true); }
+{
+    counter.push_back(true);
+}
 
 
 space_iter::space_iter(size_t n)
@@ -117,17 +125,23 @@ space_iter::space_iter(size_t n)
 
 bool
 space_iter::operator==(space_iter const & rhs) const
-{ return counter[n] == rhs.counter[rhs.n]; }
+{
+    return counter[n] == rhs.counter[rhs.n];
+}
 
 
 bool
 space_iter::operator!=(space_iter const & rhs) const
-{ return !(*this == rhs); }
+{
+    return !(*this == rhs);
+}
 
 
 vector<bool> const &
 space_iter::operator*() const
-{ return counter; }
+{
+    return counter;
+}
 
 
 space_iter const &
@@ -171,17 +185,23 @@ points_iter::points_iter(vector<var_t> const & vars)
 
 bool
 points_iter::operator==(points_iter const & rhs) const
-{ return it == rhs.it; }
+{
+    return it == rhs.it;
+}
 
 
 bool
 points_iter::operator!=(points_iter const & rhs) const
-{ return !(*this == rhs); }
+{
+    return !(*this == rhs);
+}
 
 
 point_t const &
 points_iter::operator*() const
-{ return point; }
+{
+    return point;
+}
 
 
 points_iter const &
@@ -210,23 +230,30 @@ domain_iter::domain_iter()
 
 
 domain_iter::domain_iter(bx_t const & f)
-    : s {f->support()}, it {vector<var_t>(s.begin(), s.end())}
+    : s {f->support()}
+    , it {vector<var_t>(s.begin(), s.end())}
 {}
 
 
 bool
 domain_iter::operator==(domain_iter const & rhs) const
-{ return it == rhs.it; }
+{
+    return it == rhs.it;
+}
 
 
 bool
 domain_iter::operator!=(domain_iter const & rhs) const
-{ return !(*this == rhs); }
+{
+    return !(*this == rhs);
+}
 
 
 point_t const &
 domain_iter::operator*() const
-{ return *it; }
+{
+    return *it;
+}
 
 
 domain_iter const &
@@ -249,17 +276,23 @@ cf_iter::cf_iter(bx_t const & f, vector<var_t> const & vars)
 
 bool
 cf_iter::operator==(cf_iter const & rhs) const
-{ return it == rhs.it; }
+{
+    return it == rhs.it;
+}
 
 
 bool
 cf_iter::operator!=(cf_iter const & rhs) const
-{ return !(*this == rhs); }
+{
+    return !(*this == rhs);
+}
 
 
 bx_t const &
 cf_iter::operator*() const
-{ return cf; }
+{
+    return cf;
+}
 
 
 cf_iter const &

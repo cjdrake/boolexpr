@@ -48,12 +48,46 @@ _nop_to_latop(BoolExpr const * const bx)
     return ~op->to_latop();
 }
 
-bx_t Nor::to_latop() const { return _nop_to_latop(this); }
-bx_t Nand::to_latop() const { return _nop_to_latop(this); }
-bx_t Xnor::to_latop() const { return _nop_to_latop(this); }
-bx_t Unequal::to_latop() const { return _nop_to_latop(this); }
-bx_t NotImplies::to_latop() const { return _nop_to_latop(this); }
-bx_t NotIfThenElse::to_latop() const { return _nop_to_latop(this); }
+bx_t
+Nor::to_latop() const
+{
+    return _nop_to_latop(this);
+}
+
+
+bx_t
+Nand::to_latop() const
+{
+    return _nop_to_latop(this);
+}
+
+
+bx_t
+Xnor::to_latop() const
+{
+    return _nop_to_latop(this);
+}
+
+
+bx_t
+Unequal::to_latop() const
+{
+    return _nop_to_latop(this);
+}
+
+
+bx_t
+NotImplies::to_latop() const
+{
+    return _nop_to_latop(this);
+}
+
+
+bx_t
+NotIfThenElse::to_latop() const
+{
+    return _nop_to_latop(this);
+}
 
 
 bx_t
