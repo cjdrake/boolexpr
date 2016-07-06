@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+#include <cassert>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
@@ -92,24 +93,37 @@ Operator::_sat() const
     }
 
     CMSat::SATSolver solver;
-    vector<CMSat::Lit> clause;
     solver.new_vars(xs.size());
 
-    auto and_op = std::static_pointer_cast<And const>(bx);
-    for (bx_t const & arg : and_op->args) {
-        clause.clear();
-        if (IS_LIT(arg)) {
+    if (IS_OR(bx)) {
+        auto or_op = std::static_pointer_cast<Or const>(bx);
+        vector<CMSat::Lit> clause;
+        for (bx_t const & arg : or_op->args) {
             auto index = lit2idx.find(arg)->second;
             clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
         }
-        else {
-            auto or_op = std::static_pointer_cast<Or const>(arg);
-            for (bx_t const & lit : or_op->args) {
-                auto index = lit2idx.find(lit)->second;
+        solver.add_clause(std::move(clause));
+    }
+    else if (IS_AND(bx)) {
+        auto and_op = std::static_pointer_cast<And const>(bx);
+        for (bx_t const & arg : and_op->args) {
+            vector<CMSat::Lit> clause;
+            if (IS_LIT(arg)) {
+                auto index = lit2idx.find(arg)->second;
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
+            else {
+                auto or_op = std::static_pointer_cast<Or const>(arg);
+                for (bx_t const & lit : or_op->args) {
+                    auto index = lit2idx.find(lit)->second;
+                    clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
+                }
+            }
+            solver.add_clause(std::move(clause));
         }
-        solver.add_clause(clause);
+    }
+    else {
+        assert(false); // LCOV_EXCL_LINE
     }
 
     auto sat = solver.solve();
@@ -185,23 +199,35 @@ sat_iter::sat_iter(bx_t const & bx)
         ++index;
     }
 
-    vector<CMSat::Lit> clause;
-
-    auto and_op = std::static_pointer_cast<And const>(cnf);
-    for (bx_t const & arg : and_op->args) {
-        clause.clear();
-        if (IS_LIT(arg)) {
+    if (IS_OR(cnf)) {
+        auto or_op = std::static_pointer_cast<Or const>(cnf);
+        vector<CMSat::Lit> clause;
+        for (bx_t const & arg : or_op->args) {
             auto index = lit2idx.find(arg)->second;
             clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
         }
-        else {
-            auto or_op = std::static_pointer_cast<Or const>(arg);
-            for (bx_t const & lit : or_op->args) {
-                auto index = lit2idx.find(lit)->second;
+        solver.add_clause(std::move(clause));
+    }
+    else if (IS_AND(cnf)) {
+        auto and_op = std::static_pointer_cast<And const>(cnf);
+        for (bx_t const & arg : and_op->args) {
+            vector<CMSat::Lit> clause;
+            if (IS_LIT(arg)) {
+                auto index = lit2idx.find(arg)->second;
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
+            else {
+                auto or_op = std::static_pointer_cast<Or const>(arg);
+                for (bx_t const & lit : or_op->args) {
+                    auto index = lit2idx.find(lit)->second;
+                    clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
+                }
+            }
+            solver.add_clause(std::move(clause));
         }
-        solver.add_clause(clause);
+    }
+    else {
+        assert(false); // LCOV_EXCL_LINE
     }
 
     get_soln();

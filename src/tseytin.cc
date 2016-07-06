@@ -78,6 +78,9 @@ Atom::tseytin(Context&, string const &) const
 bx_t
 Operator::tseytin(Context& ctx, string const & auxvarname) const
 {
+    if (is_cnf())
+        return shared_from_this();
+
     uint32_t index {0};
     var2op_t constraints;
 
@@ -268,8 +271,8 @@ Unequal::eqvar(var_t const & x) const
 
     for (auto i = 0u; i < args.size(); ++i) {
         for (auto j = i + 1u; j < args.size(); ++j) {
-            clauses.push_back(x | ~args[i] | args[j]);
-            clauses.push_back(x | args[i] | ~args[j]);
+            clauses.push_back(x | ~args[i] |  args[j]);
+            clauses.push_back(x |  args[i] | ~args[j]);
         }
     }
 
@@ -294,8 +297,8 @@ Equal::eqvar(var_t const & x) const
 
     for (auto i = 0u; i < args.size(); ++i) {
         for (auto j = i + 1u; j < args.size(); ++j) {
-            clauses.push_back(~x | ~args[i] | args[j]);
-            clauses.push_back(~x | args[i] | ~args[j]);
+            clauses.push_back(~x | ~args[i] |  args[j]);
+            clauses.push_back(~x |  args[i] | ~args[j]);
         }
     }
 
