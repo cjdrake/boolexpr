@@ -22,7 +22,6 @@
 #include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
-#include "argset.h"
 
 
 using namespace boolexpr;
