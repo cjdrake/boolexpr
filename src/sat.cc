@@ -84,7 +84,7 @@ Operator::_sat() const
     std::unordered_map<bx_t, uint32_t> lit2idx;
     std::unordered_map<uint32_t, var_t> idx2var;
 
-    uint32_t index = 0u;
+    uint32_t index = 0;
     for (var_t const & x : xs) {
         lit2idx.insert({~x, (index << 1) | 0u});
         lit2idx.insert({ x, (index << 1) | 1u});
@@ -193,7 +193,7 @@ sat_iter::sat_iter(bx_t const & bx)
 
     auto xs = cnf->support();
     solver.new_vars(xs.size());
-    uint32_t index = 0u;
+    uint32_t index = 0;
     for (var_t const & x : xs) {
         lit2idx.insert({~x, (index << 1) | 0u});
         lit2idx.insert({ x, (index << 1) | 1u});

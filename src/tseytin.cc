@@ -282,8 +282,8 @@ Unequal::eqvar(var_t const & x) const
     }
     clauses.push_back(or_(std::move(lits2)));
 
-    for (auto i = 0u; i < args.size(); ++i) {
-        for (auto j = i + 1u; j < args.size(); ++j) {
+    for (size_t i = 0; i < args.size(); ++i) {
+        for (size_t j = i + 1; j < args.size(); ++j) {
             clauses.push_back(x | ~args[i] |  args[j]);
             clauses.push_back(x |  args[i] | ~args[j]);
         }
@@ -310,8 +310,8 @@ Equal::eqvar(var_t const & x) const
     }
     clauses.push_back(or_(std::move(lits2)));
 
-    for (auto i = 0u; i < args.size(); ++i) {
-        for (auto j = i + 1u; j < args.size(); ++j) {
+    for (size_t i = 0; i < args.size(); ++i) {
+        for (size_t j = i + 1; j < args.size(); ++j) {
             clauses.push_back(~x | ~args[i] |  args[j]);
             clauses.push_back(~x |  args[i] | ~args[j]);
         }
