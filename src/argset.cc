@@ -122,16 +122,25 @@ LatticeArgSet::insert(bx_t const & arg)
 bx_t
 LatticeArgSet::reduce() const
 {
-    if (state == State::infimum)
+    if (state == State::infimum) {
         return identity;
-    if (state == State::islog)
-        return logical();
-    if (state == State::supremum)
-        return dominator;
-    if (state == State::isill)
-        return illogical();
+    }
 
-    if (args.size() == 1) return *args.cbegin();
+    if (state == State::islog) {
+        return logical();
+    }
+
+    if (state == State::supremum) {
+        return dominator;
+    }
+
+    if (state == State::isill) {
+        return illogical();
+    }
+
+    if (args.size() == 1) {
+        return *args.cbegin();
+    }
 
     return to_op();
 }
@@ -212,8 +221,9 @@ XorArgSet::insert(bx_t const & arg)
             break;
 
         case State::islog:
-            if (IS_ILL(arg))
+            if (IS_ILL(arg)) {
                 state = State::isill;
+            }
             break;
 
         case State::isill:
@@ -232,19 +242,25 @@ XorArgSet::to_op() const
 bx_t
 XorArgSet::reduce() const
 {
-    if (state == State::islog)
+    if (state == State::islog) {
         return logical();
-    if (state == State::isill)
+    }
+
+    if (state == State::isill) {
         return illogical();
+    }
 
     bx_t y;
 
-    if (args.size() == 0)
+    if (args.size() == 0) {
         y = zero();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         y = *args.cbegin();
-    else
+    }
+    else {
         y = to_op();
+    }
 
     return parity ? y : ~y;
 }
@@ -273,13 +289,15 @@ EqArgSet::insert(bx_t const & arg)
             }
             else if (IS_ZERO(arg)) {
                 has_zero = true;
-                if (has_one)
+                if (has_one) {
                     args.clear();
+                }
             }
             else if (IS_ONE(arg)) {
                 has_one = true;
-                if (has_zero)
+                if (has_zero) {
                     args.clear();
+                }
             }
             else if (IS_LIT(arg) && (args.find(~arg) != args.cend())) {
                 has_zero = true;
@@ -292,8 +310,9 @@ EqArgSet::insert(bx_t const & arg)
             break;
 
         case State::islog:
-            if (IS_ILL(arg))
+            if (IS_ILL(arg)) {
                 state = State::isill;
+            }
             break;
 
         case State::isill:
@@ -312,26 +331,33 @@ EqArgSet::to_op() const
 bx_t
 EqArgSet::reduce() const
 {
-    if (state == State::islog)
+    if (state == State::islog) {
         return logical();
-    if (state == State::isill)
+    }
+
+    if (state == State::isill) {
         return illogical();
+    }
 
     // eq(0, 1) <=> 0
-    if (has_zero && has_one)
+    if (has_zero && has_one) {
         return zero();
+    }
 
     // eq() <=> eq(0) <=> eq(1) <=> 1
-    if ((static_cast<size_t>(has_zero) + static_cast<size_t>(has_one) + args.size()) < 2)
+    if ((static_cast<size_t>(has_zero) + static_cast<size_t>(has_one) + args.size()) < 2) {
         return one();
+    }
 
     // eq(0, x, y) <=> nor(x, y)
-    if (has_zero)
+    if (has_zero) {
         return nor_s(vector<bx_t>(args.cbegin(), args.cend()));
+    }
 
     // eq(1, x, y) <=> x & y
-    if (has_one)
+    if (has_one) {
         return and_s(vector<bx_t>(args.cbegin(), args.cend()));
+    }
 
     return to_op();
 }

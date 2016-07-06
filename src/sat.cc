@@ -134,10 +134,12 @@ Operator::_sat() const
         for (size_t i = 0; i < solver.nVars(); ++i) {
             auto x = idx2var.find(i)->second;
             if (x->ctx != &ctx) {
-                if (model[i] == l_False)
+                if (model[i] == l_False) {
                     point.insert({x, zero()});
-                else if (model[i] == l_True)
+                }
+                else if (model[i] == l_True) {
                     point.insert({x, one()});
+                }
             }
         }
         return std::make_pair(true, std::move(point));

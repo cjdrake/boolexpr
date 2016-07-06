@@ -133,9 +133,11 @@ space_iter const &
 space_iter::operator++()
 {
     // Increment the counter
-    for (size_t i = 0; i <= n; ++i)
-        if ((counter[i] = (counter[i] != true)))
+    for (size_t i = 0; i <= n; ++i) {
+        if ((counter[i] = (counter[i] != true))) {
             break;
+        }
+    }
 
     return *this;
 }
@@ -187,10 +189,12 @@ points_iter::operator++()
     ++it;
 
     for (size_t i = 0; i < vars.size(); ++i) {
-        if ((*it)[i])
+        if ((*it)[i]) {
             point.insert({vars[i], one()});
-        else
+        }
+        else {
             point.insert({vars[i], zero()});
+        }
     }
 
     return *this;

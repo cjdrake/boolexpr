@@ -236,12 +236,15 @@ bool
 Array::equiv(Array const & other) const
 {
 
-    if (this->items.size() != other.items.size())
+    if (this->items.size() != other.items.size()) {
         return false;
+    }
 
-    for (size_t i = 0; i < this->items.size(); ++i)
-        if (!this->items[i]->equiv(other.items[i]))
+    for (size_t i = 0; i < this->items.size(); ++i) {
+        if (!this->items[i]->equiv(other.items[i])) {
             return false;
+        }
+    }
 
     return true;
 }

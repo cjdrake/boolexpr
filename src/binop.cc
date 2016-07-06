@@ -47,14 +47,17 @@ Or::to_binop() const
 {
     size_t n = args.size();
 
-    if (n == 0)                // LCOV_EXCL_LINE
+    if (n == 0) {              // LCOV_EXCL_LINE
         return Or::identity(); // LCOV_EXCL_LINE
+    }                          // LCOV_EXCL_LINE
 
-    if (n == 1)                     // LCOV_EXCL_LINE
+    if (n == 1) {                   // LCOV_EXCL_LINE
         return args[0]->to_binop(); // LCOV_EXCL_LINE
+    }                               // LCOV_EXCL_LINE
 
-    if (n == 2)
+    if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
+    }
 
     // x0 | x1 | x2 | x3 <=> (x0 | x1) | (x2 | x3)
     size_t const mid = n / 2;
@@ -79,14 +82,17 @@ And::to_binop() const
 {
     size_t n = args.size();
 
-    if (n == 0)                 // LCOV_EXCL_LINE
+    if (n == 0) {               // LCOV_EXCL_LINE
         return And::identity(); // LCOV_EXCL_LINE
+    }                           // LCOV_EXCL_LINE
 
-    if (n == 1)                     // LCOV_EXCL_LINE
+    if (n == 1) {                   // LCOV_EXCL_LINE
         return args[0]->to_binop(); // LCOV_EXCL_LINE
+    }                               // LCOV_EXCL_LINE
 
-    if (n == 2)
+    if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
+    }
 
     // x0 & x1 & x2 & x3 <=> (x0 & x1) & (x2 & x3)
     size_t const mid = n / 2;
@@ -111,14 +117,17 @@ Xor::to_binop() const
 {
     size_t n = args.size();
 
-    if (n == 0)                 // LCOV_EXCL_LINE
+    if (n == 0) {               // LCOV_EXCL_LINE
         return Xor::identity(); // LCOV_EXCL_LINE
+    }                           // LCOV_EXCL_LINE
 
-    if (n == 1)                     // LCOV_EXCL_LINE
+    if (n == 1) {                   // LCOV_EXCL_LINE
         return args[0]->to_binop(); // LCOV_EXCL_LINE
+    }                               // LCOV_EXCL_LINE
 
-    if (n == 2)
+    if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
+    }
 
     // x0 ^ x1 ^ x2 ^ x3 <=> (x0 ^ x1) ^ (x2 ^ x3)
     size_t const mid = n / 2;
@@ -143,11 +152,13 @@ Equal::to_binop() const
 {
     size_t n = args.size();
 
-    if (n < 2)        // LCOV_EXCL_LINE
+    if (n < 2) {      // LCOV_EXCL_LINE
         return one(); // LCOV_EXCL_LINE
+    }                 // LCOV_EXCL_LINE
 
-    if (n == 2)
+    if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
+    }
 
     vector<bx_t> _args(n);
     for (size_t i = 0; i < n; ++i)

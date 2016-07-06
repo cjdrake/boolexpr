@@ -39,8 +39,9 @@ Atom::simplify() const
 bx_t
 Operator::simplify() const
 {
-    if (simple)
+    if (simple) {
         return shared_from_this();
+    }
 
     return _simplify();
 }
@@ -120,32 +121,39 @@ Implies::_simplify() const
     auto p = args[0]->simplify();
     auto q = args[1]->simplify();
 
-    if (IS_ILL(p) || IS_ILL(q))
+    if (IS_ILL(p) || IS_ILL(q)) {
         return illogical();
+    }
 
     // 0 => q <=> p => 1 <=> 1
-    if (IS_ZERO(p) || IS_ONE(q))
+    if (IS_ZERO(p) || IS_ONE(q)) {
         return one();
+    }
 
     // 1 => q <=> q
-    if (IS_ONE(p))
+    if (IS_ONE(p)) {
         return q;
+    }
 
     // p => 0 <=> ~p
-    if (IS_ZERO(q))
+    if (IS_ZERO(q)) {
         return ~p;
+    }
 
     // X => q <=> p => X <=> X
-    if (IS_LOG(p) || IS_LOG(q))
+    if (IS_LOG(p) || IS_LOG(q)) {
         return logical();
+    }
 
     // q => q <=> 1
-    if (p == q)
+    if (p == q) {
         return one();
+    }
 
     // ~q => q <=> q
-    if (IS_LIT(p) && IS_LIT(q) && (p == ~q))
+    if (IS_LIT(p) && IS_LIT(q) && (p == ~q)) {
         return q;
+    }
 
     return std::make_shared<Implies>(true, p, q);
 }
@@ -166,65 +174,79 @@ IfThenElse::_simplify() const
     auto d1 = args[1]->simplify();
     auto d0 = args[2]->simplify();
 
-    if (IS_ILL(s) || IS_ILL(d1) || IS_ILL(d0))
+    if (IS_ILL(s) || IS_ILL(d1) || IS_ILL(d0)) {
         return illogical();
+    }
 
     // 0 ? d1 : d0 <=> d0
-    if (IS_ZERO(s))
+    if (IS_ZERO(s)) {
         return d0;
+    }
     // 1 ? d1 : d0 <=> d1
-    if (IS_ONE(s))
+    if (IS_ONE(s)) {
         return d1;
+    }
 
     if (IS_ZERO(d1)) {
         // s ? 0 : 0 <=> 0
-        if (IS_ZERO(d0))
+        if (IS_ZERO(d0)) {
             return zero();
+        }
         // s ? 0 : 1 <=> ~s
-        if (IS_ONE(d0))
+        if (IS_ONE(d0)) {
             return ~s;
+        }
         // s ? 0 : d0 <=> ~s & d0
         return and_s({~s, d0});
     }
 
     if (IS_ONE(d1)) {
         // s ? 1 : 0 <=> s
-        if (IS_ZERO(d0))
+        if (IS_ZERO(d0)) {
             return s;
+        }
         // s ? 1 : 1 <=> 1
-        if (IS_ONE(d0))
+        if (IS_ONE(d0)) {
             return one();
+        }
         // s ? 1 : d0 <=> s | d0
         return or_s({s, d0});
     }
 
     // s ? d1 : 0 <=> s & d1
-    if (IS_ZERO(d0))
+    if (IS_ZERO(d0)) {
         return and_s({s, d1});
+    }
     // s ? d1 : 1 <=> ~s | d1
-    if (IS_ONE(d0))
+    if (IS_ONE(d0)) {
         return or_s({~s, d1});
+    }
 
     // (s ? X : d0) <=> (s ? d1 : X) <=> X
-    if (IS_LOG(d1) || IS_LOG(d0))
+    if (IS_LOG(d1) || IS_LOG(d0)) {
         return logical();
+    }
 
     // s ? d1 : d1 <=> d1
-    if (d1 == d0)
+    if (d1 == d0) {
         return d1;
+    }
 
     // X ? d1 : d0 <=> X
     // NOTE: If you can prove d0 <=> d1, then should return d0.
     //       But that proof is too expensive to gate this operation.
-    if (IS_LOG(s))
+    if (IS_LOG(s)) {
         return logical();
+    }
 
     // s ? s : d0 <=> s | d0
-    if (s == d1)
+    if (s == d1) {
         return or_s({s, d0});
+    }
     // s ? d1 : s <=> s & d1
-    if (s == d0)
+    if (s == d0) {
         return and_s({s, d1});
+    }
 
     return std::make_shared<IfThenElse>(true, s, d1, d0);
 }

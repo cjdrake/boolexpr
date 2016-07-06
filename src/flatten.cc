@@ -87,11 +87,13 @@ _lits_cmp(std::set<lit_t> const & xs, std::set<lit_t> const & ys)
         }
     }
 
-    if (xs_it != xs.end())
+    if (xs_it != xs.end()) {
         ret &= ~XS_LTE_YS;
+    }
 
-    if (ys_it != ys.end())
+    if (ys_it != ys.end()) {
         ret &= ~YS_LTE_XS;
+    }
 
     return ret;
 }
@@ -100,8 +102,9 @@ _lits_cmp(std::set<lit_t> const & xs, std::set<lit_t> const & ys)
 static vector<std::set<lit_t>>
 _absorb(vector<std::set<lit_t>> const && clauses)
 {
-    if (clauses.size() == 0)
+    if (clauses.size() == 0) {
         return std::move(clauses);
+    }
 
     vector<bool> keep;
     for (auto const & clause : clauses)
@@ -127,12 +130,16 @@ _absorb(vector<std::set<lit_t>> const && clauses)
         }
     }
 
-    if (!drop)
+    if (!drop) {
         return std::move(clauses);
+    }
 
     vector<std::set<lit_t>> kept_clauses;
-    for (size_t i = 0; i < clauses.size(); ++i)
-        if (keep[i]) kept_clauses.push_back(clauses[i]);
+    for (size_t i = 0; i < clauses.size(); ++i) {
+        if (keep[i]) {
+            kept_clauses.push_back(clauses[i]);
+        }
+    }
 
     return std::move(kept_clauses);
 }
@@ -182,13 +189,15 @@ Or::to_cnf() const
     auto or_or_and = transform([](bx_t const & arg){return arg->to_dnf();});
     auto bx = or_or_and->simplify();
 
-    if (IS_ATOM(bx))
+    if (IS_ATOM(bx)) {
         return bx;
+    }
 
     auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
 
-    if (lop->is_clause())
+    if (lop->is_clause()) {
         return lop;
+    }
 
     auto clauses = _product(_absorb(_twolvl2clauses(lop)));
 
@@ -212,13 +221,15 @@ And::to_cnf() const
     auto and_and_or = transform([](bx_t const & arg){return arg->to_cnf();});
     auto bx = and_and_or->simplify();
 
-    if (IS_ATOM(bx))
+    if (IS_ATOM(bx)) {
         return bx;
+    }
 
     auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
 
-    if (lop->is_clause())
+    if (lop->is_clause()) {
         return lop;
+    }
 
     auto clauses = _absorb(_twolvl2clauses(lop));
 
@@ -348,13 +359,15 @@ Or::to_dnf() const
     auto or_or_and = transform([](bx_t const & arg){return arg->to_dnf();});
     auto bx = or_or_and->simplify();
 
-    if (IS_ATOM(bx))
+    if (IS_ATOM(bx)) {
         return bx;
+    }
 
     auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
 
-    if (lop->is_clause())
+    if (lop->is_clause()) {
         return lop;
+    }
 
     auto clauses = _absorb(_twolvl2clauses(lop));
 
@@ -378,13 +391,15 @@ And::to_dnf() const
     auto and_and_or = transform([](bx_t const & arg){return arg->to_dnf();});
     auto bx = and_and_or->simplify();
 
-    if (IS_ATOM(bx))
+    if (IS_ATOM(bx)) {
         return bx;
+    }
 
     auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
 
-    if (lop->is_clause())
+    if (lop->is_clause()) {
         return lop;
+    }
 
     auto clauses = _product(_absorb(_twolvl2clauses(lop)));
 

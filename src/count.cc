@@ -40,7 +40,9 @@ Operator::depth() const
     uint32_t max_depth = 0;
     for (bx_t const & arg : args) {
         auto depth = arg->depth();
-        if (depth > max_depth) max_depth = depth;
+        if (depth > max_depth) {
+            max_depth = depth;
+        }
     }
     return max_depth + 1;
 }

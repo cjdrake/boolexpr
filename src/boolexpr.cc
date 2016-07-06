@@ -131,23 +131,29 @@ bx_t boolexpr::nor(std::initializer_list<bx_t> const args) { return ~or_(args); 
 bx_t
 boolexpr::or_(vector<bx_t> const & args)
 {
-    if (args.size() == 0)
+    if (args.size() == 0) {
         return Or::identity();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         return *args.cbegin();
-    else
+    }
+    else {
         return std::make_shared<Or>(false, args);
+    }
 }
 
 bx_t
 boolexpr::or_(vector<bx_t> const && args)
 {
-    if (args.size() == 0)
+    if (args.size() == 0) {
         return Or::identity();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         return *args.cbegin();
-    else
+    }
+    else {
         return std::make_shared<Or>(false, args);
+    }
 }
 
 bx_t
@@ -165,23 +171,29 @@ bx_t boolexpr::nand(std::initializer_list<bx_t> const args) { return ~and_(args)
 bx_t
 boolexpr::and_(vector<bx_t> const & args)
 {
-    if (args.size() == 0)
+    if (args.size() == 0) {
         return And::identity();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         return *args.cbegin();
-    else
+    }
+    else {
         return std::make_shared<And>(false, args);
+    }
 }
 
 bx_t
 boolexpr::and_(vector<bx_t> const && args)
 {
-    if (args.size() == 0)
+    if (args.size() == 0) {
         return And::identity();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         return *args.cbegin();
-    else
+    }
+    else {
         return std::make_shared<And>(false, args);
+    }
 }
 
 bx_t
@@ -199,23 +211,29 @@ bx_t boolexpr::xnor(std::initializer_list<bx_t> const args) { return ~xor_(args)
 bx_t
 boolexpr::xor_(vector<bx_t> const & args)
 {
-    if (args.size() == 0)
+    if (args.size() == 0) {
         return Xor::identity();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         return *args.cbegin();
-    else
+    }
+    else {
         return std::make_shared<Xor>(false, args);
+    }
 }
 
 bx_t
 boolexpr::xor_(vector<bx_t> const && args)
 {
-    if (args.size() == 0)
+    if (args.size() == 0) {
         return Xor::identity();
-    else if (args.size() == 1)
+    }
+    else if (args.size() == 1) {
         return *args.cbegin();
-    else
+    }
+    else {
         return std::make_shared<Xor>(false, args);
+    }
 }
 
 bx_t
@@ -233,19 +251,23 @@ bx_t boolexpr::neq(std::initializer_list<bx_t> const args) { return ~eq(args); }
 bx_t
 boolexpr::eq(vector<bx_t> const & args)
 {
-    if (args.size() < 2)
+    if (args.size() < 2) {
         return one();
-    else
+    }
+    else {
         return std::make_shared<Equal>(false, args);
+    }
 }
 
 bx_t
 boolexpr::eq(vector<bx_t> const && args)
 {
-    if (args.size() < 2)
+    if (args.size() < 2) {
         return one();
-    else
+    }
+    else {
         return std::make_shared<Equal>(false, args);
+    }
 }
 
 bx_t
@@ -524,7 +546,9 @@ Operator::op_lsh(std::ostream& s) const
 {
     s << opname() << "(";
     for (size_t i = 0; i < args.size(); ++i) {
-        if (i != 0) s << ", ";
+        if (i != 0) {
+            s << ", ";
+        }
         s << args[i];
     }
     return s << ")";
@@ -600,8 +624,11 @@ op_t IfThenElse::from_args(vector<bx_t> const && args) const
 bool
 Operator::is_clause() const
 {
-    for (bx_t const & arg : args)
-        if (!IS_LIT(arg)) return false;
+    for (bx_t const & arg : args) {
+        if (!IS_LIT(arg)) {
+            return false;
+        }
+    }
     return true;
 }
 
@@ -615,9 +642,11 @@ bool Operator::is_cnf() const { return false; }
 bool
 Or::is_cnf() const
 {
-    for (bx_t const & arg : args)
-        if (!IS_LIT(arg))
+    for (bx_t const & arg : args) {
+        if (!IS_LIT(arg)) {
             return false;
+        }
+    }
     return true;
 }
 
@@ -625,9 +654,12 @@ Or::is_cnf() const
 bool
 And::is_cnf() const
 {
-    for (bx_t const & arg : args)
-        if (!IS_LIT(arg) && !(IS_OR(arg) && std::static_pointer_cast<Or const>(arg)->is_clause()))
+    for (bx_t const & arg : args) {
+        if (!IS_LIT(arg)
+                && !(IS_OR(arg) && std::static_pointer_cast<Or const>(arg)->is_clause())) {
             return false;
+        }
+    }
     return true;
 }
 
@@ -641,9 +673,12 @@ bool Operator::is_dnf() const { return false; }
 bool
 Or::is_dnf() const
 {
-    for (bx_t const & arg : args)
-        if (!IS_LIT(arg) && !(IS_AND(arg) && std::static_pointer_cast<And const>(arg)->is_clause()))
+    for (bx_t const & arg : args) {
+        if (!IS_LIT(arg)
+                && !(IS_AND(arg) && std::static_pointer_cast<And const>(arg)->is_clause())) {
             return false;
+        }
+    }
     return true;
 }
 
@@ -651,9 +686,11 @@ Or::is_dnf() const
 bool
 And::is_dnf() const
 {
-    for (bx_t const & arg : args)
-        if (!IS_LIT(arg))
+    for (bx_t const & arg : args) {
+        if (!IS_LIT(arg)) {
             return false;
+        }
+    }
     return true;
 }
 
@@ -666,10 +703,12 @@ BoolExpr::support() const
     std::unordered_set<var_t> s;
 
     for (auto it = dfs_iter(self); it != dfs_iter(); ++it) {
-        if (IS_VAR(*it))
+        if (IS_VAR(*it)) {
             s.insert(std::static_pointer_cast<Variable const>(*it));
-        else if (IS_COMP(*it))
+        }
+        else if (IS_COMP(*it)) {
             s.insert(std::static_pointer_cast<Variable const>(~*it));
+        }
     }
 
     return std::move(s);
@@ -690,8 +729,9 @@ Operator::transform(std::function<bx_t(bx_t const &)> f) const
         _args[i] = _arg;
     }
 
-    if (mod_count)
+    if (mod_count) {
         return from_args(std::move(_args));
+    }
 
     return std::static_pointer_cast<Operator const>(shared_from_this());
 }

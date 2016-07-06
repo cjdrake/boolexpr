@@ -61,8 +61,9 @@ Operator::to_con2(Context& ctx, string const & auxvarname,
         }
     }
 
-    if (found_subop)
+    if (found_subop) {
         return from_args(std::move(_args));
+    }
 
     return std::static_pointer_cast<Operator const>(shared_from_this());
 }
@@ -78,8 +79,9 @@ Atom::tseytin(Context&, string const &) const
 bx_t
 Operator::tseytin(Context& ctx, string const & auxvarname) const
 {
-    if (is_cnf())
+    if (is_cnf()) {
         return shared_from_this();
+    }
 
     uint32_t index {0};
     var2op_t constraints;
