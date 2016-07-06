@@ -175,7 +175,8 @@ points_iter::points_iter()
 
 
 points_iter::points_iter(vector<var_t> const & vars)
-    : it {space_iter(vars.size())}, vars {vars}
+    : it {space_iter(vars.size())}
+    , vars {vars}
 {
     for (var_t const & x : vars) {
         point.insert({x, zero()});
@@ -270,7 +271,9 @@ cf_iter::cf_iter()
 
 
 cf_iter::cf_iter(bx_t const & f, vector<var_t> const & vars)
-    : f {f}, it {points_iter(vars)}, cf {f->restrict_(*it)}
+    : f {f}
+    , it {points_iter(vars)}
+    , cf {f->restrict_(*it)}
 {}
 
 
