@@ -161,14 +161,16 @@ Equal::to_binop() const
     }
 
     vector<bx_t> _args(n);
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         _args[i] = args[i]->to_binop();
+    }
 
     vector<bx_t> pairs(n * (n-1) / 2);
     size_t cnt = 0;
     for (size_t i = 0; i < (n-1); ++i) {
-        for (size_t j = i + 1; j < n; ++j)
+        for (size_t j = i + 1; j < n; ++j) {
             pairs[cnt++] = eq({_args[i], _args[j]});
+        }
     }
 
     return and_(std::move(pairs));

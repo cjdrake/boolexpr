@@ -89,8 +89,9 @@ Operator::tseytin(Context& ctx, string const & auxvarname) const
     auto top = to_con1(ctx, auxvarname, index, constraints);
 
     vector<bx_t> cnfs {top};
-    for (auto const & constraint : constraints)
+    for (auto const & constraint : constraints) {
         cnfs.push_back(constraint.second->eqvar(constraint.first));
+    }
 
     return and_s(std::move(cnfs));
 }
@@ -103,12 +104,14 @@ Nor::eqvar(var_t const & x) const
 
     vector<bx_t> clauses;
 
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         clauses.push_back(~x | ~arg);
+    }
 
     vector<bx_t> lits {x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits.push_back(arg);
+    }
 
     clauses.push_back(or_(std::move(lits)));
 
@@ -123,12 +126,14 @@ Or::eqvar(var_t const & x) const
 
     vector<bx_t> clauses;
 
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         clauses.push_back(x | ~arg);
+    }
 
     vector<bx_t> lits {~x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits.push_back(arg);
+    }
 
     clauses.push_back(or_(std::move(lits)));
 
@@ -143,12 +148,14 @@ Nand::eqvar(var_t const & x) const
 
     vector<bx_t> clauses;
 
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         clauses.push_back(x | arg);
+    }
 
     vector<bx_t> lits {~x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits.push_back(~arg);
+    }
 
     clauses.push_back(or_(std::move(lits)));
 
@@ -163,12 +170,14 @@ And::eqvar(var_t const & x) const
 
     vector<bx_t> clauses;
 
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         clauses.push_back(~x | arg);
+    }
 
     vector<bx_t> lits {x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits.push_back(~arg);
+    }
 
     clauses.push_back(or_(std::move(lits)));
 
@@ -262,13 +271,15 @@ Unequal::eqvar(var_t const & x) const
     vector<bx_t> clauses;
 
     vector<bx_t> lits1 {~x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits1.push_back(arg);
+    }
     clauses.push_back(or_(std::move(lits1)));
 
     vector<bx_t> lits2 {~x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits2.push_back(~arg);
+    }
     clauses.push_back(or_(std::move(lits2)));
 
     for (auto i = 0u; i < args.size(); ++i) {
@@ -288,13 +299,15 @@ Equal::eqvar(var_t const & x) const
     vector<bx_t> clauses;
 
     vector<bx_t> lits1 {x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits1.push_back(arg);
+    }
     clauses.push_back(or_(std::move(lits1)));
 
     vector<bx_t> lits2 {x};
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         lits2.push_back(~arg);
+    }
     clauses.push_back(or_(std::move(lits2)));
 
     for (auto i = 0u; i < args.size(); ++i) {

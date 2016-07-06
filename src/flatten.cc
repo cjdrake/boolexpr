@@ -40,8 +40,9 @@ _twolvl2clauses(lop_t const & lop)
         }
         else {
             auto op = std::static_pointer_cast<Operator const>(arg);
-            for (bx_t const & subarg : op->args)
+            for (bx_t const & subarg : op->args) {
                 clause.insert(std::static_pointer_cast<Literal const>(subarg));
+            }
         }
         clauses.push_back(std::move(clause));
     }
@@ -107,8 +108,9 @@ _absorb(vector<std::set<lit_t>> const && clauses)
     }
 
     vector<bool> keep;
-    for (auto const & clause : clauses)
+    for (auto const & clause : clauses) {
         keep.push_back(true);
+    }
 
     bool drop = false;
     for (size_t i = 0; i < (clauses.size() - 1); ++i) {
@@ -202,8 +204,9 @@ Or::to_cnf() const
     auto clauses = _product(_absorb(_twolvl2clauses(lop)));
 
     vector<bx_t> args;
-    for (auto const & clause : clauses)
+    for (auto const & clause : clauses) {
         args.push_back(or_s(vector<bx_t>(clause.cbegin(), clause.cend())));
+    }
     return and_s(std::move(args));
 }
 
@@ -234,8 +237,9 @@ And::to_cnf() const
     auto clauses = _absorb(_twolvl2clauses(lop));
 
     vector<bx_t> args;
-    for (auto const & clause : clauses)
+    for (auto const & clause : clauses) {
         args.push_back(or_s(vector<bx_t>(clause.cbegin(), clause.cend())));
+    }
     return and_s(std::move(args));
 }
 
@@ -256,8 +260,9 @@ Xor::to_cnf() const
     for (auto it = space_iter(n); it != space_iter(); ++it) {
         if (!it.parity()) {
             vector<bx_t> clause(n);
-            for (size_t i = 0; i < n; ++i)
+            for (size_t i = 0; i < n; ++i) {
                 clause[i] = (*it)[i] ? ~args[i] : args[i];
+            }
             clauses.push_back(or_(std::move(clause)));
         }
     }
@@ -372,8 +377,9 @@ Or::to_dnf() const
     auto clauses = _absorb(_twolvl2clauses(lop));
 
     vector<bx_t> args;
-    for (auto const & clause : clauses)
+    for (auto const & clause : clauses) {
         args.push_back(and_s(vector<bx_t>(clause.cbegin(), clause.cend())));
+    }
     return or_s(std::move(args));
 }
 
@@ -404,8 +410,9 @@ And::to_dnf() const
     auto clauses = _product(_absorb(_twolvl2clauses(lop)));
 
     vector<bx_t> args;
-    for (auto const & clause : clauses)
+    for (auto const & clause : clauses) {
         args.push_back(and_s(vector<bx_t>(clause.cbegin(), clause.cend())));
+    }
     return or_s(std::move(args));
 }
 
@@ -426,8 +433,9 @@ Xor::to_dnf() const
     for (auto it = space_iter(n); it != space_iter(); ++it) {
         if (it.parity()) {
             vector<bx_t> clause(n);
-            for (size_t i = 0; i < n; ++i)
+            for (size_t i = 0; i < n; ++i) {
                 clause[i] = (*it)[i] ? args[i] : ~args[i];
+            }
             clauses.push_back(and_(std::move(clause)));
         }
     }

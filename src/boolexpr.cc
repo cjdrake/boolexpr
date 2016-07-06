@@ -313,8 +313,9 @@ boolexpr::onehot0(vector<bx_t> const & args)
 
     size_t cnt = 0;
     for (size_t i = 0; i < (n-1); ++i) {
-        for (size_t j = i+1; j < n; ++j)
+        for (size_t j = i+1; j < n; ++j) {
             terms[cnt++] = ~args[i] | ~args[j];
+        }
     }
 
     return and_(std::move(terms));
@@ -328,8 +329,9 @@ boolexpr::onehot0(vector<bx_t> const && args)
 
     size_t cnt = 0;
     for (size_t i = 0; i < (n-1); ++i) {
-        for (size_t j = i+1; j < n; ++j)
+        for (size_t j = i+1; j < n; ++j) {
             terms[cnt++] = ~args[i] | ~args[j];
+        }
     }
 
     return and_(std::move(terms));
@@ -350,8 +352,9 @@ boolexpr::onehot(vector<bx_t> const & args)
 
     size_t cnt = 0;
     for (size_t i = 0; i < (n-1); ++i) {
-        for (size_t j = i+1; j < n; ++j)
+        for (size_t j = i+1; j < n; ++j) {
             terms[cnt++] = ~args[i] | ~args[j];
+        }
     }
 
     terms[cnt++] = or_(args);
@@ -367,8 +370,9 @@ boolexpr::onehot(vector<bx_t> const && args)
 
     size_t cnt = 0;
     for (size_t i = 0; i < (n-1); ++i) {
-        for (size_t j = i+1; j < n; ++j)
+        for (size_t j = i+1; j < n; ++j) {
             terms[cnt++] = ~args[i] | ~args[j];
+        }
     }
 
     terms[cnt++] = or_(args);

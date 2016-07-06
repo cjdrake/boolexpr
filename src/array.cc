@@ -54,8 +54,9 @@ boolexpr::operator~(Array const & self)
     size_t n = self.items.size();
     vector<bx_t> items(n);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         items[i] = ~self.items[i];
+    }
 
     return new Array(std::move(items));
 }
@@ -69,14 +70,17 @@ boolexpr::operator|(Array const & lhs, Array const & rhs)
     auto lhs_it = lhs.items.begin();
     auto rhs_it = rhs.items.begin();
 
-    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
+    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end()) {
         items.push_back(*lhs_it++ | *rhs_it++);
+    }
 
-    while (lhs_it != lhs.items.end())
+    while (lhs_it != lhs.items.end()) {
         items.push_back(*lhs_it++);
+    }
 
-    while (rhs_it != rhs.items.end())
+    while (rhs_it != rhs.items.end()) {
         items.push_back(*rhs_it++);
+    }
 
     return new Array(std::move(items));
 }
@@ -90,14 +94,17 @@ boolexpr::operator&(Array const & lhs, Array const & rhs)
     auto lhs_it = lhs.items.begin();
     auto rhs_it = rhs.items.begin();
 
-    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
+    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end()) {
         items.push_back(*lhs_it++ & *rhs_it++);
+    }
 
-    while (lhs_it != lhs.items.end())
+    while (lhs_it != lhs.items.end()) {
         items.push_back(*lhs_it++);
+    }
 
-    while (rhs_it != rhs.items.end())
+    while (rhs_it != rhs.items.end()) {
         items.push_back(*rhs_it++);
+    }
 
     return new Array(std::move(items));
 }
@@ -111,14 +118,17 @@ boolexpr::operator^(Array const & lhs, Array const & rhs)
     auto lhs_it = lhs.items.begin();
     auto rhs_it = rhs.items.begin();
 
-    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end())
+    while (lhs_it != lhs.items.end() && rhs_it != rhs.items.end()) {
         items.push_back(*lhs_it++ ^ *rhs_it++);
+    }
 
-    while (lhs_it != lhs.items.end())
+    while (lhs_it != lhs.items.end()) {
         items.push_back(*lhs_it++);
+    }
 
-    while (rhs_it != rhs.items.end())
+    while (rhs_it != rhs.items.end()) {
         items.push_back(*rhs_it++);
+    }
 
     return new Array(std::move(items));
 }
@@ -131,11 +141,13 @@ boolexpr::operator+(Array const & lhs, Array const & rhs)
 
     size_t cnt = 0;
 
-    for (size_t i = 0; i < lhs.items.size(); ++i)
+    for (size_t i = 0; i < lhs.items.size(); ++i) {
         items[cnt++] = lhs.items[i];
+    }
 
-    for (size_t i = 0; i < rhs.items.size(); ++i)
+    for (size_t i = 0; i < rhs.items.size(); ++i) {
         items[cnt++] = rhs.items[i];
+    }
 
     return new Array(std::move(items));
 }
@@ -148,9 +160,11 @@ boolexpr::operator*(Array const & lhs, size_t num)
 
     size_t cnt = 0;
 
-    for (size_t i = 0; i < num; ++i)
-        for (size_t j = 0; j < lhs.items.size(); ++j)
+    for (size_t i = 0; i < num; ++i) {
+        for (size_t j = 0; j < lhs.items.size(); ++j) {
             items[cnt++] = lhs.items[j];
+        }
+    }
 
     return new Array(std::move(items));
 }
@@ -163,9 +177,11 @@ boolexpr::operator*(size_t num, Array const & rhs)
 
     size_t cnt = 0;
 
-    for (size_t i = 0; i < num; ++i)
-        for (size_t j = 0; j < rhs.items.size(); ++j)
+    for (size_t i = 0; i < num; ++i) {
+        for (size_t j = 0; j < rhs.items.size(); ++j) {
             items[cnt++] = rhs.items[j];
+        }
+    }
 
     return new Array(std::move(items));
 }
@@ -212,8 +228,9 @@ Array::compose(var2bx_t const & var2bx) const
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         items[i] = this->items[i]->compose(var2bx);
+    }
 
     return new Array(std::move(items));
 }
@@ -225,8 +242,9 @@ Array::restrict_(point_t const & point) const
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         items[i] = this->items[i]->restrict_(point);
+    }
 
     return new Array(std::move(items));
 }
@@ -256,11 +274,13 @@ Array::zext(size_t num) const
     vector<bx_t> items(this->items.size() + num);
 
     size_t cnt = 0;
-    for (size_t i = 0; i < this->items.size(); ++i)
+    for (size_t i = 0; i < this->items.size(); ++i) {
         items[cnt++] = this->items[i];
+    }
 
-    for (size_t i = 0; i < num; ++i)
+    for (size_t i = 0; i < num; ++i) {
         items[cnt++] = zero();
+    }
 
     return new Array(std::move(items));
 }
@@ -272,12 +292,14 @@ Array::sext(size_t num) const
     vector<bx_t> items(this->items.size() + num);
 
     size_t cnt = 0;
-    for (size_t i = 0; i < this->items.size(); ++i)
+    for (size_t i = 0; i < this->items.size(); ++i) {
         items[cnt++] = this->items[i];
+    }
 
     auto sign = this->items[this->items.size()-1];
-    for (size_t i = 0; i < num; ++i)
+    for (size_t i = 0; i < num; ++i) {
         items[cnt++] = sign;
+    }
 
     return new Array(std::move(items));
 }
@@ -315,14 +337,17 @@ Array::lsh(Array const & a) const
     vector<bx_t> left(m);
     vector<bx_t> right(n);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         left[i] = a.items[i];
+    }
 
-    for (size_t i = n; i < m; ++i)
+    for (size_t i = n; i < m; ++i) {
         left[i] = this->items[i-n];
+    }
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         right[i] = this->items[i+m-n];
+    }
 
     return std::make_pair(new Array(std::move(left)),
                           new Array(std::move(right)));
@@ -340,14 +365,17 @@ Array::rsh(Array const & a) const
     vector<bx_t> left(n);
     vector<bx_t> right(m);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         left[i] = this->items[i];
+    }
 
-    for (size_t i = 0; i < (m-n); ++i)
+    for (size_t i = 0; i < (m-n); ++i) {
         right[i] = this->items[i+n];
+    }
 
-    for (size_t i = (m-n); i < m; ++i)
+    for (size_t i = (m-n); i < m; ++i) {
         right[i] = a.items[i-m+n];
+    }
 
     return std::make_pair(new Array(std::move(left)),
                           new Array(std::move(right)));
@@ -364,14 +392,17 @@ Array::arsh(size_t n) const
     vector<bx_t> left(n);
     vector<bx_t> right(m);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         left[i] = this->items[i];
+    }
 
-    for (size_t i = 0; i < (m-n); ++i)
+    for (size_t i = 0; i < (m-n); ++i) {
         right[i] = this->items[i+n];
+    }
 
-    for (size_t i = (m-n); i < m; ++i)
+    for (size_t i = (m-n); i < m; ++i) {
         right[i] = this->items[m-1];
+    }
 
     return std::make_pair(new Array(std::move(left)),
                           new Array(std::move(right)));

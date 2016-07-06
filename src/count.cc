@@ -59,7 +59,8 @@ uint32_t
 Operator::size() const
 {
     uint32_t size = 0;
-    for (bx_t const & arg : args)
+    for (bx_t const & arg : args) {
         size += arg->size();
+    }
     return size + 1;
 }

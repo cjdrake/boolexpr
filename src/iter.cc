@@ -109,8 +109,9 @@ space_iter::space_iter()
 space_iter::space_iter(size_t n)
     : n {n}
 {
-    for (size_t i = 0; i <= n; ++i)
+    for (size_t i = 0; i <= n; ++i) {
         counter.push_back(false);
+    }
 }
 
 
@@ -147,8 +148,9 @@ bool
 space_iter::parity() const
 {
     auto val = false;
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         val ^= counter[i];
+    }
     return val;
 }
 
@@ -161,8 +163,9 @@ points_iter::points_iter()
 points_iter::points_iter(vector<var_t> const & vars)
     : it {space_iter(vars.size())}, vars {vars}
 {
-    for (var_t const & x : vars)
+    for (var_t const & x : vars) {
         point.insert({x, zero()});
+    }
 }
 
 

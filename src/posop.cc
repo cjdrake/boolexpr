@@ -41,8 +41,9 @@ Nor::to_posop() const
     size_t n = args.size();
     vector<bx_t> _args(n);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         _args[i] = (~args[i])->to_posop();
+    }
 
     return and_(std::move(_args));
 }
@@ -61,8 +62,9 @@ Nand::to_posop() const
     size_t n = args.size();
     vector<bx_t> _args(n);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i) {
         _args[i] = (~args[i])->to_posop();
+    }
 
     return or_(std::move(_args));
 }
@@ -82,8 +84,9 @@ Xnor::to_posop() const
     vector<bx_t> _args(n);
 
     _args[0] = (~args[0])->to_posop();
-    for (size_t i = 1; i < n; ++i)
+    for (size_t i = 1; i < n; ++i) {
         _args[i] = args[i]->to_posop();
+    }
 
     return xor_(std::move(_args));
 }
@@ -103,8 +106,9 @@ Unequal::to_posop() const
     vector<bx_t> _args(n);
 
     _args[0] = (~args[0])->to_posop();
-    for (size_t i = 1; i < n; ++i)
+    for (size_t i = 1; i < n; ++i) {
         _args[i] = args[i]->to_posop();
+    }
 
     return eq(std::move(_args));
 }

@@ -35,7 +35,9 @@ LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & k
     , identity {identity}
     , dominator {dominator}
 {
-    for (bx_t const & arg : args) insert(arg->simplify());
+    for (bx_t const & arg : args) {
+        insert(arg->simplify());
+    }
 }
 
 
@@ -56,8 +58,9 @@ LatticeArgSet::insert(bx_t const & arg)
             }
             else if (arg->kind == kind) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args)
+                for (bx_t const & _arg : op->args) {
                     insert(_arg);
+                }
             }
             else if (!ARE_SAME(arg, identity)) {
                 args.insert(arg);
@@ -77,8 +80,9 @@ LatticeArgSet::insert(bx_t const & arg)
             }
             else if (arg->kind == kind) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args)
+                for (bx_t const & _arg : op->args) {
                     insert(_arg);
+                }
             }
             else if (!ARE_SAME(arg, identity)) {
                 args.insert(arg);
@@ -94,8 +98,9 @@ LatticeArgSet::insert(bx_t const & arg)
             }
             else if (arg->kind == kind) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args)
+                for (bx_t const & _arg : op->args) {
                     insert(_arg);
+                }
             }
             else if (!ARE_SAME(arg, identity)) {
                 args.insert(arg);
@@ -108,8 +113,9 @@ LatticeArgSet::insert(bx_t const & arg)
             }
             else if (arg->kind == kind) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args)
+                for (bx_t const & _arg : op->args) {
                     insert(_arg);
+                }
             }
             break;
 
@@ -174,7 +180,9 @@ XorArgSet::XorArgSet(vector<bx_t> const & args)
     : state {State::basic}
     , parity {true}
 {
-    for (bx_t const & arg : args) insert(arg->simplify());
+    for (bx_t const & arg : args) {
+        insert(arg->simplify());
+    }
 }
 
 
@@ -205,14 +213,16 @@ XorArgSet::insert(bx_t const & arg)
             // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
             else if (IS_XOR(arg)) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args)
+                for (bx_t const & _arg : op->args) {
                     insert(_arg);
+                }
             }
             // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
             else if (IS_XNOR(arg)) {
                 auto op = std::static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args)
+                for (bx_t const & _arg : op->args) {
                     insert(_arg);
+                }
                 parity ^= true;
             }
             else {
@@ -271,7 +281,9 @@ EqArgSet::EqArgSet(vector<bx_t> const & args)
     , has_zero {false}
     , has_one {false}
 {
-    for (bx_t const & arg : args) insert(arg->simplify());
+    for (bx_t const & arg : args) {
+        insert(arg->simplify());
+    }
 }
 
 
