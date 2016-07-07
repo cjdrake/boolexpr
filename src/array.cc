@@ -24,7 +24,12 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::initializer_list;
+using std::make_pair;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 Array::Array()
@@ -42,13 +47,13 @@ Array::Array(vector<bx_t> const && items)
 {}
 
 
-Array::Array(std::initializer_list<bx_t> const items)
+Array::Array(initializer_list<bx_t> const items)
     : items {items}
 {}
 
 
 Array *
-boolexpr::operator~(Array const & self)
+operator~(Array const & self)
 {
     size_t n = self.items.size();
     vector<bx_t> items(n);
@@ -62,7 +67,7 @@ boolexpr::operator~(Array const & self)
 
 
 Array *
-boolexpr::operator|(Array const & lhs, Array const & rhs)
+operator|(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
 
@@ -86,7 +91,7 @@ boolexpr::operator|(Array const & lhs, Array const & rhs)
 
 
 Array *
-boolexpr::operator&(Array const & lhs, Array const & rhs)
+operator&(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
 
@@ -110,7 +115,7 @@ boolexpr::operator&(Array const & lhs, Array const & rhs)
 
 
 Array *
-boolexpr::operator^(Array const & lhs, Array const & rhs)
+operator^(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items;
 
@@ -134,7 +139,7 @@ boolexpr::operator^(Array const & lhs, Array const & rhs)
 
 
 Array *
-boolexpr::operator+(Array const & lhs, Array const & rhs)
+operator+(Array const & lhs, Array const & rhs)
 {
     vector<bx_t> items(lhs.items.size() + rhs.items.size());
 
@@ -153,7 +158,7 @@ boolexpr::operator+(Array const & lhs, Array const & rhs)
 
 
 Array *
-boolexpr::operator*(Array const & lhs, size_t num)
+operator*(Array const & lhs, size_t num)
 {
     vector<bx_t> items(num * lhs.items.size());
 
@@ -170,7 +175,7 @@ boolexpr::operator*(Array const & lhs, size_t num)
 
 
 Array *
-boolexpr::operator*(size_t num, Array const & rhs)
+operator*(size_t num, Array const & rhs)
 {
     vector<bx_t> items(num * rhs.items.size());
 
@@ -348,8 +353,8 @@ Array::lsh(Array const & a) const
         right[i] = this->items[i+m-n];
     }
 
-    return std::make_pair(new Array(std::move(left)),
-                          new Array(std::move(right)));
+    return make_pair(new Array(std::move(left)),
+                     new Array(std::move(right)));
 }
 
 
@@ -376,8 +381,8 @@ Array::rsh(Array const & a) const
         right[i] = a.items[i-m+n];
     }
 
-    return std::make_pair(new Array(std::move(left)),
-                          new Array(std::move(right)));
+    return make_pair(new Array(std::move(left)),
+                     new Array(std::move(right)));
 }
 
 
@@ -403,6 +408,9 @@ Array::arsh(size_t n) const
         right[i] = this->items[m-1];
     }
 
-    return std::make_pair(new Array(std::move(left)),
-                          new Array(std::move(right)));
+    return make_pair(new Array(std::move(left)),
+                     new Array(std::move(right)));
 }
+
+
+} // namespace boolexpr

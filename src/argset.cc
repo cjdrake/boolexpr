@@ -25,7 +25,12 @@
 #include "argset.h"
 
 
-using namespace boolexpr;
+using std::make_shared;
+using std::static_pointer_cast;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
@@ -57,7 +62,7 @@ LatticeArgSet::insert(bx_t const & arg)
                 state = State::islog;
             }
             else if (arg->kind == kind) {
-                auto op = std::static_pointer_cast<Operator const>(arg);
+                auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
@@ -79,7 +84,7 @@ LatticeArgSet::insert(bx_t const & arg)
                 state = State::islog;
             }
             else if (arg->kind == kind) {
-                auto op = std::static_pointer_cast<Operator const>(arg);
+                auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
@@ -97,7 +102,7 @@ LatticeArgSet::insert(bx_t const & arg)
                 state = State::supremum;
             }
             else if (arg->kind == kind) {
-                auto op = std::static_pointer_cast<Operator const>(arg);
+                auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
@@ -112,7 +117,7 @@ LatticeArgSet::insert(bx_t const & arg)
                 state = State::isill;
             }
             else if (arg->kind == kind) {
-                auto op = std::static_pointer_cast<Operator const>(arg);
+                auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
@@ -160,7 +165,7 @@ OrArgSet::OrArgSet(vector<bx_t> const & args)
 bx_t
 OrArgSet::to_op() const
 {
-    return std::make_shared<Or>(true, vector<bx_t>(args.cbegin(), args.cend()));
+    return make_shared<Or>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -172,7 +177,7 @@ AndArgSet::AndArgSet(vector<bx_t> const & args)
 bx_t
 AndArgSet::to_op() const
 {
-    return std::make_shared<And>(true, vector<bx_t>(args.cbegin(), args.cend()));
+    return make_shared<And>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -212,14 +217,14 @@ XorArgSet::insert(bx_t const & arg)
             }
             // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
             else if (IS_XOR(arg)) {
-                auto op = std::static_pointer_cast<Operator const>(arg);
+                auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
             }
             // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
             else if (IS_XNOR(arg)) {
-                auto op = std::static_pointer_cast<Operator const>(arg);
+                auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
@@ -245,7 +250,7 @@ XorArgSet::insert(bx_t const & arg)
 bx_t
 XorArgSet::to_op() const
 {
-    return std::make_shared<Xor>(true, vector<bx_t>(args.cbegin(), args.cend()));
+    return make_shared<Xor>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -336,7 +341,7 @@ EqArgSet::insert(bx_t const & arg)
 bx_t
 EqArgSet::to_op() const
 {
-    return std::make_shared<Equal>(true, vector<bx_t>(args.cbegin(), args.cend()));
+    return make_shared<Equal>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
 
@@ -373,3 +378,6 @@ EqArgSet::reduce() const
 
     return to_op();
 }
+
+
+} // namespace boolexpr

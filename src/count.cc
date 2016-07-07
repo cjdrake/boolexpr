@@ -24,7 +24,7 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+namespace boolexpr {
 
 
 uint32_t
@@ -64,3 +64,6 @@ Operator::size() const
     }
     return size + 1;
 }
+
+
+} // namespace boolexpr

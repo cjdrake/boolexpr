@@ -41,10 +41,10 @@ struct LiteralProxy
 template <typename T>
 struct VecProxy
 {
-    vector<T> v;
-    typename vector<T>::iterator it;
+    std::vector<T> v;
+    typename std::vector<T>::iterator it;
 
-    VecProxy(vector<T> const & v): v {v} {}
+    VecProxy(std::vector<T> const & v): v {v} {}
 
     void iter() { it = v.begin(); }
     void next() { ++it; }
@@ -152,7 +152,7 @@ struct PointsIterProxy
 {
     points_iter it;
 
-    PointsIterProxy(vector<var_t> const & xs)
+    PointsIterProxy(std::vector<var_t> const & xs)
         : it {xs}
     {}
 
@@ -188,7 +188,7 @@ struct CofactorIterProxy
 {
     cf_iter it;
 
-    CofactorIterProxy(bx_t const & bx, vector<var_t> const & vars)
+    CofactorIterProxy(bx_t const & bx, std::vector<var_t> const & vars)
         : it {cf_iter(bx, vars)}
     {}
 

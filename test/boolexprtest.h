@@ -14,6 +14,7 @@
 
 
 using namespace boolexpr;
+using std::vector;
 
 
 class BoolExprTest: public ::testing::Test

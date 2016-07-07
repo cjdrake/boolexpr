@@ -24,7 +24,7 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+namespace boolexpr {
 
 
 bx_t
@@ -32,3 +32,6 @@ BoolExpr::to_nnf() const
 {
     return to_latop()->to_posop()->simplify();
 }
+
+
+} // namespace boolexpr

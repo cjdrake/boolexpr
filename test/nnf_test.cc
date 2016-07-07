@@ -26,9 +26,6 @@
 #include "boolexprtest.h"
 
 
-using namespace boolexpr;
-
-
 class NNFTest : public BoolExprTest {};
 
 

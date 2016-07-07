@@ -24,7 +24,10 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 bx_t
@@ -155,3 +158,6 @@ IfThenElse::to_latop() const
 
     return (s & d1) | (~s & d0);
 }
+
+
+} // namespace boolexpr

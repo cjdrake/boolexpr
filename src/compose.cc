@@ -24,7 +24,10 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::static_pointer_cast;
+
+
+namespace boolexpr {
 
 
 bx_t
@@ -38,7 +41,7 @@ bx_t
 Complement::compose(var2bx_t const & var2bx) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(~self);
+    auto x = static_pointer_cast<Variable const>(~self);
     auto search = var2bx.find(x);
     return (search == var2bx.end()) ? self : ~(search->second);
 }
@@ -48,7 +51,7 @@ bx_t
 Variable::compose(var2bx_t const & var2bx) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(self);
+    auto x = static_pointer_cast<Variable const>(self);
     auto search = var2bx.find(x);
     return (search == var2bx.end()) ? self : search->second;
 }
@@ -59,3 +62,6 @@ Operator::compose(var2bx_t const & var2bx) const
 {
     return transform([&var2bx](bx_t const & bx){return bx->compose(var2bx);});
 }
+
+
+} // namespace boolexpr

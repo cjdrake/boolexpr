@@ -25,7 +25,11 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::static_pointer_cast;
+using std::string;
+
+
+namespace boolexpr {
 
 
 string const
@@ -144,7 +148,7 @@ std::ostream&
 Complement::op_lsh(std::ostream& s) const
 {
     auto self = shared_from_this();
-    auto xn = std::static_pointer_cast<Complement const>(self);
+    auto xn = static_pointer_cast<Complement const>(self);
     return s << "~" << xn->ctx->get_name(xn->id);
 }
 
@@ -153,7 +157,7 @@ std::ostream&
 Variable::op_lsh(std::ostream& s) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(self);
+    auto x = static_pointer_cast<Variable const>(self);
     return s << x->ctx->get_name(x->id);
 }
 
@@ -173,7 +177,7 @@ Operator::op_lsh(std::ostream& s) const
 
 
 std::ostream&
-boolexpr::operator<<(std::ostream& s, bx_t const & bx)
+operator<<(std::ostream& s, bx_t const & bx)
 {
     return bx->op_lsh(s);
 }
@@ -186,3 +190,6 @@ BoolExpr::to_string() const
     oss << shared_from_this();
     return oss.str();
 }
+
+
+} // namespace boolexpr

@@ -24,7 +24,10 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::make_shared;
+
+
+namespace boolexpr {
 
 
 bx_t
@@ -72,82 +75,85 @@ Variable::invert() const
 bx_t
 Nor::invert() const
 {
-    return std::make_shared<Or>(simple, args);
+    return make_shared<Or>(simple, args);
 }
 
 
 bx_t
 Or::invert() const
 {
-    return std::make_shared<Nor>(simple, args);
+    return make_shared<Nor>(simple, args);
 }
 
 
 bx_t
 Nand::invert() const
 {
-    return std::make_shared<And>(simple, args);
+    return make_shared<And>(simple, args);
 }
 
 
 bx_t
 And::invert() const
 {
-    return std::make_shared<Nand>(simple, args);
+    return make_shared<Nand>(simple, args);
 }
 
 
 bx_t
 Xnor::invert() const
 {
-    return std::make_shared<Xor>(simple, args);
+    return make_shared<Xor>(simple, args);
 }
 
 
 bx_t
 Xor::invert() const
 {
-    return std::make_shared<Xnor>(simple, args);
+    return make_shared<Xnor>(simple, args);
 }
 
 
 bx_t
 Unequal::invert() const
 {
-    return std::make_shared<Equal>(simple, args);
+    return make_shared<Equal>(simple, args);
 }
 
 
 bx_t
 Equal::invert() const
 {
-    return std::make_shared<Unequal>(simple, args);
+    return make_shared<Unequal>(simple, args);
 }
 
 
 bx_t
 NotImplies::invert() const
 {
-    return std::make_shared<Implies>(simple, args[0], args[1]);
+    return make_shared<Implies>(simple, args[0], args[1]);
 }
 
 
 bx_t
 Implies::invert() const
 {
-    return std::make_shared<NotImplies>(simple, args[0], args[1]);
+    return make_shared<NotImplies>(simple, args[0], args[1]);
 }
 
 
 bx_t
 NotIfThenElse::invert() const
 {
-    return std::make_shared<IfThenElse>(simple, args[0], args[1], args[2]);
+    return make_shared<IfThenElse>(simple, args[0], args[1], args[2]);
 }
 
 
 bx_t
 IfThenElse::invert() const
 {
-    return std::make_shared<NotIfThenElse>(simple, args[0], args[1], args[2]);
+    return make_shared<NotIfThenElse>(simple, args[0], args[1], args[2]);
 }
+
+
+} // namespace boolexpr

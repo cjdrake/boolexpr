@@ -25,10 +25,17 @@
 #include "boolexpr/boolexpr.h"
 
 
+using std::make_pair;
+using std::static_pointer_cast;
+using std::unordered_map;
+using std::vector;
+
+
 // Required for l_False and l_True
 using CMSat::lbool;
 
-using namespace boolexpr;
+
+namespace boolexpr {
 
 
 soln_t
@@ -41,28 +48,28 @@ BoolExpr::sat() const
 soln_t
 Zero::_sat() const
 {
-    return std::make_pair(false, boost::none);
+    return make_pair(false, boost::none);
 }
 
 
 soln_t
 One::_sat() const
 {
-    return std::make_pair(true, point_t {});
+    return make_pair(true, point_t {});
 }
 
 
 soln_t
 Logical::_sat() const
 {
-    return std::make_pair(false, boost::none);
+    return make_pair(false, boost::none);
 }
 
 
 soln_t
 Illogical::_sat() const
 {
-    return std::make_pair(false, boost::none);
+    return make_pair(false, boost::none);
 }
 
 
@@ -70,8 +77,8 @@ soln_t
 Complement::_sat() const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(~self);
-    return std::make_pair(true, point_t { {x, zero()} });
+    auto x = static_pointer_cast<Variable const>(~self);
+    return make_pair(true, point_t { {x, zero()} });
 }
 
 
@@ -79,8 +86,8 @@ soln_t
 Variable::_sat() const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(self);
-    return std::make_pair(true, point_t { {x, one()} });
+    auto x = static_pointer_cast<Variable const>(self);
+    return make_pair(true, point_t { {x, one()} });
 }
 
 
@@ -91,8 +98,8 @@ Operator::_sat() const
     auto bx = tseytin(ctx);
 
     auto xs = bx->support();
-    std::unordered_map<bx_t, uint32_t> lit2idx;
-    std::unordered_map<uint32_t, var_t> idx2var;
+    unordered_map<bx_t, uint32_t> lit2idx;
+    unordered_map<uint32_t, var_t> idx2var;
 
     uint32_t index = 0;
     for (var_t const & x : xs) {
@@ -106,7 +113,7 @@ Operator::_sat() const
     solver.new_vars(xs.size());
 
     if (IS_OR(bx)) {
-        auto or_op = std::static_pointer_cast<Or const>(bx);
+        auto or_op = static_pointer_cast<Or const>(bx);
         vector<CMSat::Lit> clause;
         for (bx_t const & arg : or_op->args) {
             auto index = lit2idx.find(arg)->second;
@@ -115,7 +122,7 @@ Operator::_sat() const
         solver.add_clause(std::move(clause));
     }
     else if (IS_AND(bx)) {
-        auto and_op = std::static_pointer_cast<And const>(bx);
+        auto and_op = static_pointer_cast<And const>(bx);
         for (bx_t const & arg : and_op->args) {
             vector<CMSat::Lit> clause;
             if (IS_LIT(arg)) {
@@ -123,7 +130,7 @@ Operator::_sat() const
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
             else {
-                auto or_op = std::static_pointer_cast<Or const>(arg);
+                auto or_op = static_pointer_cast<Or const>(arg);
                 for (bx_t const & lit : or_op->args) {
                     auto index = lit2idx.find(lit)->second;
                     clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
@@ -152,10 +159,10 @@ Operator::_sat() const
                 }
             }
         }
-        return std::make_pair(true, std::move(point));
+        return make_pair(true, std::move(point));
     }
     else {
-        return std::make_pair(false, boost::none);
+        return make_pair(false, boost::none);
     }
 }
 
@@ -182,7 +189,7 @@ sat_iter::sat_iter(bx_t const & bx)
 
     if (IS_COMP(bx)) {
         sat = l_True;
-        auto x = std::static_pointer_cast<Variable const>(~bx);
+        auto x = static_pointer_cast<Variable const>(~bx);
         point.insert({x, zero()});
         one_soln = true;
         return;
@@ -190,7 +197,7 @@ sat_iter::sat_iter(bx_t const & bx)
 
     if (IS_VAR(bx)) {
         sat = l_True;
-        auto x = std::static_pointer_cast<Variable const>(bx);
+        auto x = static_pointer_cast<Variable const>(bx);
         point.insert({x, one()});
         one_soln = true;
         return;
@@ -198,7 +205,7 @@ sat_iter::sat_iter(bx_t const & bx)
 
     // Operator
 
-    auto op = std::static_pointer_cast<Operator const>(bx);
+    auto op = static_pointer_cast<Operator const>(bx);
     auto cnf = op->tseytin(ctx);
 
     auto xs = cnf->support();
@@ -212,7 +219,7 @@ sat_iter::sat_iter(bx_t const & bx)
     }
 
     if (IS_OR(cnf)) {
-        auto or_op = std::static_pointer_cast<Or const>(cnf);
+        auto or_op = static_pointer_cast<Or const>(cnf);
         vector<CMSat::Lit> clause;
         for (bx_t const & arg : or_op->args) {
             auto index = lit2idx.find(arg)->second;
@@ -221,7 +228,7 @@ sat_iter::sat_iter(bx_t const & bx)
         solver.add_clause(std::move(clause));
     }
     else if (IS_AND(cnf)) {
-        auto and_op = std::static_pointer_cast<And const>(cnf);
+        auto and_op = static_pointer_cast<And const>(cnf);
         for (bx_t const & arg : and_op->args) {
             vector<CMSat::Lit> clause;
             if (IS_LIT(arg)) {
@@ -229,7 +236,7 @@ sat_iter::sat_iter(bx_t const & bx)
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
             else {
-                auto or_op = std::static_pointer_cast<Or const>(arg);
+                auto or_op = static_pointer_cast<Or const>(arg);
                 for (bx_t const & lit : or_op->args) {
                     auto index = lit2idx.find(lit)->second;
                     clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
@@ -309,3 +316,6 @@ sat_iter::operator++()
 
     return *this;
 }
+
+
+} // namespace boolexpr

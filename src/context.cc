@@ -24,10 +24,16 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::make_shared;
+using std::string;
 
 
-Context::Context() : id {0} {}
+namespace boolexpr {
+
+
+Context::Context()
+    : id {0}
+{}
 
 
 var_t
@@ -35,8 +41,8 @@ Context::get_var(string name)
 {
     auto search = vars.find(name);
     if (search == vars.end()) {
-        auto xn = std::make_shared<Complement>(this, id++);
-        auto x = std::make_shared<Variable>(this, id++);
+        auto xn = make_shared<Complement>(this, id++);
+        auto x = make_shared<Variable>(this, id++);
         vars.insert({name, x});
         id2name.insert({xn->id >> 1, name});
         id2lit.insert({xn->id, xn});
@@ -59,3 +65,6 @@ Context::get_lit(id_t id) const
 {
     return id2lit.find(id)->second;
 }
+
+
+} // namespace boolexpr

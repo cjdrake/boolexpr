@@ -24,7 +24,12 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::static_pointer_cast;
+using std::string;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 var_t
@@ -53,7 +58,7 @@ Operator::to_con2(Context& ctx, string const & auxvarname,
     for (size_t i = 0; i < n; ++i) {
         if (IS_OP(args[i])) {
             found_subop = true;
-            auto subop = std::static_pointer_cast<Operator const>(args[i]);
+            auto subop = static_pointer_cast<Operator const>(args[i]);
             _args[i] = subop->to_con1(ctx, auxvarname, index, constraints);
         }
         else {
@@ -65,7 +70,7 @@ Operator::to_con2(Context& ctx, string const & auxvarname,
         return from_args(std::move(_args));
     }
 
-    return std::static_pointer_cast<Operator const>(shared_from_this());
+    return static_pointer_cast<Operator const>(shared_from_this());
 }
 
 
@@ -361,3 +366,6 @@ IfThenElse::eqvar(var_t const & x) const
 
     return and_s({(x | ~s | ~d1), (x | s | ~d0), (~x | ~s | d1), (~x | s | d0), (~x | d1 | d0)});
 }
+
+
+} // namespace boolexpr

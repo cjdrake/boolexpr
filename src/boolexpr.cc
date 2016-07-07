@@ -24,7 +24,13 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::make_shared;
+using std::static_pointer_cast;
+using std::unordered_set;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 BoolExpr::BoolExpr(Kind kind)
@@ -217,84 +223,84 @@ Xor::identity()
 op_t
 Nor::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Nor>(false, args);
+    return make_shared<Nor>(false, args);
 }
 
 
 op_t
 Or::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Or>(false, args);
+    return make_shared<Or>(false, args);
 }
 
 
 op_t
 Nand::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Nand>(false, args);
+    return make_shared<Nand>(false, args);
 }
 
 
 op_t
 And::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<And>(false, args);
+    return make_shared<And>(false, args);
 }
 
 
 op_t
 Xnor::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Xnor>(false, args);
+    return make_shared<Xnor>(false, args);
 }
 
 
 op_t
 Xor::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Xor>(false, args);
+    return make_shared<Xor>(false, args);
 }
 
 
 op_t
 Unequal::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Unequal>(false, args);
+    return make_shared<Unequal>(false, args);
 }
 
 
 op_t
 Equal::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Equal>(false, args);
+    return make_shared<Equal>(false, args);
 }
 
 
 op_t
 NotImplies::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<NotImplies>(false, args[0], args[1]);
+    return make_shared<NotImplies>(false, args[0], args[1]);
 }
 
 
 op_t
 Implies::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<Implies>(false, args[0], args[1]);
+    return make_shared<Implies>(false, args[0], args[1]);
 }
 
 
 op_t
 NotIfThenElse::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<NotIfThenElse>(false, args[0], args[1], args[2]);
+    return make_shared<NotIfThenElse>(false, args[0], args[1], args[2]);
 }
 
 
 op_t
 IfThenElse::from_args(vector<bx_t> const && args) const
 {
-    return std::make_shared<IfThenElse>(false, args[0], args[1], args[2]);
+    return make_shared<IfThenElse>(false, args[0], args[1], args[2]);
 }
 
 
@@ -356,7 +362,7 @@ And::is_cnf() const
 {
     for (bx_t const & arg : args) {
         if (!IS_LIT(arg)
-                && !(IS_OR(arg) && std::static_pointer_cast<Or const>(arg)->is_clause())) {
+                && !(IS_OR(arg) && static_pointer_cast<Or const>(arg)->is_clause())) {
             return false;
         }
     }
@@ -397,7 +403,7 @@ Or::is_dnf() const
 {
     for (bx_t const & arg : args) {
         if (!IS_LIT(arg)
-                && !(IS_AND(arg) && std::static_pointer_cast<And const>(arg)->is_clause())) {
+                && !(IS_AND(arg) && static_pointer_cast<And const>(arg)->is_clause())) {
             return false;
         }
     }
@@ -417,19 +423,19 @@ And::is_dnf() const
 }
 
 
-std::unordered_set<var_t>
+unordered_set<var_t>
 BoolExpr::support() const
 {
     auto self = shared_from_this();
 
-    std::unordered_set<var_t> s;
+    unordered_set<var_t> s;
 
     for (auto it = dfs_iter(self); it != dfs_iter(); ++it) {
         if (IS_VAR(*it)) {
-            s.insert(std::static_pointer_cast<Variable const>(*it));
+            s.insert(static_pointer_cast<Variable const>(*it));
         }
         else if (IS_COMP(*it)) {
-            s.insert(std::static_pointer_cast<Variable const>(~*it));
+            s.insert(static_pointer_cast<Variable const>(~*it));
         }
     }
 
@@ -455,7 +461,7 @@ Operator::transform(std::function<bx_t(bx_t const &)> f) const
         return from_args(std::move(_args));
     }
 
-    return std::static_pointer_cast<Operator const>(shared_from_this());
+    return static_pointer_cast<Operator const>(shared_from_this());
 }
 
 
@@ -482,3 +488,6 @@ BoolExpr::derivative(vector<var_t> const & xs) const
     auto self = shared_from_this();
     return xor_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
 }
+
+
+} // namespace boolexpr

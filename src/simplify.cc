@@ -25,7 +25,10 @@
 #include "argset.h"
 
 
-using namespace boolexpr;
+using std::make_shared;
+
+
+namespace boolexpr {
 
 
 // Atoms are already simple
@@ -155,7 +158,7 @@ Implies::_simplify() const
         return q;
     }
 
-    return std::make_shared<Implies>(true, p, q);
+    return make_shared<Implies>(true, p, q);
 }
 
 
@@ -248,5 +251,8 @@ IfThenElse::_simplify() const
         return and_s({s, d1});
     }
 
-    return std::make_shared<IfThenElse>(true, s, d1, d0);
+    return make_shared<IfThenElse>(true, s, d1, d0);
 }
+
+
+} // namespace boolexpr

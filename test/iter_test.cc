@@ -26,9 +26,6 @@
 #include "boolexprtest.h"
 
 
-using namespace boolexpr;
-
-
 class IterTest : public BoolExprTest {};
 
 
@@ -38,7 +35,7 @@ TEST_F(IterTest, DFSIter)
     // but should only be yielded once by the DFS iterator.
     auto y = (~xs[0] & xs[1]) | (~xs[2] & xs[1]);
 
-    const string ans[] = {
+    const std::string ans[] = {
         "~x_0",
         "x_1",
         "And(~x_0, x_1)",

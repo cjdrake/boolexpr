@@ -24,36 +24,42 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::make_shared;
+
+
+namespace boolexpr {
 
 
 zero_t
-boolexpr::zero()
+zero()
 {
-    static auto _zero = std::make_shared<Zero>();
+    static auto _zero = make_shared<Zero>();
     return _zero;
 }
 
 
 one_t
-boolexpr::one()
+one()
 {
-    static auto _one = std::make_shared<One>();
+    static auto _one = make_shared<One>();
     return _one;
 }
 
 
 log_t
-boolexpr::logical()
+logical()
 {
-    static auto _log = std::make_shared<Logical>();
+    static auto _log = make_shared<Logical>();
     return _log;
 }
 
 
 ill_t
-boolexpr::illogical()
+illogical()
 {
-    static auto _ill = std::make_shared<Illogical>();
+    static auto _ill = make_shared<Illogical>();
     return _ill;
 }
+
+
+} // namespace boolexpr

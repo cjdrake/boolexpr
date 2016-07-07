@@ -24,7 +24,11 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::static_pointer_cast;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 dfs_iter::dfs_iter()
@@ -56,7 +60,7 @@ dfs_iter::advance_one()
             }
             else {
                 colors[item] = Color::GRAY;
-                auto op = std::static_pointer_cast<Operator const>(item);
+                auto op = static_pointer_cast<Operator const>(item);
                 for (auto it = op->args.crbegin(); it != op->args.crend(); ++it) {
                     stack.push_back(*it);
                     colors.insert({*it, Color::WHITE});
@@ -305,3 +309,6 @@ cf_iter::operator++()
     cf = f->restrict_(*it);
     return *this;
 }
+
+
+} // namespace boolexpr

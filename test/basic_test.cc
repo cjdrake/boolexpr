@@ -26,9 +26,6 @@
 #include "boolexprtest.h"
 
 
-using namespace boolexpr;
-
-
 TEST_F(BoolExprTest, Basic)
 {
     EXPECT_EQ(ctx.get_var("x_0"), xs[0]);

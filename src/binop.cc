@@ -24,7 +24,10 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 bx_t
@@ -205,3 +208,6 @@ IfThenElse::to_binop() const
 {
     return transform([](bx_t const & bx){return bx->to_binop();});
 }
+
+
+} // namespace boolexpr

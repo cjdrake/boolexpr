@@ -24,7 +24,10 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::vector;
+
+
+namespace boolexpr {
 
 
 bx_t
@@ -163,3 +166,6 @@ NotIfThenElse::to_posop() const
 
     return ite(s, d1n, d0n);
 }
+
+
+} // namespace boolexpr

@@ -24,7 +24,7 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+namespace boolexpr {
 
 
 bool
@@ -34,3 +34,6 @@ BoolExpr::equiv(bx_t const & other) const
     auto soln = (self ^ other)->sat();
     return !soln.first;
 }
+
+
+} // namespace boolexpr

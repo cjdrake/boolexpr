@@ -47,7 +47,7 @@ protected:
     void insert(bx_t const &);
 
 public:
-    LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
+    LatticeArgSet(std::vector<bx_t> const & args, BoolExpr::Kind const & kind,
                   bx_t const & identity, bx_t const & dominator);
     bx_t reduce() const;
 };
@@ -59,7 +59,7 @@ protected:
     bx_t to_op() const;
 
 public:
-    OrArgSet(vector<bx_t> const & args);
+    OrArgSet(std::vector<bx_t> const & args);
 };
 
 
@@ -69,7 +69,7 @@ protected:
     bx_t to_op() const;
 
 public:
-    AndArgSet(vector<bx_t> const & args);
+    AndArgSet(std::vector<bx_t> const & args);
 };
 
 
@@ -84,7 +84,7 @@ protected:
     bx_t to_op() const;
 
 public:
-    XorArgSet(vector<bx_t> const & args);
+    XorArgSet(std::vector<bx_t> const & args);
     bx_t reduce() const;
 };
 
@@ -101,7 +101,7 @@ protected:
     bx_t to_op() const;
 
 public:
-    EqArgSet(vector<bx_t> const & args);
+    EqArgSet(std::vector<bx_t> const & args);
     bx_t reduce() const;
 };
 

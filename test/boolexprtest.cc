@@ -26,9 +26,6 @@
 #include "boolexprtest.h"
 
 
-using namespace boolexpr;
-
-
 BoolExprTest::BoolExprTest()
     : _zero {zero()}
     , _one {one()}

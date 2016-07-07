@@ -24,7 +24,10 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::static_pointer_cast;
+
+
+namespace boolexpr {
 
 
 bx_t
@@ -38,7 +41,7 @@ bx_t
 Complement::restrict_(point_t const & point) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(~self);
+    auto x = static_pointer_cast<Variable const>(~self);
     auto search = point.find(x);
     return (search == point.end()) ? self : ~(search->second);
 }
@@ -48,7 +51,7 @@ bx_t
 Variable::restrict_(point_t const & point) const
 {
     auto self = shared_from_this();
-    auto x = std::static_pointer_cast<Variable const>(self);
+    auto x = static_pointer_cast<Variable const>(self);
     auto search = point.find(x);
     return (search == point.end()) ? self : search->second;
 }
@@ -60,3 +63,6 @@ Operator::restrict_(point_t const & point) const
     auto f = [&point] (bx_t const & bx) { return bx->restrict_(point); };
     return transform(f)->simplify();
 }
+
+
+} // namespace boolexpr

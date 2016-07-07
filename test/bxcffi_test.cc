@@ -26,9 +26,6 @@
 #include "boolexprtest.h"
 
 
-using namespace boolexpr;
-
-
 TEST(CFFI, Basic)
 {
     auto zero = boolexpr_zero();

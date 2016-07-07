@@ -58,10 +58,6 @@
 namespace boolexpr {
 
 
-using std::string;
-using std::vector;
-
-
 // Forward declarations
 class Context;
 class BoolExpr;
@@ -106,17 +102,17 @@ class Context
 
     id_t id;
 
-    std::unordered_map<string, var_t> vars;
-    std::unordered_map<id_t, string> id2name;
+    std::unordered_map<std::string, var_t> vars;
+    std::unordered_map<id_t, std::string> id2name;
     std::unordered_map<id_t, lit_t> id2lit;
 
-    string get_name(id_t id) const;
+    std::string get_name(id_t id) const;
     lit_t get_lit(id_t id) const;
 
 public:
     Context();
 
-    var_t get_var(string name);
+    var_t get_var(std::string name);
 };
 
 
@@ -156,7 +152,7 @@ public:
 
     BoolExpr(Kind kind);
 
-    string to_string() const;
+    std::string to_string() const;
 
     virtual uint32_t depth() const = 0;
     virtual uint32_t size() const = 0;
@@ -170,7 +166,7 @@ public:
     virtual bx_t to_dnf() const = 0;
     virtual bx_t to_latop() const = 0;
     virtual bx_t to_posop() const = 0;
-    virtual bx_t tseytin(Context&, string const & = "a") const = 0;
+    virtual bx_t tseytin(Context&, std::string const & = "a") const = 0;
 
     virtual bx_t compose(var2bx_t const &) const = 0;
     virtual bx_t restrict_(point_t const &) const = 0;
@@ -182,9 +178,9 @@ public:
     bool equiv(bx_t const &) const;
     std::unordered_set<var_t> support() const;
 
-    bx_t smoothing(vector<var_t> const &) const;
-    bx_t consensus(vector<var_t> const &) const;
-    bx_t derivative(vector<var_t> const &) const;
+    bx_t smoothing(std::vector<var_t> const &) const;
+    bx_t consensus(std::vector<var_t> const &) const;
+    bx_t derivative(std::vector<var_t> const &) const;
 };
 
 
@@ -203,7 +199,7 @@ public:
     bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
-    bx_t tseytin(Context&, string const & = "a") const;
+    bx_t tseytin(Context&, std::string const & = "a") const;
 };
 
 
@@ -337,26 +333,26 @@ public:
 
 class Operator : public BoolExpr
 {
-    var_t to_con1(Context&, string const &, uint32_t&, var2op_t&) const;
-    op_t  to_con2(Context&, string const &, uint32_t&, var2op_t&) const;
+    var_t to_con1(Context&, std::string const &, uint32_t&, var2op_t&) const;
+    op_t  to_con2(Context&, std::string const &, uint32_t&, var2op_t&) const;
 
 protected:
     std::ostream& op_lsh(std::ostream&) const;
     soln_t _sat() const;
 
-    virtual string const opname() const = 0;
+    virtual std::string const opname() const = 0;
     virtual bx_t _simplify() const = 0;
     virtual bx_t eqvar(var_t const &) const = 0;
-    virtual op_t from_args(vector<bx_t> const &&) const = 0;
+    virtual op_t from_args(std::vector<bx_t> const &&) const = 0;
 
     op_t transform(std::function<bx_t(bx_t const &)>) const;
 
 public:
     bool const simple;
-    vector<bx_t> const args;
+    std::vector<bx_t> const args;
 
-    Operator(Kind kind, bool simple, vector<bx_t> const & args);
-    Operator(Kind kind, bool simple, vector<bx_t> const && args);
+    Operator(Kind kind, bool simple, std::vector<bx_t> const & args);
+    Operator(Kind kind, bool simple, std::vector<bx_t> const && args);
 
     uint32_t depth() const;
     uint32_t size() const;
@@ -364,7 +360,7 @@ public:
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t simplify() const;
-    bx_t tseytin(Context&, string const & = "a") const;
+    bx_t tseytin(Context&, std::string const & = "a") const;
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
 
@@ -375,7 +371,7 @@ public:
 class LatticeOperator : public Operator
 {
 public:
-    LatticeOperator(Kind kind, bool simple, vector<bx_t> const & args);
+    LatticeOperator(Kind kind, bool simple, std::vector<bx_t> const & args);
 
     bx_t to_latop() const;
 };
@@ -386,13 +382,13 @@ class Nor : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Nor(bool simple, vector<bx_t> const & args);
+    Nor(bool simple, std::vector<bx_t> const & args);
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
@@ -407,14 +403,14 @@ class Or : public LatticeOperator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Or(bool simple, vector<bx_t> const & args);
-    Or(bool simple, vector<bx_t> const && args);
+    Or(bool simple, std::vector<bx_t> const & args);
+    Or(bool simple, std::vector<bx_t> const && args);
 
     static bx_t identity();
     static bx_t dominator();
@@ -433,13 +429,13 @@ class Nand : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Nand(bool simple, vector<bx_t> const & args);
+    Nand(bool simple, std::vector<bx_t> const & args);
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
@@ -454,14 +450,14 @@ class And : public LatticeOperator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    And(bool simple, vector<bx_t> const & args);
-    And(bool simple, vector<bx_t> const && args);
+    And(bool simple, std::vector<bx_t> const & args);
+    And(bool simple, std::vector<bx_t> const && args);
 
     static bx_t identity();
     static bx_t dominator();
@@ -480,13 +476,13 @@ class Xnor : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Xnor(bool simple, vector<bx_t> const & args);
+    Xnor(bool simple, std::vector<bx_t> const & args);
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
@@ -501,14 +497,14 @@ class Xor : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(const vector<bx_t>&&) const;
+    op_t from_args(const std::vector<bx_t>&&) const;
 
 public:
-    Xor(bool simple, vector<bx_t> const & args);
-    Xor(bool simple, vector<bx_t> const && args);
+    Xor(bool simple, std::vector<bx_t> const & args);
+    Xor(bool simple, std::vector<bx_t> const && args);
 
     static bx_t identity();
 
@@ -525,13 +521,13 @@ class Unequal : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Unequal(bool simple, vector<bx_t> const & args);
+    Unequal(bool simple, std::vector<bx_t> const & args);
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
@@ -546,14 +542,14 @@ class Equal : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Equal(bool simple, vector<bx_t> const & args) : Operator(EQ, simple, args) {}
-    Equal(bool simple, vector<bx_t> const && args) : Operator(EQ, simple, args) {}
+    Equal(bool simple, std::vector<bx_t> const & args) : Operator(EQ, simple, args) {}
+    Equal(bool simple, std::vector<bx_t> const && args) : Operator(EQ, simple, args) {}
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
@@ -568,10 +564,10 @@ class NotImplies : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
@@ -589,10 +585,10 @@ class Implies : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     Implies(bool simple, bx_t p, bx_t q);
@@ -610,10 +606,10 @@ class NotIfThenElse : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -631,10 +627,10 @@ class IfThenElse : public Operator
 protected:
     bx_t invert() const;
 
-    string const opname() const;
+    std::string const opname() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(vector<bx_t> const &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
@@ -659,20 +655,20 @@ class Array
     friend Array * operator*(size_t, Array const &);
 
 private:
-    vector<bx_t> items;
+    std::vector<bx_t> items;
 
 public:
     Array();
-    Array(vector<bx_t> const &);
-    Array(vector<bx_t> const &&);
+    Array(std::vector<bx_t> const &);
+    Array(std::vector<bx_t> const &&);
     Array(std::initializer_list<bx_t> const items);
 
     bx_t const & operator[](size_t) const;
     bx_t & operator[](size_t);
 
     size_t size() const;
-    vector<bx_t>::const_iterator begin() const;
-    vector<bx_t>::const_iterator end() const;
+    std::vector<bx_t>::const_iterator begin() const;
+    std::vector<bx_t>::const_iterator end() const;
 
     Array * compose(var2bx_t const &) const;
     Array * restrict_(point_t const &) const;
@@ -696,7 +692,7 @@ class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
     enum class Color { WHITE, GRAY, BLACK };
 
     std::unordered_map<bx_t, Color> colors;
-    vector<bx_t> stack;
+    std::vector<bx_t> stack;
 
     bx_t const * p;
 
@@ -739,10 +735,10 @@ public:
 };
 
 
-class space_iter : public std::iterator<std::input_iterator_tag, vector<bool>>
+class space_iter : public std::iterator<std::input_iterator_tag, std::vector<bool>>
 {
     size_t n;
-    vector<bool> counter;
+    std::vector<bool> counter;
 
 public:
     space_iter();
@@ -750,7 +746,7 @@ public:
 
     bool operator==(space_iter const &) const;
     bool operator!=(space_iter const &) const;
-    vector<bool> const & operator*() const;
+    std::vector<bool> const & operator*() const;
     space_iter const & operator++();
     bool parity() const;
 };
@@ -759,13 +755,13 @@ public:
 class points_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
     space_iter it;
-    vector<var_t> vars;
+    std::vector<var_t> vars;
 
     point_t point;
 
 public:
     points_iter();
-    points_iter(vector<var_t> const &);
+    points_iter(std::vector<var_t> const &);
 
     bool operator==(points_iter const &) const;
     bool operator!=(points_iter const &) const;
@@ -798,7 +794,7 @@ class cf_iter : public std::iterator<std::input_iterator_tag, bx_t>
 
 public:
     cf_iter();
-    cf_iter(bx_t const &, vector<var_t> const &);
+    cf_iter(bx_t const &, std::vector<var_t> const &);
 
     bool operator==(cf_iter const &) const;
     bool operator!=(cf_iter const &) const;
@@ -818,65 +814,65 @@ log_t logical();
 
 ill_t illogical();
 
-bx_t nor(vector<bx_t> const &);
-bx_t nor(vector<bx_t> const &&);
+bx_t nor(std::vector<bx_t> const &);
+bx_t nor(std::vector<bx_t> const &&);
 bx_t nor(std::initializer_list<bx_t> const);
-bx_t or_(vector<bx_t> const &);
-bx_t or_(vector<bx_t> const &&);
+bx_t or_(std::vector<bx_t> const &);
+bx_t or_(std::vector<bx_t> const &&);
 bx_t or_(std::initializer_list<bx_t> const);
-bx_t nand(vector<bx_t> const &);
-bx_t nand(vector<bx_t> const &&);
+bx_t nand(std::vector<bx_t> const &);
+bx_t nand(std::vector<bx_t> const &&);
 bx_t nand(std::initializer_list<bx_t> const);
-bx_t and_(vector<bx_t> const &);
-bx_t and_(vector<bx_t> const &&);
+bx_t and_(std::vector<bx_t> const &);
+bx_t and_(std::vector<bx_t> const &&);
 bx_t and_(std::initializer_list<bx_t> const);
-bx_t xnor(vector<bx_t> const &);
-bx_t xnor(vector<bx_t> const &&);
+bx_t xnor(std::vector<bx_t> const &);
+bx_t xnor(std::vector<bx_t> const &&);
 bx_t xnor(std::initializer_list<bx_t> const);
-bx_t xor_(vector<bx_t> const &);
-bx_t xor_(vector<bx_t> const &&);
+bx_t xor_(std::vector<bx_t> const &);
+bx_t xor_(std::vector<bx_t> const &&);
 bx_t xor_(std::initializer_list<bx_t> const);
-bx_t neq(vector<bx_t> const &);
-bx_t neq(vector<bx_t> const &&);
+bx_t neq(std::vector<bx_t> const &);
+bx_t neq(std::vector<bx_t> const &&);
 bx_t neq(std::initializer_list<bx_t> const);
-bx_t eq(vector<bx_t> const &);
-bx_t eq(vector<bx_t> const &&);
+bx_t eq(std::vector<bx_t> const &);
+bx_t eq(std::vector<bx_t> const &&);
 bx_t eq(std::initializer_list<bx_t> const);
 bx_t nimpl(bx_t const &, bx_t const &);
 bx_t impl(bx_t const &, bx_t const &);
 bx_t nite(bx_t const &, bx_t const &, bx_t const &);
 bx_t ite(bx_t const &, bx_t const &, bx_t const &);
 
-bx_t onehot0(vector<bx_t> const &);
-bx_t onehot0(vector<bx_t> const &&);
+bx_t onehot0(std::vector<bx_t> const &);
+bx_t onehot0(std::vector<bx_t> const &&);
 bx_t onehot0(std::initializer_list<bx_t> const);
-bx_t onehot(vector<bx_t> const &);
-bx_t onehot(vector<bx_t> const &&);
+bx_t onehot(std::vector<bx_t> const &);
+bx_t onehot(std::vector<bx_t> const &&);
 bx_t onehot(std::initializer_list<bx_t> const);
 
-bx_t nor_s(vector<bx_t> const &);
-bx_t nor_s(vector<bx_t> const &&);
+bx_t nor_s(std::vector<bx_t> const &);
+bx_t nor_s(std::vector<bx_t> const &&);
 bx_t nor_s(std::initializer_list<bx_t> const);
-bx_t or_s(vector<bx_t> const &);
-bx_t or_s(vector<bx_t> const &&);
+bx_t or_s(std::vector<bx_t> const &);
+bx_t or_s(std::vector<bx_t> const &&);
 bx_t or_s(std::initializer_list<bx_t> const);
-bx_t nand_s(vector<bx_t> const &);
-bx_t nand_s(vector<bx_t> const &&);
+bx_t nand_s(std::vector<bx_t> const &);
+bx_t nand_s(std::vector<bx_t> const &&);
 bx_t nand_s(std::initializer_list<bx_t> const);
-bx_t and_s(vector<bx_t> const &);
-bx_t and_s(vector<bx_t> const &&);
+bx_t and_s(std::vector<bx_t> const &);
+bx_t and_s(std::vector<bx_t> const &&);
 bx_t and_s(std::initializer_list<bx_t> const);
-bx_t xnor_s(vector<bx_t> const &);
-bx_t xnor_s(vector<bx_t> const &&);
+bx_t xnor_s(std::vector<bx_t> const &);
+bx_t xnor_s(std::vector<bx_t> const &&);
 bx_t xnor_s(std::initializer_list<bx_t> const);
-bx_t xor_s(vector<bx_t> const &);
-bx_t xor_s(vector<bx_t> const &&);
+bx_t xor_s(std::vector<bx_t> const &);
+bx_t xor_s(std::vector<bx_t> const &&);
 bx_t xor_s(std::initializer_list<bx_t> const);
-bx_t neq_s(vector<bx_t> const &);
-bx_t neq_s(vector<bx_t> const &&);
+bx_t neq_s(std::vector<bx_t> const &);
+bx_t neq_s(std::vector<bx_t> const &&);
 bx_t neq_s(std::initializer_list<bx_t> const);
-bx_t eq_s(vector<bx_t> const &);
-bx_t eq_s(vector<bx_t> const &&);
+bx_t eq_s(std::vector<bx_t> const &);
+bx_t eq_s(std::vector<bx_t> const &&);
 bx_t eq_s(std::initializer_list<bx_t> const);
 bx_t nimpl_s(bx_t const &, bx_t const &);
 bx_t impl_s(bx_t const &, bx_t const &);

@@ -27,7 +27,38 @@
 #include "bxcffi.h"
 
 
-using namespace boolexpr;
+using std::static_pointer_cast;
+using std::string;
+using std::vector;
+
+using boolexpr::Array;
+using boolexpr::BoolExpr;
+using boolexpr::BoolExprProxy;
+using boolexpr::CofactorIterProxy;
+using boolexpr::Constant;
+using boolexpr::Context;
+using boolexpr::DfsIterProxy;
+using boolexpr::DomainIterProxy;
+using boolexpr::Literal;
+using boolexpr::LiteralProxy;
+using boolexpr::MapProxy;
+using boolexpr::Operator;
+using boolexpr::PointsIterProxy;
+using boolexpr::SatIterProxy;
+using boolexpr::SetProxy;
+using boolexpr::SolnProxy;
+using boolexpr::Variable;
+using boolexpr::VecProxy;
+
+using boolexpr::bx_t;
+using boolexpr::const_t;
+using boolexpr::illogical;
+using boolexpr::logical;
+using boolexpr::one;
+using boolexpr::point_t;
+using boolexpr::var_t;
+using boolexpr::var2bx_t;
+using boolexpr::zero;
 
 
 CONTEXT
@@ -49,10 +80,10 @@ BX
 boolexpr_Context_get_var(CONTEXT c_self, STRING c_name)
 {
     auto self = reinterpret_cast<Context * const>(c_self);
-    std::string name { c_name };
+    string name { c_name };
 
     auto var = self->get_var(name);
-    auto bx = std::static_pointer_cast<BoolExpr const>(var);
+    auto bx = static_pointer_cast<BoolExpr const>(var);
     return new BoolExprProxy(bx);
 }
 
@@ -263,7 +294,7 @@ boolexpr_PointsIter_new(size_t n, VARS c_varps)
     vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         vars[i] = var;
     }
     return new PointsIterProxy(vars);
@@ -333,7 +364,7 @@ boolexpr_CofactorIter_new(BX c_bxp, size_t n, VARS c_varps)
     vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         vars[i] = var;
     }
     return new CofactorIterProxy(bxp->bx, vars);
@@ -366,19 +397,30 @@ boolexpr_CofactorIter_val(CF_ITER c_self)
 
 BX
 boolexpr_zero()
-{ return new BoolExprProxy(zero()); }
+{
+    return new BoolExprProxy(zero());
+}
+
 
 BX
 boolexpr_one()
-{ return new BoolExprProxy(one()); }
+{
+    return new BoolExprProxy(one());
+}
+
 
 BX
 boolexpr_logical()
-{ return new BoolExprProxy(logical()); }
+{
+    return new BoolExprProxy(logical());
+}
+
 
 BX
 boolexpr_illogical()
-{ return new BoolExprProxy(illogical()); }
+{
+    return new BoolExprProxy(illogical());
+}
 
 
 BX
@@ -648,7 +690,7 @@ boolexpr_BoolExpr_tseytin(BX c_self, CONTEXT c_ctx, STRING c_auxvarname)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
     auto ctx = reinterpret_cast<Context * const>(c_ctx);
-    std::string auxvarname { c_auxvarname };
+    string auxvarname { c_auxvarname };
     return new BoolExprProxy(self->bx->tseytin(*ctx, auxvarname));
 }
 
@@ -661,7 +703,7 @@ boolexpr_BoolExpr_compose(BX c_self, size_t n, VARS c_varps, BXS c_bxps)
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
         auto bxp = reinterpret_cast<BoolExprProxy const * const>(c_bxps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         auto bx = bxp->bx;
         var2bx.insert({var, bx});
     }
@@ -677,8 +719,8 @@ boolexpr_BoolExpr_restrict(BX c_self, size_t n, VARS c_varps, CONSTS c_constps)
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
         auto constp = reinterpret_cast<BoolExprProxy const * const>(c_constps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
-        auto const_ = std::static_pointer_cast<Constant const>(constp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
+        auto const_ = static_pointer_cast<Constant const>(constp->bx);
         point.insert({var, const_});
     }
     return new BoolExprProxy(self->bx->restrict_(point));
@@ -741,7 +783,7 @@ boolexpr_BoolExpr_smoothing(BX c_self, size_t n, VARS c_varps)
     vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         vars[i] = var;
     }
     return new BoolExprProxy(self->bx->smoothing(vars));
@@ -755,7 +797,7 @@ boolexpr_BoolExpr_consensus(BX c_self, size_t n, VARS c_varps)
     vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         vars[i] = var;
     }
     return new BoolExprProxy(self->bx->consensus(vars));
@@ -769,7 +811,7 @@ boolexpr_BoolExpr_derivative(BX c_self, size_t n, VARS c_varps)
     vector<var_t> vars(n);
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         vars[i] = var;
     }
     return new BoolExprProxy(self->bx->derivative(vars));
@@ -780,7 +822,7 @@ CONTEXT
 boolexpr_Literal_ctx(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
-    auto lit = std::static_pointer_cast<Literal const>(self->bx);
+    auto lit = static_pointer_cast<Literal const>(self->bx);
     return lit->ctx;
 }
 
@@ -789,7 +831,7 @@ uint32_t
 boolexpr_Literal_id(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
-    auto lit = std::static_pointer_cast<Literal const>(self->bx);
+    auto lit = static_pointer_cast<Literal const>(self->bx);
     return lit->id;
 }
 
@@ -798,7 +840,7 @@ bool
 boolexpr_Operator_simple(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
-    auto op = std::static_pointer_cast<Operator const>(self->bx);
+    auto op = static_pointer_cast<Operator const>(self->bx);
     return op->simple;
 }
 
@@ -807,7 +849,7 @@ VEC
 boolexpr_Operator_args(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
-    auto op = std::static_pointer_cast<Operator const>(self->bx);
+    auto op = static_pointer_cast<Operator const>(self->bx);
     return new VecProxy<bx_t>(op->args);
 }
 
@@ -816,7 +858,7 @@ bool
 boolexpr_Operator_is_clause(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
-    auto op = std::static_pointer_cast<Operator const>(self->bx);
+    auto op = static_pointer_cast<Operator const>(self->bx);
     return op->is_clause();
 }
 
@@ -934,7 +976,7 @@ boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
         auto bxp = reinterpret_cast<BoolExprProxy const * const>(c_bxps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
         auto bx = bxp->bx;
         var2bx.insert({var, bx});
     }
@@ -950,8 +992,8 @@ boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
     for (size_t i = 0; i < n; ++i) {
         auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
         auto constp = reinterpret_cast<BoolExprProxy const * const>(c_constps[i]);
-        auto var = std::static_pointer_cast<Variable const>(varp->bx);
-        auto const_ = std::static_pointer_cast<Constant const>(constp->bx);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
+        auto const_ = static_pointer_cast<Constant const>(constp->bx);
         point.insert({var, const_});
     }
     return self->restrict_(point);

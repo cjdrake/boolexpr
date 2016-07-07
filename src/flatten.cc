@@ -25,23 +25,28 @@
 #include "boolexpr/boolexpr.h"
 
 
-using namespace boolexpr;
+using std::set;
+using std::static_pointer_cast;
+using std::vector;
 
 
-static vector<std::set<lit_t>>
+namespace boolexpr {
+
+
+static vector<set<lit_t>>
 _twolvl2clauses(lop_t const & lop)
 {
-    vector<std::set<lit_t>> clauses;
+    vector<set<lit_t>> clauses;
 
     for (bx_t const & arg : lop->args) {
-        std::set<lit_t> clause;
+        set<lit_t> clause;
         if (IS_LIT(arg)) {
-            clause.insert(std::static_pointer_cast<Literal const>(arg));
+            clause.insert(static_pointer_cast<Literal const>(arg));
         }
         else {
-            auto op = std::static_pointer_cast<Operator const>(arg);
+            auto op = static_pointer_cast<Operator const>(arg);
             for (bx_t const & subarg : op->args) {
-                clause.insert(std::static_pointer_cast<Literal const>(subarg));
+                clause.insert(static_pointer_cast<Literal const>(subarg));
             }
         }
         clauses.push_back(std::move(clause));
@@ -61,7 +66,7 @@ _twolvl2clauses(lop_t const & lop)
 #define YS_LTE_XS (1u << 1)
 
 static uint8_t
-_lits_cmp(std::set<lit_t> const & xs, std::set<lit_t> const & ys)
+_lits_cmp(set<lit_t> const & xs, set<lit_t> const & ys)
 {
     uint8_t ret = XS_LTE_YS | YS_LTE_XS;
 
@@ -100,8 +105,8 @@ _lits_cmp(std::set<lit_t> const & xs, std::set<lit_t> const & ys)
 }
 
 
-static vector<std::set<lit_t>>
-_absorb(vector<std::set<lit_t>> const && clauses)
+static vector<set<lit_t>>
+_absorb(vector<set<lit_t>> const && clauses)
 {
     if (clauses.size() == 0) {
         return std::move(clauses);
@@ -136,7 +141,7 @@ _absorb(vector<std::set<lit_t>> const && clauses)
         return std::move(clauses);
     }
 
-    vector<std::set<lit_t>> kept_clauses;
+    vector<set<lit_t>> kept_clauses;
     for (size_t i = 0; i < clauses.size(); ++i) {
         if (keep[i]) {
             kept_clauses.push_back(clauses[i]);
@@ -148,16 +153,16 @@ _absorb(vector<std::set<lit_t>> const && clauses)
 
 
 // NOTE: Return size is MxN
-static vector<std::set<lit_t>>
-_product(vector<std::set<lit_t>> const & clauses)
+static vector<set<lit_t>>
+_product(vector<set<lit_t>> const & clauses)
 {
-    vector<std::set<lit_t>> product {{}};
+    vector<set<lit_t>> product {{}};
 
     for (auto const & clause : clauses) {
-        vector<std::set<lit_t>> newprod;
+        vector<set<lit_t>> newprod;
         for (auto const & factor : product) {
             for (lit_t const & x : clause) {
-                auto xn = std::static_pointer_cast<Literal const>(~x);
+                auto xn = static_pointer_cast<Literal const>(~x);
                 if (factor.find(xn) == factor.end()) {
                     newprod.push_back(factor);
                     newprod.back().insert(x);
@@ -195,7 +200,7 @@ Or::to_cnf() const
         return bx;
     }
 
-    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+    auto lop = static_pointer_cast<LatticeOperator const>(bx);
 
     if (lop->is_clause()) {
         return lop;
@@ -228,7 +233,7 @@ And::to_cnf() const
         return bx;
     }
 
-    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+    auto lop = static_pointer_cast<LatticeOperator const>(bx);
 
     if (lop->is_clause()) {
         return lop;
@@ -370,7 +375,7 @@ Or::to_dnf() const
         return bx;
     }
 
-    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+    auto lop = static_pointer_cast<LatticeOperator const>(bx);
 
     if (lop->is_clause()) {
         return lop;
@@ -403,7 +408,7 @@ And::to_dnf() const
         return bx;
     }
 
-    auto lop = std::static_pointer_cast<LatticeOperator const>(bx);
+    auto lop = static_pointer_cast<LatticeOperator const>(bx);
 
     if (lop->is_clause()) {
         return lop;
@@ -519,3 +524,6 @@ IfThenElse::to_dnf() const
 
     return ((s & d1) | (~s & d0))->to_dnf();
 }
+
+
+} // namespace boolexpr
