@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 #include "argset.h"
@@ -33,8 +33,10 @@ using std::vector;
 namespace boolexpr {
 
 
-LatticeArgSet::LatticeArgSet(vector<bx_t> const & args, BoolExpr::Kind const & kind,
-                             bx_t const & identity, bx_t const & dominator)
+LatticeArgSet::LatticeArgSet(vector<bx_t> const & args,
+                             BoolExpr::Kind const & kind,
+                             bx_t const & identity,
+                             bx_t const & dominator)
     : state {State::infimum}
     , kind {kind}
     , identity {identity}
@@ -50,12 +52,12 @@ void
 LatticeArgSet::insert(bx_t const & arg)
 {
     switch (state) {
-
         case State::infimum:
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
+            else if (ARE_SAME(arg, dominator)
+                         || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
             }
             else if (IS_LOG(arg)) {
@@ -77,7 +79,8 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
+            else if (ARE_SAME(arg, dominator)
+                         || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
             }
             else if (IS_LOG(arg)) {
@@ -98,7 +101,8 @@ LatticeArgSet::insert(bx_t const & arg)
             if (IS_ILL(arg)) {
                 state = State::isill;
             }
-            else if (ARE_SAME(arg, dominator) || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
+            else if (ARE_SAME(arg, dominator)
+                         || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
             }
             else if (arg->kind == kind) {
@@ -195,7 +199,6 @@ void
 XorArgSet::insert(bx_t const & arg)
 {
     switch (state) {
-
         case State::basic:
             if (IS_ILL(arg)) {
                 state = State::isill;
@@ -215,14 +218,16 @@ XorArgSet::insert(bx_t const & arg)
                 args.erase(~arg);
                 parity ^= true;
             }
-            // xor(x, xor(y, z)) <=> xor(x, y, z) ; xnor(x, xor(y, z)) <=> xnor(x, y, z)
+            //  xor(x, xor(y, z)) <=>  xor(x, y, z)
+            // xnor(x, xor(y, z)) <=> xnor(x, y, z)
             else if (IS_XOR(arg)) {
                 auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
                     insert(_arg);
                 }
             }
-            // xor(x, xnor(y, z)) <=> xnor(x, y, z) ; xnor(x, xnor(y, z)) <=> xor(x, y, z)
+            //  xor(x, xnor(y, z)) <=> xnor(x, y, z)
+            // xnor(x, xnor(y, z)) <=>  xor(x, y, z)
             else if (IS_XNOR(arg)) {
                 auto op = static_pointer_cast<Operator const>(arg);
                 for (bx_t const & _arg : op->args) {
@@ -296,7 +301,6 @@ void
 EqArgSet::insert(bx_t const & arg)
 {
     switch (state) {
-
         case State::basic:
             if (IS_ILL(arg)) {
                 state = State::isill;
@@ -362,7 +366,8 @@ EqArgSet::reduce() const
     }
 
     // eq() <=> eq(0) <=> eq(1) <=> 1
-    if ((static_cast<size_t>(has_zero) + static_cast<size_t>(has_one) + args.size()) < 2) {
+    if ((static_cast<size_t>(has_zero)
+             + static_cast<size_t>(has_one) + args.size()) < 2) {
         return one();
     }
 
@@ -380,4 +385,4 @@ EqArgSet::reduce() const
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr

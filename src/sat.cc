@@ -13,14 +13,14 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <cassert>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -140,7 +140,7 @@ Operator::_sat() const
         }
     }
     else {
-        assert(false); // LCOV_EXCL_LINE
+        assert(false);  // LCOV_EXCL_LINE
     }
 
     auto sat = solver.solve();
@@ -246,7 +246,7 @@ sat_iter::sat_iter(bx_t const & bx)
         }
     }
     else {
-        assert(false); // LCOV_EXCL_LINE
+        assert(false);  // LCOV_EXCL_LINE
     }
 
     get_soln();
@@ -318,4 +318,4 @@ sat_iter::operator++()
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr

@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -50,13 +50,13 @@ Or::to_binop() const
 {
     size_t n = args.size();
 
-    if (n == 0) {              // LCOV_EXCL_LINE
-        return Or::identity(); // LCOV_EXCL_LINE
-    }                          // LCOV_EXCL_LINE
+    if (n == 0) {               // LCOV_EXCL_LINE
+        return Or::identity();  // LCOV_EXCL_LINE
+    }                           // LCOV_EXCL_LINE
 
-    if (n == 1) {                   // LCOV_EXCL_LINE
-        return args[0]->to_binop(); // LCOV_EXCL_LINE
-    }                               // LCOV_EXCL_LINE
+    if (n == 1) {                    // LCOV_EXCL_LINE
+        return args[0]->to_binop();  // LCOV_EXCL_LINE
+    }                                // LCOV_EXCL_LINE
 
     if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
@@ -85,13 +85,13 @@ And::to_binop() const
 {
     size_t n = args.size();
 
-    if (n == 0) {               // LCOV_EXCL_LINE
-        return And::identity(); // LCOV_EXCL_LINE
-    }                           // LCOV_EXCL_LINE
+    if (n == 0) {                // LCOV_EXCL_LINE
+        return And::identity();  // LCOV_EXCL_LINE
+    }                            // LCOV_EXCL_LINE
 
-    if (n == 1) {                   // LCOV_EXCL_LINE
-        return args[0]->to_binop(); // LCOV_EXCL_LINE
-    }                               // LCOV_EXCL_LINE
+    if (n == 1) {                    // LCOV_EXCL_LINE
+        return args[0]->to_binop();  // LCOV_EXCL_LINE
+    }                                // LCOV_EXCL_LINE
 
     if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
@@ -120,13 +120,13 @@ Xor::to_binop() const
 {
     size_t n = args.size();
 
-    if (n == 0) {               // LCOV_EXCL_LINE
-        return Xor::identity(); // LCOV_EXCL_LINE
-    }                           // LCOV_EXCL_LINE
+    if (n == 0) {                // LCOV_EXCL_LINE
+        return Xor::identity();  // LCOV_EXCL_LINE
+    }                            // LCOV_EXCL_LINE
 
-    if (n == 1) {                   // LCOV_EXCL_LINE
-        return args[0]->to_binop(); // LCOV_EXCL_LINE
-    }                               // LCOV_EXCL_LINE
+    if (n == 1) {                    // LCOV_EXCL_LINE
+        return args[0]->to_binop();  // LCOV_EXCL_LINE
+    }                                // LCOV_EXCL_LINE
 
     if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
@@ -155,9 +155,9 @@ Equal::to_binop() const
 {
     size_t n = args.size();
 
-    if (n < 2) {      // LCOV_EXCL_LINE
-        return one(); // LCOV_EXCL_LINE
-    }                 // LCOV_EXCL_LINE
+    if (n < 2) {       // LCOV_EXCL_LINE
+        return one();  // LCOV_EXCL_LINE
+    }                  // LCOV_EXCL_LINE
 
     if (n == 2) {
         return transform([](bx_t const & bx){return bx->to_binop();});
@@ -210,4 +210,4 @@ IfThenElse::to_binop() const
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr

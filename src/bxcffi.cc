@@ -13,15 +13,15 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <cassert>
 #include <cstring>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 #include "bxcffi.h"
@@ -615,7 +615,7 @@ boolexpr_BoolExpr_to_string(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
     auto str = self->bx->to_string();
-    auto c_str = new char [str.length() + 1];
+    auto c_str = new char[str.length() + 1];
     std::strcpy(c_str, str.c_str());
     return c_str;
 }

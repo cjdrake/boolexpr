@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -96,13 +96,13 @@ NotIfThenElse::to_latop() const
 bx_t
 Xor::to_latop() const
 {
-    if (args.size() == 0) {     // LCOV_EXCL_LINE
-        return Xor::identity(); // LCOV_EXCL_LINE
-    }                           // LCOV_EXCL_LINE
+    if (args.size() == 0) {      // LCOV_EXCL_LINE
+        return Xor::identity();  // LCOV_EXCL_LINE
+    }                            // LCOV_EXCL_LINE
 
-    if (args.size() == 1) {         // LCOV_EXCL_LINE
-        return args[0]->to_latop(); // LCOV_EXCL_LINE
-    }                               // LCOV_EXCL_LINE
+    if (args.size() == 1) {          // LCOV_EXCL_LINE
+        return args[0]->to_latop();  // LCOV_EXCL_LINE
+    }                                // LCOV_EXCL_LINE
 
     if (args.size() == 2) {
         // x0 ^ x1 <=> ~x0 & x1 | x0 & ~x1
@@ -160,4 +160,4 @@ IfThenElse::to_latop() const
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr

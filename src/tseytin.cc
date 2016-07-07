@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -353,7 +353,13 @@ NotIfThenElse::eqvar(var_t const & x) const
     auto d1 = args[1];
     auto d0 = args[2];
 
-    return and_s({(~x | ~s | ~d1), (~x | s | ~d0), (x | ~s | d1), (x | s | d0), (x | d1 | d0)});
+    return and_s({
+               (~x | ~s | ~d1),
+               (~x | s | ~d0),
+               (x | ~s | d1),
+               (x | s | d0),
+               (x | d1 | d0),
+           });
 }
 
 
@@ -364,8 +370,14 @@ IfThenElse::eqvar(var_t const & x) const
     auto d1 = args[1];
     auto d0 = args[2];
 
-    return and_s({(x | ~s | ~d1), (x | s | ~d0), (~x | ~s | d1), (~x | s | d0), (~x | d1 | d0)});
+    return and_s({
+               (x | ~s | ~d1),
+               (x | s | ~d0),
+               (~x | ~s | d1),
+               (~x | s | d0),
+               (~x | d1 |  d0),
+           });
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr

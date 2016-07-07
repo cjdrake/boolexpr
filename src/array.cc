@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -257,7 +257,6 @@ Array::restrict_(point_t const & point) const
 bool
 Array::equiv(Array const & other) const
 {
-
     if (this->items.size() != other.items.size()) {
         return false;
     }
@@ -413,4 +412,4 @@ Array::arsh(size_t n) const
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr

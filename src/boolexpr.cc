@@ -13,13 +13,13 @@
 // limitations under the License.
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>
+
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>
 
 #include "boolexpr/boolexpr.h"
 
@@ -110,7 +110,8 @@ Operator::Operator(Kind kind, bool simple, vector<bx_t> const && args)
 {}
 
 
-LatticeOperator::LatticeOperator(Kind kind, bool simple, vector<bx_t> const & args)
+LatticeOperator::LatticeOperator(Kind kind, bool simple,
+                                 vector<bx_t> const & args)
     : Operator(kind, simple, args)
 {}
 
@@ -361,8 +362,7 @@ bool
 And::is_cnf() const
 {
     for (bx_t const & arg : args) {
-        if (!IS_LIT(arg)
-                && !(IS_OR(arg) && static_pointer_cast<Or const>(arg)->is_clause())) {
+        if (!IS_LIT(arg) && !(IS_OR(arg) && static_pointer_cast<Or const>(arg)->is_clause())) {
             return false;
         }
     }
@@ -402,8 +402,7 @@ bool
 Or::is_dnf() const
 {
     for (bx_t const & arg : args) {
-        if (!IS_LIT(arg)
-                && !(IS_AND(arg) && static_pointer_cast<And const>(arg)->is_clause())) {
+        if (!IS_LIT(arg) && !(IS_AND(arg) && static_pointer_cast<And const>(arg)->is_clause())) {
             return false;
         }
     }
@@ -490,4 +489,4 @@ BoolExpr::derivative(vector<var_t> const & xs) const
 }
 
 
-} // namespace boolexpr
+}  // namespace boolexpr
