@@ -20,6 +20,21 @@
 #ifdef __cplusplus
 
 
+#include <boost/optional.hpp>
+#include <cryptominisat4/cryptominisat.h>  // SATSolver, lbool
+
+#include <functional>  // function
+#include <initializer_list>
+#include <iterator>
+#include <memory>  // enable_shared_from_this, shared_ptr
+#include <ostream>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>  // pair
+#include <vector>
+
+
 // Kind checks
 #define IS_ZERO(expr)  ((expr)->kind == boolexpr::BoolExpr::ZERO)
 #define IS_ONE(expr)   ((expr)->kind == boolexpr::BoolExpr::ONE)
