@@ -122,12 +122,15 @@ Operator::_sat() const
                 auto index = lit2idx.find(arg)->second;
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
-            else {
+            else if (IS_OP(arg)) {
                 auto or_op = static_pointer_cast<Or const>(arg);
                 for (bx_t const & lit : or_op->args) {
                     auto index = lit2idx.find(lit)->second;
                     clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
                 }
+            }
+            else {
+                assert(false);
             }
             solver.add_clause(std::move(clause));
         }
@@ -228,12 +231,15 @@ sat_iter::sat_iter(bx_t const & bx)
                 auto index = lit2idx.find(arg)->second;
                 clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
             }
-            else {
+            else if (IS_OP(arg)) {
                 auto or_op = static_pointer_cast<Or const>(arg);
                 for (bx_t const & lit : or_op->args) {
                     auto index = lit2idx.find(lit)->second;
                     clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
                 }
+            }
+            else {
+                assert(false);
             }
             solver.add_clause(std::move(clause));
         }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+#include <cassert>
 #include <set>
 
 #include "boolexpr/boolexpr.h"
@@ -36,11 +37,14 @@ _twolvl2clauses(lop_t const & lop)
         if (IS_LIT(arg)) {
             clause.insert(static_pointer_cast<Literal const>(arg));
         }
-        else {
+        else if (IS_OP(arg)) {
             auto op = static_pointer_cast<Operator const>(arg);
             for (bx_t const & subarg : op->args) {
                 clause.insert(static_pointer_cast<Literal const>(subarg));
             }
+        }
+        else {
+            assert(false);
         }
         clauses.push_back(std::move(clause));
     }
