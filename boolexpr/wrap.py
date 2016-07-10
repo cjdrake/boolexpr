@@ -1029,7 +1029,6 @@ def _var(ctx_num, name):
     ctx = ffi.cast("void *", ctx_num)
     return _bx(lib.boolexpr_Context_get_var(ctx, name.encode("ascii")))
 
-# pylint: disable=bad-builtin
 _AST = {
     BoolExpr.Kind.zero  : lambda _: ZERO,
     BoolExpr.Kind.one   : lambda _: ONE,
@@ -1050,7 +1049,6 @@ _AST = {
     BoolExpr.Kind.nite  : lambda asts: nite(*map(BoolExpr.from_ast, asts)),
     BoolExpr.Kind.ite   : lambda asts: ite(*map(BoolExpr.from_ast, asts)),
 }
-# pylint: enable=bad-builtin
 
 
 def _expect_array(obj):
