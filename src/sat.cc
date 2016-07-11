@@ -13,8 +13,6 @@
 // limitations under the License.
 
 
-#include <cassert>
-
 #include "boolexpr/boolexpr.h"
 
 
@@ -29,6 +27,59 @@ using CMSat::lbool;
 
 
 namespace boolexpr {
+
+
+void
+encode_cmsat(std::unordered_map<uint32_t, var_t> & idx2var,
+             CMSat::SATSolver & solver,
+             bx_t bx)
+{
+    auto xs = bx->support();
+    unordered_map<lit_t, uint32_t> lit2idx;
+
+    uint32_t index = 0;
+    for (var_t const & x : xs) {
+        auto xn_lit = static_pointer_cast<Literal const>(~x);
+        auto  x_lit = static_pointer_cast<Literal const>( x);
+        lit2idx.insert({xn_lit, (index << 1) | 0u});
+        lit2idx.insert({ x_lit, (index << 1) | 1u});
+        idx2var.insert({index, x});
+        ++index;
+    }
+
+    solver.new_vars(xs.size());
+
+    if (IS_OR(bx)) {
+        vector<CMSat::Lit> clause;
+        auto or_op = static_pointer_cast<Or const>(bx);
+        for (bx_t const & arg : or_op->args) {
+            auto lit = static_pointer_cast<Literal const>(arg);
+            auto index = lit2idx.find(lit)->second;
+            clause.push_back(CMSat::Lit(index>>1, !(index&1u)));
+        }
+        solver.add_clause(std::move(clause));
+    }
+    else {
+        auto and_op = static_pointer_cast<And const>(bx);
+        for (bx_t const & arg : and_op->args) {
+            vector<CMSat::Lit> clause;
+            if (IS_OR(arg)) {
+                auto or_op = static_pointer_cast<Or const>(arg);
+                for (bx_t const & _arg : or_op->args) {
+                    auto lit = static_pointer_cast<Literal const>(_arg);
+                    auto index = lit2idx.find(lit)->second;
+                    clause.push_back(CMSat::Lit(index>>1, !(index&1u)));
+                }
+            }
+            else {
+                auto lit = static_pointer_cast<Literal const>(arg);
+                auto index = lit2idx.find(lit)->second;
+                clause.push_back(CMSat::Lit(index>>1, !(index&1u)));
+            }
+            solver.add_clause(std::move(clause));
+        }
+    }
+}
 
 
 soln_t
@@ -90,54 +141,10 @@ Operator::_sat() const
     auto ctx = Context();
     auto bx = tseytin(ctx);
 
-    auto xs = bx->support();
-    unordered_map<bx_t, uint32_t> lit2idx;
-    unordered_map<uint32_t, var_t> idx2var;
-
-    uint32_t index = 0;
-    for (var_t const & x : xs) {
-        lit2idx.insert({~x, (index << 1) | 0u});
-        lit2idx.insert({ x, (index << 1) | 1u});
-        idx2var.insert({index, x});
-        ++index;
-    }
-
+    std::unordered_map<uint32_t, var_t> idx2var;
     CMSat::SATSolver solver;
-    solver.new_vars(xs.size());
 
-    if (IS_OR(bx)) {
-        auto or_op = static_pointer_cast<Or const>(bx);
-        vector<CMSat::Lit> clause;
-        for (bx_t const & arg : or_op->args) {
-            auto index = lit2idx.find(arg)->second;
-            clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
-        }
-        solver.add_clause(std::move(clause));
-    }
-    else if (IS_AND(bx)) {
-        auto and_op = static_pointer_cast<And const>(bx);
-        for (bx_t const & arg : and_op->args) {
-            vector<CMSat::Lit> clause;
-            if (IS_LIT(arg)) {
-                auto index = lit2idx.find(arg)->second;
-                clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
-            }
-            else if (IS_OP(arg)) {
-                auto or_op = static_pointer_cast<Or const>(arg);
-                for (bx_t const & lit : or_op->args) {
-                    auto index = lit2idx.find(lit)->second;
-                    clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
-                }
-            }
-            else {
-                assert(false);
-            }
-            solver.add_clause(std::move(clause));
-        }
-    }
-    else {
-        assert(false);  // LCOV_EXCL_LINE
-    }
+    encode_cmsat(idx2var, solver, bx);
 
     auto sat = solver.solve();
 
@@ -200,53 +207,10 @@ sat_iter::sat_iter(bx_t const & bx)
     }
 
     // Operator
-
     auto op = static_pointer_cast<Operator const>(bx);
     auto cnf = op->tseytin(ctx);
 
-    auto xs = cnf->support();
-    solver.new_vars(xs.size());
-    uint32_t index = 0;
-    for (var_t const & x : xs) {
-        lit2idx.insert({~x, (index << 1) | 0u});
-        lit2idx.insert({ x, (index << 1) | 1u});
-        idx2var.insert({index, x});
-        ++index;
-    }
-
-    if (IS_OR(cnf)) {
-        auto or_op = static_pointer_cast<Or const>(cnf);
-        vector<CMSat::Lit> clause;
-        for (bx_t const & arg : or_op->args) {
-            auto index = lit2idx.find(arg)->second;
-            clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
-        }
-        solver.add_clause(std::move(clause));
-    }
-    else if (IS_AND(cnf)) {
-        auto and_op = static_pointer_cast<And const>(cnf);
-        for (bx_t const & arg : and_op->args) {
-            vector<CMSat::Lit> clause;
-            if (IS_LIT(arg)) {
-                auto index = lit2idx.find(arg)->second;
-                clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
-            }
-            else if (IS_OP(arg)) {
-                auto or_op = static_pointer_cast<Or const>(arg);
-                for (bx_t const & lit : or_op->args) {
-                    auto index = lit2idx.find(lit)->second;
-                    clause.push_back(CMSat::Lit(index >> 1, !(index & 1u)));
-                }
-            }
-            else {
-                assert(false);
-            }
-            solver.add_clause(std::move(clause));
-        }
-    }
-    else {
-        assert(false);  // LCOV_EXCL_LINE
-    }
+    encode_cmsat(idx2var, solver, cnf);
 
     get_soln();
 }

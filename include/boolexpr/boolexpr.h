@@ -728,7 +728,6 @@ public:
 class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
     Context ctx;
-    std::unordered_map<bx_t, uint32_t> lit2idx;
     std::unordered_map<uint32_t, var_t> idx2var;
 
     CMSat::SATSolver solver;
