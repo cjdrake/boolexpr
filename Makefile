@@ -105,6 +105,7 @@ pypi-upload-whl:
 BX_HDRS := \
     include/boolexpr/boolexpr.h \
     src/argset.h \
+    src/bxcffi.h \
 
 BX_SRCS := \
     src/argset.cc \
