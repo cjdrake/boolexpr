@@ -769,6 +769,14 @@ boolexpr_BoolExpr_support(BX c_self)
 }
 
 
+uint32_t
+boolexpr_BoolExpr_degree(BX c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
+    return self->bx->degree();
+}
+
+
 BX
 boolexpr_BoolExpr_smoothing(BX c_self, size_t n, VARS c_varps)
 {

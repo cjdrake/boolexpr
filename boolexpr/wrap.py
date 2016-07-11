@@ -616,6 +616,14 @@ class BoolExpr:
         """Return the support set of the expression."""
         return set(_VarSet(lib.boolexpr_BoolExpr_support(self._cdata)))
 
+    def degree(self):
+        r"""Return the degree of a function.
+
+        A function from :math:`B^{N} \Rightarrow B` is called a Boolean
+        function of *degree* :math:`N`.
+        """
+        return lib.boolexpr_BoolExpr_degree(self._cdata)
+
     def smoothing(self, xs):
         r"""Return the smoothing over a sequence of N variables.
 

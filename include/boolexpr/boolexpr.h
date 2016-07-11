@@ -192,6 +192,7 @@ public:
 
     bool equiv(bx_t const &) const;
     std::unordered_set<var_t> support() const;
+    uint32_t degree() const;
 
     bx_t smoothing(std::vector<var_t> const &) const;
     bx_t consensus(std::vector<var_t> const &) const;
@@ -1046,6 +1047,7 @@ BX boolexpr_BoolExpr_to_dnf(BX);
 BX boolexpr_BoolExpr_to_nnf(BX);
 bool boolexpr_BoolExpr_equiv(BX, BX);
 VARSET boolexpr_BoolExpr_support(BX);
+uint32_t boolexpr_BoolExpr_degree(BX);
 
 BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
 BX boolexpr_BoolExpr_consensus(BX, size_t, VARS);

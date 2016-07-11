@@ -434,6 +434,13 @@ BoolExpr::support() const
 }
 
 
+uint32_t
+BoolExpr::degree() const
+{
+    return support().size();
+}
+
+
 op_t
 Operator::transform(std::function<bx_t(bx_t const &)> f) const
 {
