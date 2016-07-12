@@ -530,3 +530,425 @@ It is the XOR of a sequence of cofactors.
    >>> f = onehot0(a, b, c)
    >>> f.derivative(a)
    Xor(And(Or(~c, ~b), ~c, ~b), Or(~c, ~b))
+
+Multi-Dimensional Arrays
+========================
+
+BoolExpr version 2.0 introduces multi-dimensional arrays.
+The look and feel of the ``boolexpr.ndarray`` data type is modeled after
+numpy's `ndarray <http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html>`_,
+with some subtle differences.
+
+Construction
+------------
+
+There are four ways to construct ``ndarray`` instances:
+
+1. Use the ``Context.get_vars`` method.
+2. Use the ``array`` factory function.
+3. Use the ``zeros``, ``ones``, and ``logicals`` factory functions.
+4. Use the ``uint2nda``, and ``int2nda`` factory functions.
+
+We have already covered #1.
+
+The ``array`` function takes an arbitrarily-shaped input of Python sequences,
+and attempts to automatically convert it to an ``ndarray``.
+For example:
+
+.. code-block:: pycon
+
+   >>> a, b, c, d = map(ctx.get_var, "abcd")
+   >>> array([a, b, c, d])
+   array([a, b, c, d])
+   >>> array([[a, b], [c, d]])
+   array([[a, b],
+          [c, d]])
+
+If you want to get an N-dimensional array of constant values,
+use ``zeros``, ``ones``, and ``logicals``:
+
+.. code-block:: pycon
+
+   >>> zeros(4)
+   array([0, 0, 0, 0])
+   >>> ones(2, 3)
+   array([[1, 1, 1],
+          [1, 1, 1]])
+
+Similarly, to get the binary representation of an unsigned or two's complement
+integer, use the ``uint2nda`` and ``int2nda`` functions.
+Both take an optional ``length`` parameter.
+
+.. code-block:: pycon
+
+   >>> uint2nda(42)
+   array([0, 1, 0, 1, 0, 1])
+   >>> int2nda(-42, width=8)
+   array([0, 1, 1, 0, 1, 0, 1, 1])
+
+Notice that for integers,
+the output is displayed in least-significant-bit to most-significant-bit order.
+
+Shape and Size
+--------------
+
+The ``Context.get_vars`` method allows you to provide irregular shape inputs.
+For example:
+
+.. code-block:: pycon
+
+   >>> X = ctx.get_vars('x', (1, 3), (2, 4), (3, 5))
+   >>> X
+   array([[[x[1,2,3], x[1,2,4]],
+           [x[1,3,3], x[1,3,4]]],
+
+          [[x[2,2,3], x[2,2,4]],
+           [x[2,3,3], x[2,3,4]]]])
+
+You can accomplish the same thing with the ``array`` function using the
+optional ``shape`` parameter:
+
+.. code-block:: pycon
+
+   >>> Y = array([[a, b], [c, d]], shape=((5, 7), (11, 13)))
+   >>> Y
+   array([[a, b],
+          [c, d]])
+
+Internally, all of these are represented as flat arrays.
+
+Use the ``shape`` property to get the array shape,
+and the ``reshape`` method to return a new array with a similar shape:
+
+.. code-block:: pycon
+
+   >>> Y.shape
+   ((5, 7), (11, 13))
+   >>> Y.reshape(2, 2).shape
+   ((0, 2), (0, 2))
+
+Keep in mind that iterating through an N-dimensional array will only work on
+one dimension at a time.
+Therefore, the ``len`` function will only return the length of the first
+dimension in that iteration:
+
+.. code-block:: pycon
+
+   >>> for item in X:
+           print(item)
+   array([[x[1,2,3], x[1,2,4]],
+          [x[1,3,3], x[1,3,4]]])
+   array([[x[2,2,3], x[2,2,4]],
+          [x[2,3,3], x[2,3,4]]])
+   >>> len(X)
+   2
+
+Use the ``flat`` iterator and ``size`` property to access the array data in a
+one-dimensional way:
+
+.. code-block:: pycon
+
+   >>> for item in X.flat:
+           print(item)
+   x[1,2,3]
+   x[1,2,4]
+   x[1,3,3]
+   x[1,3,4]
+   x[2,2,3]
+   x[2,2,4]
+   x[2,3,3]
+   x[2,3,4]
+   >>> X.size
+   8
+
+Slicing
+-------
+
+N-dimensional arrays mostly support numpy-style slicing.
+
+To demonstrate the various capabilities, let's create some arrays.
+For simplicity, we will only use zero indexing.
+
+.. code-block:: pycon
+
+   >>> A = ctx.get_vars('a', 4)
+   >>> B = ctx.get_vars('b', 4, 4, 4)
+
+Using a single integer index will *collapse* an array dimension.
+For 1-D arrays,
+this means returning an item.
+
+.. code-block:: pycon
+
+   >>> A[2]
+   a[2]
+   >>> B[2]
+   array([[b[2,0,0], b[2,0,1], b[2,0,2], b[2,0,3]],
+          [b[2,1,0], b[2,1,1], b[2,1,2], b[2,1,3]],
+          [b[2,2,0], b[2,2,1], b[2,2,2], b[2,2,3]],
+          [b[2,3,0], b[2,3,1], b[2,3,2], b[2,3,3]]])
+
+The colon ``:`` slice syntax *shrinks* a dimension:
+
+.. code-block:: pycon
+
+   >>> A[:]
+   array([a[0], a[1], a[2], a[3]])
+   >>> A[1:]
+   array([a[1], a[2], a[3]])
+   >>> A[:3]
+   array([a[0], a[1], a[2]])
+   >>> B[1:3]
+   array([[[b[1,0,0], b[1,0,1], b[1,0,2], b[1,0,3]],
+           [b[1,1,0], b[1,1,1], b[1,1,2], b[1,1,3]],
+           [b[1,2,0], b[1,2,1], b[1,2,2], b[1,2,3]],
+           [b[1,3,0], b[1,3,1], b[1,3,2], b[1,3,3]]],
+
+          [[b[2,0,0], b[2,0,1], b[2,0,2], b[2,0,3]],
+           [b[2,1,0], b[2,1,1], b[2,1,2], b[2,1,3]],
+           [b[2,2,0], b[2,2,1], b[2,2,2], b[2,2,3]],
+           [b[2,3,0], b[2,3,1], b[2,3,2], b[2,3,3]]]])
+
+For N-dimensional arrays,
+the slice accepts up to N indices separated by a comma.
+Unspecified slices at the end will default to ``:``.
+
+.. code-block:: pycon
+
+   >>> B[1,2,3]
+   b[1,2,3]
+   >>> B[:,2,3]
+   array([b[0,2,3], b[1,2,3], b[2,2,3], b[3,2,3]])
+   >>> B[1,:,3]
+   array([b[1,0,3], b[1,1,3], b[1,2,3], b[1,3,3]])
+   >>> B[1,2,:]
+   array([b[1,2,0], b[1,2,1], b[1,2,2], b[1,2,3]])
+   >>> B[1,2]
+   array([b[1,2,0], b[1,2,1], b[1,2,2], b[1,2,3]])
+
+The ``...`` syntax will fill available indices left to right with ``:``.
+Only one ellipsis will be recognized per slice.
+
+.. code-block:: pycon
+
+   >>> B[...,1]
+   array([[b[0,0,1], b[0,1,1], b[0,2,1], b[0,3,1]],
+          [b[1,0,1], b[1,1,1], b[1,2,1], b[1,3,1]],
+          [b[2,0,1], b[2,1,1], b[2,2,1], b[2,3,1]],
+          [b[3,0,1], b[3,1,1], b[3,2,1], b[3,3,1]]])
+   >>> B[1,...]
+   array([[b[1,0,0], b[1,0,1], b[1,0,2], b[1,0,3]],
+          [b[1,1,0], b[1,1,1], b[1,1,2], b[1,1,3]],
+          [b[1,2,0], b[1,2,1], b[1,2,2], b[1,2,3]],
+          [b[1,3,0], b[1,3,1], b[1,3,2], b[1,3,3]]])
+
+N-dimensional arrays also support negative indices.
+Arrays with a zero start index follow Python's usual conventions.
+
+For example, here is the index guide for ``A[0:4]``::
+
+    +------+------+------+------+
+    | a[0] | a[1] | a[2] | a[3] |
+    +------+------+------+------+
+    0      1      2      3      4
+   -4     -3     -2     -1
+
+For example
+
+.. code-block:: pycon
+
+   >>> A[-1]
+   a[3]
+   >>> A[-3:-1]
+   array([a[1], a[2]])
+
+N-dimensional arrays are mutable,
+which means you can use the slicing notation similarly to a Python list:
+
+.. code-block:: pycon
+
+   >>> A
+   array([a[0], a[1], a[2], a[3]])
+   >>> A[1] = B[1,2,3]
+   >>> A
+   array([a[0], b[1,2,3], a[2], a[3]])
+
+If you assign to a slice larger than one element,
+make sure the size of the left-hand slice matches
+the size of the right-hand slice.
+
+
+.. code-block:: pycon
+
+   >>> A[1:3] = B[1,1:3,1]
+   >>> A
+   array([a[0], b[1,1,1], b[1,2,1], a[3]])
+
+Operators
+---------
+
+Bitwise
+^^^^^^^
+
+N-dimensional arrays overload all of Python's bit-wise operators.
+
+.. code-block:: pycon
+
+   >>> X = ctx.get_vars('x', 4)
+   >>> Y = ctx.get_vars('y', 4)
+   >>> ~X
+   array([~x[0], ~x[1], ~x[2], ~x[3]])
+   >>> X | Y
+   array([Or(x[0], y[0]), Or(x[1], y[1]), Or(x[2], y[2]), Or(x[3], y[3])])
+   >>> X & Y
+   array([And(x[0], y[0]), And(x[1], y[1]), And(x[2], y[2]), And(x[3], y[3])])
+   >>> X ^ Y
+   array([Xor(x[0], y[0]), Xor(x[1], y[1]), Xor(x[2], y[2]), Xor(x[3], y[3])])
+   >>> X << 2
+   array([0, 0, x[0], x[1]])
+   >>> X >> 2
+   array([x[2], x[3], 0, 0])
+
+Performing bitwise operators on arrays of different size works just fine,
+but keep in mind that it fills empty elements with the operator's *identity*.
+For OR and XOR, this is ``False``; for AND, this is ``True``.
+
+.. code-block:: pycon
+
+   >>> X & Y[:2]
+   array([And(x[0], y[0]), And(x[1], y[1]), x[2], x[3]])
+
+Concatenation and Repetition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Just like Python lists, the ``+`` operator implements concatenation,
+and the ``*`` operator implements repetition.
+
+.. code-block:: pycon
+
+   >>> X + Y
+   array([x[0], x[1], x[2], x[3], y[0], y[1], y[2], y[3]])
+   >>> Y + X
+   array([y[0], y[1], y[2], y[3], x[0], x[1], x[2], x[3]])
+   >>> X * 2
+   array([x[0], x[1], x[2], x[3], x[0], x[1], x[2], x[3]])
+   >>> 2 * X
+   array([x[0], x[1], x[2], x[3], x[0], x[1], x[2], x[3]])
+
+Reduction
+^^^^^^^^^
+
+Another important operator for bit vectors is *reduction*.
+You can implement reduction the usual Python way with the
+``operator`` and ``functools`` modules.
+
+.. code-block:: pycon
+
+   >>> from functools import reduce
+   >>> import operator
+   >>> reduce(operator.or_, X)
+   Or(Or(Or(x[0], x[1]), x[2]), x[3])
+
+You can simplify this output to get the desired result:
+
+.. code-block:: pycon
+
+   >>> reduce(operator.or_, X).simplify()
+   Or(x[1], x[0], x[3], x[2])
+
+To make things a bit easier, ``boolexpr`` provides bitwise reduction operators.
+
+.. code-block:: pycon
+
+   >>> X.or_reduce()
+   Or(x[0], x[1], x[2], x[3])
+   >>> X.and_reduce()
+   And(x[0], x[1], x[2], x[3])
+   >>> X.xor_reduce()
+   Xor(x[0], x[1], x[2], x[3])
+
+Extension
+^^^^^^^^^
+
+The ``zext`` method returns a new array *zero-extended* by some number of bits.
+Similarly,
+the ``sext`` method returns a new array *sign-extended* by some number of bits.
+Even though N-dimensional arrays do not posess any numerical encoding semantics,
+the meaning is the same for either signed magnitude or two's complement,
+where the sign is the most-significant bit.
+Notice that the return value is a new array.
+
+For example:
+
+.. code-block:: pycon
+
+   >>> X.zext(2)
+   array([x[0], x[1], x[2], x[3], 0, 0])
+   >>> X.sext(2)
+   array([x[0], x[1], x[2], x[3], x[3], x[3]])
+
+Rich Shift
+^^^^^^^^^^
+
+The shift operators we have looked at so far are somewhat limited.
+The ``lsh`` and ``rsh`` shift methods give you not just the array
+after being shifted,
+but also the value that is "shifted out" of the array.
+Instead of an integer, they take an array as an input.
+
+For example:
+
+.. code-block:: pycon
+
+   >>> X.lsh(Y[:2])
+   (array([y[0], y[1], x[0], x[1]]), array([x[2], x[3]]))
+   >>> X.rsh(ones(2))
+   (array([x[0], x[1]]), array([x[2], x[3], 1, 1]))
+
+Notice that the return value maintains the direction of the shift-out.
+That is,
+for left shifts the value shifts towards the most significant bit,
+and for right shifts, the value shifts towards the least significant bit.
+
+For convenience, there is also an "arithmetic" shift operator.
+This is a type of right shift that always uses the most significant bit
+as the shift-in value.
+This preserves the signedness in a signed magnitude or two's complement
+representation.
+
+For example:
+
+.. code-block:: pycon
+
+   >>> X.arsh(2)
+   (array([x[0], x[1]]), array([x[2], x[3], x[3], x[3]]))
+
+Other Methods
+--------------
+
+N-dimensional arrays also implement some vectorized versions of BoolExpr
+methods.
+
+For example,
+you can perform function composition or restriction on a whole array at once:
+
+.. code-block:: pycon
+
+   >>> X = array(x, 4)
+   >>> X.compose({X[0]: Y[0] | Y[1], X[1]: Y[2] & Y[3]})
+   array([Or(y[0], y[1]), And(y[2], y[3]), x[2], x[3]])
+   >>> X.restrict({X[0]: 0, X[1]: 1, X[2]: 0, X[3]: 1})
+   array([0, 1, 0, 1])
+   >>> X.restrict({X: "0101"})
+   array([0, 1, 0, 1])
+
+The ``equiv`` method tests whether two N-dimensional arrays are equivalent.
+This is only true if both arrays are the same size,
+and each corresponding element of both arrays is equivalent.
+
+.. code-block:: pycon
+
+   >>> A = array([impl(p, q), ite(s, d1, d0)])
+   >>> B = array([~p|q, s&d1|~s&d0])
+   >>> A.equiv(B)
+   True
