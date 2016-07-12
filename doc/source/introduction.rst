@@ -10,7 +10,7 @@ BoolExpr is an open source C++ library for symbolic Boolean algebra.
 It implements a C foreign function interface (FFI),
 and has a Python binding.
 
-The underlying data structure is a kind of directed, acyclic graph.
+The underlying data structure is a directed, acyclic graph.
 Leaf nodes are referred to as *atoms*,
 and branch nodes are referred to as *operators*.
 With the exception of unknown constants (similar to Boolean "don't care"),
@@ -53,9 +53,10 @@ Optional:
 * `CMake`_, for building `CryptoMiniSat`_ and `Google Test`_
 * `Coverage.py`_, for Python coverage measurement
 * `Doxygen`_, for building C++ API reference
-* `Make`_, for basic build stuff
 * `Google Test`_, for C++ unit testing
 * `LCOV`_, for C++ coverage measurement
+* `Pylint`_, for Python linting
+* `Make`_, for basic build stuff
 * `Sphinx`_, for building documentation
 
 Influences

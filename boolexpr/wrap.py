@@ -753,6 +753,7 @@ class Illogical(Unknown):
 class Literal(Atom):
     """Boolean Literal Atom"""
     def __abs__(self):
+        """Absolute value operator"""
         return _bx(lib.boolexpr_abs(self._cdata))
 
 

@@ -12,7 +12,7 @@ Symbolic Variable Context
 =========================
 
 .. autoclass:: boolexpr.Context
-   :members: get_var
+   :members: get_var, get_vars
    :member-order: bysource
 
 Boolean Expression Class Hierarchy
@@ -65,6 +65,7 @@ Base Class
              to_cnf, to_dnf, to_nnf,
              equiv,
              support,
+             degree,
              smoothing, consensus, derivative,
              iter_dfs,
              iter_domain,
@@ -97,6 +98,8 @@ Atom Nodes
 
 .. autoclass:: boolexpr.Literal
    :show-inheritance: true
+   :members: __abs__
+   :member-order: bysource
 
 .. autoclass:: boolexpr.Complement
    :show-inheritance: true
@@ -105,6 +108,7 @@ Atom Nodes
    :show-inheritance: true
 
 .. autoclass:: boolexpr.Operator
+   :show-inheritance: true
    :members: simple,
              args,
              is_clause
@@ -221,6 +225,8 @@ High Order Operators
 
 .. autofunction:: boolexpr.onehot
 
+.. autofunction:: boolexpr.nhot
+
 .. autofunction:: boolexpr.majority
 
 .. autofunction:: boolexpr.achilles_heel
@@ -233,6 +239,8 @@ High Order Operators
 
 Multidimensional Arrays
 =======================
+
+.. autoclass:: boolexpr.Array
 
 .. autofunction:: boolexpr.zeros
 

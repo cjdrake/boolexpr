@@ -20,7 +20,7 @@ a terminal:
    >>> ctx = bx.Context()
    >>> a, b, c, d = map(ctx.get_var, "abcd")
    >>> p, q, s, d1, d0 = map(ctx.get_var, "p q s d1 d0".split())
-   >>> xs = [ctx.get_var("x_%s" % i) for i in range(8)]
+   >>> xs = array('x', 8)
 
 Trivial Operators
 =================

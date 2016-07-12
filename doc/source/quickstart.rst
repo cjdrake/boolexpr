@@ -82,32 +82,33 @@ Tips and Tricks
 ---------------
 
 It's a common operation to create more than one variable at a time.
-BoolExpr does not provide any assistance (yet),
-but Python's list comprehensions can come in handy.
+For this you can use the ``get_vars`` method.
 
 For example,
 to create a list of eight :math:`x` variables with an index:
 
 .. code-block:: pycon
 
-   >>> xs = [ctx.get_var("x_%s" % i) for i in range(8)]
+   >>> xs = ctx.get_vars('x', 8)
    >>> xs
-   [x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7]
+   array([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7]])
    >>> xs[3]
-   x_3
+   x[3]
 
-Creating multi-dimensional arrays is a bit trickier,
-but possible.
-To create a 4x4 list of :math:`x` variables:
+Provide more than one argument to create a multi-dimensional array.
+For example,
+to create a 4x4 list of :math:`x` variables:
 
 .. code-block:: pycon
 
-   >>> xs = [[ctx.get_var("x[%s,%s]" % (i,j)) for j in range(4)] for i in range(4)]
+   >>> xs = ctx.get_vars('x', 4, 4)
    >>> xs
-   [[x[0,0], x[0,1], x[0,2], x[0,3]],
-    [x[1,0], x[1,1], x[1,2], x[1,3]],
-    [x[2,0], x[2,1], x[2,2], x[2,3]],
-    [x[3,0], x[3,1], x[3,2], x[3,3]]]
+   array([[x[0,0], x[0,1], x[0,2], x[0,3]],
+          [x[1,0], x[1,1], x[1,2], x[1,3]],
+          [x[2,0], x[2,1], x[2,2], x[2,3]],
+          [x[3,0], x[3,1], x[3,2], x[3,3]]])
+   >>> xs[2,3]
+   x[2,3]
    >>> xs[2][3]
    x[2,3]
 
@@ -198,7 +199,7 @@ Equal, Implies, and If-Then-Else
 
 BoolExpr supports the "unequal, "equal", "implies" and "if-then-else"
 symbolic operators.
-Python does not have good symbols for us to use for these,
+Python does not have good symbols to use for these,
 so you must use the :func:`neq <boolexpr.neq>`,
 :func:`eq <boolexpr.eq>`, :func:`impl <boolexpr.impl>`,
 and :func:`ite <boolexpr.ite>` functions.
