@@ -138,13 +138,12 @@ Variable::_sat() const
 soln_t
 Operator::_sat() const
 {
-    auto ctx = Context();
-    auto bx = tseytin(ctx);
-
     std::unordered_map<uint32_t, var_t> idx2var;
     CMSat::SATSolver solver;
 
-    encode_cmsat(idx2var, solver, bx);
+    auto ctx = Context();
+    auto cnf = tseytin(ctx);
+    encode_cmsat(idx2var, solver, cnf);
 
     auto sat = solver.solve();
 
@@ -209,7 +208,6 @@ sat_iter::sat_iter(bx_t const & bx)
     // Operator
     auto op = static_pointer_cast<Operator const>(bx);
     auto cnf = op->tseytin(ctx);
-
     encode_cmsat(idx2var, solver, cnf);
 
     get_soln();
