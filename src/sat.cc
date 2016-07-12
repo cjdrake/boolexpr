@@ -29,7 +29,7 @@ using CMSat::lbool;
 namespace boolexpr {
 
 
-void
+static void
 encode_cmsat(std::unordered_map<uint32_t, var_t> & idx2var,
              CMSat::SATSolver & solver,
              bx_t bx)
