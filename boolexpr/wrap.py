@@ -1545,15 +1545,24 @@ class ndarray: # pylint: disable=invalid-name
         return self.__class__(~self._bxa, self._shape)
 
     def __or__(self, other):
-        shape = self._shape if self._shape == other.shape else None
+        if self._shape == other.shape:
+            shape = self._shape
+        else:
+            shape = ((0, self.__len__()), )
         return self.__class__(self._bxa | other.bxa, shape)
 
     def __and__(self, other):
-        shape = self._shape if self._shape == other.shape else None
+        if self._shape == other.shape:
+            shape = self._shape
+        else:
+            shape = ((0, self.__len__()), )
         return self.__class__(self._bxa & other.bxa, shape)
 
     def __xor__(self, other):
-        shape = self._shape if self._shape == other.shape else None
+        if self._shape == other.shape:
+            shape = self._shape
+        else:
+            shape = ((0, self.__len__()), )
         return self.__class__(self._bxa ^ other.bxa, shape)
 
     def __lshift__(self, num):
