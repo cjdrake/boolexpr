@@ -1466,10 +1466,13 @@ class ndarray: # pylint: disable=invalid-name
     """
     N-dimensional array of Boolean expressions
     """
-    def __init__(self, bxa, shape):
+    def __init__(self, bxa, shape=None):
         self._bxa = bxa
-        self._shape = shape
-        self._nshape = tuple(stop - start for start, stop in shape)
+        if shape is None:
+            self._shape = ((0, len(bxa)), )
+        else:
+            self._shape = shape
+        self._nshape = tuple(stop - start for start, stop in self._shape)
 
     @property
     def bxa(self):
@@ -1548,21 +1551,21 @@ class ndarray: # pylint: disable=invalid-name
         if self._shape == other.shape:
             shape = self._shape
         else:
-            shape = ((0, self.__len__()), )
+            shape = None
         return self.__class__(self._bxa | other.bxa, shape)
 
     def __and__(self, other):
         if self._shape == other.shape:
             shape = self._shape
         else:
-            shape = ((0, self.__len__()), )
+            shape = None
         return self.__class__(self._bxa & other.bxa, shape)
 
     def __xor__(self, other):
         if self._shape == other.shape:
             shape = self._shape
         else:
-            shape = ((0, self.__len__()), )
+            shape = None
         return self.__class__(self._bxa ^ other.bxa, shape)
 
     def __lshift__(self, num):
@@ -1574,7 +1577,7 @@ class ndarray: # pylint: disable=invalid-name
     def __add__(self, other):
         other = _expect_array(other)
         bxa = self.bxa + other.bxa
-        shape = ((0, len(bxa)), )
+        shape = None
         if (self.ndim == other.ndim > 1
                 and self._shape[1:] == other.shape[1:]
                 and self._shape[0][0] == other.shape[0][0] == 0):
@@ -1589,7 +1592,7 @@ class ndarray: # pylint: disable=invalid-name
         if num < 0:
             raise ValueError("expected multiplier to be non-negative")
         bxa = self.bxa * num
-        shape = ((0, len(bxa)), )
+        shape = None
         if self.ndim > 1 and self._shape[0][0] == 0:
             shape0 = ((0, self._shape[0][1] * num), )
             shape = shape0 + self._shape[1:]
@@ -1645,16 +1648,14 @@ class ndarray: # pylint: disable=invalid-name
 
         Returns a new array.
         """
-        shape = ((0, self.size+num), )
-        return self.__class__(self._bxa.zext(num), shape)
+        return self.__class__(self._bxa.zext(num))
 
     def sext(self, num):
         """Sign-extend this array by *num* bits.
 
         Returns a new array.
         """
-        shape = ((0, self.size+num), )
-        return self.__class__(self._bxa.sext(num), shape)
+        return self.__class__(self._bxa.sext(num))
 
     # Reduction operators
     def or_reduce(self):
@@ -1680,8 +1681,7 @@ class ndarray: # pylint: disable=invalid-name
             fstr = "expected 0 <= a.size <= {}"
             raise ValueError(fstr.format(self.size))
         left, right = self._bxa.lsh(a.bxa)
-        return (self.__class__(left, ((0, len(left)), )),
-                self.__class__(right, ((0, len(right)), )))
+        return self.__class__(left), self.__class__(right)
 
     def rsh(self, a):
         """Right shift the *a* array into this array.
@@ -1693,8 +1693,7 @@ class ndarray: # pylint: disable=invalid-name
             fstr = "expected 0 <= a.size <= {}"
             raise ValueError(fstr.format(self.size))
         left, right = self._bxa.rsh(a.bxa)
-        return (self.__class__(left, ((0, len(left)), )),
-                self.__class__(right, ((0, len(right)), )))
+        return self.__class__(left), self.__class__(right)
 
     def arsh(self, num):
         """Arithmetically right shift the array by *num* places.
@@ -1708,8 +1707,7 @@ class ndarray: # pylint: disable=invalid-name
         if not 0 <= num <= self.size:
             raise ValueError("expected 0 <= num <= {}".format(self.size))
         left, right = self._bxa.arsh(num)
-        return (self.__class__(left, ((0, len(left)), )),
-                self.__class__(right, ((0, len(right)), )))
+        return self.__class__(left), self.__class__(right)
 
     # Subroutines of __getitem__, __setitem__
     @staticmethod
