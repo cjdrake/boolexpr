@@ -1062,9 +1062,9 @@ _AST = {
 
 def _expect_array(obj):
     """Return an ndarray, or raise TypeError."""
-    if obj == 0:
+    if obj == 0 or obj == "0":
         return array([ZERO])
-    elif obj == 1:
+    elif obj == 1 or obj == "1":
         return array([ONE])
     elif obj == "x" or obj == "X":
         return array([LOGICAL])
@@ -1080,9 +1080,9 @@ def _expect_array(obj):
 
 def _expect_bx(obj):
     """Return a BoolExpr, or raise TypeError."""
-    if obj == 0:
+    if obj == 0 or obj == "0":
         return ZERO
-    elif obj == 1:
+    elif obj == 1 or obj == "1":
         return ONE
     elif obj == "x" or obj == "X":
         return LOGICAL
@@ -1096,9 +1096,9 @@ def _expect_bx(obj):
 
 def _expect_const(obj):
     """Return a Constant, or raise TypeError."""
-    if obj == 0:
+    if obj == 0 or obj == "0":
         return ZERO
-    elif obj == 1:
+    elif obj == 1 or obj == "1":
         return ONE
     elif obj == "x" or obj == "X":
         return LOGICAL
@@ -1640,6 +1640,7 @@ class ndarray: # pylint: disable=invalid-name
 
         Returns a new array.
         """
+        var2bx = _vmap2map(var2bx)
         return self.__class__(self._bxa.compose(var2bx), self._shape)
 
     def restrict(self, point):
@@ -1647,6 +1648,7 @@ class ndarray: # pylint: disable=invalid-name
 
         Returns a new array.
         """
+        point = _vpnt2pnt(point)
         return self.__class__(self._bxa.restrict(point), self._shape)
 
     def equiv(self, other):
@@ -1857,6 +1859,17 @@ def _dims2shape(*dims):
     return tuple(shape)
 
 
+def _flatten(var_or_seq, val, f):
+    """Recursively flatten vectorized var => bx mappings."""
+    if isinstance(var_or_seq, Variable):
+        yield var_or_seq, f(val)
+    else:
+        if len(var_or_seq) != len(val):
+            raise ValueError("expected 1:1 mapping from Variable => {0, 1}")
+        for _var_or_seq, _val in zip(var_or_seq, val):
+            yield from _flatten(_var_or_seq, _val, f)
+
+
 def _is_dim(obj):
     """Return True if the object is a shape dimension."""
     return (isinstance(obj, tuple) and len(obj) == 2
@@ -1910,3 +1923,25 @@ def _volume(shape):
     for start, stop in shape:
         prod *= stop - start
     return prod
+
+
+def _vmap2map(vmap):
+    """Convert *vmap* into a var2bx in an N-dimensional Boolean space."""
+    var2bx = dict()
+    for var_or_seq, val in vmap.items():
+        var2bx.update(_flatten(var_or_seq, val, _expect_bx))
+    return var2bx
+
+
+def _vpnt2pnt(vpnt):
+    """Convert *vpnt* into a point in an N-dimensional Boolean space.
+
+    The *vpnt* argument is a mapping from multi-dimensional arrays of
+    variables to matching arrays of :math:`{0, 1}`.
+    Elements from the values array will be converted to :math:`{0, 1}` using
+    the `int` builtin function.
+    """
+    point = dict()
+    for var_or_seq, val in vpnt.items():
+        point.update(_flatten(var_or_seq, val, _expect_const))
+    return point
