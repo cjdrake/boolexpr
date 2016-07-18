@@ -264,6 +264,7 @@ Multidimensional Arrays
              __lshift__, __rshift__,
              __add__, __mul__,
              ndim, size, flat,
+             simplify,
              compose, restrict,
              equiv,
              zext, sext,
