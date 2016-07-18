@@ -143,6 +143,7 @@ from .misc import achilles_heel
 from .misc import mux
 from .misc import exists
 from .misc import forall
+from .misc import cat
 
 
 __version__ = "1.3"

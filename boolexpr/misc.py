@@ -18,9 +18,12 @@ Miscellaneous features not implemented in C++ API
 """
 
 
+import functools
 import itertools
+import operator
 
 from .util import clog2
+from .wrap import array
 from .wrap import iter_points
 from .wrap import not_
 from .wrap import or_
@@ -108,3 +111,8 @@ def forall(xs, f):
     This is identical to ``f.consensus(xs)``.
     """
     return f.consensus(xs)
+
+
+def cat(*xs):
+    """Concatenate a sequence of expressions."""
+    return functools.reduce(operator.add, xs, array([]))
