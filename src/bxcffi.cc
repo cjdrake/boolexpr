@@ -970,6 +970,14 @@ boolexpr_Array_mul(ARRAY c_self, size_t num)
 
 
 ARRAY
+boolexpr_Array_simplify(ARRAY c_self)
+{
+    auto self = reinterpret_cast<Array * const>(c_self);
+    return self->simplify();
+}
+
+
+ARRAY
 boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
 {
     auto self = reinterpret_cast<Array * const>(c_self);

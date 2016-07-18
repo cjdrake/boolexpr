@@ -686,6 +686,7 @@ public:
     std::vector<bx_t>::const_iterator begin() const;
     std::vector<bx_t>::const_iterator end() const;
 
+    Array * simplify() const;
     Array * compose(var2bx_t const &) const;
     Array * restrict_(point_t const &) const;
     bool equiv(Array const &) const;
@@ -1071,6 +1072,7 @@ ARRAY boolexpr_Array_and(ARRAY, ARRAY);
 ARRAY boolexpr_Array_xor(ARRAY, ARRAY);
 ARRAY boolexpr_Array_plus(ARRAY, ARRAY);
 ARRAY boolexpr_Array_mul(ARRAY, size_t);
+ARRAY boolexpr_Array_simplify(ARRAY);
 ARRAY boolexpr_Array_compose(ARRAY, size_t, VARS, BXS);
 ARRAY boolexpr_Array_restrict(ARRAY, size_t, VARS, CONSTS);
 bool boolexpr_Array_equiv(ARRAY, ARRAY);

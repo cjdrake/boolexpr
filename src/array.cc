@@ -219,6 +219,20 @@ Array::end() const
 
 
 Array *
+Array::simplify() const
+{
+    size_t n = this->items.size();
+    vector<bx_t> items(n);
+
+    for (size_t i = 0; i < n; ++i) {
+        items[i] = this->items[i]->simplify();
+    }
+
+    return new Array(std::move(items));
+}
+
+
+Array *
 Array::compose(var2bx_t const & var2bx) const
 {
     size_t n = this->items.size();

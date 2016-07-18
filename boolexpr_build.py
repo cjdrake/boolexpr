@@ -251,6 +251,7 @@ ARRAY boolexpr_Array_and(ARRAY, ARRAY);
 ARRAY boolexpr_Array_xor(ARRAY, ARRAY);
 ARRAY boolexpr_Array_plus(ARRAY, ARRAY);
 ARRAY boolexpr_Array_mul(ARRAY, size_t);
+ARRAY boolexpr_Array_simplify(ARRAY);
 ARRAY boolexpr_Array_compose(ARRAY, size_t, VARS, BXS);
 ARRAY boolexpr_Array_restrict(ARRAY, size_t, VARS, CONSTS);
 _Bool boolexpr_Array_equiv(ARRAY, ARRAY);

@@ -1214,6 +1214,14 @@ class Array:
     def __rmul__(self, num):
         return Array(lib.boolexpr_Array_mul(self._cdata, num))
 
+    def simplify(self):
+        """Return a simplified array.
+
+        Simplification uses Boolean algebra identities to reduce the size
+        of the expression.
+        """
+        return Array(lib.boolexpr_Array_simplify(self._cdata))
+
     def compose(self, var2bx):
         r"""
         Substitute a subset of support variables with other Boolean expressions.
@@ -1620,8 +1628,15 @@ class ndarray: # pylint: disable=invalid-name
         """Return a 1D iterator over the array."""
         return iter(self._bxa)
 
+    def simplify(self):
+        """Apply the ``simplify`` method to all expressions.
+
+        Returns a new array.
+        """
+        return self.__class__(self._bxa.simplify(), self._shape)
+
     def compose(self, var2bx):
-        """Apply the ``compose`` method to all functions.
+        """Apply the ``compose`` method to all expressions.
 
         Returns a new array.
         """
