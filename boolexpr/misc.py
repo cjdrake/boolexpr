@@ -23,8 +23,8 @@ import itertools
 import operator
 
 from .util import clog2
+from .util import iter_space
 from .wrap import array
-from .wrap import iter_points
 from .wrap import not_
 from .wrap import or_
 from .wrap import and_
@@ -88,8 +88,8 @@ def mux(xs, sel):
     if sel.size < clog2(xs.size):
         fstr = "expected at least {} select bits, got {}"
         raise ValueError(fstr.format(clog2(xs.size), sel.size))
-    terms = (tuple(var if val else ~var for var, val in point.items())
-             for point in iter_points(sel))
+    terms = [tuple(sel[i] if vertex[i] else ~sel[i] for i in range(sel.size))
+             for vertex in iter_space(sel.size)]
     return or_(*[and_(x, *term) for (x, term) in zip(xs, terms)])
 
 

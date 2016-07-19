@@ -43,3 +43,14 @@ def clog2(num: int) -> int:
         shifter <<= 1
         accum += 1
     return accum
+
+
+def iter_space(n):
+    """Iterate through an N-dimensional Boolean space."""
+    counter = [False] * (n+1)
+    while not counter[n]:
+        yield counter[:n]
+        for i in range(n+1):
+            counter[i] ^= True
+            if counter[i]:
+                break
