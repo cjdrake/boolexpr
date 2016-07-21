@@ -610,6 +610,7 @@ class BoolExpr:
                   SAT is an NP-complete problem, so some inputs will require
                   exponential runtime.
         """
+        other = _expect_bx(other)
         return bool(lib.boolexpr_BoolExpr_equiv(self._cdata, other._cdata))
 
     def support(self):
@@ -1556,24 +1557,24 @@ class ndarray: # pylint: disable=invalid-name
         return self.__class__(~self._bxa, self._shape)
 
     def __or__(self, other):
+        other = _expect_array(other)
+        shape = None
         if self._shape == other.shape:
             shape = self._shape
-        else:
-            shape = None
         return self.__class__(self._bxa | other.bxa, shape)
 
     def __and__(self, other):
+        other = _expect_array(other)
+        shape = None
         if self._shape == other.shape:
             shape = self._shape
-        else:
-            shape = None
         return self.__class__(self._bxa & other.bxa, shape)
 
     def __xor__(self, other):
+        other = _expect_array(other)
+        shape = None
         if self._shape == other.shape:
             shape = self._shape
-        else:
-            shape = None
         return self.__class__(self._bxa ^ other.bxa, shape)
 
     def __lshift__(self, num):
@@ -1658,6 +1659,7 @@ class ndarray: # pylint: disable=invalid-name
                   SAT is an NP-complete problem, so some inputs will require
                   exponential runtime.
         """
+        other = _expect_array(other)
         return self._bxa.equiv(other.bxa)
 
     def zext(self, num):
