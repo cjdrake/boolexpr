@@ -1530,10 +1530,10 @@ class ndarray: # pylint: disable=invalid-name
 
     def __getitem__(self, key):
         parts = self._key2parts(key)
-        ranges, shape, vols = self._walk_parts(parts)
+        ranges, shape, strides = self._walk_parts(parts)
         items = list()
         for coord in itertools.product(*ranges):
-            index = sum(vols[i] * coord[i] for i in range(self.ndim))
+            index = sum(strides[i] * coord[i] for i in range(self.ndim))
             items.append(self._bxa[index])
         if shape:
             return array(items, tuple(shape))
@@ -1542,14 +1542,14 @@ class ndarray: # pylint: disable=invalid-name
 
     def __setitem__(self, key, val):
         parts = self._key2parts(key)
-        ranges, _, vols = self._walk_parts(parts)
+        ranges, _, strides = self._walk_parts(parts)
         val = _expect_array(val)
         coords = list(itertools.product(*ranges))
         if val.size != len(coords):
             fstr = "expected val.size = {}, got {}"
             raise ValueError(fstr.format(len(coords), val.size))
         for coord, _val in zip(coords, val.flat):
-            index = sum(vols[i] * coord[i] for i in range(self.ndim))
+            index = sum(strides[i] * coord[i] for i in range(self.ndim))
             self._bxa[index] = _val
 
     # Operators
@@ -1811,7 +1811,7 @@ class ndarray: # pylint: disable=invalid-name
         """Walk through slice parts, and get characteristic info."""
         ranges = list()
         shape = list()
-        vols = list()
+        strides = list()
         for i, part in enumerate(parts):
             if isinstance(part, int):
                 ranges.append(range(part, part+1))
@@ -1822,8 +1822,8 @@ class ndarray: # pylint: disable=invalid-name
                               self._shape[i][0] + stop))
             else:
                 assert False # pragma: no cover
-            vols.append(reduce(operator.mul, self._nshape[i+1:], 1))
-        return ranges, shape, vols
+            strides.append(reduce(operator.mul, self._nshape[i+1:], 1))
+        return ranges, shape, strides
 
 
 def _check_dim(dim):
