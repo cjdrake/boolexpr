@@ -281,7 +281,7 @@ boolexpr_SatIter_val(SAT_ITER c_self)
 }
 
 
-PTS_ITER
+POINTS_ITER
 boolexpr_PointsIter_new(size_t n, VARS c_varps)
 {
     vector<var_t> vars(n);
@@ -295,7 +295,7 @@ boolexpr_PointsIter_new(size_t n, VARS c_varps)
 
 
 void
-boolexpr_PointsIter_del(PTS_ITER c_self)
+boolexpr_PointsIter_del(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
     delete self;
@@ -303,7 +303,7 @@ boolexpr_PointsIter_del(PTS_ITER c_self)
 
 
 void
-boolexpr_PointsIter_next(PTS_ITER c_self)
+boolexpr_PointsIter_next(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
     self->next();
@@ -311,7 +311,7 @@ boolexpr_PointsIter_next(PTS_ITER c_self)
 
 
 POINT
-boolexpr_PointsIter_val(PTS_ITER c_self)
+boolexpr_PointsIter_val(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
     return self->val();

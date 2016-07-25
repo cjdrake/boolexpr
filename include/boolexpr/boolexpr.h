@@ -955,7 +955,7 @@ typedef void * const POINT;
 typedef void * const SOLN;
 typedef void * const DFS_ITER;
 typedef void * const SAT_ITER;
-typedef void * const PTS_ITER;
+typedef void * const POINTS_ITER;
 typedef void * const DOM_ITER;
 typedef void * const CF_ITER;
 
@@ -995,10 +995,10 @@ void boolexpr_SatIter_del(SAT_ITER);
 void boolexpr_SatIter_next(SAT_ITER);
 POINT boolexpr_SatIter_val(SAT_ITER);
 
-PTS_ITER boolexpr_PointsIter_new(size_t, VARS);
-void boolexpr_PointsIter_del(PTS_ITER);
-void boolexpr_PointsIter_next(PTS_ITER);
-POINT boolexpr_PointsIter_val(PTS_ITER);
+POINTS_ITER boolexpr_PointsIter_new(size_t, VARS);
+void boolexpr_PointsIter_del(POINTS_ITER);
+void boolexpr_PointsIter_next(POINTS_ITER);
+POINT boolexpr_PointsIter_val(POINTS_ITER);
 
 DOM_ITER boolexpr_DomainIter_new(BX);
 void boolexpr_DomainIter_del(DOM_ITER);
