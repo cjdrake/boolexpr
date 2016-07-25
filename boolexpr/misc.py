@@ -78,19 +78,18 @@ def achilles_heel(*args):
     return and_(*[or_(args[2*i], args[2*i+1]) for i in range(num // 2)])
 
 
-def mux(xs, sel):
+def mux(a, sel):
     """
-    Return an expression that multiplexes a sequence of input functions over a
-    sequence of select functions.
+    Return an expression that multiplexes an input array over a select array.
     """
-    xs = _expect_array(xs)
+    a = _expect_array(a)
     sel = _expect_array(sel)
-    if sel.size < clog2(xs.size):
+    if sel.size < clog2(a.size):
         fstr = "expected at least {} select bits, got {}"
-        raise ValueError(fstr.format(clog2(xs.size), sel.size))
+        raise ValueError(fstr.format(clog2(a.size), sel.size))
     terms = (tuple(sel[i] if vertex[i] else ~sel[i] for i in range(sel.size))
              for vertex in iter_space(sel.size))
-    return or_(*[and_(x, *term) for (x, term) in zip(xs, terms)])
+    return or_(*[and_(x, *term) for (x, term) in zip(a.flat, terms)])
 
 
 def exists(xs, f):
