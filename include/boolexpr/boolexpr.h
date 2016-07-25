@@ -106,7 +106,6 @@ using lop_t = std::shared_ptr<LatticeOperator const>;
 using var2bx_t = std::unordered_map<var_t, bx_t>;
 using var2op_t = std::unordered_map<var_t, op_t>;
 using point_t = std::unordered_map<var_t, const_t>;
-using term_t = std::vector<lit_t>;
 
 using soln_t = std::pair<bool, boost::optional<point_t>>;
 
@@ -787,20 +786,20 @@ public:
 };
 
 
-class terms_iter : public std::iterator<std::input_iterator_tag, term_t>
+class terms_iter : public std::iterator<std::input_iterator_tag, std::vector<bx_t>>
 {
     space_iter it;
-    std::vector<var_t> vars;
+    std::vector<bx_t> bxs;
 
-    term_t term;
+    std::vector<bx_t> term;
 
 public:
     terms_iter();
-    terms_iter(std::vector<var_t> const &);
+    terms_iter(std::vector<bx_t> const &);
 
     bool operator==(terms_iter const &) const;
     bool operator!=(terms_iter const &) const;
-    term_t const & operator*() const;
+    std::vector<bx_t> const & operator*() const;
     terms_iter const & operator++();
 };
 

@@ -86,20 +86,17 @@ TEST_F(IterTest, PointsIter)
 
 TEST_F(IterTest, TermsIter)
 {
-    auto xn0 = std::static_pointer_cast<Literal const>(~xs[0]);
-    auto xn1 = std::static_pointer_cast<Literal const>(~xs[1]);
-
-    vector<term_t> ans {
-        {   xn0,   xn1 },
-        { xs[0],   xn1 },
-        {   xn0, xs[1] },
-        { xs[0], xs[1] },
+    vector<vector<bx_t>> ans {
+        { ~xs[0], ~xs[1] },
+        {  xs[0], ~xs[1] },
+        { ~xs[0],  xs[1] },
+        {  xs[0],  xs[1] },
     };
 
-    vector<var_t> vars {xs[0], xs[1]};
+    vector<bx_t> bxs {xs[0], xs[1]};
 
     size_t i = 0;
-    for (auto it = terms_iter(vars); it != terms_iter(); ++it)
+    for (auto it = terms_iter(bxs); it != terms_iter(); ++it)
         EXPECT_EQ(*it, ans[i++]);
 }
 

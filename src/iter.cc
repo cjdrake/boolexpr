@@ -226,13 +226,12 @@ terms_iter::terms_iter()
 {}
 
 
-terms_iter::terms_iter(vector<var_t> const & vars)
-    : it {space_iter(vars.size())}
-    , vars {vars}
+terms_iter::terms_iter(vector<bx_t> const & bxs)
+    : it {space_iter(bxs.size())}
+    , bxs {bxs}
 {
-    for (var_t const & x : vars) {
-        auto xn = static_pointer_cast<Literal const>(~x);
-        term.push_back(xn);
+    for (bx_t const & bx : bxs) {
+        term.push_back(~bx);
     }
 }
 
@@ -251,7 +250,7 @@ terms_iter::operator!=(terms_iter const & rhs) const
 }
 
 
-term_t const &
+vector<bx_t> const &
 terms_iter::operator*() const
 {
     return term;
@@ -265,13 +264,12 @@ terms_iter::operator++()
 
     ++it;
 
-    for (size_t i = 0; i < vars.size(); ++i) {
+    for (size_t i = 0; i < bxs.size(); ++i) {
         if ((*it)[i]) {
-            term.push_back(vars[i]);
+            term.push_back(bxs[i]);
         }
         else {
-            auto xn = static_pointer_cast<Literal const>(~vars[i]);
-            term.push_back(xn);
+            term.push_back(~bxs[i]);
         }
     }
 
