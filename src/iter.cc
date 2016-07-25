@@ -221,6 +221,64 @@ points_iter::operator++()
 }
 
 
+terms_iter::terms_iter()
+    : it {space_iter()}
+{}
+
+
+terms_iter::terms_iter(vector<var_t> const & vars)
+    : it {space_iter(vars.size())}
+    , vars {vars}
+{
+    for (var_t const & x : vars) {
+        auto xn = static_pointer_cast<Literal const>(~x);
+        term.push_back(xn);
+    }
+}
+
+
+bool
+terms_iter::operator==(terms_iter const & rhs) const
+{
+    return it == rhs.it;
+}
+
+
+bool
+terms_iter::operator!=(terms_iter const & rhs) const
+{
+    return !(*this == rhs);
+}
+
+
+term_t const &
+terms_iter::operator*() const
+{
+    return term;
+}
+
+
+terms_iter const &
+terms_iter::operator++()
+{
+    term.clear();
+
+    ++it;
+
+    for (size_t i = 0; i < vars.size(); ++i) {
+        if ((*it)[i]) {
+            term.push_back(vars[i]);
+        }
+        else {
+            auto xn = static_pointer_cast<Literal const>(~vars[i]);
+            term.push_back(xn);
+        }
+    }
+
+    return *this;
+}
+
+
 domain_iter::domain_iter()
     : it {points_iter()}
 {}
