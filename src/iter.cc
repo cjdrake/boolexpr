@@ -226,9 +226,9 @@ terms_iter::terms_iter()
 {}
 
 
-terms_iter::terms_iter(vector<bx_t> const & bxs)
-    : it {space_iter(bxs.size())}
-    , bxs {bxs}
+terms_iter::terms_iter(vector<bx_t> const & args)
+    : it {space_iter(args.size())}
+    , bxs {args}
 {
     for (bx_t const & bx : bxs) {
         term.push_back(~bx);

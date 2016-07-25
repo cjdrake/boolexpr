@@ -166,6 +166,24 @@ struct PointsIterProxy
 };
 
 
+struct TermsIterProxy
+{
+    terms_iter it;
+
+    TermsIterProxy(std::vector<bx_t> const & args)
+        : it {args}
+    {}
+
+    void next() { ++it; }
+
+    VecProxy<bx_t> * val() const
+    {
+        return (it == terms_iter()) ? nullptr
+                                    : new VecProxy<bx_t>(*it);
+    }
+};
+
+
 struct DomainIterProxy
 {
     domain_iter it;

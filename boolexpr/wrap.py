@@ -201,6 +201,25 @@ class _PointsIter:
             lib.boolexpr_PointsIter_next(self._cdata)
 
 
+class _TermsIter:
+    """
+    Wrap C TermsIter
+    """
+    def __init__(self, cdata):
+        self._cdata = cdata
+
+    def __del__(self):
+        lib.boolexpr_TermsIter_del(self._cdata)
+
+    def __iter__(self):
+        while True:
+            val = lib.boolexpr_TermsIter_val(self._cdata)
+            if val == ffi.NULL:
+                break
+            yield tuple(_Vec(val))
+            lib.boolexpr_TermsIter_next(self._cdata)
+
+
 class _DomainIter:
     """
     Wrap C DomainIter
@@ -860,6 +879,12 @@ def iter_points(xs):
     for i, x in enumerate(xs):
         c_vars[i] = _expect_var(x)._cdata
     yield from _PointsIter(lib.boolexpr_PointsIter_new(len(c_vars), c_vars))
+
+
+def iter_terms(*args):
+    """Iterate through all terms in a Boolean space."""
+    _, c_bxs = _convert_args(args)
+    yield from _TermsIter(lib.boolexpr_TermsIter_new(len(c_bxs), c_bxs))
 
 
 def not_(arg):

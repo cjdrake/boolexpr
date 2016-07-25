@@ -40,6 +40,7 @@ using boolexpr::PointsIterProxy;
 using boolexpr::SatIterProxy;
 using boolexpr::SetProxy;
 using boolexpr::SolnProxy;
+using boolexpr::TermsIterProxy;
 using boolexpr::Variable;
 using boolexpr::VecProxy;
 
@@ -314,6 +315,42 @@ POINT
 boolexpr_PointsIter_val(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
+    return self->val();
+}
+
+
+TERMS_ITER
+boolexpr_TermsIter_new(size_t n, BXS c_args)
+{
+    vector<bx_t> _args(n);
+    for (size_t i = 0; i < n; ++i) {
+        auto arg = reinterpret_cast<BoolExprProxy const * const>(c_args[i]);
+        _args[i] = arg->bx;
+    }
+    return new TermsIterProxy(_args);
+}
+
+
+void
+boolexpr_TermsIter_del(TERMS_ITER c_self)
+{
+    auto self = reinterpret_cast<TermsIterProxy * const>(c_self);
+    delete self;
+}
+
+
+void
+boolexpr_TermsIter_next(TERMS_ITER c_self)
+{
+    auto self = reinterpret_cast<TermsIterProxy * const>(c_self);
+    self->next();
+}
+
+
+VEC
+boolexpr_TermsIter_val(TERMS_ITER c_self)
+{
+    auto self = reinterpret_cast<TermsIterProxy * const>(c_self);
     return self->val();
 }
 
