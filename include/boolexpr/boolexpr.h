@@ -194,6 +194,8 @@ public:
     std::unordered_set<var_t> support() const;
     uint32_t degree() const;
 
+    bx_t expand(std::vector<var_t> const &) const;
+
     bx_t smoothing(std::vector<var_t> const &) const;
     bx_t consensus(std::vector<var_t> const &) const;
     bx_t derivative(std::vector<var_t> const &) const;
@@ -795,6 +797,7 @@ class terms_iter : public std::iterator<std::input_iterator_tag, std::vector<bx_
 
 public:
     terms_iter();
+    terms_iter(std::vector<var_t> const &);
     terms_iter(std::vector<bx_t> const &);
 
     bool operator==(terms_iter const &) const;
@@ -1072,6 +1075,8 @@ BX boolexpr_BoolExpr_to_nnf(BX);
 bool boolexpr_BoolExpr_equiv(BX, BX);
 VARSET boolexpr_BoolExpr_support(BX);
 uint32_t boolexpr_BoolExpr_degree(BX);
+
+BX boolexpr_BoolExpr_expand(BX, size_t, VARS);
 
 BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
 BX boolexpr_BoolExpr_consensus(BX, size_t, VARS);

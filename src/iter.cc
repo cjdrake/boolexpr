@@ -226,6 +226,16 @@ terms_iter::terms_iter()
 {}
 
 
+terms_iter::terms_iter(vector<var_t> const & xs)
+    : it {space_iter(xs.size())}
+{
+    for (var_t const & x : xs) {
+        bxs.push_back(x);
+        term.push_back(~x);
+    }
+}
+
+
 terms_iter::terms_iter(vector<bx_t> const & args)
     : it {space_iter(args.size())}
     , bxs {args}

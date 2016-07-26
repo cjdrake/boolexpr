@@ -234,6 +234,8 @@ _Bool boolexpr_BoolExpr_equiv(BX, BX);
 VARSET boolexpr_BoolExpr_support(BX);
 uint32_t boolexpr_BoolExpr_degree(BX);
 
+BX boolexpr_BoolExpr_expand(BX, size_t, VARS);
+
 BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
 BX boolexpr_BoolExpr_consensus(BX, size_t, VARS);
 BX boolexpr_BoolExpr_derivative(BX, size_t, VARS);

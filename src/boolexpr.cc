@@ -463,6 +463,29 @@ Operator::transform(std::function<bx_t(bx_t const &)> f) const
 }
 
 
+bx_t
+BoolExpr::expand(vector<var_t> const & xs) const
+{
+    auto self = shared_from_this();
+
+    vector<bx_t> or_args;
+
+    auto it1 = terms_iter(xs);
+    auto it2 = cf_iter(self, xs);
+
+    for (; it1 != terms_iter() && it2 != cf_iter(); ++it1, ++it2) {
+        vector<bx_t> and_args;
+        for (auto const & term : *it1) {
+            and_args.push_back(term);
+        }
+        and_args.push_back(*it2);
+        or_args.push_back(and_(std::move(and_args)));
+    }
+
+    return or_(std::move(or_args));
+}
+
+
 // FIXME(cjdrake): Implement these as reductions
 bx_t
 BoolExpr::smoothing(vector<var_t> const & xs) const

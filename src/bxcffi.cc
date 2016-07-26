@@ -815,6 +815,20 @@ boolexpr_BoolExpr_degree(BX c_self)
 
 
 BX
+boolexpr_BoolExpr_expand(BX c_self, size_t n, VARS c_varps)
+{
+    auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
+    vector<var_t> vars(n);
+    for (size_t i = 0; i < n; ++i) {
+        auto varp = reinterpret_cast<BoolExprProxy const * const>(c_varps[i]);
+        auto var = static_pointer_cast<Variable const>(varp->bx);
+        vars[i] = var;
+    }
+    return new BoolExprProxy(self->bx->expand(vars));
+}
+
+
+BX
 boolexpr_BoolExpr_smoothing(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);

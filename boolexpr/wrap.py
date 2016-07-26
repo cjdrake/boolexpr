@@ -644,6 +644,18 @@ class BoolExpr:
         """
         return lib.boolexpr_BoolExpr_degree(self._cdata)
 
+    def expand(self, xs):
+        """
+        Return the Shannon expansion with respect to a sequence of variables.
+        """
+        if isinstance(xs, Variable):
+            xs = [xs]
+        num = len(xs)
+        c_vars = ffi.new("void * []", num)
+        for i, x in enumerate(xs):
+            c_vars[i] = _expect_var(x)._cdata
+        return _bx(lib.boolexpr_BoolExpr_expand(self._cdata, num, c_vars))
+
     def smoothing(self, xs):
         r"""Return the smoothing over a sequence of N variables.
 
