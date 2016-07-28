@@ -6,6 +6,22 @@
   Release Notes
 *****************
 
+Release 2.0
+===========
+
+This is a major release that primarily fills out the array stuff
+added in 1.3.
+Lots of new documentation,
+and several little bug fixes and other code cleanup.
+
+Short list of new stuff:
+
+* Absolute value for literals
+* New ``BoolExpr.degree`` method
+* New ndarray ``cat`` function
+* New ndarray ``simplify`` method
+* New C++ "term" iterator
+
 Release 1.3
 ===========
 
