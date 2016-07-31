@@ -215,6 +215,7 @@ BX boolexpr_ite_s(BX, BX, BX);
 void boolexpr_BoolExpr_del(BX);
 uint8_t boolexpr_BoolExpr_kind(BX);
 STRING boolexpr_BoolExpr_to_string(BX);
+STRING boolexpr_BoolExpr_to_dot(BX);
 uint32_t boolexpr_BoolExpr_depth(BX);
 uint32_t boolexpr_BoolExpr_size(BX);
 _Bool boolexpr_BoolExpr_is_cnf(BX);

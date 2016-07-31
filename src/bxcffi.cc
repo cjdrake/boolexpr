@@ -651,6 +651,17 @@ boolexpr_BoolExpr_to_string(BX c_self)
 }
 
 
+STRING
+boolexpr_BoolExpr_to_dot(BX c_self)
+{
+    auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
+    auto str = self->bx->to_dot();
+    auto c_str = new char[str.length() + 1];
+    std::strcpy(c_str, str.c_str());
+    return c_str;
+}
+
+
 uint32_t
 boolexpr_BoolExpr_depth(BX c_self)
 {

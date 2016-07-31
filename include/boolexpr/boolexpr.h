@@ -139,6 +139,8 @@ class BoolExpr : public std::enable_shared_from_this<BoolExpr>
 protected:
     virtual bx_t invert() const = 0;
     virtual std::ostream& op_lsh(std::ostream&) const = 0;
+    virtual void dot_node(std::ostream&) const = 0;
+    virtual void dot_edge(std::ostream&) const = 0;
     virtual soln_t _sat() const = 0;
 
 public:
@@ -168,6 +170,7 @@ public:
     BoolExpr(Kind kind);
 
     std::string to_string() const;
+    std::string to_dot() const;
 
     virtual uint32_t depth() const = 0;
     virtual uint32_t size() const = 0;
@@ -204,6 +207,9 @@ public:
 
 class Atom : public BoolExpr
 {
+protected:
+    void dot_edge(std::ostream&) const;
+
 public:
     Atom(Kind kind);
 
@@ -245,6 +251,7 @@ class Zero : public Known
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
     soln_t _sat() const;
 
 public:
@@ -259,6 +266,7 @@ class One : public Known
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
     soln_t _sat() const;
 
 public:
@@ -280,6 +288,7 @@ class Logical : public Unknown
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
     soln_t _sat() const;
 
 public:
@@ -292,6 +301,7 @@ class Illogical : public Unknown
 protected:
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
     soln_t _sat() const;
 
 public:
@@ -323,6 +333,7 @@ protected:
     lit_t abs() const;
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
     soln_t _sat() const;
 
 public:
@@ -339,6 +350,7 @@ protected:
     lit_t abs() const;
     bx_t invert() const;
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
     soln_t _sat() const;
 
 public:
@@ -356,9 +368,12 @@ class Operator : public BoolExpr
 
 protected:
     std::ostream& op_lsh(std::ostream&) const;
+    void dot_node(std::ostream&) const;
+    void dot_edge(std::ostream&) const;
     soln_t _sat() const;
 
-    virtual std::string const opname() const = 0;
+    virtual std::string const opname_camel() const = 0;
+    virtual std::string const opname_compact() const = 0;
     virtual bx_t _simplify() const = 0;
     virtual bx_t eqvar(var_t const &) const = 0;
     virtual op_t from_args(std::vector<bx_t> const &&) const = 0;
@@ -400,7 +415,8 @@ class Nor : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -421,7 +437,8 @@ class Or : public LatticeOperator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -447,7 +464,8 @@ class Nand : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -468,7 +486,8 @@ class And : public LatticeOperator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -494,7 +513,8 @@ class Xnor : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -515,7 +535,8 @@ class Xor : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(const std::vector<bx_t>&&) const;
@@ -539,7 +560,8 @@ class Unequal : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -560,7 +582,8 @@ class Equal : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -582,7 +605,8 @@ class NotImplies : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -603,7 +627,8 @@ class Implies : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -624,7 +649,8 @@ class NotIfThenElse : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -645,7 +671,8 @@ class IfThenElse : public Operator
 protected:
     bx_t invert() const;
 
-    std::string const opname() const;
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
@@ -1057,6 +1084,7 @@ BX boolexpr_ite_s(BX, BX, BX);
 void boolexpr_BoolExpr_del(BX);
 uint8_t boolexpr_BoolExpr_kind(BX);
 STRING boolexpr_BoolExpr_to_string(BX);
+STRING boolexpr_BoolExpr_to_dot(BX);
 uint32_t boolexpr_BoolExpr_depth(BX);
 uint32_t boolexpr_BoolExpr_size(BX);
 bool boolexpr_BoolExpr_is_cnf(BX);
