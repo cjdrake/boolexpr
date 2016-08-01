@@ -356,16 +356,16 @@ class BoolExpr:
     def to_ast(self):
         """Convert to an abstract syntax tree (AST)."""
 
-    def to_dot(self):
-        """Convert to DOT language representation."""
-        b = bytes(_String(lib.boolexpr_BoolExpr_to_dot(self._cdata)))
-        return b.decode("utf-8")
-
     @classmethod
     def from_ast(cls, ast):
         """Convert an abstract syntax tree (AST) to a BoolExpr."""
         fst, rst = ast[0], ast[1:]
         return _AST[fst](rst)
+
+    def to_dot(self):
+        """Convert to DOT language representation."""
+        b = bytes(_String(lib.boolexpr_BoolExpr_to_dot(self._cdata)))
+        return b.decode("utf-8")
 
     def __repr__(self):
         return self.__str__()

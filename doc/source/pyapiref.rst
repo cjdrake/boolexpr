@@ -55,6 +55,7 @@ Base Class
 .. autoclass:: boolexpr.BoolExpr
    :members: Kind,
              to_ast, from_ast,
+             to_dot,
              __invert__, __or__, __and__, __xor__,
              kind,
              depth, size,
@@ -66,6 +67,7 @@ Base Class
              equiv,
              support,
              degree,
+             expand,
              smoothing, consensus, derivative,
              iter_dfs,
              iter_domain,
