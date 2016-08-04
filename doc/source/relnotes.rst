@@ -6,6 +6,11 @@
   Release Notes
 *****************
 
+Release 2.1
+===========
+
+Added a ``to_dot`` method, and slightly improved the docs.
+
 Release 2.0
 ===========
 
