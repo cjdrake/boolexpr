@@ -31,7 +31,6 @@ CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python",
     "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
