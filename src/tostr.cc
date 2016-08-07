@@ -242,12 +242,9 @@ Variable::op_lsh(std::ostream& s) const
 std::ostream&
 Operator::op_lsh(std::ostream& s) const
 {
-    s << opname_camel() << "(";
-    for (size_t i = 0; i < args.size(); ++i) {
-        if (i != 0) {
-            s << ", ";
-        }
-        s << args[i];
+    s << opname_camel() << "(" << args[0];
+    for (size_t i = 1; i < args.size(); ++i) {
+        s << ", " << args[i];
     }
     return s << ")";
 }
