@@ -364,8 +364,8 @@ class BoolExpr:
 
     def to_dot(self):
         """Convert to DOT language representation."""
-        b = bytes(_String(lib.boolexpr_BoolExpr_to_dot(self._cdata)))
-        return b.decode("utf-8")
+        data = bytes(_String(lib.boolexpr_BoolExpr_to_dot(self._cdata)))
+        return data.decode("utf-8")
 
     def __repr__(self):
         return self.__str__()
