@@ -6,6 +6,17 @@
   Release Notes
 *****************
 
+Release 2.2
+===========
+
+Added the following reduction methods to the ``ndarray`` class:
+
+* ``nor_reduce``
+* ``nand_reduce``
+* ``xnor_reduce``
+
+Also cleaned up some package metadata.
+
 Release 2.1
 ===========
 
