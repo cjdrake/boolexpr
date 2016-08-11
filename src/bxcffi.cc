@@ -1097,6 +1097,14 @@ boolexpr_Array_sext(ARRAY c_self, size_t num)
 
 
 BX
+boolexpr_Array_nor_reduce(ARRAY c_self)
+{
+    auto self = reinterpret_cast<Array * const>(c_self);
+    return new BoolExprProxy(self->nor_reduce());
+}
+
+
+BX
 boolexpr_Array_or_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1105,10 +1113,26 @@ boolexpr_Array_or_reduce(ARRAY c_self)
 
 
 BX
+boolexpr_Array_nand_reduce(ARRAY c_self)
+{
+    auto self = reinterpret_cast<Array * const>(c_self);
+    return new BoolExprProxy(self->nand_reduce());
+}
+
+
+BX
 boolexpr_Array_and_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
     return new BoolExprProxy(self->and_reduce());
+}
+
+
+BX
+boolexpr_Array_xnor_reduce(ARRAY c_self)
+{
+    auto self = reinterpret_cast<Array * const>(c_self);
+    return new BoolExprProxy(self->xnor_reduce());
 }
 
 

@@ -1314,13 +1314,25 @@ class Array:
         """Sign-extend this array by *num* bits."""
         return Array(lib.boolexpr_Array_sext(self._cdata, num))
 
+    def nor_reduce(self):
+        """Reduce items of the array using the NOR operator."""
+        return _bx(lib.boolexpr_Array_nor_reduce(self._cdata))
+
     def or_reduce(self):
         """Reduce items of the array using the OR operator."""
         return _bx(lib.boolexpr_Array_or_reduce(self._cdata))
 
+    def nand_reduce(self):
+        """Reduce items of the array using the NAND operator."""
+        return _bx(lib.boolexpr_Array_nand_reduce(self._cdata))
+
     def and_reduce(self):
         """Reduce items of the array using the AND operator."""
         return _bx(lib.boolexpr_Array_and_reduce(self._cdata))
+
+    def xnor_reduce(self):
+        """Reduce items of the array using the XNOR operator."""
+        return _bx(lib.boolexpr_Array_xnor_reduce(self._cdata))
 
     def xor_reduce(self):
         """Reduce items of the array using the XOR operator."""
@@ -1722,13 +1734,25 @@ class ndarray: # pylint: disable=invalid-name
         return self.__class__(self._bxa.sext(num))
 
     # Reduction operators
+    def nor_reduce(self):
+        """NOR reduction operator"""
+        return self._bxa.nor_reduce()
+
     def or_reduce(self):
         """OR reduction operator"""
         return self._bxa.or_reduce()
 
+    def nand_reduce(self):
+        """NAND reduction operator"""
+        return self._bxa.nand_reduce()
+
     def and_reduce(self):
         """AND reduction operator"""
         return self._bxa.and_reduce()
+
+    def xnor_reduce(self):
+        """XNOR reduction operator"""
+        return self._bxa.xnor_reduce()
 
     def xor_reduce(self):
         """XOR reduction operator"""

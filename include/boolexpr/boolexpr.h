@@ -723,8 +723,11 @@ public:
     Array * zext(size_t num) const;
     Array * sext(size_t num) const;
 
+    bx_t nor_reduce() const;
     bx_t or_reduce() const;
+    bx_t nand_reduce() const;
     bx_t and_reduce() const;
+    bx_t xnor_reduce() const;
     bx_t xor_reduce() const;
 
     std::pair<Array *, Array *> lsh(Array const &) const;
@@ -1135,8 +1138,11 @@ ARRAY boolexpr_Array_restrict(ARRAY, size_t, VARS, CONSTS);
 bool boolexpr_Array_equiv(ARRAY, ARRAY);
 ARRAY boolexpr_Array_zext(ARRAY, size_t);
 ARRAY boolexpr_Array_sext(ARRAY, size_t);
+BX boolexpr_Array_nor_reduce(ARRAY);
 BX boolexpr_Array_or_reduce(ARRAY);
+BX boolexpr_Array_nand_reduce(ARRAY);
 BX boolexpr_Array_and_reduce(ARRAY);
+BX boolexpr_Array_xnor_reduce(ARRAY);
 BX boolexpr_Array_xor_reduce(ARRAY);
 ARRAY boolexpr_ArrayPair_fst(ARRAY_PAIR);
 ARRAY boolexpr_ArrayPair_snd(ARRAY_PAIR);

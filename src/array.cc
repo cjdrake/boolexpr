@@ -315,6 +315,13 @@ Array::sext(size_t num) const
 
 
 bx_t
+Array::nor_reduce() const
+{
+    return nor(items);
+}
+
+
+bx_t
 Array::or_reduce() const
 {
     return or_(items);
@@ -322,9 +329,23 @@ Array::or_reduce() const
 
 
 bx_t
+Array::nand_reduce() const
+{
+    return nand(items);
+}
+
+
+bx_t
 Array::and_reduce() const
 {
     return and_(items);
+}
+
+
+bx_t
+Array::xnor_reduce() const
+{
+    return xnor(items);
 }
 
 

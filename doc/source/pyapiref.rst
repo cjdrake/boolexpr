@@ -270,6 +270,8 @@ Multidimensional Arrays
              compose, restrict,
              equiv,
              zext, sext,
-             or_reduce, and_reduce, xor_reduce,
+             nor_reduce, or_reduce,
+             nand_reduce, and_reduce,
+             xnor_reduce, xor_reduce,
              lsh, rsh, arsh
    :member-order: bysource
