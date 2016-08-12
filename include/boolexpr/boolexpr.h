@@ -401,6 +401,13 @@ public:
 };
 
 
+class NegativeOperator : public Operator
+{
+public:
+    NegativeOperator(Kind kind, bool simple, std::vector<bx_t> const & args);
+};
+
+
 class LatticeOperator : public Operator
 {
 public:
@@ -410,7 +417,7 @@ public:
 };
 
 
-class Nor : public Operator
+class Nor : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -459,7 +466,7 @@ public:
 };
 
 
-class Nand : public Operator
+class Nand : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -508,7 +515,7 @@ public:
 };
 
 
-class Xnor : public Operator
+class Xnor : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -555,7 +562,7 @@ public:
 };
 
 
-class Unequal : public Operator
+class Unequal : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -600,7 +607,7 @@ public:
 };
 
 
-class NotImplies : public Operator
+class NotImplies : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -644,7 +651,7 @@ public:
 };
 
 
-class NotIfThenElse : public Operator
+class NotIfThenElse : public NegativeOperator
 {
 protected:
     bx_t invert() const;

@@ -102,6 +102,12 @@ Operator::Operator(Kind kind, bool simple, vector<bx_t> const && args)
 {}
 
 
+NegativeOperator::NegativeOperator(Kind kind, bool simple,
+                                   vector<bx_t> const & args)
+    : Operator(kind, simple, args)
+{}
+
+
 LatticeOperator::LatticeOperator(Kind kind, bool simple,
                                  vector<bx_t> const & args)
     : Operator(kind, simple, args)
@@ -109,7 +115,7 @@ LatticeOperator::LatticeOperator(Kind kind, bool simple,
 
 
 Nor::Nor(bool simple, vector<bx_t> const & args)
-    : Operator(NOR, simple, args)
+    : NegativeOperator(NOR, simple, args)
 {}
 
 
@@ -124,7 +130,7 @@ Or::Or(bool simple, vector<bx_t> const && args)
 
 
 Nand::Nand(bool simple, vector<bx_t> const & args)
-    : Operator(NAND, simple, args)
+    : NegativeOperator(NAND, simple, args)
 {}
 
 
@@ -139,7 +145,7 @@ And::And(bool simple, vector<bx_t> const && args)
 
 
 Xnor::Xnor(bool simple, vector<bx_t> const & args)
-    : Operator(XNOR, simple, args)
+    : NegativeOperator(XNOR, simple, args)
 {}
 
 
@@ -154,12 +160,12 @@ Xor::Xor(bool simple, vector<bx_t> const && args)
 
 
 Unequal::Unequal(bool simple, vector<bx_t> const & args)
-    : Operator(NEQ, simple, args)
+    : NegativeOperator(NEQ, simple, args)
 {}
 
 
 NotImplies::NotImplies(bool simple, bx_t p, bx_t q)
-    : Operator(NIMPL, simple, vector<bx_t>{p, q})
+    : NegativeOperator(NIMPL, simple, vector<bx_t>{p, q})
 {}
 
 
@@ -169,7 +175,7 @@ Implies::Implies(bool simple, bx_t p, bx_t q)
 
 
 NotIfThenElse::NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0)
-    : Operator(NITE, simple, vector<bx_t>{s, d1, d0})
+    : NegativeOperator(NITE, simple, vector<bx_t>{s, d1, d0})
 {}
 
 
