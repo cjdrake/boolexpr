@@ -841,41 +841,46 @@ class Operator(BoolExpr):
         return bool(lib.boolexpr_Operator_is_clause(self._cdata))
 
 
+class NegativeOperator(Operator):
+    """Negative Operator"""
+
 class LatticeOperator(Operator):
     """Boolean Lattice Operator"""
 
-class Nor(Operator):
+
+class Nor(NegativeOperator):
     """Boolean Nor Operator"""
+
+class Nand(NegativeOperator):
+    """Boolean Nand Operator"""
+
+class Xnor(NegativeOperator):
+    """Boolean Xnor Operator"""
+
+class Unequal(NegativeOperator):
+    """Boolean Unequal Operator"""
+
+class NotImplies(NegativeOperator):
+    """Boolean Not Implies Operator"""
+
+class NotIfThenElse(NegativeOperator):
+    """Boolean Not IfThenElse Operator"""
+
 
 class Or(LatticeOperator):
     """Boolean Or Operator"""
 
-class Nand(Operator):
-    """Boolean Nand Operator"""
-
 class And(LatticeOperator):
     """Boolean And Operator"""
-
-class Xnor(Operator):
-    """Boolean Xnor Operator"""
 
 class Xor(Operator):
     """Boolean Xor Operator"""
 
-class Unequal(Operator):
-    """Boolean Unequal Operator"""
-
 class Equal(Operator):
     """Boolean Equal Operator"""
 
-class NotImplies(Operator):
-    """Boolean Not Implies Operator"""
-
 class Implies(Operator):
     """Boolean Implies Operator"""
-
-class NotIfThenElse(Operator):
-    """Boolean Not IfThenElse Operator"""
 
 class IfThenElse(Operator):
     """Boolean IfThenElse Operator"""

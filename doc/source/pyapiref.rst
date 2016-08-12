@@ -119,40 +119,43 @@ Atom Nodes
 Operator Nodes
 --------------
 
+.. autoclass:: boolexpr.NegativeOperator
+   :show-inheritance: true
+
 .. autoclass:: boolexpr.LatticeOperator
    :show-inheritance: true
 
 .. autoclass:: boolexpr.Nor
    :show-inheritance: true
 
-.. autoclass:: boolexpr.Or
-   :show-inheritance: true
-
 .. autoclass:: boolexpr.Nand
-   :show-inheritance: true
-
-.. autoclass:: boolexpr.And
    :show-inheritance: true
 
 .. autoclass:: boolexpr.Xnor
    :show-inheritance: true
 
-.. autoclass:: boolexpr.Xor
-   :show-inheritance: true
-
 .. autoclass:: boolexpr.Unequal
-   :show-inheritance: true
-
-.. autoclass:: boolexpr.Equal
    :show-inheritance: true
 
 .. autoclass:: boolexpr.NotImplies
    :show-inheritance: true
 
-.. autoclass:: boolexpr.Implies
+.. autoclass:: boolexpr.NotIfThenElse
    :show-inheritance: true
 
-.. autoclass:: boolexpr.NotIfThenElse
+.. autoclass:: boolexpr.Or
+   :show-inheritance: true
+
+.. autoclass:: boolexpr.And
+   :show-inheritance: true
+
+.. autoclass:: boolexpr.Xor
+   :show-inheritance: true
+
+.. autoclass:: boolexpr.Equal
+   :show-inheritance: true
+
+.. autoclass:: boolexpr.Implies
    :show-inheritance: true
 
 .. autoclass:: boolexpr.IfThenElse

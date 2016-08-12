@@ -74,6 +74,7 @@ from .wrap import Literal
 from .wrap import Complement
 from .wrap import Variable
 from .wrap import Operator
+from .wrap import NegativeOperator
 from .wrap import LatticeOperator
 from .wrap import Nor
 from .wrap import Or
