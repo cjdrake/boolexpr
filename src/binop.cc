@@ -30,7 +30,7 @@ Atom::to_binop() const
 
 
 bx_t
-Nor::to_binop() const
+NegativeOperator::to_binop() const
 {
     auto op = ~shared_from_this();
     return ~op->to_binop();
@@ -65,14 +65,6 @@ Or::to_binop() const
 
 
 bx_t
-Nand::to_binop() const
-{
-    auto op = ~shared_from_this();
-    return ~op->to_binop();
-}
-
-
-bx_t
 And::to_binop() const
 {
     size_t n = args.size();
@@ -100,14 +92,6 @@ And::to_binop() const
 
 
 bx_t
-Xnor::to_binop() const
-{
-    auto op = ~shared_from_this();
-    return ~op->to_binop();
-}
-
-
-bx_t
 Xor::to_binop() const
 {
     size_t n = args.size();
@@ -131,14 +115,6 @@ Xor::to_binop() const
     auto hi = xor_(vector<bx_t>(args.cbegin() + mid, args.cend()));
 
     return lo->to_binop() ^ hi->to_binop();
-}
-
-
-bx_t
-Unequal::to_binop() const
-{
-    auto op = ~shared_from_this();
-    return ~op->to_binop();
 }
 
 
@@ -173,25 +149,9 @@ Equal::to_binop() const
 
 
 bx_t
-NotImplies::to_binop() const
-{
-    auto op = ~shared_from_this();
-    return ~op->to_binop();
-}
-
-
-bx_t
 Implies::to_binop() const
 {
     return transform([](bx_t const & bx){return bx->to_binop();});
-}
-
-
-bx_t
-NotIfThenElse::to_binop() const
-{
-    auto op = ~shared_from_this();
-    return ~op->to_binop();
 }
 
 

@@ -403,8 +403,14 @@ public:
 
 class NegativeOperator : public Operator
 {
+protected:
+    bx_t _simplify() const;
+
 public:
     NegativeOperator(Kind kind, bool simple, std::vector<bx_t> const & args);
+
+    bx_t to_binop() const;
+    bx_t to_latop() const;
 };
 
 
@@ -424,17 +430,14 @@ protected:
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     Nor(bool simple, std::vector<bx_t> const & args);
 
-    bx_t to_binop() const;
     bx_t to_cnf() const;
     bx_t to_dnf() const;
-    bx_t to_latop() const;
     bx_t to_posop() const;
 };
 
@@ -473,17 +476,14 @@ protected:
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     Nand(bool simple, std::vector<bx_t> const & args);
 
-    bx_t to_binop() const;
     bx_t to_cnf() const;
     bx_t to_dnf() const;
-    bx_t to_latop() const;
     bx_t to_posop() const;
 };
 
@@ -522,17 +522,14 @@ protected:
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     Xnor(bool simple, std::vector<bx_t> const & args);
 
-    bx_t to_binop() const;
     bx_t to_cnf() const;
     bx_t to_dnf() const;
-    bx_t to_latop() const;
     bx_t to_posop() const;
 };
 
@@ -569,17 +566,14 @@ protected:
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     Unequal(bool simple, std::vector<bx_t> const & args);
 
-    bx_t to_binop() const;
     bx_t to_cnf() const;
     bx_t to_dnf() const;
-    bx_t to_latop() const;
     bx_t to_posop() const;
 };
 
@@ -614,17 +608,14 @@ protected:
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
 
-    bx_t to_binop() const;
     bx_t to_cnf() const;
     bx_t to_dnf() const;
-    bx_t to_latop() const;
     bx_t to_posop() const;
 };
 
@@ -658,17 +649,14 @@ protected:
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
-    bx_t to_binop() const;
     bx_t to_cnf() const;
     bx_t to_dnf() const;
-    bx_t to_latop() const;
     bx_t to_posop() const;
 };
 

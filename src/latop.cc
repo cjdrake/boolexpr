@@ -36,52 +36,11 @@ LatticeOperator::to_latop() const
 }
 
 
-static bx_t
-_nop_to_latop(BoolExpr const * const bx)
+bx_t
+NegativeOperator::to_latop() const
 {
-    auto op = ~bx->shared_from_this();
+    auto op = ~shared_from_this();
     return ~op->to_latop();
-}
-
-bx_t
-Nor::to_latop() const
-{
-    return _nop_to_latop(this);
-}
-
-
-bx_t
-Nand::to_latop() const
-{
-    return _nop_to_latop(this);
-}
-
-
-bx_t
-Xnor::to_latop() const
-{
-    return _nop_to_latop(this);
-}
-
-
-bx_t
-Unequal::to_latop() const
-{
-    return _nop_to_latop(this);
-}
-
-
-bx_t
-NotImplies::to_latop() const
-{
-    return _nop_to_latop(this);
-}
-
-
-bx_t
-NotIfThenElse::to_latop() const
-{
-    return _nop_to_latop(this);
 }
 
 

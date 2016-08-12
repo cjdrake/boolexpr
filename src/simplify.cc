@@ -43,7 +43,7 @@ Operator::simplify() const
 
 
 bx_t
-Nor::_simplify() const
+NegativeOperator::_simplify() const
 {
     auto op = ~shared_from_this();
     return ~op->simplify();
@@ -58,25 +58,9 @@ Or::_simplify() const
 
 
 bx_t
-Nand::_simplify() const
-{
-    auto op = ~shared_from_this();
-    return ~op->simplify();
-}
-
-
-bx_t
 And::_simplify() const
 {
     return AndArgSet(args).reduce();
-}
-
-
-bx_t
-Xnor::_simplify() const
-{
-    auto op = ~shared_from_this();
-    return ~op->simplify();
 }
 
 
@@ -88,25 +72,9 @@ Xor::_simplify() const
 
 
 bx_t
-Unequal::_simplify() const
-{
-    auto op = ~shared_from_this();
-    return ~op->simplify();
-}
-
-
-bx_t
 Equal::_simplify() const
 {
     return EqArgSet(args).reduce();
-}
-
-
-bx_t
-NotImplies::_simplify() const
-{
-    auto op = ~shared_from_this();
-    return ~op->simplify();
 }
 
 
@@ -151,14 +119,6 @@ Implies::_simplify() const
     }
 
     return make_shared<Implies>(true, p, q);
-}
-
-
-bx_t
-NotIfThenElse::_simplify() const
-{
-    auto op = ~shared_from_this();
-    return ~op->simplify();
 }
 
 
