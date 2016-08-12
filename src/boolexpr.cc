@@ -420,20 +420,37 @@ And::is_dnf() const
 }
 
 
+void
+Atom::insert_support_var(unordered_set<var_t> & s) const
+{}
+
+
+void
+Complement::insert_support_var(unordered_set<var_t> & s) const
+{
+    s.insert(static_pointer_cast<Variable const>(~shared_from_this()));
+}
+
+
+void
+Variable::insert_support_var(unordered_set<var_t> & s) const
+{
+    s.insert(static_pointer_cast<Variable const>(shared_from_this()));
+}
+
+
+void
+Operator::insert_support_var(unordered_set<var_t> & s) const
+{}
+
+
 unordered_set<var_t>
 BoolExpr::support() const
 {
-    auto self = shared_from_this();
-
     unordered_set<var_t> s;
 
-    for (auto it = dfs_iter(self); it != dfs_iter(); ++it) {
-        if (IS_VAR(*it)) {
-            s.insert(static_pointer_cast<Variable const>(*it));
-        }
-        else if (IS_COMP(*it)) {
-            s.insert(static_pointer_cast<Variable const>(~*it));
-        }
+    for (auto it = dfs_iter(shared_from_this()); it != dfs_iter(); ++it) {
+        (*it)->insert_support_var(s);
     }
 
     return std::move(s);

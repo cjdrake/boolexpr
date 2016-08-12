@@ -142,6 +142,7 @@ protected:
     virtual void dot_node(std::ostream&) const = 0;
     virtual void dot_edge(std::ostream&) const = 0;
     virtual soln_t _sat() const = 0;
+    virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
 
 public:
     enum Kind {
@@ -209,6 +210,7 @@ class Atom : public BoolExpr
 {
 protected:
     void dot_edge(std::ostream&) const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
 
 public:
     Atom(Kind kind);
@@ -335,6 +337,7 @@ protected:
     std::ostream& op_lsh(std::ostream&) const;
     void dot_node(std::ostream&) const;
     soln_t _sat() const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
 
 public:
     Complement(Context * const ctx, id_t id);
@@ -352,6 +355,7 @@ protected:
     std::ostream& op_lsh(std::ostream&) const;
     void dot_node(std::ostream&) const;
     soln_t _sat() const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
 
 public:
     Variable(Context * const ctx, id_t id);
@@ -371,6 +375,7 @@ protected:
     void dot_node(std::ostream&) const;
     void dot_edge(std::ostream&) const;
     soln_t _sat() const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
 
     virtual std::string const opname_camel() const = 0;
     virtual std::string const opname_compact() const = 0;
