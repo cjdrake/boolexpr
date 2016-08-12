@@ -24,6 +24,23 @@ using std::vector;
 namespace boolexpr {
 
 
+bx_t
+Atom::find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const
+{
+    return shared_from_this();
+}
+
+
+bx_t
+Operator::find_subop(bool & found,
+                     Context & ctx, std::string const & auxvarname,
+                     uint32_t & index, var2op_t & constraints) const
+{
+    found = true;
+    return to_con1(ctx, auxvarname, index, constraints);
+}
+
+
 var_t
 Operator::to_con1(Context & ctx, string const & auxvarname,
                   uint32_t & index, var2op_t & constraints) const
@@ -41,24 +58,17 @@ op_t
 Operator::to_con2(Context & ctx, string const & auxvarname,
                   uint32_t & index, var2op_t & constraints) const
 {
-    bool found_subop = false;
+    bool found = false;
 
     size_t n = args.size();
     vector<bx_t> _args(n);
 
     // NOTE: do not use transform, b/c there's mutable state
     for (size_t i = 0; i < n; ++i) {
-        if (IS_OP(args[i])) {
-            found_subop = true;
-            auto subop = static_pointer_cast<Operator const>(args[i]);
-            _args[i] = subop->to_con1(ctx, auxvarname, index, constraints);
-        }
-        else {
-            _args[i] = args[i];
-        }
+        _args[i] = args[i]->find_subop(found, ctx, auxvarname, index, constraints);
     }
 
-    if (found_subop) {
+    if (found) {
         return from_args(std::move(_args));
     }
 

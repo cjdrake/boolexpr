@@ -133,6 +133,8 @@ public:
 
 class BoolExpr : public std::enable_shared_from_this<BoolExpr>
 {
+    friend class Operator;
+
     friend bx_t operator~(bx_t const &);
     friend std::ostream & operator<<(std::ostream &, bx_t const &);
 
@@ -143,6 +145,7 @@ protected:
     virtual void dot_edge(std::ostream &) const = 0;
     virtual soln_t _sat() const = 0;
     virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
+    virtual bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const = 0;
 
 public:
     enum Kind {
@@ -211,6 +214,7 @@ class Atom : public BoolExpr
 protected:
     void dot_edge(std::ostream &) const;
     void insert_support_var(std::unordered_set<var_t> &) const;
+    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
 
 public:
     Atom(Kind kind);
@@ -376,6 +380,7 @@ protected:
     void dot_edge(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
+    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
 
     virtual std::string const opname_camel() const = 0;
     virtual std::string const opname_compact() const = 0;
