@@ -25,8 +25,8 @@ namespace boolexpr {
 
 
 var_t
-Operator::to_con1(Context& ctx, string const & auxvarname,
-                  uint32_t& index, var2op_t& constraints) const
+Operator::to_con1(Context & ctx, string const & auxvarname,
+                  uint32_t & index, var2op_t & constraints) const
 {
     auto key = ctx.get_var(auxvarname + "_" + std::to_string(index++));
     auto val = to_con2(ctx, auxvarname, index, constraints);
@@ -38,8 +38,8 @@ Operator::to_con1(Context& ctx, string const & auxvarname,
 
 
 op_t
-Operator::to_con2(Context& ctx, string const & auxvarname,
-                  uint32_t& index, var2op_t& constraints) const
+Operator::to_con2(Context & ctx, string const & auxvarname,
+                  uint32_t & index, var2op_t & constraints) const
 {
     bool found_subop = false;
 
@@ -67,14 +67,14 @@ Operator::to_con2(Context& ctx, string const & auxvarname,
 
 
 bx_t
-Atom::tseytin(Context&, string const &) const
+Atom::tseytin(Context &, string const &) const
 {
     return shared_from_this();
 }
 
 
 bx_t
-Operator::tseytin(Context& ctx, string const & auxvarname) const
+Operator::tseytin(Context & ctx, string const & auxvarname) const
 {
     if (is_cnf()) {
         return shared_from_this();

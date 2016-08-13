@@ -134,13 +134,13 @@ public:
 class BoolExpr : public std::enable_shared_from_this<BoolExpr>
 {
     friend bx_t operator~(bx_t const &);
-    friend std::ostream& operator<<(std::ostream&, bx_t const &);
+    friend std::ostream & operator<<(std::ostream &, bx_t const &);
 
 protected:
     virtual bx_t invert() const = 0;
-    virtual std::ostream& op_lsh(std::ostream&) const = 0;
-    virtual void dot_node(std::ostream&) const = 0;
-    virtual void dot_edge(std::ostream&) const = 0;
+    virtual std::ostream & op_lsh(std::ostream &) const = 0;
+    virtual void dot_node(std::ostream &) const = 0;
+    virtual void dot_edge(std::ostream &) const = 0;
     virtual soln_t _sat() const = 0;
     virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
 
@@ -185,7 +185,7 @@ public:
     virtual bx_t to_dnf() const = 0;
     virtual bx_t to_latop() const = 0;
     virtual bx_t to_posop() const = 0;
-    virtual bx_t tseytin(Context&, std::string const & = "a") const = 0;
+    virtual bx_t tseytin(Context &, std::string const & = "a") const = 0;
 
     virtual bx_t compose(var2bx_t const &) const = 0;
     virtual bx_t restrict_(point_t const &) const = 0;
@@ -209,7 +209,7 @@ public:
 class Atom : public BoolExpr
 {
 protected:
-    void dot_edge(std::ostream&) const;
+    void dot_edge(std::ostream &) const;
     void insert_support_var(std::unordered_set<var_t> &) const;
 
 public:
@@ -225,7 +225,7 @@ public:
     bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
-    bx_t tseytin(Context&, std::string const & = "a") const;
+    bx_t tseytin(Context &, std::string const & = "a") const;
 };
 
 
@@ -252,8 +252,8 @@ class Zero : public Known
 {
 protected:
     bx_t invert() const;
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
     soln_t _sat() const;
 
 public:
@@ -267,8 +267,8 @@ class One : public Known
 {
 protected:
     bx_t invert() const;
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
     soln_t _sat() const;
 
 public:
@@ -289,8 +289,8 @@ class Logical : public Unknown
 {
 protected:
     bx_t invert() const;
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
     soln_t _sat() const;
 
 public:
@@ -302,8 +302,8 @@ class Illogical : public Unknown
 {
 protected:
     bx_t invert() const;
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
     soln_t _sat() const;
 
 public:
@@ -334,8 +334,8 @@ class Complement : public Literal
 protected:
     lit_t abs() const;
     bx_t invert() const;
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
 
@@ -352,8 +352,8 @@ class Variable : public Literal
 protected:
     lit_t abs() const;
     bx_t invert() const;
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
 
@@ -367,13 +367,13 @@ public:
 
 class Operator : public BoolExpr
 {
-    var_t to_con1(Context&, std::string const &, uint32_t&, var2op_t&) const;
-    op_t  to_con2(Context&, std::string const &, uint32_t&, var2op_t&) const;
+    var_t to_con1(Context &, std::string const &, uint32_t &, var2op_t &) const;
+    op_t  to_con2(Context &, std::string const &, uint32_t &, var2op_t &) const;
 
 protected:
-    std::ostream& op_lsh(std::ostream&) const;
-    void dot_node(std::ostream&) const;
-    void dot_edge(std::ostream&) const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
+    void dot_edge(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
 
@@ -398,7 +398,7 @@ public:
     bool is_cnf() const;
     bool is_dnf() const;
     bx_t simplify() const;
-    bx_t tseytin(Context&, std::string const & = "a") const;
+    bx_t tseytin(Context &, std::string const & = "a") const;
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
 
@@ -548,7 +548,7 @@ protected:
     std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(const std::vector<bx_t>&&) const;
+    op_t from_args(const std::vector<bx_t> &&) const;
 
 public:
     Xor(bool simple, std::vector<bx_t> const & args);
@@ -952,7 +952,7 @@ bx_t operator&(bx_t const &, bx_t const &);
 bx_t operator^(bx_t const &, bx_t const &);
 lit_t abs(lit_t const &);
 bool operator<(lit_t const &, lit_t const &);
-std::ostream& operator<<(std::ostream&, bx_t const &);
+std::ostream & operator<<(std::ostream &, bx_t const &);
 
 Array * operator~(Array const &);
 Array * operator|(Array const &, Array const &);

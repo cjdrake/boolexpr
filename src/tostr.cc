@@ -193,36 +193,36 @@ IfThenElse::opname_compact() const
 }
 
 
-std::ostream&
-Zero::op_lsh(std::ostream& s) const
+std::ostream &
+Zero::op_lsh(std::ostream & s) const
 {
     return s << "0";
 }
 
 
-std::ostream&
-One::op_lsh(std::ostream& s) const
+std::ostream &
+One::op_lsh(std::ostream & s) const
 {
     return s << "1";
 }
 
 
-std::ostream&
-Logical::op_lsh(std::ostream& s) const
+std::ostream &
+Logical::op_lsh(std::ostream & s) const
 {
     return s << "X";
 }
 
 
-std::ostream&
-Illogical::op_lsh(std::ostream& s) const
+std::ostream &
+Illogical::op_lsh(std::ostream & s) const
 {
     return s << "?";
 }
 
 
-std::ostream&
-Complement::op_lsh(std::ostream& s) const
+std::ostream &
+Complement::op_lsh(std::ostream & s) const
 {
     auto self = shared_from_this();
     auto xn = static_pointer_cast<Complement const>(self);
@@ -230,8 +230,8 @@ Complement::op_lsh(std::ostream& s) const
 }
 
 
-std::ostream&
-Variable::op_lsh(std::ostream& s) const
+std::ostream &
+Variable::op_lsh(std::ostream & s) const
 {
     auto self = shared_from_this();
     auto x = static_pointer_cast<Variable const>(self);
@@ -239,8 +239,8 @@ Variable::op_lsh(std::ostream& s) const
 }
 
 
-std::ostream&
-Operator::op_lsh(std::ostream& s) const
+std::ostream &
+Operator::op_lsh(std::ostream & s) const
 {
     s << opname_camel() << "(" << args[0];
     for (size_t i = 1; i < args.size(); ++i) {
@@ -250,8 +250,8 @@ Operator::op_lsh(std::ostream& s) const
 }
 
 
-std::ostream&
-operator<<(std::ostream& s, bx_t const & bx)
+std::ostream &
+operator<<(std::ostream & s, bx_t const & bx)
 {
     return bx->op_lsh(s);
 }
@@ -267,35 +267,35 @@ BoolExpr::to_string() const
 
 
 void
-Zero::dot_node(std::ostream& s) const
+Zero::dot_node(std::ostream & s) const
 {
     s << " n" << this << " [label=\"0\",shape=box];";
 }
 
 
 void
-One::dot_node(std::ostream& s) const
+One::dot_node(std::ostream & s) const
 {
     s << " n" << this << " [label=\"1\",shape=box];";
 }
 
 
 void
-Logical::dot_node(std::ostream& s) const
+Logical::dot_node(std::ostream & s) const
 {
     s << " n" << this << " [label=\"X\",shape=box];";
 }
 
 
 void
-Illogical::dot_node(std::ostream& s) const
+Illogical::dot_node(std::ostream & s) const
 {
     s << " n" << this << " [label=\"?\",shape=box];";
 }
 
 
 void
-Complement::dot_node(std::ostream& s) const
+Complement::dot_node(std::ostream & s) const
 {
     auto xn = static_pointer_cast<Complement const>(shared_from_this());
 
@@ -307,7 +307,7 @@ Complement::dot_node(std::ostream& s) const
 
 
 void
-Variable::dot_node(std::ostream& s) const
+Variable::dot_node(std::ostream & s) const
 {
     auto x = static_pointer_cast<Variable const>(shared_from_this());
 
@@ -319,7 +319,7 @@ Variable::dot_node(std::ostream& s) const
 
 
 void
-Operator::dot_node(std::ostream& s) const
+Operator::dot_node(std::ostream & s) const
 {
     s << " n" << this;
     s << " [label=";
@@ -329,12 +329,12 @@ Operator::dot_node(std::ostream& s) const
 
 
 void
-Atom::dot_edge(std::ostream& s) const
+Atom::dot_edge(std::ostream & s) const
 {}
 
 
 void
-Operator::dot_edge(std::ostream& s) const
+Operator::dot_edge(std::ostream & s) const
 {
     for (size_t i = 0; i < args.size(); ++i) {
         s << " n" << &*args[i];
