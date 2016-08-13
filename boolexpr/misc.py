@@ -47,23 +47,15 @@ def nhot(n, *args):
     return and_(*clauses)
 
 
-def majority(*args, conj=False):
+def majority(*args):
     """
-    Return an expression that means
+    Return a CNF expression that means
     "the majority of input functions are true".
-
-    If *conj* is ``True``, return a CNF.
-    Otherwise, return a DNF.
     """
     clauses = list()
-    if conj:
-        for xs in itertools.combinations(args, (len(args) + 1) // 2):
-            clauses.append(or_(*xs))
-        return and_(*clauses)
-    else:
-        for xs in itertools.combinations(args, len(args) // 2 + 1):
-            clauses.append(and_(*xs))
-        return or_(*clauses)
+    for xs in itertools.combinations(args, (len(args) + 1) // 2):
+        clauses.append(or_(*xs))
+    return and_(*clauses)
 
 
 def achilles_heel(*args):

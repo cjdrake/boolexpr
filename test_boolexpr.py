@@ -143,11 +143,17 @@ class BoolExprTest(unittest.TestCase):
         self.assertEqual(f2.kind, BoolExpr.Kind.and_)
         self.assertEqual(len(list(f2.iter_sat())), 8)
 
-        f4 = majority(*xs[:8], conj=False)
-        self.assertEqual(f4.kind, BoolExpr.Kind.or_)
-        f5 = majority(*xs[:8], conj=True)
+        f4 = majority(*xs[:8])
+        self.assertEqual(f4.kind, BoolExpr.Kind.and_)
+        for p in f4.iter_sat():
+            s = sum(int(val) for val in p.values())
+            self.assertGreater(s, 4)
+
+        f5 = majority(*xs[:9])
         self.assertEqual(f5.kind, BoolExpr.Kind.and_)
-        self.assertTrue(f4.equiv(f5))
+        for p in f5.iter_sat():
+            s = sum(int(val) for val in p.values())
+            self.assertGreater(s, 4)
 
         f6 = achilles_heel(*xs[:8])
         self.assertEqual(f6.kind, BoolExpr.Kind.and_)
