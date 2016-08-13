@@ -169,6 +169,55 @@ Operator::_sat() const
 }
 
 
+void
+Zero::sat_iter_init(sat_iter *it) const
+{
+    it->one_soln = false;
+    it->sat = l_False;
+}
+
+
+void One::sat_iter_init(sat_iter *it) const
+{
+    it->one_soln = true;
+    it->sat = l_True;
+}
+
+
+void Unknown::sat_iter_init(sat_iter *it) const
+{
+    it->one_soln = false;
+    it->sat = l_False;
+}
+
+
+void Complement::sat_iter_init(sat_iter *it) const
+{
+    it->one_soln = true;
+    it->sat = l_True;
+    auto x = static_pointer_cast<Variable const>(~shared_from_this());
+    it->point.insert({x, zero()});
+}
+
+
+void Variable::sat_iter_init(sat_iter *it) const
+{
+    it->one_soln = true;
+    it->sat = l_True;
+    auto x = static_pointer_cast<Variable const>(shared_from_this());
+    it->point.insert({x, one()});
+}
+
+
+void Operator::sat_iter_init(sat_iter *it) const
+{
+    it->one_soln = false;
+    auto cnf = tseytin(it->ctx);
+    encode_cmsat(it->idx2var, it->solver, cnf);
+    it->get_soln();
+}
+
+
 sat_iter::sat_iter()
     : sat {l_False}
 {}
@@ -176,41 +225,7 @@ sat_iter::sat_iter()
 
 sat_iter::sat_iter(bx_t const & bx)
 {
-    one_soln = false;
-
-    if (IS_ZERO(bx) || IS_UNKNOWN(bx)) {
-        sat = l_False;
-        return;
-    }
-
-    if (IS_ONE(bx)) {
-        sat = l_True;
-        one_soln = true;
-        return;
-    }
-
-    if (IS_COMP(bx)) {
-        sat = l_True;
-        auto x = static_pointer_cast<Variable const>(~bx);
-        point.insert({x, zero()});
-        one_soln = true;
-        return;
-    }
-
-    if (IS_VAR(bx)) {
-        sat = l_True;
-        auto x = static_pointer_cast<Variable const>(bx);
-        point.insert({x, one()});
-        one_soln = true;
-        return;
-    }
-
-    // Operator
-    auto op = static_pointer_cast<Operator const>(bx);
-    auto cnf = op->tseytin(ctx);
-    encode_cmsat(idx2var, solver, cnf);
-
-    get_soln();
+    bx->sat_iter_init(this);
 }
 
 

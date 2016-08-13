@@ -86,6 +86,7 @@ class Variable;
 class Operator;
 class LatticeOperator;
 class Array;
+class sat_iter;
 
 
 using id_t = uint32_t;
@@ -134,6 +135,7 @@ public:
 class BoolExpr : public std::enable_shared_from_this<BoolExpr>
 {
     friend class Operator;
+    friend class sat_iter;
 
     friend bx_t operator~(bx_t const &);
     friend std::ostream & operator<<(std::ostream &, bx_t const &);
@@ -146,6 +148,7 @@ protected:
     virtual soln_t _sat() const = 0;
     virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
     virtual bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const = 0;
+    virtual void sat_iter_init(sat_iter * const) const = 0;
 
 public:
     enum Kind {
@@ -259,6 +262,7 @@ protected:
     std::ostream & op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
+    void sat_iter_init(sat_iter * const) const;
 
 public:
     Zero();
@@ -274,6 +278,7 @@ protected:
     std::ostream & op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
+    void sat_iter_init(sat_iter * const) const;
 
 public:
     One();
@@ -284,6 +289,9 @@ public:
 
 class Unknown : public Constant
 {
+protected:
+    void sat_iter_init(sat_iter * const) const;
+
 public:
     Unknown(Kind kind);
 };
@@ -342,6 +350,7 @@ protected:
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
+    void sat_iter_init(sat_iter * const) const;
 
 public:
     Complement(Context * const ctx, id_t id);
@@ -360,6 +369,7 @@ protected:
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
+    void sat_iter_init(sat_iter * const) const;
 
 public:
     Variable(Context * const ctx, id_t id);
@@ -381,6 +391,7 @@ protected:
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
     bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
+    void sat_iter_init(sat_iter * const) const;
 
     virtual std::string const opname_camel() const = 0;
     virtual std::string const opname_compact() const = 0;
@@ -765,6 +776,13 @@ public:
 
 class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
+    friend class Zero;
+    friend class One;
+    friend class Unknown;
+    friend class Complement;
+    friend class Variable;
+    friend class Operator;
+
     Context ctx;
     std::unordered_map<uint32_t, var_t> idx2var;
 
