@@ -252,7 +252,7 @@ public:
 };
 
 
-class Zero : public Known
+class Zero final : public Known
 {
 protected:
     bx_t invert() const;
@@ -267,7 +267,7 @@ public:
 };
 
 
-class One : public Known
+class One final : public Known
 {
 protected:
     bx_t invert() const;
@@ -289,7 +289,7 @@ public:
 };
 
 
-class Logical : public Unknown
+class Logical final : public Unknown
 {
 protected:
     bx_t invert() const;
@@ -302,7 +302,7 @@ public:
 };
 
 
-class Illogical : public Unknown
+class Illogical final : public Unknown
 {
 protected:
     bx_t invert() const;
@@ -333,7 +333,7 @@ public:
 };
 
 
-class Complement : public Literal
+class Complement final : public Literal
 {
 protected:
     lit_t abs() const;
@@ -351,7 +351,7 @@ public:
 };
 
 
-class Variable : public Literal
+class Variable final : public Literal
 {
 protected:
     lit_t abs() const;
@@ -433,7 +433,7 @@ public:
 };
 
 
-class Nor : public NegativeOperator
+class Nor final : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -452,7 +452,7 @@ public:
 };
 
 
-class Or : public LatticeOperator
+class Or final : public LatticeOperator
 {
 protected:
     bx_t invert() const;
@@ -479,7 +479,7 @@ public:
 };
 
 
-class Nand : public NegativeOperator
+class Nand final : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -498,7 +498,7 @@ public:
 };
 
 
-class And : public LatticeOperator
+class And final : public LatticeOperator
 {
 protected:
     bx_t invert() const;
@@ -525,7 +525,7 @@ public:
 };
 
 
-class Xnor : public NegativeOperator
+class Xnor final : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -544,7 +544,7 @@ public:
 };
 
 
-class Xor : public Operator
+class Xor final : public Operator
 {
 protected:
     bx_t invert() const;
@@ -569,7 +569,7 @@ public:
 };
 
 
-class Unequal : public NegativeOperator
+class Unequal final : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -588,7 +588,7 @@ public:
 };
 
 
-class Equal : public Operator
+class Equal final : public Operator
 {
 protected:
     bx_t invert() const;
@@ -611,7 +611,7 @@ public:
 };
 
 
-class NotImplies : public NegativeOperator
+class NotImplies final : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -630,7 +630,7 @@ public:
 };
 
 
-class Implies : public Operator
+class Implies final : public Operator
 {
 protected:
     bx_t invert() const;
@@ -652,7 +652,7 @@ public:
 };
 
 
-class NotIfThenElse : public NegativeOperator
+class NotIfThenElse final : public NegativeOperator
 {
 protected:
     bx_t invert() const;
@@ -671,7 +671,7 @@ public:
 };
 
 
-class IfThenElse : public Operator
+class IfThenElse final : public Operator
 {
 protected:
     bx_t invert() const;
