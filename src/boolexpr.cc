@@ -164,6 +164,16 @@ Unequal::Unequal(bool simple, vector<bx_t> const & args)
 {}
 
 
+Equal::Equal(bool simple, std::vector<bx_t> const & args)
+    : Operator(EQ, simple, args)
+{}
+
+
+Equal::Equal(bool simple, std::vector<bx_t> const && args)
+    : Operator(EQ, simple, args)
+{}
+
+
 NotImplies::NotImplies(bool simple, bx_t p, bx_t q)
     : NegativeOperator(NIMPL, simple, vector<bx_t>{p, q})
 {}

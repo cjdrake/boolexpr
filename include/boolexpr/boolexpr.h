@@ -595,8 +595,8 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 
 public:
-    Equal(bool simple, std::vector<bx_t> const & args) : Operator(EQ, simple, args) {}
-    Equal(bool simple, std::vector<bx_t> const && args) : Operator(EQ, simple, args) {}
+    Equal(bool simple, std::vector<bx_t> const & args);
+    Equal(bool simple, std::vector<bx_t> const && args);
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
