@@ -26,9 +26,6 @@ The following functions are only available in the Python boolexpr package:
 * ``boolexpr.forall``
 
 They are "miscellaneous" components, which are not currently implemented in C++.
-The ``majority`` function returns a disjunctive normal form expression by default.
-This is due to the slightly smaller size of the DNF.
-However, the importance of CNF to SAT might change this convention in the future.
 
 The ``boolexpr.ndarray`` data type is also entirely implemented in Python.
 This is partly out of convenience.
