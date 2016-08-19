@@ -117,6 +117,7 @@ BX_SRCS := \
     src/constants.cc \
     src/context.cc \
     src/count.cc \
+    src/dot.cc \
     src/equivalent.cc \
     src/flatten.cc \
     src/invert.cc \
