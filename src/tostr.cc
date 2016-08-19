@@ -224,8 +224,7 @@ Illogical::op_lsh(std::ostream & s) const
 std::ostream &
 Complement::op_lsh(std::ostream & s) const
 {
-    auto self = shared_from_this();
-    auto xn = static_pointer_cast<Complement const>(self);
+    auto xn = static_pointer_cast<Complement const>(shared_from_this());
     return s << "~" << xn->ctx->get_name(xn->id);
 }
 
@@ -233,8 +232,7 @@ Complement::op_lsh(std::ostream & s) const
 std::ostream &
 Variable::op_lsh(std::ostream & s) const
 {
-    auto self = shared_from_this();
-    auto x = static_pointer_cast<Variable const>(self);
+    auto x = static_pointer_cast<Variable const>(shared_from_this());
     return s << x->ctx->get_name(x->id);
 }
 

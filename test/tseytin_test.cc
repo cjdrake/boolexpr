@@ -50,7 +50,7 @@ TEST_F(TseytinTest, Operators)
     auto y7 =   eq_s({xs[0],  neq_s({xs[1], xs[2]}), xs[3]});
 
     auto y8 = nimpl_s(xs[0],  or_s({xs[1], xs[2]}));
-    auto y9 = impl_s (xs[0], nor_s({xs[1], xs[2]}));
+    auto y9 =  impl_s(xs[0], nor_s({xs[1], xs[2]}));
 
     auto y10 = nite_s(xs[0], xs[1],  and_s({xs[2], xs[3]}) );
     auto y11 =  ite_s(xs[0], xs[1], nand_s({xs[2], xs[3]}));
