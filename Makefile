@@ -141,12 +141,14 @@ TEST_SRCS := \
     test/bxcffi_test.cc \
     test/compose_test.cc \
     test/count_test.cc \
+    test/dot_test.cc \
     test/flatten_test.cc \
     test/iter_test.cc \
     test/nnf_test.cc \
     test/posop_test.cc \
     test/sat_test.cc \
     test/simplify_test.cc \
+    test/tostr_test.cc \
     test/tseytin_test.cc \
     test/main.cc \
 
