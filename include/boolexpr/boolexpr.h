@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef BOOLEXPR_H
-#define BOOLEXPR_H
+#ifndef BOOLEXPR_H_
+#define BOOLEXPR_H_
 
 
 #ifdef __cplusplus
@@ -989,7 +989,7 @@ Array * operator*(size_t, Array const &);
 } // namespace boolexpr
 
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
 
 // C Foreign Function Interface (CFFI)
@@ -1177,4 +1177,4 @@ ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 } // extern "C"
 
 
-#endif // BOOLEXPR_H
+#endif  // BOOLEXPR_H_

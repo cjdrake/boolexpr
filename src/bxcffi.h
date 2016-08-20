@@ -19,6 +19,9 @@
 //     because they may change without notice.
 
 
+#ifndef BOOLEXPR_BXCFFI_H_
+#define BOOLEXPR_BXCFFI_H_
+
 namespace boolexpr {
 
 
@@ -221,3 +224,6 @@ struct CofactorIterProxy
 
 
 } // namespace boolexpr
+
+
+#endif  // BOOLEXPR_BXCFFI_H_

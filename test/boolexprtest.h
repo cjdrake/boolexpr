@@ -13,6 +13,10 @@
 // limitations under the License.
 
 
+#ifndef BOOLEXPRTEST_H_
+#define BOOLEXPRTEST_H_
+
+
 using namespace boolexpr;
 using std::vector;
 
@@ -40,3 +44,6 @@ protected:
 public:
     BoolExprTest();
 };
+
+
+#endif  // BOOLEXPRTEST_H_

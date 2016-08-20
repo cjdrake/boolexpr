@@ -19,6 +19,10 @@
 //     because they may change without notice.
 
 
+#ifndef BOOLEXPR_ARGSET_H_
+#define BOOLEXPR_ARGSET_H_
+
+
 namespace boolexpr {
 
 
@@ -107,3 +111,6 @@ public:
 
 
 } // namespace boolexpr
+
+
+#endif  // BOOLEXPR_ARGSET_H_
