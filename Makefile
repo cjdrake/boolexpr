@@ -6,6 +6,7 @@ DOXYGEN := doxygen
 GENHTML := genhtml
 GSUTIL := gsutil
 LCOV := lcov
+PYLINT := pylint
 
 CMSAT := third_party/cryptominisat
 GTEST := third_party/googletest
@@ -71,15 +72,15 @@ pytest:
 pylint:
 	@cd python && ( \
         ./setup.py build_ext -i && \
-        pylint boolexpr \
+        $(PYLINT) boolexpr \
     )
 
 .PHONY: pycov
 pycov:
 	@cd python && ( \
         ./setup.py build_ext -i && \
-        coverage run test_boolexpr.py && \
-        coverage html \
+        $(COVERAGE) run test_boolexpr.py && \
+        $(COVERAGE) html \
     )
 
 .PHONY: html
