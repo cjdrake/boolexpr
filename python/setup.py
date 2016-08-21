@@ -15,13 +15,18 @@
 # limitations under the License.
 
 
+import os
+from os.path import join
 from setuptools import setup
 
 
-with open("VERSION") as fin:
+TOP = os.path.abspath(os.pardir)
+
+
+with open(join(TOP, "VERSION")) as fin:
     VERSION = fin.read().strip()
 
-with open("README.rst") as fin:
+with open(join(TOP, "README.rst")) as fin:
     README = fin.read()
 
 CLASSIFIERS = [

@@ -17,7 +17,7 @@ LDFLAGS := -L$(CMSAT)/lib -L$(GTEST)
 LDLIBS := -lcryptominisat4 -lgtest -lm4ri
 
 GCS_BUCKET := gs://www.boolexpr.org
-HTML_DIR := build/sphinx/html
+HTML_DIR := python/build/sphinx/html
 
 .PHONY: help
 help:
@@ -39,7 +39,6 @@ help:
 	@echo "    html-upload         Upload HTML to Google Cloud Storage"
 	@echo
 	@echo "    pypi-upload-src     Upload source to Python Package Index"
-	@echo "    pypi-upload-whl     Upload wheel to Python Package Index"
 	@echo
 
 .PHONY: test
@@ -66,24 +65,30 @@ cover: do_genhtml
 
 .PHONY: pytest
 pytest:
-	@./setup.py test
+	@cd python && ./setup.py test
 
 .PHONY: pylint
 pylint:
-	@./setup.py build_ext -i
-	@pylint boolexpr
+	@cd python && ( \
+        ./setup.py build_ext -i && \
+        pylint boolexpr \
+    )
 
 .PHONY: pycov
-pycov: test_boolexpr.py
-	@./setup.py build_ext -i
-	@coverage run test_boolexpr.py
-	@coverage html
+pycov:
+	@cd python && ( \
+        ./setup.py build_ext -i && \
+        coverage run test_boolexpr.py && \
+        coverage html \
+    )
 
 .PHONY: html
 html:
 	@$(DOXYGEN)
-	@./setup.py build_ext -i
-	@./setup.py build_sphinx
+	@cd python && ( \
+        ./setup.py build_ext -i && \
+        ./setup.py build_sphinx -s ../doc/source \
+    )
 
 .PHONY: html-upload
 html-upload: html
@@ -92,11 +97,9 @@ html-upload: html
 
 .PHONY: pypi-upload-src
 pypi-upload-src:
-	@./setup.py sdist --formats=gztar,zip upload
-
-.PHONY: pypi-upload-whl
-pypi-upload-whl:
-	@./setup.py bdist_wheel upload
+	@cd python && ( \
+        ./setup.py sdist --formats=gztar,zip upload \
+    )
 
 #===============================================================================
 # Source Code

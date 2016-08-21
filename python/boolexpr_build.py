@@ -20,13 +20,16 @@ from glob import glob
 import cffi
 
 
+TOP = os.path.abspath(os.pardir)
+
+
 # Add file from boolexpr
-INCLUDE_DIRS = ["include"]
-SOURCES = glob(join("src", "*.cc"))
+INCLUDE_DIRS = [join(TOP, "include")]
+SOURCES = glob(join(TOP, "src", "*.cc"))
 
 
 # Add files from CryptoMiniSat 4.5.3
-CMSAT = join("third_party", "cryptominisat")
+CMSAT = join(TOP, "third_party", "cryptominisat")
 
 INCLUDE_DIRS += [
     join(CMSAT),

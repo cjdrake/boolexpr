@@ -1,0 +1,6 @@
+.coverage
+dist
+htmlcov
+.eggs
+*.egg-info
+*.py[co]
