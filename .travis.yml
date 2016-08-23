@@ -10,7 +10,7 @@ compiler:
     - gcc
 
 env:
-    - CMSAT_TAG="4.5.3" GTEST_TAG="release-1.7.0"
+    - CMSAT_TAG="4.5.3" GTEST_TAG="release-1.8.0"
 
 install:
     - sudo apt-get update --fix-missing
