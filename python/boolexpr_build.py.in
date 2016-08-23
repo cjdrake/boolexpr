@@ -20,33 +20,22 @@ from glob import glob
 import cffi
 
 
-TOP = os.path.abspath(os.pardir)
-
 INCLUDE_DIRS = []
 SOURCES = []
 
 
 # Add files from Boost 1.54.0
-BOOST = join(TOP, "third_party", "boost-1.54.0")
-
-INCLUDE_DIRS += [BOOST]
+INCLUDE_DIRS += [join("${PROJECT_SOURCE_DIR}", "third_party", "boost-1.54.0")]
 
 
 # Add files from Glucosamine
-GLUCOSAMINE = join(TOP, "third_party", "glucosamine")
-
-INCLUDE_DIRS += [
-    join(GLUCOSAMINE, "src"),
-]
-
-SOURCES += [
-    join(GLUCOSAMINE, "src", "core", "Solver.cc"),
-]
+INCLUDE_DIRS += [join("${glucosamine_SOURCE_DIR}", "src")]
+SOURCES += [join("${glucosamine_SOURCE_DIR}", "src", "core", "Solver.cc")]
 
 
-# Add file from boolexpr
-INCLUDE_DIRS += [join(TOP, "include")]
-SOURCES += glob(join(TOP, "src", "*.cc"))
+# Add files from boolexpr
+INCLUDE_DIRS += [join("${PROJECT_SOURCE_DIR}", "include")]
+SOURCES += glob(join("${PROJECT_SOURCE_DIR}", "src", "*.cc"))
 
 
 # C Foreign Function Interface

@@ -20,13 +20,7 @@ from os.path import join
 from setuptools import setup
 
 
-TOP = os.path.abspath(os.pardir)
-
-
-with open(join(TOP, "VERSION")) as fin:
-    VERSION = fin.read().strip()
-
-with open(join(TOP, "README.rst")) as fin:
+with open(join("${PROJECT_SOURCE_DIR}", "README.rst")) as fin:
     README = fin.read()
 
 CLASSIFIERS = [
@@ -42,7 +36,7 @@ CLASSIFIERS = [
 
 setup(
     name="boolexpr",
-    version=VERSION,
+    version="@VERSION@",
     author="Chris Drake",
     author_email="cjdrake@gmail.com",
     url="http://www.boolexpr.org",

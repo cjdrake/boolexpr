@@ -148,4 +148,4 @@ from .misc import forall
 from .misc import cat
 
 
-__version__ = "2.2"
+__version__ = "@VERSION@"
