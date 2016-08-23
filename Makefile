@@ -14,7 +14,7 @@ GTEST := third_party/googletest
 # Currently, coverage only works with GCC
 CXX := g++
 CXXFLAGS := --std=c++11
-LDFLAGS := -L$(CMSAT)/lib -L$(GTEST)
+LDFLAGS := -L$(CMSAT)/lib -L$(GTEST)/googlemock/gtest
 LDLIBS := -lcryptominisat4 -lgtest -lm4ri
 
 GCS_BUCKET := gs://www.boolexpr.org
@@ -179,7 +179,7 @@ build/test/%.o: src/%.cc $(BX_HDRS) | build/test/
 	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -Iinclude -Isrc $<
 
 build/test/%.o: test/%.cc $(BX_HDRS) $(TEST_HDRS) | build/test/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -I$(GTEST)/include -Iinclude -Itest $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -I$(GTEST)/googletest/include -Iinclude -Itest $<
 
 BLD_TEST_OBJS += $(patsubst src/%.cc,build/test/%.o,$(BX_SRCS))
 BLD_TEST_OBJS += $(patsubst test/%.cc,build/test/%.o,$(TEST_SRCS))
@@ -195,7 +195,7 @@ build/cover/%.o: src/%.cc $(BX_HDRS) | build/cover/
 	$(CXX) $(CXXFLAGS) -o $@ -c -g --coverage -I$(CMSAT)/include -Iinclude -Isrc $<
 
 build/cover/%.o: test/%.cc $(BX_HDRS) $(TEST_HDRS) | build/cover/
-	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -I$(GTEST)/include -Iinclude -Itest $<
+	$(CXX) $(CXXFLAGS) -o $@ -c -g -I$(CMSAT)/include -I$(GTEST)/googletest/include -Iinclude -Itest $<
 
 BLD_COVER_OBJS += $(patsubst src/%.cc,build/cover/%.o,$(BX_SRCS))
 BLD_COVER_OBJS += $(patsubst test/%.cc,build/cover/%.o,$(TEST_SRCS))
