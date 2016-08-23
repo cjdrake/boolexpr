@@ -2,3 +2,7 @@
 	path = third_party/googletest
 	url = https://github.com/google/googletest
 	ignore = dirty
+[submodule "third_party/glucosamine"]
+	path = third_party/glucosamine
+	url = https://github.com/cjdrake/glucosamine
+	ignore = dirty
