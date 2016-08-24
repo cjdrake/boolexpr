@@ -21,7 +21,7 @@
 
 
 #include <boost/optional.hpp>
-#include <cryptominisat4/cryptominisat.h>  // SATSolver, lbool
+#include "core/Solver.h"  // Solver, lbool, vec
 
 #include <functional>  // function
 #include <initializer_list>
@@ -786,9 +786,9 @@ class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
     Context ctx;
     std::unordered_map<uint32_t, var_t> idx2var;
 
-    CMSat::SATSolver solver;
+    Glucose::Solver solver;
 
-    CMSat::lbool sat;
+    bool sat;
     point_t point;
 
     bool one_soln;

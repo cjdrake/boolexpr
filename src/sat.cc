@@ -19,11 +19,11 @@
 using std::make_pair;
 using std::static_pointer_cast;
 using std::unordered_map;
-using std::vector;
 
 
-// Required for l_False and l_True
-using CMSat::lbool;
+using Glucose::Lit;
+using Glucose::lbool;  // l_False, l_True
+using Glucose::mkLit;
 
 
 namespace boolexpr {
@@ -31,7 +31,7 @@ namespace boolexpr {
 
 static void
 encode_cmsat(std::unordered_map<uint32_t, var_t> & idx2var,
-             CMSat::SATSolver & solver,
+             Glucose::Solver & solver,
              bx_t bx)
 {
     auto xs = bx->support();
@@ -47,36 +47,37 @@ encode_cmsat(std::unordered_map<uint32_t, var_t> & idx2var,
         ++index;
     }
 
-    solver.new_vars(xs.size());
+    for (size_t i = 0; i < xs.size(); ++i)
+        solver.newVar();
 
     if (IS_OR(bx)) {
-        vector<CMSat::Lit> clause;
+        Glucose::vec<Lit> clause;
         auto or_op = static_pointer_cast<Or const>(bx);
         for (bx_t const & arg : or_op->args) {
             auto lit = static_pointer_cast<Literal const>(arg);
             auto index = lit2idx.find(lit)->second;
-            clause.push_back(CMSat::Lit(index>>1, !(index&1u)));
+            clause.push(mkLit(index>>1, !(index&1u)));
         }
-        solver.add_clause(std::move(clause));
+        solver.addClause(std::move(clause));
     }
     else {
         auto and_op = static_pointer_cast<And const>(bx);
         for (bx_t const & arg : and_op->args) {
-            vector<CMSat::Lit> clause;
+            Glucose::vec<Lit> clause;
             if (IS_OR(arg)) {
                 auto or_op = static_pointer_cast<Or const>(arg);
                 for (bx_t const & _arg : or_op->args) {
                     auto lit = static_pointer_cast<Literal const>(_arg);
                     auto index = lit2idx.find(lit)->second;
-                    clause.push_back(CMSat::Lit(index>>1, !(index&1u)));
+                    clause.push(mkLit(index>>1, !(index&1u)));
                 }
             }
             else {
                 auto lit = static_pointer_cast<Literal const>(arg);
                 auto index = lit2idx.find(lit)->second;
-                clause.push_back(CMSat::Lit(index>>1, !(index&1u)));
+                clause.push(mkLit(index>>1, !(index&1u)));
             }
-            solver.add_clause(std::move(clause));
+            solver.addClause(std::move(clause));
         }
     }
 }
@@ -139,7 +140,7 @@ soln_t
 Operator::_sat() const
 {
     std::unordered_map<uint32_t, var_t> idx2var;
-    CMSat::SATSolver solver;
+    Glucose::Solver solver;
 
     auto ctx = Context();
     auto cnf = tseytin(ctx);
@@ -147,16 +148,15 @@ Operator::_sat() const
 
     auto sat = solver.solve();
 
-    if (sat == l_True) {
-        auto model = solver.get_model();
+    if (sat) {
         point_t point;
         for (size_t i = 0; i < solver.nVars(); ++i) {
             auto x = idx2var.find(i)->second;
             if (x->ctx != &ctx) {
-                if (model[i] == l_False) {
+                if (solver.modelValue(i) == l_False) {
                     point.insert({x, zero()});
                 }
-                else if (model[i] == l_True) {
+                else if (solver.modelValue(i) == l_True) {
                     point.insert({x, one()});
                 }
             }
@@ -173,28 +173,28 @@ void
 Zero::sat_iter_init(sat_iter *it) const
 {
     it->one_soln = false;
-    it->sat = l_False;
+    it->sat = false;
 }
 
 
 void One::sat_iter_init(sat_iter *it) const
 {
     it->one_soln = true;
-    it->sat = l_True;
+    it->sat = true;
 }
 
 
 void Unknown::sat_iter_init(sat_iter *it) const
 {
     it->one_soln = false;
-    it->sat = l_False;
+    it->sat = false;
 }
 
 
 void Complement::sat_iter_init(sat_iter *it) const
 {
     it->one_soln = true;
-    it->sat = l_True;
+    it->sat = true;
     auto x = static_pointer_cast<Variable const>(~shared_from_this());
     it->point.insert({x, zero()});
 }
@@ -203,7 +203,7 @@ void Complement::sat_iter_init(sat_iter *it) const
 void Variable::sat_iter_init(sat_iter *it) const
 {
     it->one_soln = true;
-    it->sat = l_True;
+    it->sat = true;
     auto x = static_pointer_cast<Variable const>(shared_from_this());
     it->point.insert({x, one()});
 }
@@ -219,7 +219,7 @@ void Operator::sat_iter_init(sat_iter *it) const
 
 
 sat_iter::sat_iter()
-    : sat {l_False}
+    : sat {false}
 {}
 
 
@@ -236,24 +236,23 @@ sat_iter::get_soln()
 
     sat = solver.solve();
 
-    if (sat == l_True) {
-        auto model = solver.get_model();
-        vector<CMSat::Lit> clause;
+    if (sat) {
+        Glucose::vec<Lit> clause;
         for (size_t i = 0; i < solver.nVars(); ++i) {
             auto x = idx2var.find(i)->second;
             if (x->ctx != &ctx) {
-                if (model[i] == l_False) {
+                if (solver.modelValue(i) == l_False) {
                     point.insert({x, zero()});
-                    clause.push_back(CMSat::Lit(i, false));
+                    clause.push(mkLit(i, false));
                 }
-                else if (model[i] == l_True) {
+                else if (solver.modelValue(i) == l_True) {
                     point.insert({x, one()});
-                    clause.push_back(CMSat::Lit(i, true));
+                    clause.push(mkLit(i, true));
                 }
             }
         }
         // Block this solution
-        solver.add_clause(clause);
+        solver.addClause(clause);
     }
 }
 
@@ -283,7 +282,7 @@ sat_iter const &
 sat_iter::operator++()
 {
     if (one_soln) {
-        sat = l_False;
+        sat = false;
         point.clear();
     }
     else {

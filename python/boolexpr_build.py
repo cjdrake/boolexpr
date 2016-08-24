@@ -32,53 +32,15 @@ BOOST = join(TOP, "third_party", "boost-1.54.0")
 INCLUDE_DIRS += [BOOST]
 
 
-# Add files from CryptoMiniSat 4.5.3
-CMSAT = join(TOP, "third_party", "cryptominisat")
+# Add files from Glucosamine
+GLUCOSAMINE = join(TOP, "third_party", "glucosamine")
 
 INCLUDE_DIRS += [
-    join(CMSAT),
-    join(CMSAT, "include"),
+    join(GLUCOSAMINE, "src"),
 ]
 
 SOURCES += [
-    join(CMSAT, "cmsat4-src", "GitSHA1.cpp"),
-    join(CMSAT, "cmsat4-src", "sql_tablestructure.cpp"),
-    join(CMSAT, "src", "bva.cpp"),
-    join(CMSAT, "src", "calcdefpolars.cpp"),
-    join(CMSAT, "src", "clauseallocator.cpp"),
-    join(CMSAT, "src", "clausecleaner.cpp"),
-    join(CMSAT, "src", "clausedumper.cpp"),
-    join(CMSAT, "src", "clauseusagestats.cpp"),
-    join(CMSAT, "src", "cleaningstats.cpp"),
-    join(CMSAT, "src", "cnf.cpp"),
-    join(CMSAT, "src", "compfinder.cpp"),
-    join(CMSAT, "src", "comphandler.cpp"),
-    join(CMSAT, "src", "completedetachreattacher.cpp"),
-    join(CMSAT, "src", "cryptominisat.cpp"),
-    join(CMSAT, "src", "datasync.cpp"),
-    join(CMSAT, "src", "distiller.cpp"),
-    join(CMSAT, "src", "features.cpp"),
-    join(CMSAT, "src", "features_calc.cpp"),
-    join(CMSAT, "src", "features_to_reconf.cpp"),
-    join(CMSAT, "src", "gatefinder.cpp"),
-    join(CMSAT, "src", "hyperengine.cpp"),
-    join(CMSAT, "src", "implcache.cpp"),
-    join(CMSAT, "src", "intree.cpp"),
-    join(CMSAT, "src", "occsimplifier.cpp"),
-    join(CMSAT, "src", "prober.cpp"),
-    join(CMSAT, "src", "propengine.cpp"),
-    join(CMSAT, "src", "reducedb.cpp"),
-    join(CMSAT, "src", "sccfinder.cpp"),
-    join(CMSAT, "src", "searcher.cpp"),
-    join(CMSAT, "src", "solutionextender.cpp"),
-    join(CMSAT, "src", "solver.cpp"),
-    join(CMSAT, "src", "solverconf.cpp"),
-    join(CMSAT, "src", "sqlstats.cpp"),
-    join(CMSAT, "src", "stamp.cpp"),
-    join(CMSAT, "src", "strengthener.cpp"),
-    join(CMSAT, "src", "subsumeimplicit.cpp"),
-    join(CMSAT, "src", "subsumestrengthen.cpp"),
-    join(CMSAT, "src", "varreplacer.cpp"),
+    join(GLUCOSAMINE, "src", "core", "Solver.cc"),
 ]
 
 
