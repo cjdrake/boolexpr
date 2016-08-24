@@ -22,10 +22,8 @@ import cffi
 
 TOP = os.path.abspath(os.pardir)
 
-
-# Add file from boolexpr
-INCLUDE_DIRS = [join(TOP, "include")]
-SOURCES = glob(join(TOP, "src", "*.cc"))
+INCLUDE_DIRS = []
+SOURCES = []
 
 
 # Add files from CryptoMiniSat 4.5.3
@@ -76,6 +74,11 @@ SOURCES += [
     join(CMSAT, "src", "subsumestrengthen.cpp"),
     join(CMSAT, "src", "varreplacer.cpp"),
 ]
+
+
+# Add file from boolexpr
+INCLUDE_DIRS += [join(TOP, "include")]
+SOURCES += glob(join(TOP, "src", "*.cc"))
 
 
 # C Foreign Function Interface
