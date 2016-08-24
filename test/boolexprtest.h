@@ -21,7 +21,7 @@ using namespace boolexpr;
 using std::vector;
 
 
-class BoolExprTest: public ::testing::Test
+class BoolExprTest : public ::testing::Test
 {
 protected:
     const int N = 1024;
