@@ -22,6 +22,18 @@
 class IterTest : public BoolExprTest {};
 
 
+static bool
+parity(unsigned int n)
+{
+    bool parity = false;
+    while (n) {
+        parity = !parity;
+        n = n & (n - 1);
+    }
+    return parity;
+}
+
+
 TEST_F(IterTest, DFSIter)
 {
     // x_1 is listed twice in the leaves,
@@ -60,8 +72,7 @@ TEST_F(IterTest, SpaceIter)
     for (auto it = space_iter(3); it != space_iter(); ++it) {
         for (size_t j = 0; j < 3; ++j)
             EXPECT_EQ((*it)[j], ans[i][j]);
-        // This should work on both GCC and Clang
-        EXPECT_EQ(it.parity(), __builtin_parity(i));
+        EXPECT_EQ(it.parity(), parity(i));
         i += 1;
     }
 }
