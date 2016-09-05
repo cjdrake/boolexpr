@@ -126,7 +126,6 @@ TEST_F(IterTest, DomainIter)
 
     auto f = xs[0] | xs[1];
 
-    size_t i = 0;
     for (auto it = domain_iter(f); it != domain_iter(); ++it) {
         for (size_t j = 0; j < ans.size(); ++j)
             if (*it == ans[j]) {
