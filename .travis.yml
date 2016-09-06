@@ -9,23 +9,11 @@ compiler:
     - clang
     - gcc
 
-env:
-    - CMSAT_TAG="4.5.3" GTEST_TAG="release-1.8.0"
-
 install:
     - sudo apt-get update --fix-missing
-    - sudo apt-get install -y lcov libboost-dev libm4ri-dev
-    - pushd third_party/cryptominisat
-    - git checkout $CMSAT_TAG
-    - cmake .
-    - make -j2
-    - popd
-    - pushd third_party/googletest
-    - git checkout $GTEST_TAG
-    - cmake .
-    - make -j2
-    - popd
+    - sudo apt-get install -y lcov
 
 script:
-    - make -j2 test
+    - cmake .
+    - make -j2 do_test
     - make pytest
