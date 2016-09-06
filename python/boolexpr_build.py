@@ -26,6 +26,12 @@ INCLUDE_DIRS = []
 SOURCES = []
 
 
+# Add files from Boost 1.54.0
+BOOST = join(TOP, "third_party", "boost-1.54.0")
+
+INCLUDE_DIRS += [BOOST]
+
+
 # Add files from CryptoMiniSat 4.5.3
 CMSAT = join(TOP, "third_party", "cryptominisat")
 
