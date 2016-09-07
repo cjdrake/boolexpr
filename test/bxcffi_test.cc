@@ -28,15 +28,19 @@ TEST(CFFI, Basic)
 
     auto cstr_0 = boolexpr_BoolExpr_to_string(zero);
     EXPECT_STREQ(cstr_0, "0");
+    boolexpr_String_del(cstr_0);
 
     auto cstr_1 = boolexpr_BoolExpr_to_string(one);
     EXPECT_STREQ(cstr_1, "1");
+    boolexpr_String_del(cstr_1);
 
     auto cstr_x = boolexpr_BoolExpr_to_string(log);
     EXPECT_STREQ(cstr_x, "X");
+    boolexpr_String_del(cstr_x);
 
     auto cstr_xx = boolexpr_BoolExpr_to_string(ill);
     EXPECT_STREQ(cstr_xx, "?");
+    boolexpr_String_del(cstr_xx);
 
     auto ctx = boolexpr_Context_new();
 
@@ -54,19 +58,31 @@ TEST(CFFI, Basic)
     auto cstr_b = boolexpr_BoolExpr_to_string(b);
     auto cstr_c = boolexpr_BoolExpr_to_string(c);
     auto cstr_d = boolexpr_BoolExpr_to_string(d);
+
     EXPECT_STREQ(cstr_a, "a");
     EXPECT_STREQ(cstr_b, "b");
     EXPECT_STREQ(cstr_c, "c");
     EXPECT_STREQ(cstr_d, "d");
 
+    boolexpr_String_del(cstr_a);
+    boolexpr_String_del(cstr_b);
+    boolexpr_String_del(cstr_c);
+    boolexpr_String_del(cstr_d);
+
     auto cstr_an = boolexpr_BoolExpr_to_string(an);
     auto cstr_bn = boolexpr_BoolExpr_to_string(bn);
     auto cstr_cn = boolexpr_BoolExpr_to_string(cn);
     auto cstr_dn = boolexpr_BoolExpr_to_string(dn);
+
     EXPECT_STREQ(cstr_an, "~a");
     EXPECT_STREQ(cstr_bn, "~b");
     EXPECT_STREQ(cstr_cn, "~c");
     EXPECT_STREQ(cstr_dn, "~d");
+
+    boolexpr_String_del(cstr_an);
+    boolexpr_String_del(cstr_bn);
+    boolexpr_String_del(cstr_cn);
+    boolexpr_String_del(cstr_dn);
 
     void const * args[] = {an, b, cn, d};
 
@@ -105,22 +121,33 @@ TEST(CFFI, Basic)
     EXPECT_STREQ(cstr_y4, "Implies(~a, b)");
     EXPECT_STREQ(cstr_y5, "IfThenElse(~a, b, ~c)");
 
-    boolexpr_String_del(cstr_0);
-    boolexpr_String_del(cstr_1);
-    boolexpr_String_del(cstr_x);
-    boolexpr_String_del(cstr_xx);
-    boolexpr_String_del(cstr_a);
-    boolexpr_String_del(cstr_b);
-    boolexpr_String_del(cstr_c);
-    boolexpr_String_del(cstr_d);
-    boolexpr_String_del(cstr_an);
-    boolexpr_String_del(cstr_bn);
-    boolexpr_String_del(cstr_cn);
-    boolexpr_String_del(cstr_dn);
     boolexpr_String_del(cstr_y0);
     boolexpr_String_del(cstr_y1);
     boolexpr_String_del(cstr_y2);
     boolexpr_String_del(cstr_y3);
     boolexpr_String_del(cstr_y4);
     boolexpr_String_del(cstr_y5);
+
+    boolexpr_BoolExpr_del(zero);
+    boolexpr_BoolExpr_del(one);
+    boolexpr_BoolExpr_del(log);
+    boolexpr_BoolExpr_del(ill);
+
+    boolexpr_BoolExpr_del(a);
+    boolexpr_BoolExpr_del(b);
+    boolexpr_BoolExpr_del(c);
+    boolexpr_BoolExpr_del(d);
+    boolexpr_BoolExpr_del(an);
+    boolexpr_BoolExpr_del(bn);
+    boolexpr_BoolExpr_del(cn);
+    boolexpr_BoolExpr_del(dn);
+
+    boolexpr_BoolExpr_del(y0);
+    boolexpr_BoolExpr_del(y1);
+    boolexpr_BoolExpr_del(y2);
+    boolexpr_BoolExpr_del(y3);
+    boolexpr_BoolExpr_del(y4);
+    boolexpr_BoolExpr_del(y5);
+
+    boolexpr_Context_del(ctx);
 }

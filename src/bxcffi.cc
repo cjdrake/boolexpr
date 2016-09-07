@@ -85,7 +85,7 @@ boolexpr_Context_get_var(CONTEXT c_self, STRING c_name)
 void
 boolexpr_String_del(STRING c_str)
 {
-    delete c_str;
+    delete [] c_str;
 }
 
 
