@@ -477,7 +477,7 @@ _convert_args(size_t n, BXS c_args)
         auto arg = reinterpret_cast<BoolExprProxy const * const>(c_args[i]);
         _args[i] = arg->bx;
     }
-    return std::move(_args);
+    return _args;
 }
 
 

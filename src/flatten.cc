@@ -49,7 +49,7 @@ _twolvl2clauses(lop_t const & lop)
         clauses.push_back(std::move(clause));
     }
 
-    return std::move(clauses);
+    return clauses;
 }
 
 
@@ -106,7 +106,7 @@ static vector<set<lit_t>>
 _absorb(vector<set<lit_t>> const && clauses)
 {
     if (clauses.size() == 0) {
-        return std::move(clauses);
+        return clauses;
     }
 
     vector<bool> keep;
@@ -135,7 +135,7 @@ _absorb(vector<set<lit_t>> const && clauses)
     }
 
     if (!drop) {
-        return std::move(clauses);
+        return clauses;
     }
 
     vector<set<lit_t>> kept_clauses;
@@ -145,7 +145,7 @@ _absorb(vector<set<lit_t>> const && clauses)
         }
     }
 
-    return std::move(kept_clauses);
+    return kept_clauses;
 }
 
 
@@ -169,7 +169,7 @@ _product(vector<set<lit_t>> const & clauses)
         product = _absorb(std::move(newprod));
     }
 
-    return std::move(product);
+    return product;
 }
 
 

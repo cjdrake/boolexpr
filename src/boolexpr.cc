@@ -463,7 +463,7 @@ BoolExpr::support() const
         (*it)->insert_support_var(s);
     }
 
-    return std::move(s);
+    return s;
 }
 
 
