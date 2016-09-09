@@ -6,58 +6,66 @@ find_program(coverage_path coverage)
 find_program(gsutil_path gsutil)
 find_program(pylint_path pylint)
 
-configure_file(boolexpr_build.py.in boolexpr_build.py)
-configure_file(setup.py.in setup.py)
-configure_file(boolexpr/__init__.py.in boolexpr/__init__.py)
-
 configure_file(.pylintrc .pylintrc)
+configure_file(MANIFEST.in MANIFEST.in)
+configure_file(setup.py.in setup.py)
 configure_file(test_boolexpr.py test_boolexpr.py)
+configure_file(boolexpr/__init__.py.in boolexpr/__init__.py)
+configure_file(boolexpr/_boolexpr.py.in boolexpr/_boolexpr.py)
 configure_file(boolexpr/misc.py boolexpr/misc.py)
 configure_file(boolexpr/util.py boolexpr/util.py)
 configure_file(boolexpr/wrap.py boolexpr/wrap.py)
 
 add_custom_command(
-    OUTPUT ${OUTPUT}/stamp
+    OUTPUT stamp
     COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
+    DEPENDS boolexpr
 )
 
 if(coverage_path)
+    # Run unit tests with coverage
     add_custom_target(
         pycov
         COMMAND ${coverage_path} run test_boolexpr.py
         COMMAND ${coverage_path} html
-        DEPENDS ${OUTPUT}/stamp
+        DEPENDS stamp
     )
-endif()
+endif(coverage_path)
 
-add_custom_target(
-    pytest
-    COMMAND ${PYTHON_EXECUTABLE} setup.py test
-)
+if(DOXYGEN_FOUND)
+    # Build Sphinx documentation
+    add_custom_target(
+        pyhtml
+        COMMAND ${PYTHON_EXECUTABLE} setup.py build_sphinx
+                -s ${PROJECT_SOURCE_DIR}/doc/source
+        DEPENDS ccapiref stamp
+    )
+    # Upload to GCS
+    if(gsutil_path)
+        add_custom_target(
+            pyhtml-upload
+            COMMAND ${gsutil_path} -m rsync -d -p -r python/build/sphinx/html ${GCS_BUCKET}
+            COMMAND ${gsutil_path} -m acl ch -u AllUsers:R ${GCS_BUCKET}/**
+            DEPENDS pyhtml
+        )
+    endif(gsutil_path)
+endif(DOXYGEN_FOUND)
 
 if(pylint_path)
+    # Run PyLint
     add_custom_target(
         pylint
         COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
         COMMAND ${pylint_path} boolexpr
-        DEPENDS ${OUTPUT}/stamp
+        DEPENDS stamp
     )
-endif()
+endif(pylint_path)
 
 add_custom_target(
-    html
-    COMMAND ${PYTHON_EXECUTABLE} setup.py build_sphinx -s ${PROJECT_SOURCE_DIR}/doc/source
-    DEPENDS ccapiref ${OUTPUT}/stamp
+    pytest
+    COMMAND ${PYTHON_EXECUTABLE} setup.py test
+    DEPENDS boolexpr
 )
-
-if(gsutil_path)
-    add_custom_target(
-        html-upload
-        COMMAND ${gsutil_path} -m rsync -d -p -r python/build/sphinx/html ${GCS_BUCKET}
-        COMMAND ${gsutil_path} -m acl ch -u AllUsers:R ${GCS_BUCKET}/**
-        DEPENDS html
-    )
-endif()
 
 add_custom_target(
     pypi-upload

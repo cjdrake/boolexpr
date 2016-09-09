@@ -1,8 +1,1 @@
-include LICENSE
-include VERSION
-include boolexpr_build.py
-recursive-include include *.h
-recursive-include src *.h *.cc
-include third_party/cryptominisat/AUTHORS
-include third_party/cryptominisat/LICENSE-LGPL
-recursive-include third_party/cryptominisat *.h *.cpp
+#FIXME

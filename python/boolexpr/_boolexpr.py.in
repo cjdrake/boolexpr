@@ -13,32 +13,16 @@
 # limitations under the License.
 
 
-import os
-from os.path import join
-from glob import glob
+"""
+CFFI BoolExpr Interface
+"""
+
+
+# pylint: skip-file
+
 
 import cffi
 
-
-INCLUDE_DIRS = []
-SOURCES = []
-
-
-# Add files from Boost 1.54.0
-INCLUDE_DIRS += [join("${PROJECT_SOURCE_DIR}", "third_party", "boost-1.54.0")]
-
-
-# Add files from Glucosamine
-INCLUDE_DIRS += [join("${glucosamine_SOURCE_DIR}", "src")]
-SOURCES += [join("${glucosamine_SOURCE_DIR}", "src", "core", "Solver.cc")]
-
-
-# Add files from boolexpr
-INCLUDE_DIRS += [join("${PROJECT_SOURCE_DIR}", "include")]
-SOURCES += glob(join("${PROJECT_SOURCE_DIR}", "src", "*.cc"))
-
-
-# C Foreign Function Interface
 
 HEADER = """
 
@@ -245,20 +229,5 @@ ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 """
 
 ffi = cffi.FFI()
-
-ffi.set_source(
-    "boolexpr._boolexpr",
-    HEADER,
-    language="c++",
-    define_macros=[],
-    extra_compile_args=["-std=c++11"],
-    extra_link_args=[],
-    include_dirs=INCLUDE_DIRS,
-    sources=SOURCES,
-)
-
 ffi.cdef(HEADER)
-
-
-if __name__ == "__main__":
-    ffi.compile(verbose=True)
+lib = ffi.dlopen("${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}boolexpr${CMAKE_SHARED_LIBRARY_SUFFIX}")
