@@ -6,15 +6,13 @@ find_program(coverage_path coverage)
 find_program(gsutil_path gsutil)
 find_program(pylint_path pylint)
 
-configure_file(.pylintrc .pylintrc)
+file(COPY .pylintrc test_boolexpr.py DESTINATION .)
+file(COPY boolexpr/misc.py boolexpr/util.py boolexpr/wrap.py DESTINATION boolexpr)
+
 configure_file(MANIFEST.in MANIFEST.in)
 configure_file(setup.py.in setup.py)
-configure_file(test_boolexpr.py test_boolexpr.py)
 configure_file(boolexpr/__init__.py.in boolexpr/__init__.py)
 configure_file(boolexpr/_boolexpr.py.in boolexpr/_boolexpr.py)
-configure_file(boolexpr/misc.py boolexpr/misc.py)
-configure_file(boolexpr/util.py boolexpr/util.py)
-configure_file(boolexpr/wrap.py boolexpr/wrap.py)
 
 add_custom_command(
     OUTPUT stamp
