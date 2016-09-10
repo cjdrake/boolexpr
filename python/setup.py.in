@@ -15,9 +15,9 @@
 # limitations under the License.
 
 
-import os
 from os.path import join
 from setuptools import setup
+from setuptools.dist import Distribution
 
 
 with open(join("${PROJECT_SOURCE_DIR}", "README.rst")) as fin:
@@ -34,7 +34,16 @@ CLASSIFIERS = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 
+PACKAGE_DATA = {
+    "boolexpr": [join("boolexpr", "${CMAKE_SHARED_LIBRARY_PREFIX}boolexpr${CMAKE_SHARED_LIBRARY_SUFFIX}")],
+}
+
+class BinaryDistribution(Distribution):
+    def is_pure(self):
+        return False
+
 setup(
+    # distutils
     name="boolexpr",
     version="@VERSION@",
     author="Chris Drake",
@@ -44,7 +53,10 @@ setup(
     long_description=README,
     classifiers=CLASSIFIERS,
     license="Apache 2.0",
-    install_requires=["cffi>=1.5.0"],
-    setup_requires=["cffi>=1.5.0"],
     packages=["boolexpr"],
+    package_data=PACKAGE_DATA,
+    # setuptools
+    include_package_data=True,
+    distclass=BinaryDistribution,
+    install_requires=["cffi>=1.5.0"],
 )

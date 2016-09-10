@@ -21,7 +21,14 @@ CFFI BoolExpr Interface
 # pylint: skip-file
 
 
+from os.path import join
+from os.path import split
+
 import cffi
+
+
+_dpath, _ = split(__file__)
+_bx_libpath = join(_dpath, "${CMAKE_SHARED_LIBRARY_PREFIX}boolexpr${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 
 HEADER = """
@@ -230,4 +237,4 @@ ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 
 ffi = cffi.FFI()
 ffi.cdef(HEADER)
-lib = ffi.dlopen("${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}boolexpr${CMAKE_SHARED_LIBRARY_SUFFIX}")
+lib = ffi.dlopen(_bx_libpath)
