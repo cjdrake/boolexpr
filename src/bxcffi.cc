@@ -55,14 +55,14 @@ using boolexpr::var2bx_t;
 using boolexpr::zero;
 
 
-CONTEXT
+DllExport CONTEXT
 boolexpr_Context_new()
 {
     return new Context();
 }
 
 
-void
+DllExport void
 boolexpr_Context_del(CONTEXT c_self)
 {
     auto self = reinterpret_cast<Context * const>(c_self);
@@ -70,7 +70,7 @@ boolexpr_Context_del(CONTEXT c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Context_get_var(CONTEXT c_self, STRING c_name)
 {
     auto self = reinterpret_cast<Context * const>(c_self);
@@ -82,14 +82,14 @@ boolexpr_Context_get_var(CONTEXT c_self, STRING c_name)
 }
 
 
-void
+DllExport void
 boolexpr_String_del(STRING c_str)
 {
     delete [] c_str;
 }
 
 
-void
+DllExport void
 boolexpr_Vec_del(VEC c_self)
 {
     auto self = reinterpret_cast<VecProxy<bx_t> * const>(c_self);
@@ -97,7 +97,7 @@ boolexpr_Vec_del(VEC c_self)
 }
 
 
-void
+DllExport void
 boolexpr_Vec_iter(VEC c_self)
 {
     auto self = reinterpret_cast<VecProxy<bx_t> * const>(c_self);
@@ -105,7 +105,7 @@ boolexpr_Vec_iter(VEC c_self)
 }
 
 
-void
+DllExport void
 boolexpr_Vec_next(VEC c_self)
 {
     auto self = reinterpret_cast<VecProxy<bx_t> * const>(c_self);
@@ -113,7 +113,7 @@ boolexpr_Vec_next(VEC c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Vec_val(VEC c_self)
 {
     auto self = reinterpret_cast<VecProxy<bx_t> * const>(c_self);
@@ -121,7 +121,7 @@ boolexpr_Vec_val(VEC c_self)
 }
 
 
-void
+DllExport void
 boolexpr_VarSet_del(VARSET c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> * const>(c_self);
@@ -129,7 +129,7 @@ boolexpr_VarSet_del(VARSET c_self)
 }
 
 
-void
+DllExport void
 boolexpr_VarSet_iter(VARSET c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> * const>(c_self);
@@ -137,7 +137,7 @@ boolexpr_VarSet_iter(VARSET c_self)
 }
 
 
-void
+DllExport void
 boolexpr_VarSet_next(VARSET c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> * const>(c_self);
@@ -145,7 +145,7 @@ boolexpr_VarSet_next(VARSET c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_VarSet_val(VARSET c_self)
 {
     auto self = reinterpret_cast<SetProxy<var_t> * const>(c_self);
@@ -153,7 +153,7 @@ boolexpr_VarSet_val(VARSET c_self)
 }
 
 
-void
+DllExport void
 boolexpr_Point_del(POINT c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> * const>(c_self);
@@ -161,7 +161,7 @@ boolexpr_Point_del(POINT c_self)
 }
 
 
-void
+DllExport void
 boolexpr_Point_iter(POINT c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> * const>(c_self);
@@ -169,7 +169,7 @@ boolexpr_Point_iter(POINT c_self)
 }
 
 
-void
+DllExport void
 boolexpr_Point_next(POINT c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> * const>(c_self);
@@ -177,7 +177,7 @@ boolexpr_Point_next(POINT c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Point_key(POINT c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> * const>(c_self);
@@ -185,7 +185,7 @@ boolexpr_Point_key(POINT c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Point_val(POINT c_self)
 {
     auto self = reinterpret_cast<MapProxy<var_t, const_t> * const>(c_self);
@@ -193,7 +193,7 @@ boolexpr_Point_val(POINT c_self)
 }
 
 
-void
+DllExport void
 boolexpr_Soln_del(SOLN c_self)
 {
     auto self = reinterpret_cast<SolnProxy * const>(c_self);
@@ -201,7 +201,7 @@ boolexpr_Soln_del(SOLN c_self)
 }
 
 
-bool
+DllExport bool
 boolexpr_Soln_first(SOLN c_self)
 {
     auto self = reinterpret_cast<SolnProxy * const>(c_self);
@@ -209,7 +209,7 @@ boolexpr_Soln_first(SOLN c_self)
 }
 
 
-POINT
+DllExport POINT
 boolexpr_Soln_second(SOLN c_self)
 {
     auto self = reinterpret_cast<SolnProxy * const>(c_self);
@@ -218,7 +218,7 @@ boolexpr_Soln_second(SOLN c_self)
 }
 
 
-DFS_ITER
+DllExport DFS_ITER
 boolexpr_DfsIter_new(BX c_bxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const * const>(c_bxp);
@@ -226,7 +226,7 @@ boolexpr_DfsIter_new(BX c_bxp)
 }
 
 
-void
+DllExport void
 boolexpr_DfsIter_del(DFS_ITER c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy * const>(c_self);
@@ -234,7 +234,7 @@ boolexpr_DfsIter_del(DFS_ITER c_self)
 }
 
 
-void
+DllExport void
 boolexpr_DfsIter_next(DFS_ITER c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy * const>(c_self);
@@ -242,7 +242,7 @@ boolexpr_DfsIter_next(DFS_ITER c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_DfsIter_val(DFS_ITER c_self)
 {
     auto self = reinterpret_cast<DfsIterProxy * const>(c_self);
@@ -250,7 +250,7 @@ boolexpr_DfsIter_val(DFS_ITER c_self)
 }
 
 
-SAT_ITER
+DllExport SAT_ITER
 boolexpr_SatIter_new(BX c_bxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const * const>(c_bxp);
@@ -258,7 +258,7 @@ boolexpr_SatIter_new(BX c_bxp)
 }
 
 
-void
+DllExport void
 boolexpr_SatIter_del(SAT_ITER c_self)
 {
     auto self = reinterpret_cast<SatIterProxy * const>(c_self);
@@ -266,7 +266,7 @@ boolexpr_SatIter_del(SAT_ITER c_self)
 }
 
 
-void
+DllExport void
 boolexpr_SatIter_next(SAT_ITER c_self)
 {
     auto self = reinterpret_cast<SatIterProxy * const>(c_self);
@@ -274,7 +274,7 @@ boolexpr_SatIter_next(SAT_ITER c_self)
 }
 
 
-POINT
+DllExport POINT
 boolexpr_SatIter_val(SAT_ITER c_self)
 {
     auto self = reinterpret_cast<SatIterProxy * const>(c_self);
@@ -282,7 +282,7 @@ boolexpr_SatIter_val(SAT_ITER c_self)
 }
 
 
-POINTS_ITER
+DllExport POINTS_ITER
 boolexpr_PointsIter_new(size_t n, VARS c_varps)
 {
     vector<var_t> vars(n);
@@ -295,7 +295,7 @@ boolexpr_PointsIter_new(size_t n, VARS c_varps)
 }
 
 
-void
+DllExport void
 boolexpr_PointsIter_del(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
@@ -303,7 +303,7 @@ boolexpr_PointsIter_del(POINTS_ITER c_self)
 }
 
 
-void
+DllExport void
 boolexpr_PointsIter_next(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
@@ -311,7 +311,7 @@ boolexpr_PointsIter_next(POINTS_ITER c_self)
 }
 
 
-POINT
+DllExport POINT
 boolexpr_PointsIter_val(POINTS_ITER c_self)
 {
     auto self = reinterpret_cast<PointsIterProxy * const>(c_self);
@@ -319,7 +319,7 @@ boolexpr_PointsIter_val(POINTS_ITER c_self)
 }
 
 
-TERMS_ITER
+DllExport TERMS_ITER
 boolexpr_TermsIter_new(size_t n, BXS c_args)
 {
     vector<bx_t> _args(n);
@@ -331,7 +331,7 @@ boolexpr_TermsIter_new(size_t n, BXS c_args)
 }
 
 
-void
+DllExport void
 boolexpr_TermsIter_del(TERMS_ITER c_self)
 {
     auto self = reinterpret_cast<TermsIterProxy * const>(c_self);
@@ -339,7 +339,7 @@ boolexpr_TermsIter_del(TERMS_ITER c_self)
 }
 
 
-void
+DllExport void
 boolexpr_TermsIter_next(TERMS_ITER c_self)
 {
     auto self = reinterpret_cast<TermsIterProxy * const>(c_self);
@@ -347,7 +347,7 @@ boolexpr_TermsIter_next(TERMS_ITER c_self)
 }
 
 
-VEC
+DllExport VEC
 boolexpr_TermsIter_val(TERMS_ITER c_self)
 {
     auto self = reinterpret_cast<TermsIterProxy * const>(c_self);
@@ -355,7 +355,7 @@ boolexpr_TermsIter_val(TERMS_ITER c_self)
 }
 
 
-DOM_ITER
+DllExport DOM_ITER
 boolexpr_DomainIter_new(BX c_bxp)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const * const>(c_bxp);
@@ -363,7 +363,7 @@ boolexpr_DomainIter_new(BX c_bxp)
 }
 
 
-void
+DllExport void
 boolexpr_DomainIter_del(DOM_ITER c_self)
 {
     auto self = reinterpret_cast<DomainIterProxy * const>(c_self);
@@ -371,7 +371,7 @@ boolexpr_DomainIter_del(DOM_ITER c_self)
 }
 
 
-void
+DllExport void
 boolexpr_DomainIter_next(DOM_ITER c_self)
 {
     auto self = reinterpret_cast<DomainIterProxy * const>(c_self);
@@ -379,7 +379,7 @@ boolexpr_DomainIter_next(DOM_ITER c_self)
 }
 
 
-POINT
+DllExport POINT
 boolexpr_DomainIter_val(DOM_ITER c_self)
 {
     auto self = reinterpret_cast<DomainIterProxy * const>(c_self);
@@ -387,7 +387,7 @@ boolexpr_DomainIter_val(DOM_ITER c_self)
 }
 
 
-CF_ITER
+DllExport CF_ITER
 boolexpr_CofactorIter_new(BX c_bxp, size_t n, VARS c_varps)
 {
     auto bxp = reinterpret_cast<BoolExprProxy const * const>(c_bxp);
@@ -401,7 +401,7 @@ boolexpr_CofactorIter_new(BX c_bxp, size_t n, VARS c_varps)
 }
 
 
-void
+DllExport void
 boolexpr_CofactorIter_del(CF_ITER c_self)
 {
     auto self = reinterpret_cast<CofactorIterProxy * const>(c_self);
@@ -409,7 +409,7 @@ boolexpr_CofactorIter_del(CF_ITER c_self)
 }
 
 
-void
+DllExport void
 boolexpr_CofactorIter_next(CF_ITER c_self)
 {
     auto self = reinterpret_cast<CofactorIterProxy * const>(c_self);
@@ -417,7 +417,7 @@ boolexpr_CofactorIter_next(CF_ITER c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_CofactorIter_val(CF_ITER c_self)
 {
     auto self = reinterpret_cast<CofactorIterProxy * const>(c_self);
@@ -425,35 +425,35 @@ boolexpr_CofactorIter_val(CF_ITER c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_zero()
 {
     return new BoolExprProxy(zero());
 }
 
 
-BX
+DllExport BX
 boolexpr_one()
 {
     return new BoolExprProxy(one());
 }
 
 
-BX
+DllExport BX
 boolexpr_logical()
 {
     return new BoolExprProxy(logical());
 }
 
 
-BX
+DllExport BX
 boolexpr_illogical()
 {
     return new BoolExprProxy(illogical());
 }
 
 
-BX
+DllExport BX
 boolexpr_not(BX c_arg)
 {
     auto arg = reinterpret_cast<BoolExprProxy const * const>(c_arg);
@@ -461,7 +461,7 @@ boolexpr_not(BX c_arg)
 }
 
 
-LIT
+DllExport LIT
 boolexpr_abs(LIT c_arg)
 {
     auto arg = reinterpret_cast<LiteralProxy const * const>(c_arg);
@@ -481,39 +481,39 @@ _convert_args(size_t n, BXS c_args)
 }
 
 
-BX
+DllExport BX
 boolexpr_nor(size_t n, BXS c_args)
 { return new BoolExprProxy(nor(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_or(size_t n, BXS c_args)
 { return new BoolExprProxy(or_(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_nand(size_t n, BXS c_args)
 { return new BoolExprProxy(nand(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_and(size_t n, BXS c_args)
 { return new BoolExprProxy(and_(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_xnor(size_t n, BXS c_args)
 { return new BoolExprProxy(xnor(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_xor(size_t n, BXS c_args)
 { return new BoolExprProxy(xor_(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_neq(size_t n, BXS c_args)
 { return new BoolExprProxy(neq(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_eq(size_t n, BXS c_args)
 { return new BoolExprProxy(eq(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_nimpl(BX c_p, BX c_q)
 {
     auto p = reinterpret_cast<BoolExprProxy const * const>(c_p);
@@ -521,7 +521,7 @@ boolexpr_nimpl(BX c_p, BX c_q)
     return new BoolExprProxy(nimpl(p->bx, q->bx));
 }
 
-BX
+DllExport BX
 boolexpr_impl(BX c_p, BX c_q)
 {
     auto p = reinterpret_cast<BoolExprProxy const * const>(c_p);
@@ -529,7 +529,7 @@ boolexpr_impl(BX c_p, BX c_q)
     return new BoolExprProxy(impl(p->bx, q->bx));
 }
 
-BX
+DllExport BX
 boolexpr_nite(BX c_s, BX c_d1, BX c_d0)
 {
     auto s = reinterpret_cast<BoolExprProxy const * const>(c_s);
@@ -538,7 +538,7 @@ boolexpr_nite(BX c_s, BX c_d1, BX c_d0)
     return new BoolExprProxy(nite(s->bx, d1->bx, d0->bx));
 }
 
-BX
+DllExport BX
 boolexpr_ite(BX c_s, BX c_d1, BX c_d0)
 {
     auto s = reinterpret_cast<BoolExprProxy const * const>(c_s);
@@ -548,48 +548,48 @@ boolexpr_ite(BX c_s, BX c_d1, BX c_d0)
 }
 
 
-BX
+DllExport BX
 boolexpr_onehot0(size_t n, BXS c_args)
 { return new BoolExprProxy(onehot0(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_onehot(size_t n, BXS c_args)
 { return new BoolExprProxy(onehot(_convert_args(n, c_args))); }
 
 
-BX
+DllExport BX
 boolexpr_nor_s(size_t n, BXS c_args)
 { return new BoolExprProxy(nor_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_or_s(size_t n, BXS c_args)
 { return new BoolExprProxy(or_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_nand_s(size_t n, BXS c_args)
 { return new BoolExprProxy(nand_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_and_s(size_t n, BXS c_args)
 { return new BoolExprProxy(and_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_xnor_s(size_t n, BXS c_args)
 { return new BoolExprProxy(xnor_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_xor_s(size_t n, BXS c_args)
 { return new BoolExprProxy(xor_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_neq_s(size_t n, BXS c_args)
 { return new BoolExprProxy(neq_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_eq_s(size_t n, BXS c_args)
 { return new BoolExprProxy(eq_s(_convert_args(n, c_args))); }
 
-BX
+DllExport BX
 boolexpr_nimpl_s(BX c_p, BX c_q)
 {
     auto p = reinterpret_cast<BoolExprProxy const * const>(c_p);
@@ -597,7 +597,7 @@ boolexpr_nimpl_s(BX c_p, BX c_q)
     return new BoolExprProxy(nimpl_s(p->bx, q->bx));
 }
 
-BX
+DllExport BX
 boolexpr_impl_s(BX c_p, BX c_q)
 {
     auto p = reinterpret_cast<BoolExprProxy const * const>(c_p);
@@ -605,7 +605,7 @@ boolexpr_impl_s(BX c_p, BX c_q)
     return new BoolExprProxy(impl_s(p->bx, q->bx));
 }
 
-BX
+DllExport BX
 boolexpr_nite_s(BX c_s, BX c_d1, BX c_d0)
 {
     auto s = reinterpret_cast<BoolExprProxy const * const>(c_s);
@@ -614,7 +614,7 @@ boolexpr_nite_s(BX c_s, BX c_d1, BX c_d0)
     return new BoolExprProxy(nite_s(s->bx, d1->bx, d0->bx));
 }
 
-BX
+DllExport BX
 boolexpr_ite_s(BX c_s, BX c_d1, BX c_d0)
 {
     auto s = reinterpret_cast<BoolExprProxy const * const>(c_s);
@@ -624,7 +624,7 @@ boolexpr_ite_s(BX c_s, BX c_d1, BX c_d0)
 }
 
 
-void
+DllExport void
 boolexpr_BoolExpr_del(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -632,7 +632,7 @@ boolexpr_BoolExpr_del(BX c_self)
 }
 
 
-uint8_t
+DllExport uint8_t
 boolexpr_BoolExpr_kind(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -640,7 +640,7 @@ boolexpr_BoolExpr_kind(BX c_self)
 }
 
 
-STRING
+DllExport STRING
 boolexpr_BoolExpr_to_string(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -651,7 +651,7 @@ boolexpr_BoolExpr_to_string(BX c_self)
 }
 
 
-STRING
+DllExport STRING
 boolexpr_BoolExpr_to_dot(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -662,7 +662,7 @@ boolexpr_BoolExpr_to_dot(BX c_self)
 }
 
 
-uint32_t
+DllExport uint32_t
 boolexpr_BoolExpr_depth(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -670,7 +670,7 @@ boolexpr_BoolExpr_depth(BX c_self)
 }
 
 
-uint32_t
+DllExport uint32_t
 boolexpr_BoolExpr_size(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -678,7 +678,7 @@ boolexpr_BoolExpr_size(BX c_self)
 }
 
 
-bool
+DllExport bool
 boolexpr_BoolExpr_is_cnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -686,7 +686,7 @@ boolexpr_BoolExpr_is_cnf(BX c_self)
 }
 
 
-bool
+DllExport bool
 boolexpr_BoolExpr_is_dnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -694,7 +694,7 @@ boolexpr_BoolExpr_is_dnf(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_simplify(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -702,7 +702,7 @@ boolexpr_BoolExpr_simplify(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_to_binop(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -710,7 +710,7 @@ boolexpr_BoolExpr_to_binop(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_to_latop(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -718,7 +718,7 @@ boolexpr_BoolExpr_to_latop(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_to_posop(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -726,7 +726,7 @@ boolexpr_BoolExpr_to_posop(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_tseytin(BX c_self, CONTEXT c_ctx, STRING c_auxvarname)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -736,7 +736,7 @@ boolexpr_BoolExpr_tseytin(BX c_self, CONTEXT c_ctx, STRING c_auxvarname)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_compose(BX c_self, size_t n, VARS c_varps, BXS c_bxps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -752,7 +752,7 @@ boolexpr_BoolExpr_compose(BX c_self, size_t n, VARS c_varps, BXS c_bxps)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_restrict(BX c_self, size_t n, VARS c_varps, CONSTS c_constps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -768,7 +768,7 @@ boolexpr_BoolExpr_restrict(BX c_self, size_t n, VARS c_varps, CONSTS c_constps)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_sat(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -776,7 +776,7 @@ boolexpr_BoolExpr_sat(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_to_cnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -784,7 +784,7 @@ boolexpr_BoolExpr_to_cnf(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_to_dnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -792,7 +792,7 @@ boolexpr_BoolExpr_to_dnf(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_to_nnf(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -800,7 +800,7 @@ boolexpr_BoolExpr_to_nnf(BX c_self)
 }
 
 
-bool
+DllExport bool
 boolexpr_BoolExpr_equiv(BX c_self, BX c_other)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -809,7 +809,7 @@ boolexpr_BoolExpr_equiv(BX c_self, BX c_other)
 }
 
 
-VARSET
+DllExport VARSET
 boolexpr_BoolExpr_support(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -817,7 +817,7 @@ boolexpr_BoolExpr_support(BX c_self)
 }
 
 
-uint32_t
+DllExport uint32_t
 boolexpr_BoolExpr_degree(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -825,7 +825,7 @@ boolexpr_BoolExpr_degree(BX c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_expand(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -839,7 +839,7 @@ boolexpr_BoolExpr_expand(BX c_self, size_t n, VARS c_varps)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_smoothing(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -853,7 +853,7 @@ boolexpr_BoolExpr_smoothing(BX c_self, size_t n, VARS c_varps)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_consensus(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -867,7 +867,7 @@ boolexpr_BoolExpr_consensus(BX c_self, size_t n, VARS c_varps)
 }
 
 
-BX
+DllExport BX
 boolexpr_BoolExpr_derivative(BX c_self, size_t n, VARS c_varps)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -881,7 +881,7 @@ boolexpr_BoolExpr_derivative(BX c_self, size_t n, VARS c_varps)
 }
 
 
-CONTEXT
+DllExport CONTEXT
 boolexpr_Literal_ctx(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -890,7 +890,7 @@ boolexpr_Literal_ctx(BX c_self)
 }
 
 
-uint32_t
+DllExport uint32_t
 boolexpr_Literal_id(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -899,7 +899,7 @@ boolexpr_Literal_id(BX c_self)
 }
 
 
-bool
+DllExport bool
 boolexpr_Operator_simple(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -908,7 +908,7 @@ boolexpr_Operator_simple(BX c_self)
 }
 
 
-VEC
+DllExport VEC
 boolexpr_Operator_args(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -917,7 +917,7 @@ boolexpr_Operator_args(BX c_self)
 }
 
 
-bool
+DllExport bool
 boolexpr_Operator_is_clause(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);
@@ -926,14 +926,14 @@ boolexpr_Operator_is_clause(BX c_self)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_new(size_t n, BXS c_args)
 {
     return new Array(_convert_args(n, c_args));
 }
 
 
-void
+DllExport void
 boolexpr_Array_del(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -941,7 +941,7 @@ boolexpr_Array_del(ARRAY c_self)
 }
 
 
-size_t
+DllExport size_t
 boolexpr_Array_size(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -949,7 +949,7 @@ boolexpr_Array_size(ARRAY c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_getitem(ARRAY c_self, size_t index)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -958,7 +958,7 @@ boolexpr_Array_getitem(ARRAY c_self, size_t index)
 }
 
 
-void
+DllExport void
 boolexpr_Array_setitem(ARRAY c_self, size_t index, BX c_item)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -968,7 +968,7 @@ boolexpr_Array_setitem(ARRAY c_self, size_t index, BX c_item)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_getslice(ARRAY c_self, size_t start, size_t stop)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -979,7 +979,7 @@ boolexpr_Array_getslice(ARRAY c_self, size_t start, size_t stop)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_invert(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -987,7 +987,7 @@ boolexpr_Array_invert(ARRAY c_self)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_or(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -996,7 +996,7 @@ boolexpr_Array_or(ARRAY c_self, ARRAY c_other)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_and(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1005,7 +1005,7 @@ boolexpr_Array_and(ARRAY c_self, ARRAY c_other)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_xor(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1014,7 +1014,7 @@ boolexpr_Array_xor(ARRAY c_self, ARRAY c_other)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_plus(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1023,7 +1023,7 @@ boolexpr_Array_plus(ARRAY c_self, ARRAY c_other)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_mul(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1031,7 +1031,7 @@ boolexpr_Array_mul(ARRAY c_self, size_t num)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_simplify(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1039,7 +1039,7 @@ boolexpr_Array_simplify(ARRAY c_self)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1055,7 +1055,7 @@ boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1071,7 +1071,7 @@ boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
 }
 
 
-bool
+DllExport bool
 boolexpr_Array_equiv(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1080,7 +1080,7 @@ boolexpr_Array_equiv(ARRAY c_self, ARRAY c_other)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_zext(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1088,7 +1088,7 @@ boolexpr_Array_zext(ARRAY c_self, size_t num)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_Array_sext(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1096,7 +1096,7 @@ boolexpr_Array_sext(ARRAY c_self, size_t num)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_nor_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1104,7 +1104,7 @@ boolexpr_Array_nor_reduce(ARRAY c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_or_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1112,7 +1112,7 @@ boolexpr_Array_or_reduce(ARRAY c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_nand_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1120,7 +1120,7 @@ boolexpr_Array_nand_reduce(ARRAY c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_and_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1128,7 +1128,7 @@ boolexpr_Array_and_reduce(ARRAY c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_xnor_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1136,7 +1136,7 @@ boolexpr_Array_xnor_reduce(ARRAY c_self)
 }
 
 
-BX
+DllExport BX
 boolexpr_Array_xor_reduce(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1144,21 +1144,21 @@ boolexpr_Array_xor_reduce(ARRAY c_self)
 }
 
 
-ARRAY
+DllExport ARRAY
 boolexpr_ArrayPair_fst(ARRAY_PAIR c_self)
 {
     auto self = reinterpret_cast<Array * const * const>(c_self);
     return self[0];
 }
 
-ARRAY
+DllExport ARRAY
 boolexpr_ArrayPair_snd(ARRAY_PAIR c_self)
 {
     auto self = reinterpret_cast<Array * const * const>(c_self);
     return self[1];
 }
 
-void
+DllExport void
 boolexpr_ArrayPair_del(ARRAY_PAIR c_self)
 {
     auto self = reinterpret_cast<Array * const * const>(c_self);
@@ -1166,7 +1166,7 @@ boolexpr_ArrayPair_del(ARRAY_PAIR c_self)
 }
 
 
-ARRAY_PAIR
+DllExport ARRAY_PAIR
 boolexpr_Array_lsh(ARRAY c_self, ARRAY c_sin)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1178,7 +1178,7 @@ boolexpr_Array_lsh(ARRAY c_self, ARRAY c_sin)
 }
 
 
-ARRAY_PAIR
+DllExport ARRAY_PAIR
 boolexpr_Array_rsh(ARRAY c_self, ARRAY c_sin)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
@@ -1190,7 +1190,7 @@ boolexpr_Array_rsh(ARRAY c_self, ARRAY c_sin)
 }
 
 
-ARRAY_PAIR
+DllExport ARRAY_PAIR
 boolexpr_Array_arsh(ARRAY c_self, size_t n)
 {
     auto self = reinterpret_cast<Array * const>(c_self);

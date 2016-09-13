@@ -992,9 +992,18 @@ Array * operator*(size_t, Array const &);
 #endif  // __cplusplus
 
 
+#ifdef __GNUC__
+#    define DllExport
+#elif __clang__
+#    define DllExport
+#elif _MSC_VER
+#    define DllExport __declspec(dllexport)
+#endif
+
+
 // C Foreign Function Interface (CFFI)
-extern "C"
-{
+extern "C" {
+
 
 typedef char const * const STRING;
 typedef void * const CONTEXT;
@@ -1016,163 +1025,165 @@ typedef void * const TERMS_ITER;
 typedef void * const DOM_ITER;
 typedef void * const CF_ITER;
 
-CONTEXT boolexpr_Context_new(void);
-void boolexpr_Context_del(CONTEXT);
-BX boolexpr_Context_get_var(CONTEXT, STRING);
 
-void boolexpr_String_del(STRING);
+DllExport CONTEXT boolexpr_Context_new(void);
+DllExport void boolexpr_Context_del(CONTEXT);
+DllExport BX boolexpr_Context_get_var(CONTEXT, STRING);
 
-void boolexpr_Vec_del(VEC);
-void boolexpr_Vec_iter(VEC);
-void boolexpr_Vec_next(VEC);
-BX boolexpr_Vec_val(VEC);
+DllExport void boolexpr_String_del(STRING);
 
-void boolexpr_VarSet_del(VARSET);
-void boolexpr_VarSet_iter(VARSET);
-void boolexpr_VarSet_next(VARSET);
-BX boolexpr_VarSet_val(VARSET);
+DllExport void boolexpr_Vec_del(VEC);
+DllExport void boolexpr_Vec_iter(VEC);
+DllExport void boolexpr_Vec_next(VEC);
+DllExport BX boolexpr_Vec_val(VEC);
 
-void boolexpr_Point_del(POINT);
-void boolexpr_Point_iter(POINT);
-void boolexpr_Point_next(POINT);
-BX boolexpr_Point_key(POINT);
-BX boolexpr_Point_val(POINT);
+DllExport void boolexpr_VarSet_del(VARSET);
+DllExport void boolexpr_VarSet_iter(VARSET);
+DllExport void boolexpr_VarSet_next(VARSET);
+DllExport BX boolexpr_VarSet_val(VARSET);
 
-void boolexpr_Soln_del(SOLN);
-bool boolexpr_Soln_first(SOLN);
-POINT boolexpr_Soln_second(SOLN);
+DllExport void boolexpr_Point_del(POINT);
+DllExport void boolexpr_Point_iter(POINT);
+DllExport void boolexpr_Point_next(POINT);
+DllExport BX boolexpr_Point_key(POINT);
+DllExport BX boolexpr_Point_val(POINT);
 
-DFS_ITER boolexpr_DfsIter_new(BX);
-void boolexpr_DfsIter_del(DFS_ITER);
-void boolexpr_DfsIter_next(DFS_ITER);
-BX boolexpr_DfsIter_val(DFS_ITER);
+DllExport void boolexpr_Soln_del(SOLN);
+DllExport bool boolexpr_Soln_first(SOLN);
+DllExport POINT boolexpr_Soln_second(SOLN);
 
-SAT_ITER boolexpr_SatIter_new(BX);
-void boolexpr_SatIter_del(SAT_ITER);
-void boolexpr_SatIter_next(SAT_ITER);
-POINT boolexpr_SatIter_val(SAT_ITER);
+DllExport DFS_ITER boolexpr_DfsIter_new(BX);
+DllExport void boolexpr_DfsIter_del(DFS_ITER);
+DllExport void boolexpr_DfsIter_next(DFS_ITER);
+DllExport BX boolexpr_DfsIter_val(DFS_ITER);
 
-POINTS_ITER boolexpr_PointsIter_new(size_t, VARS);
-void boolexpr_PointsIter_del(POINTS_ITER);
-void boolexpr_PointsIter_next(POINTS_ITER);
-POINT boolexpr_PointsIter_val(POINTS_ITER);
+DllExport SAT_ITER boolexpr_SatIter_new(BX);
+DllExport void boolexpr_SatIter_del(SAT_ITER);
+DllExport void boolexpr_SatIter_next(SAT_ITER);
+DllExport POINT boolexpr_SatIter_val(SAT_ITER);
 
-TERMS_ITER boolexpr_TermsIter_new(size_t, VARS);
-void boolexpr_TermsIter_del(TERMS_ITER);
-void boolexpr_TermsIter_next(TERMS_ITER);
-VEC boolexpr_TermsIter_val(TERMS_ITER);
+DllExport POINTS_ITER boolexpr_PointsIter_new(size_t, VARS);
+DllExport void boolexpr_PointsIter_del(POINTS_ITER);
+DllExport void boolexpr_PointsIter_next(POINTS_ITER);
+DllExport POINT boolexpr_PointsIter_val(POINTS_ITER);
 
-DOM_ITER boolexpr_DomainIter_new(BX);
-void boolexpr_DomainIter_del(DOM_ITER);
-void boolexpr_DomainIter_next(DOM_ITER);
-POINT boolexpr_DomainIter_val(DOM_ITER);
+DllExport TERMS_ITER boolexpr_TermsIter_new(size_t, VARS);
+DllExport void boolexpr_TermsIter_del(TERMS_ITER);
+DllExport void boolexpr_TermsIter_next(TERMS_ITER);
+DllExport VEC boolexpr_TermsIter_val(TERMS_ITER);
 
-CF_ITER boolexpr_CofactorIter_new(BX, size_t, VARS);
-void boolexpr_CofactorIter_del(CF_ITER);
-void boolexpr_CofactorIter_next(CF_ITER);
-BX boolexpr_CofactorIter_val(CF_ITER);
+DllExport DOM_ITER boolexpr_DomainIter_new(BX);
+DllExport void boolexpr_DomainIter_del(DOM_ITER);
+DllExport void boolexpr_DomainIter_next(DOM_ITER);
+DllExport POINT boolexpr_DomainIter_val(DOM_ITER);
 
-BX boolexpr_zero(void);
-BX boolexpr_one(void);
-BX boolexpr_logical(void);
-BX boolexpr_illogical(void);
+DllExport CF_ITER boolexpr_CofactorIter_new(BX, size_t, VARS);
+DllExport void boolexpr_CofactorIter_del(CF_ITER);
+DllExport void boolexpr_CofactorIter_next(CF_ITER);
+DllExport BX boolexpr_CofactorIter_val(CF_ITER);
 
-BX boolexpr_not(BX);
-LIT boolexpr_abs(LIT);
-BX boolexpr_nor(size_t, BXS);
-BX boolexpr_or(size_t, BXS);
-BX boolexpr_nand(size_t, BXS);
-BX boolexpr_and(size_t, BXS);
-BX boolexpr_xnor(size_t, BXS);
-BX boolexpr_xor(size_t, BXS);
-BX boolexpr_neq(size_t, BXS);
-BX boolexpr_eq(size_t, BXS);
-BX boolexpr_nimpl(BX, BX);
-BX boolexpr_impl(BX, BX);
-BX boolexpr_nite(BX, BX, BX);
-BX boolexpr_ite(BX, BX, BX);
-BX boolexpr_onehot0(size_t, BXS);
-BX boolexpr_onehot(size_t, BXS);
+DllExport BX boolexpr_zero(void);
+DllExport BX boolexpr_one(void);
+DllExport BX boolexpr_logical(void);
+DllExport BX boolexpr_illogical(void);
 
-BX boolexpr_nor_s(size_t, BXS);
-BX boolexpr_or_s(size_t, BXS);
-BX boolexpr_nand_s(size_t, BXS);
-BX boolexpr_and_s(size_t, BXS);
-BX boolexpr_xnor_s(size_t, BXS);
-BX boolexpr_xor_s(size_t, BXS);
-BX boolexpr_neq_s(size_t, BXS);
-BX boolexpr_eq_s(size_t, BXS);
-BX boolexpr_nimpl_s(BX, BX);
-BX boolexpr_impl_s(BX, BX);
-BX boolexpr_nite_s(BX, BX, BX);
-BX boolexpr_ite_s(BX, BX, BX);
+DllExport BX boolexpr_not(BX);
+DllExport LIT boolexpr_abs(LIT);
+DllExport BX boolexpr_nor(size_t, BXS);
+DllExport BX boolexpr_or(size_t, BXS);
+DllExport BX boolexpr_nand(size_t, BXS);
+DllExport BX boolexpr_and(size_t, BXS);
+DllExport BX boolexpr_xnor(size_t, BXS);
+DllExport BX boolexpr_xor(size_t, BXS);
+DllExport BX boolexpr_neq(size_t, BXS);
+DllExport BX boolexpr_eq(size_t, BXS);
+DllExport BX boolexpr_nimpl(BX, BX);
+DllExport BX boolexpr_impl(BX, BX);
+DllExport BX boolexpr_nite(BX, BX, BX);
+DllExport BX boolexpr_ite(BX, BX, BX);
+DllExport BX boolexpr_onehot0(size_t, BXS);
+DllExport BX boolexpr_onehot(size_t, BXS);
 
-void boolexpr_BoolExpr_del(BX);
-uint8_t boolexpr_BoolExpr_kind(BX);
-STRING boolexpr_BoolExpr_to_string(BX);
-STRING boolexpr_BoolExpr_to_dot(BX);
-uint32_t boolexpr_BoolExpr_depth(BX);
-uint32_t boolexpr_BoolExpr_size(BX);
-bool boolexpr_BoolExpr_is_cnf(BX);
-bool boolexpr_BoolExpr_is_dnf(BX);
-BX boolexpr_BoolExpr_simplify(BX);
-BX boolexpr_BoolExpr_to_binop(BX);
-BX boolexpr_BoolExpr_to_latop(BX);
-BX boolexpr_BoolExpr_to_posop(BX);
-BX boolexpr_BoolExpr_tseytin(BX, CONTEXT, STRING);
-BX boolexpr_BoolExpr_compose(BX, size_t, VARS, BXS);
-BX boolexpr_BoolExpr_restrict(BX, size_t, VARS, CONSTS);
-BX boolexpr_BoolExpr_sat(BX);
-BX boolexpr_BoolExpr_to_cnf(BX);
-BX boolexpr_BoolExpr_to_dnf(BX);
-BX boolexpr_BoolExpr_to_nnf(BX);
-bool boolexpr_BoolExpr_equiv(BX, BX);
-VARSET boolexpr_BoolExpr_support(BX);
-uint32_t boolexpr_BoolExpr_degree(BX);
+DllExport BX boolexpr_nor_s(size_t, BXS);
+DllExport BX boolexpr_or_s(size_t, BXS);
+DllExport BX boolexpr_nand_s(size_t, BXS);
+DllExport BX boolexpr_and_s(size_t, BXS);
+DllExport BX boolexpr_xnor_s(size_t, BXS);
+DllExport BX boolexpr_xor_s(size_t, BXS);
+DllExport BX boolexpr_neq_s(size_t, BXS);
+DllExport BX boolexpr_eq_s(size_t, BXS);
+DllExport BX boolexpr_nimpl_s(BX, BX);
+DllExport BX boolexpr_impl_s(BX, BX);
+DllExport BX boolexpr_nite_s(BX, BX, BX);
+DllExport BX boolexpr_ite_s(BX, BX, BX);
 
-BX boolexpr_BoolExpr_expand(BX, size_t, VARS);
+DllExport void boolexpr_BoolExpr_del(BX);
+DllExport uint8_t boolexpr_BoolExpr_kind(BX);
+DllExport STRING boolexpr_BoolExpr_to_string(BX);
+DllExport STRING boolexpr_BoolExpr_to_dot(BX);
+DllExport uint32_t boolexpr_BoolExpr_depth(BX);
+DllExport uint32_t boolexpr_BoolExpr_size(BX);
+DllExport bool boolexpr_BoolExpr_is_cnf(BX);
+DllExport bool boolexpr_BoolExpr_is_dnf(BX);
+DllExport BX boolexpr_BoolExpr_simplify(BX);
+DllExport BX boolexpr_BoolExpr_to_binop(BX);
+DllExport BX boolexpr_BoolExpr_to_latop(BX);
+DllExport BX boolexpr_BoolExpr_to_posop(BX);
+DllExport BX boolexpr_BoolExpr_tseytin(BX, CONTEXT, STRING);
+DllExport BX boolexpr_BoolExpr_compose(BX, size_t, VARS, BXS);
+DllExport BX boolexpr_BoolExpr_restrict(BX, size_t, VARS, CONSTS);
+DllExport BX boolexpr_BoolExpr_sat(BX);
+DllExport BX boolexpr_BoolExpr_to_cnf(BX);
+DllExport BX boolexpr_BoolExpr_to_dnf(BX);
+DllExport BX boolexpr_BoolExpr_to_nnf(BX);
+DllExport bool boolexpr_BoolExpr_equiv(BX, BX);
+DllExport VARSET boolexpr_BoolExpr_support(BX);
+DllExport uint32_t boolexpr_BoolExpr_degree(BX);
 
-BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
-BX boolexpr_BoolExpr_consensus(BX, size_t, VARS);
-BX boolexpr_BoolExpr_derivative(BX, size_t, VARS);
+DllExport BX boolexpr_BoolExpr_expand(BX, size_t, VARS);
 
-CONTEXT boolexpr_Literal_ctx(BX);
-uint32_t boolexpr_Literal_id(BX);
+DllExport BX boolexpr_BoolExpr_smoothing(BX, size_t, VARS);
+DllExport BX boolexpr_BoolExpr_consensus(BX, size_t, VARS);
+DllExport BX boolexpr_BoolExpr_derivative(BX, size_t, VARS);
 
-bool boolexpr_Operator_simple(BX);
-VEC boolexpr_Operator_args(BX);
-bool boolexpr_Operator_is_clause(BX);
+DllExport CONTEXT boolexpr_Literal_ctx(BX);
+DllExport uint32_t boolexpr_Literal_id(BX);
 
-ARRAY boolexpr_Array_new(size_t, BXS);
-void boolexpr_Array_del(ARRAY);
-size_t boolexpr_Array_size(ARRAY);
-BX boolexpr_Array_getitem(ARRAY, size_t);
-void boolexpr_Array_setitem(ARRAY, size_t, BX);
-ARRAY boolexpr_Array_getslice(ARRAY, size_t, size_t);
-ARRAY boolexpr_Array_invert(ARRAY);
-ARRAY boolexpr_Array_or(ARRAY, ARRAY);
-ARRAY boolexpr_Array_and(ARRAY, ARRAY);
-ARRAY boolexpr_Array_xor(ARRAY, ARRAY);
-ARRAY boolexpr_Array_plus(ARRAY, ARRAY);
-ARRAY boolexpr_Array_mul(ARRAY, size_t);
-ARRAY boolexpr_Array_simplify(ARRAY);
-ARRAY boolexpr_Array_compose(ARRAY, size_t, VARS, BXS);
-ARRAY boolexpr_Array_restrict(ARRAY, size_t, VARS, CONSTS);
-bool boolexpr_Array_equiv(ARRAY, ARRAY);
-ARRAY boolexpr_Array_zext(ARRAY, size_t);
-ARRAY boolexpr_Array_sext(ARRAY, size_t);
-BX boolexpr_Array_nor_reduce(ARRAY);
-BX boolexpr_Array_or_reduce(ARRAY);
-BX boolexpr_Array_nand_reduce(ARRAY);
-BX boolexpr_Array_and_reduce(ARRAY);
-BX boolexpr_Array_xnor_reduce(ARRAY);
-BX boolexpr_Array_xor_reduce(ARRAY);
-ARRAY boolexpr_ArrayPair_fst(ARRAY_PAIR);
-ARRAY boolexpr_ArrayPair_snd(ARRAY_PAIR);
-void boolexpr_ArrayPair_del(ARRAY_PAIR);
-ARRAY_PAIR boolexpr_Array_lsh(ARRAY, ARRAY);
-ARRAY_PAIR boolexpr_Array_rsh(ARRAY, ARRAY);
-ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
+DllExport bool boolexpr_Operator_simple(BX);
+DllExport VEC boolexpr_Operator_args(BX);
+DllExport bool boolexpr_Operator_is_clause(BX);
+
+DllExport ARRAY boolexpr_Array_new(size_t, BXS);
+DllExport void boolexpr_Array_del(ARRAY);
+DllExport size_t boolexpr_Array_size(ARRAY);
+DllExport BX boolexpr_Array_getitem(ARRAY, size_t);
+DllExport void boolexpr_Array_setitem(ARRAY, size_t, BX);
+DllExport ARRAY boolexpr_Array_getslice(ARRAY, size_t, size_t);
+DllExport ARRAY boolexpr_Array_invert(ARRAY);
+DllExport ARRAY boolexpr_Array_or(ARRAY, ARRAY);
+DllExport ARRAY boolexpr_Array_and(ARRAY, ARRAY);
+DllExport ARRAY boolexpr_Array_xor(ARRAY, ARRAY);
+DllExport ARRAY boolexpr_Array_plus(ARRAY, ARRAY);
+DllExport ARRAY boolexpr_Array_mul(ARRAY, size_t);
+DllExport ARRAY boolexpr_Array_simplify(ARRAY);
+DllExport ARRAY boolexpr_Array_compose(ARRAY, size_t, VARS, BXS);
+DllExport ARRAY boolexpr_Array_restrict(ARRAY, size_t, VARS, CONSTS);
+DllExport bool boolexpr_Array_equiv(ARRAY, ARRAY);
+DllExport ARRAY boolexpr_Array_zext(ARRAY, size_t);
+DllExport ARRAY boolexpr_Array_sext(ARRAY, size_t);
+DllExport BX boolexpr_Array_nor_reduce(ARRAY);
+DllExport BX boolexpr_Array_or_reduce(ARRAY);
+DllExport BX boolexpr_Array_nand_reduce(ARRAY);
+DllExport BX boolexpr_Array_and_reduce(ARRAY);
+DllExport BX boolexpr_Array_xnor_reduce(ARRAY);
+DllExport BX boolexpr_Array_xor_reduce(ARRAY);
+DllExport ARRAY boolexpr_ArrayPair_fst(ARRAY_PAIR);
+DllExport ARRAY boolexpr_ArrayPair_snd(ARRAY_PAIR);
+DllExport void boolexpr_ArrayPair_del(ARRAY_PAIR);
+DllExport ARRAY_PAIR boolexpr_Array_lsh(ARRAY, ARRAY);
+DllExport ARRAY_PAIR boolexpr_Array_rsh(ARRAY, ARRAY);
+DllExport ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
+
 
 } // extern "C"
 
