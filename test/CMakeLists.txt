@@ -1,7 +1,7 @@
 file(GLOB srcs "*.h" "*.cc")
 
 add_executable(a.out ${srcs})
-target_link_libraries(a.out boolexpr glucosamine gtest)
+target_link_libraries(a.out boolexpr gtest)
 
 # make do_test
 add_custom_target(

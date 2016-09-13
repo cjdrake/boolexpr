@@ -19,16 +19,22 @@ if(DOXYGEN_FOUND)
     )
 endif(DOXYGEN_FOUND)
 
-# Glucosamine
-add_subdirectory(third_party/glucosamine)
+file(GLOB boolexpr_srcs "include/boolexpr/*.h" "src/*.cc")
+file(GLOB_RECURSE glucosamine_srcs "third_party/glucosamine/src/*.h" "third_party/glucosamine/src/core/Solver.cc")
 
-file(GLOB srcs "include/boolexpr/*.h" "src/*.cc")
+add_library(boolexpr ${boolexpr_srcs} ${glucosamine_srcs})
 
-add_library(boolexpr ${srcs})
-target_compile_options(boolexpr PUBLIC -std=c++11 -Wall)
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+    target_compile_options(boolexpr PUBLIC -std=c++11 -Wall)
+elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+    target_compile_options(boolexpr PUBLIC -std=c++11 -Wall)
+elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+    target_compile_options(boolexpr PUBLIC /std:c++11 /Wall)
+endif()
+
 target_include_directories(boolexpr PUBLIC include)
 target_include_directories(boolexpr PUBLIC third_party/boost-1.54.0)
-target_link_libraries(boolexpr glucosamine)
+target_include_directories(boolexpr PUBLIC third_party/glucosamine/src)
 
 # Copy boolexpr library to python/boolexpr directory
 add_custom_command(
