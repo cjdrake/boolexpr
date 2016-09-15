@@ -1,1 +1,2 @@
+include LICENSE README.rst
 include boolexpr/${CMAKE_SHARED_LIBRARY_PREFIX}boolexpr${CMAKE_SHARED_LIBRARY_SUFFIX}

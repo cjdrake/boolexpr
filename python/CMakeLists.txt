@@ -6,6 +6,7 @@ find_program(coverage_path coverage)
 find_program(gsutil_path gsutil)
 find_program(pylint_path pylint)
 
+file(COPY ../LICENSE ../README.rst DESTINATION .)
 file(COPY .pylintrc test_boolexpr.py DESTINATION .)
 file(COPY boolexpr/misc.py boolexpr/util.py boolexpr/wrap.py DESTINATION boolexpr)
 

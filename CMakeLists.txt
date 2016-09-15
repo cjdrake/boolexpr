@@ -5,6 +5,7 @@ project(boolexpr)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 set(VERSION 2.2)
+set(BOOST_VERSION 1.54.0)
 
 # Doxygen
 include(FindDoxygen)
@@ -21,6 +22,7 @@ endif(DOXYGEN_FOUND)
 
 file(GLOB boolexpr_srcs "include/boolexpr/*.h" "src/*.cc")
 file(GLOB_RECURSE glucosamine_srcs "third_party/glucosamine/src/*.h" "third_party/glucosamine/src/core/Solver.cc")
+file(GLOB_RECURSE boost_srcs "third_party/boost-${BOOST_VERSION}/*.hpp" "third_party/boost-${BOOST_VERSION}/*.cc")
 
 add_library(boolexpr ${boolexpr_srcs} ${glucosamine_srcs})
 
