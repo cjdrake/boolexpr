@@ -55,7 +55,7 @@ The documentation uses `Doxygen <http://www.doxygen.org>`_ and
 To build the html version::
 
     pip install sphinx
-    make html
+    make pyhtml
 
 The documentation will be in ``build/python/build/sphinx/html/index.html``.
 
