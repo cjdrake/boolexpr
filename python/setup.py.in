@@ -84,7 +84,7 @@ setup(
     author="Chris Drake",
     author_email="cjdrake@gmail.com",
     url="http://www.boolexpr.org",
-    download_url="",
+    download_url="https://github.com/cjdrake/boolexpr/archive/v2.3.tar.gz",
     packages=["boolexpr"],
     ext_modules=[bx],
     classifiers=CLASSIFIERS,
