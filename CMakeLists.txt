@@ -38,15 +38,6 @@ target_include_directories(boolexpr PUBLIC include)
 target_include_directories(boolexpr PUBLIC third_party/boost-1.54.0)
 target_include_directories(boolexpr PUBLIC third_party/glucosamine/src)
 
-# Copy boolexpr library to python/boolexpr directory
-add_custom_command(
-    TARGET boolexpr
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-        $<TARGET_FILE:boolexpr>
-        python/boolexpr/$<TARGET_FILE_NAME:boolexpr>
-)
-
 # Python bindings
 add_subdirectory(python)
 

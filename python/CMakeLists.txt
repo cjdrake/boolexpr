@@ -6,19 +6,22 @@ find_program(coverage_path coverage)
 find_program(gsutil_path gsutil)
 find_program(pylint_path pylint)
 
-file(COPY ../LICENSE ../README.rst DESTINATION .)
-file(COPY .pylintrc test_boolexpr.py DESTINATION .)
-file(COPY boolexpr/misc.py boolexpr/util.py boolexpr/wrap.py DESTINATION boolexpr)
+file(GLOB srcs "boolexpr/*.py")
 
-configure_file(MANIFEST.in MANIFEST.in)
+file(COPY ../LICENSE ../README.rst DESTINATION .)
+file(COPY .pylintrc MANIFEST.in test_boolexpr.py DESTINATION .)
+file(COPY ${srcs} DESTINATION boolexpr)
+file(COPY ../include DESTINATION boolexpr/)
+file(COPY ../src DESTINATION boolexpr/)
+file(COPY ../third_party/glucosamine/src DESTINATION boolexpr/third_party/glucosamine/)
+file(COPY ../third_party/boost-${BOOST_VERSION} DESTINATION boolexpr/third_party/)
+
 configure_file(setup.py.in setup.py)
 configure_file(boolexpr/__init__.py.in boolexpr/__init__.py)
-configure_file(boolexpr/_boolexpr.py.in boolexpr/_boolexpr.py)
 
 add_custom_command(
     OUTPUT stamp
     COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
-    DEPENDS boolexpr
 )
 
 if(coverage_path)
@@ -63,7 +66,6 @@ endif(pylint_path)
 add_custom_target(
     pytest
     COMMAND ${PYTHON_EXECUTABLE} setup.py test
-    DEPENDS boolexpr
 )
 
 add_custom_target(

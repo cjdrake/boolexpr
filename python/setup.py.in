@@ -15,9 +15,11 @@
 # limitations under the License.
 
 
+import sys
+from glob import glob
 from os.path import join
+from setuptools import Extension
 from setuptools import setup
-from setuptools.dist import Distribution
 
 
 with open(join("${PROJECT_SOURCE_DIR}", "README.rst")) as fin:
@@ -34,29 +36,60 @@ CLASSIFIERS = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 
-PACKAGE_DATA = {
-    "boolexpr": [join("boolexpr", "${CMAKE_SHARED_LIBRARY_PREFIX}boolexpr${CMAKE_SHARED_LIBRARY_SUFFIX}")],
-}
 
-class BinaryDistribution(Distribution):
-    def is_pure(self):
-        return False
+sources = [
+    join("boolexpr", "third_party", "glucosamine", "src", "core", "Solver.cc"),
+]
+sources += glob(join("boolexpr", "src", "*.cc"))
+
+include_dirs = [
+    join("boolexpr", "include"),
+    join("boolexpr", "third_party", "glucosamine", "src"),
+    join("boolexpr", "third_party", "boost-${BOOST_VERSION}"),
+]
+
+define_macros = [
+    ("NDEBUG", None),
+]
+
+extra_compile_args = []
+# Assume MSVC on Windows
+if sys.platform == "win32":
+    extra_compile_args += ["/std:c++11", "/Wall"]
+# Assume Clang on MacOS
+elif sys.platform == "darwin":
+    extra_compile_args += ["-std=c++11", "-Wall"]
+    extra_compile_args += ["-stdlib=libc++"]
+    extra_compile_args += ["-mmacosx-version-min=10.7"]
+# Assume GNU otherwise
+else:
+    extra_compile_args += ["-std=c++11", "-Wall"]
+
+bx = Extension(
+         name="boolexpr._boolexpr",
+         sources=sources,
+         include_dirs=include_dirs,
+         define_macros=define_macros,
+         extra_compile_args=extra_compile_args,
+         language = "c++",
+     )
+
 
 setup(
     # distutils
     name="boolexpr",
     version="@VERSION@",
+    description="Boolean Expressions",
+    long_description=README,
     author="Chris Drake",
     author_email="cjdrake@gmail.com",
     url="http://www.boolexpr.org",
-    description="Boolean Expressions",
-    long_description=README,
+    download_url="",
+    packages=["boolexpr"],
+    ext_modules=[bx],
     classifiers=CLASSIFIERS,
     license="Apache 2.0",
-    packages=["boolexpr"],
-    package_data=PACKAGE_DATA,
+
     # setuptools
-    include_package_data=True,
-    distclass=BinaryDistribution,
     install_requires=["cffi>=1.5.0"],
 )

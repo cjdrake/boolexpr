@@ -1199,3 +1199,10 @@ boolexpr_Array_arsh(ARRAY c_self, size_t n)
 
     return new Array * [2] { p.first, p.second };
 }
+
+
+// Required to compile a Python extension for Windows
+#ifdef _MSC_VER
+DllExport void *
+PyInit__boolexpr(void) { return NULL; }
+#endif

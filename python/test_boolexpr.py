@@ -61,7 +61,7 @@ class BoolExprTest(unittest.TestCase):
 
     def test_ast(self):
         """BoolExpr to_ast/from_ast methods"""
-        from boolexpr._boolexpr import ffi
+        from boolexpr import ffi
         p = int(ffi.cast("uintptr_t", ctx._cdata))
 
         self.assertEqual(ZERO.to_ast(), (BoolExpr.Kind.zero, ))

@@ -35,8 +35,8 @@ import operator
 from functools import reduce
 
 # pylint: disable=no-name-in-module
-from ._boolexpr import ffi
-from ._boolexpr import lib
+from . import ffi
+from . import lib
 # pylint: enable=no-name-in-module
 from .util import clog2
 
