@@ -4,7 +4,7 @@ project(boolexpr)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-set(VERSION 2.2)
+set(VERSION 2.3)
 set(BOOST_VERSION 1.54.0)
 
 # Doxygen

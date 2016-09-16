@@ -6,6 +6,42 @@
   Release Notes
 *****************
 
+Release 2.3
+===========
+
+Now this is an exciting release!
+
+First, the minor things.
+
+The ``majority`` function now always returns a CNF.
+There is no size advantage to DNF,
+and CNF is almost always preferable for the purposes of SAT.
+
+Also, there is a new ``NegativeOperator`` class.
+Because inheritance allowed for some nice consolidation in this particular case.
+
+Now onto the cool stuff.
+
+We are swapping SAT solvers.
+BoolExpr had been using
+`CryptoMinisat <https://github.com/msoos/cryptominisat>`_.
+Primarily due to build dependency complexities,
+we are now using `Glucosamine <https://github.com/cjdrake/glucosamine>`_,
+which is a fork of version 4.0 (2014) of the well-known
+`Glucose <http://www.labri.fr/perso/lsimon/glucose/>`_ solver.
+Both were derived from `MiniSAT <http://minisat.se/>`_ originally,
+so I don't expect a drastic change in performance.
+
+Another major achievement is the adoption of
+`CMake <https://cmake.org/>`_ for build.
+After looking around for quite a while,
+this system appears to be the de-facto standard for C++ builds.
+
+With all of this new-found cross-platform magic,
+BoolExpr will now ship Python wheels for 1) Linux, 2) MacOS, and 3) Windows.
+Getting this to work was a minor miracle,
+but definitely worth it.
+
 Release 2.2
 ===========
 
