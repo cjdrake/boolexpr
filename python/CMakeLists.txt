@@ -46,7 +46,7 @@ if(DOXYGEN_FOUND)
     if(gsutil_path)
         add_custom_target(
             pyhtml-upload
-            COMMAND ${gsutil_path} -m rsync -d -p -r python/build/sphinx/html ${GCS_BUCKET}
+            COMMAND ${gsutil_path} -m rsync -d -p -r build/sphinx/html ${GCS_BUCKET}
             COMMAND ${gsutil_path} -m acl ch -u AllUsers:R ${GCS_BUCKET}/**
             DEPENDS pyhtml
         )
