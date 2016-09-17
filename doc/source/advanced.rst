@@ -16,11 +16,11 @@ a terminal:
 
 .. code-block:: pycon
 
-   >>> from boolexpr as bx
-   >>> ctx = bx.Context()
+   >>> from boolexpr import *
+   >>> ctx = Context()
    >>> a, b, c, d = map(ctx.get_var, "abcd")
    >>> p, q, s, d1, d0 = map(ctx.get_var, "p q s d1 d0".split())
-   >>> xs = array('x', 8)
+   >>> X = ctx.get_vars('x', 8)
 
 Trivial Operators
 =================
@@ -30,37 +30,37 @@ Giving zero or one argument to those functions results in a degenerate form.
 
 .. code-block:: pycon
 
-   >>> bx.nor()
+   >>> nor()
    1
-   >>> bx.nor(a)
+   >>> nor(a)
    ~a
-   >>> bx.or_()
+   >>> or_()
    0
-   >>> bx.or_(a)
+   >>> or_(a)
    a
-   >>> bx.nand()
+   >>> nand()
    0
-   >>> bx.nand(a)
+   >>> nand(a)
    ~a
-   >>> bx.and_()
+   >>> and_()
    1
-   >>> bx.and_(a)
+   >>> and_(a)
    a
-   >>> bx.xnor()
+   >>> xnor()
    1
-   >>> bx.xnor(a)
+   >>> xnor(a)
    ~a
-   >>> bx.xor()
+   >>> xor()
    0
-   >>> bx.xor(a)
+   >>> xor(a)
    a
-   >>> bx.neq()
+   >>> neq()
    0
-   >>> bx.neq(a)
+   >>> neq(a)
    0
-   >>> bx.eq()
+   >>> eq()
    1
-   >>> bx.eq(a)
+   >>> eq(a)
    1
 
 Transformations
@@ -90,9 +90,9 @@ For example:
 
 .. code-block:: pycon
 
-   >>> bx.or_s(a, False)
+   >>> or_s(a, False)
    a
-   >>> bx.xor_s(a|1, b)
+   >>> xor_s(a | 1, b)
    ~b
 
 This is also true for expressions that can easily be converted to constants.
@@ -100,7 +100,7 @@ For example:
 
 .. code-block:: pycon
 
-   >>> bx.or_s(a, ~a)
+   >>> or_s(a, ~a)
    1
 
 Associativity
@@ -113,7 +113,7 @@ For example:
 
 .. code-block:: pycon
 
-   >>> bx.or_s(a&b, c|d)
+   >>> or_s(a & b, c | d)
    Or(c, d, And(b, a))
 
 Unknown Propagation
@@ -129,7 +129,7 @@ For example:
 
 .. code-block:: pycon
 
-   >>> bx.or_s(a, 'X')
+   >>> or_s(a, 'X')
    X
 
 The worth of this analysis is determining whether sub-expressions that propagate
@@ -139,9 +139,9 @@ For example:
 
 .. code-block:: pycon
 
-   >>> bx.or_s(a & 0, b & 'X')
+   >>> or_s(a & 0, b & 'X')
    X
-   >>> bx.or_s(1 | a, b & 'X')
+   >>> or_s(1 | a, b & 'X')
    1
 
 In the first case,
@@ -161,13 +161,13 @@ For example:
 
 .. code-block:: pycon
 
-   >>> bx.impl_s(0, q)
+   >>> impl_s(0, q)
    1
-   >>> bx.impl_s(~p, p)
+   >>> impl_s(~p, p)
    p
-   >>> bx.ite_s(0, d1, d0)
+   >>> ite_s(0, d1, d0)
    d0
-   >>> bx.ite_s(s, d1, 1)
+   >>> ite_s(s, d1, 1)
    Or(d1, ~s)
 
 The :class:`IfThenElse <boolexpr.IfThenElse>` operator is the same as a
@@ -177,11 +177,11 @@ it doesn't matter what the select value is.
 
 .. code-block:: pycon
 
-   >>> bx.ite_s(s, d1, d1)
+   >>> ite_s(s, d1, d1)
    d1
-   >>> bx.ite_s('X', 0, 0)
+   >>> ite_s('X', 0, 0)
    0
-   >>> bx.ite_s('X', a, a)
+   >>> ite_s('X', a, a)
    a
 
 Push Down NOT Bubbles
@@ -239,7 +239,7 @@ use the :meth:`to_binop <boolexpr.BoolExpr.to_binop>` method:
 
 .. code-block:: pycon
 
-   >>> or_(*xs[:8]).to_binop()
+   >>> or_(*X[:8]).to_binop()
    Or(Or(Or(x_0, x_1), Or(x_2, x_3)), Or(Or(x_4, x_5), Or(x_6, x_7)))
 
 This technique might help to re-write an arbitrary expression in a language
@@ -583,7 +583,7 @@ Both take an optional ``length`` parameter.
 
    >>> uint2nda(42)
    array([0, 1, 0, 1, 0, 1])
-   >>> int2nda(-42, width=8)
+   >>> int2nda(-42, length=8)
    array([0, 1, 1, 0, 1, 0, 1, 1])
 
 Notice that for integers,
@@ -949,6 +949,6 @@ and each corresponding element of both arrays is equivalent.
 .. code-block:: pycon
 
    >>> A = array([impl(p, q), ite(s, d1, d0)])
-   >>> B = array([~p|q, s&d1|~s&d0])
+   >>> B = array([~p | q, s & d1 | ~s & d0])
    >>> A.equiv(B)
    True
