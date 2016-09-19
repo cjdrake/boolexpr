@@ -278,6 +278,10 @@ lib = ffi.dlopen(_spec.origin)
 
 from .wrap import Context
 
+from .wrap import ROOT_CONTEXT
+from .wrap import get_var
+from .wrap import get_vars
+
 from .wrap import BoolExpr
 from .wrap import Atom
 from .wrap import Constant

@@ -321,6 +321,19 @@ class Context:
         return array(objs, shape)
 
 
+ROOT_CONTEXT = Context()
+
+
+def get_var(name):
+    """Return a variable from the root context."""
+    return ROOT_CONTEXT.get_var(name)
+
+
+def get_vars(name, *dims):
+    """Return a multi-dimensional array of variables from the root context."""
+    return ROOT_CONTEXT.get_vars(name, *dims)
+
+
 class BoolExpr:
     """
     Wrap boolexpr::BoolExpr class
