@@ -983,7 +983,7 @@ DllExport ARRAY
 boolexpr_Array_invert(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
-    return ~(*self);
+    return (~(*self)).release();
 }
 
 
@@ -992,7 +992,7 @@ boolexpr_Array_or(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
     auto other = reinterpret_cast<Array * const>(c_other);
-    return *self | *other;
+    return (*self | *other).release();
 }
 
 
@@ -1001,7 +1001,7 @@ boolexpr_Array_and(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
     auto other = reinterpret_cast<Array * const>(c_other);
-    return *self & *other;
+    return (*self & *other).release();
 }
 
 
@@ -1010,7 +1010,7 @@ boolexpr_Array_xor(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
     auto other = reinterpret_cast<Array * const>(c_other);
-    return *self ^ *other;
+    return (*self ^ *other).release();
 }
 
 
@@ -1019,7 +1019,7 @@ boolexpr_Array_plus(ARRAY c_self, ARRAY c_other)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
     auto other = reinterpret_cast<Array * const>(c_other);
-    return *self + *other;
+    return (*self + *other).release();
 }
 
 
@@ -1027,7 +1027,7 @@ DllExport ARRAY
 boolexpr_Array_mul(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
-    return *self * num;
+    return (*self * num).release();
 }
 
 
@@ -1035,7 +1035,7 @@ DllExport ARRAY
 boolexpr_Array_simplify(ARRAY c_self)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
-    return self->simplify();
+    return self->simplify().release();
 }
 
 
@@ -1051,7 +1051,7 @@ boolexpr_Array_compose(ARRAY c_self, size_t n, VARS c_varps, BXS c_bxps)
         auto bx = bxp->bx;
         var2bx.insert({var, bx});
     }
-    return self->compose(var2bx);
+    return self->compose(var2bx).release();
 }
 
 
@@ -1067,7 +1067,7 @@ boolexpr_Array_restrict(ARRAY c_self, size_t n, VARS c_varps, CONSTS c_constps)
         auto const_ = static_pointer_cast<Constant const>(constp->bx);
         point.insert({var, const_});
     }
-    return self->restrict_(point);
+    return self->restrict_(point).release();
 }
 
 
@@ -1084,7 +1084,7 @@ DllExport ARRAY
 boolexpr_Array_zext(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
-    return self->zext(num);
+    return self->zext(num).release();
 }
 
 
@@ -1092,7 +1092,7 @@ DllExport ARRAY
 boolexpr_Array_sext(ARRAY c_self, size_t num)
 {
     auto self = reinterpret_cast<Array * const>(c_self);
-    return self->sext(num);
+    return self->sext(num).release();
 }
 
 
@@ -1174,7 +1174,7 @@ boolexpr_Array_lsh(ARRAY c_self, ARRAY c_sin)
 
     auto p = self->lsh(*si);
 
-    return new Array * [2] { p.first, p.second };
+    return new Array * [2] { p.first.release(), p.second.release() };
 }
 
 
@@ -1186,7 +1186,7 @@ boolexpr_Array_rsh(ARRAY c_self, ARRAY c_sin)
 
     auto p = self->rsh(*si);
 
-    return new Array * [2] { p.first, p.second };
+    return new Array * [2] { p.first.release(), p.second.release() };
 }
 
 
@@ -1197,7 +1197,7 @@ boolexpr_Array_arsh(ARRAY c_self, size_t n)
 
     auto p = self->arsh(n);
 
-    return new Array * [2] { p.first, p.second };
+    return new Array * [2] { p.first.release(), p.second.release() };
 }
 
 

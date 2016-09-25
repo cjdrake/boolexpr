@@ -26,7 +26,7 @@
 #include <functional>  // function
 #include <initializer_list>
 #include <iterator>
-#include <memory>  // enable_shared_from_this, shared_ptr
+#include <memory>  // enable_shared_from_this, shared_ptr, unique_ptr
 #include <ostream>
 #include <string>
 #include <unordered_map>
@@ -109,6 +109,8 @@ using var2op_t = std::unordered_map<var_t, op_t>;
 using point_t = std::unordered_map<var_t, const_t>;
 
 using soln_t = std::pair<bool, boost::optional<point_t>>;
+
+using array_t = std::unique_ptr<Array>;
 
 
 class Context
@@ -706,14 +708,14 @@ public:
 
 class Array
 {
-    friend Array * operator~(Array const &);
-    friend Array * operator|(Array const &, Array const &);
-    friend Array * operator&(Array const &, Array const &);
-    friend Array * operator^(Array const &, Array const &);
+    friend array_t operator~(Array const &);
+    friend array_t operator|(Array const &, Array const &);
+    friend array_t operator&(Array const &, Array const &);
+    friend array_t operator^(Array const &, Array const &);
 
-    friend Array * operator+(Array const &, Array const &);
-    friend Array * operator*(Array const &, size_t);
-    friend Array * operator*(size_t, Array const &);
+    friend array_t operator+(Array const &, Array const &);
+    friend array_t operator*(Array const &, size_t);
+    friend array_t operator*(size_t, Array const &);
 
 private:
     std::vector<bx_t> items;
@@ -731,13 +733,13 @@ public:
     std::vector<bx_t>::const_iterator begin() const;
     std::vector<bx_t>::const_iterator end() const;
 
-    Array * simplify() const;
-    Array * compose(var2bx_t const &) const;
-    Array * restrict_(point_t const &) const;
+    array_t simplify() const;
+    array_t compose(var2bx_t const &) const;
+    array_t restrict_(point_t const &) const;
     bool equiv(Array const &) const;
 
-    Array * zext(size_t num) const;
-    Array * sext(size_t num) const;
+    array_t zext(size_t num) const;
+    array_t sext(size_t num) const;
 
     bx_t nor_reduce() const;
     bx_t or_reduce() const;
@@ -746,9 +748,9 @@ public:
     bx_t xnor_reduce() const;
     bx_t xor_reduce() const;
 
-    std::pair<Array *, Array *> lsh(Array const &) const;
-    std::pair<Array *, Array *> rsh(Array const &) const;
-    std::pair<Array *, Array *> arsh(size_t) const;
+    std::pair<array_t, array_t> lsh(Array const &) const;
+    std::pair<array_t, array_t> rsh(Array const &) const;
+    std::pair<array_t, array_t> arsh(size_t) const;
 };
 
 
@@ -977,13 +979,13 @@ lit_t abs(lit_t const &);
 bool operator<(lit_t const &, lit_t const &);
 std::ostream & operator<<(std::ostream &, bx_t const &);
 
-Array * operator~(Array const &);
-Array * operator|(Array const &, Array const &);
-Array * operator&(Array const &, Array const &);
-Array * operator^(Array const &, Array const &);
-Array * operator+(Array const &, Array const &);
-Array * operator*(Array const &, size_t);
-Array * operator*(size_t, Array const &);
+array_t operator~(Array const &);
+array_t operator|(Array const &, Array const &);
+array_t operator&(Array const &, Array const &);
+array_t operator^(Array const &, Array const &);
+array_t operator+(Array const &, Array const &);
+array_t operator*(Array const &, size_t);
+array_t operator*(size_t, Array const &);
 
 
 } // namespace boolexpr

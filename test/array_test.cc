@@ -63,14 +63,6 @@ TEST_F(ArrayTest, BitWiseOps)
     auto Y6 = X0 ^ X2;
     EXPECT_TRUE(Y5->equiv(Array {xs[0] ^ xs[4], xs[1] ^ xs[5], xs[2], xs[3]}));
     EXPECT_TRUE(Y6->equiv(Array {xs[0] ^ xs[6], xs[1] ^ xs[7], xs[2] ^ xs[8], xs[3] ^ xs[9], xs[10], xs[11]}));
-
-    delete Y0;
-    delete Y1;
-    delete Y2;
-    delete Y3;
-    delete Y4;
-    delete Y5;
-    delete Y6;
 }
 
 
@@ -81,8 +73,6 @@ TEST_F(ArrayTest, ConcatOp)
 
     auto Y = X0 + X1;
     EXPECT_TRUE(Y->equiv(Array {xs[0], xs[1], xs[2], xs[3], xs[4], xs[5]}));
-
-    delete Y;
 }
 
 
@@ -95,9 +85,6 @@ TEST_F(ArrayTest, RepeatOp)
 
     EXPECT_TRUE(Y0->equiv(Array {xs[0], xs[1], xs[2], xs[0], xs[1], xs[2], xs[0], xs[1], xs[2]}));
     EXPECT_TRUE(Y1->equiv(Array {xs[0], xs[1], xs[2], xs[0], xs[1], xs[2], xs[0], xs[1], xs[2]}));
-
-    delete Y0;
-    delete Y1;
 }
 
 
@@ -127,8 +114,6 @@ TEST_F(ArrayTest, Compose)
     };
 
     EXPECT_TRUE(Y0->equiv(Y1));
-
-    delete Y0;
 }
 
 
@@ -163,8 +148,6 @@ TEST_F(ArrayTest, Restrict)
     Array Y1 {_one, _zero, _one, _zero, _one, _zero};
 
     EXPECT_TRUE(Y0->equiv(Y1));
-
-    delete Y0;
 }
 
 
@@ -190,8 +173,6 @@ TEST_F(ArrayTest, ZeroExtend)
     Array Y1 {~xs[0], xs[1], ~xs[2], xs[3], _zero, _zero};
 
     EXPECT_TRUE(Y0->equiv(Y1));
-
-    delete Y0;
 }
 
 
@@ -204,8 +185,6 @@ TEST_F(ArrayTest, SignExtend)
     Array Y1 {~xs[0], xs[1], ~xs[2], xs[3], xs[3], xs[3]};
 
     EXPECT_TRUE(Y0->equiv(Y1));
-
-    delete Y0;
 }
 
 
@@ -235,9 +214,6 @@ TEST_F(ArrayTest, LeftShift)
     auto pair = A.lsh(si);
     EXPECT_TRUE(pair.first->equiv(B));
     EXPECT_TRUE(pair.second->equiv(so));
-
-    delete pair.first;
-    delete pair.second;
 }
 
 
@@ -253,9 +229,6 @@ TEST_F(ArrayTest, RightShift)
 
     EXPECT_TRUE(pair.first->equiv(so));
     EXPECT_TRUE(pair.second->equiv(B));
-
-    delete pair.first;
-    delete pair.second;
 }
 
 
@@ -270,7 +243,4 @@ TEST_F(ArrayTest, ArithmeticRightShift)
 
     EXPECT_TRUE(pair.first->equiv(so));
     EXPECT_TRUE(pair.second->equiv(B));
-
-    delete pair.first;
-    delete pair.second;
 }
