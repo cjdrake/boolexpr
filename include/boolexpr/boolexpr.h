@@ -118,6 +118,12 @@ class Context
     friend class Complement;
     friend class Variable;
 
+public:
+    Context();
+
+    var_t get_var(std::string name);
+
+private:
     id_t id;
 
     std::unordered_map<std::string, var_t> vars;
@@ -126,11 +132,6 @@ class Context
 
     std::string get_name(id_t id) const;
     lit_t get_lit(id_t id) const;
-
-public:
-    Context();
-
-    var_t get_var(std::string name);
 };
 
 
@@ -141,16 +142,6 @@ class BoolExpr : public std::enable_shared_from_this<BoolExpr>
 
     friend bx_t operator~(bx_t const &);
     friend std::ostream & operator<<(std::ostream &, bx_t const &);
-
-protected:
-    virtual bx_t invert() const = 0;
-    virtual std::ostream & op_lsh(std::ostream &) const = 0;
-    virtual void dot_node(std::ostream &) const = 0;
-    virtual void dot_edge(std::ostream &) const = 0;
-    virtual soln_t _sat() const = 0;
-    virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
-    virtual bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const = 0;
-    virtual void sat_iter_init(sat_iter * const) const = 0;
 
 public:
     enum Kind {
@@ -211,16 +202,21 @@ public:
     bx_t smoothing(std::vector<var_t> const &) const;
     bx_t consensus(std::vector<var_t> const &) const;
     bx_t derivative(std::vector<var_t> const &) const;
+
+protected:
+    virtual bx_t invert() const = 0;
+    virtual std::ostream & op_lsh(std::ostream &) const = 0;
+    virtual void dot_node(std::ostream &) const = 0;
+    virtual void dot_edge(std::ostream &) const = 0;
+    virtual soln_t _sat() const = 0;
+    virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
+    virtual bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const = 0;
+    virtual void sat_iter_init(sat_iter * const) const = 0;
 };
 
 
 class Atom : public BoolExpr
 {
-protected:
-    void dot_edge(std::ostream &) const;
-    void insert_support_var(std::unordered_set<var_t> &) const;
-    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
-
 public:
     Atom(Kind kind);
 
@@ -235,6 +231,11 @@ public:
     bx_t to_latop() const;
     bx_t to_posop() const;
     bx_t tseytin(Context &, std::string const & = "a") const;
+
+protected:
+    void dot_edge(std::ostream &) const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
+    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
 };
 
 
@@ -259,78 +260,75 @@ public:
 
 class Zero final : public Known
 {
+public:
+    Zero();
+
+    bool is_dnf() const;
+
 protected:
     bx_t invert() const;
     std::ostream & op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void sat_iter_init(sat_iter * const) const;
-
-public:
-    Zero();
-
-    bool is_dnf() const;
 };
 
 
 class One final : public Known
 {
+public:
+    One();
+
+    bool is_cnf() const;
+
 protected:
     bx_t invert() const;
     std::ostream & op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void sat_iter_init(sat_iter * const) const;
-
-public:
-    One();
-
-    bool is_cnf() const;
 };
 
 
 class Unknown : public Constant
 {
-protected:
-    void sat_iter_init(sat_iter * const) const;
-
 public:
     Unknown(Kind kind);
+
+protected:
+    void sat_iter_init(sat_iter * const) const;
 };
 
 
 class Logical final : public Unknown
 {
+public:
+    Logical();
+
 protected:
     bx_t invert() const;
     std::ostream & op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
-
-public:
-    Logical();
 };
 
 
 class Illogical final : public Unknown
 {
+public:
+    Illogical();
+
 protected:
     bx_t invert() const;
     std::ostream & op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
-
-public:
-    Illogical();
 };
 
 
 class Literal : public Atom
 {
     friend lit_t abs(lit_t const &);
-
-protected:
-    virtual lit_t abs() const = 0;
 
 public:
     Context * const ctx;
@@ -340,30 +338,20 @@ public:
 
     bool is_cnf() const;
     bool is_dnf() const;
+
+protected:
+    virtual lit_t abs() const = 0;
 };
 
 
 class Complement final : public Literal
 {
-protected:
-    lit_t abs() const;
-    bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
-    void dot_node(std::ostream &) const;
-    soln_t _sat() const;
-    void insert_support_var(std::unordered_set<var_t> &) const;
-    void sat_iter_init(sat_iter * const) const;
-
 public:
     Complement(Context * const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
-};
 
-
-class Variable final : public Literal
-{
 protected:
     lit_t abs() const;
     bx_t invert() const;
@@ -372,37 +360,30 @@ protected:
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
     void sat_iter_init(sat_iter * const) const;
+};
 
+
+class Variable final : public Literal
+{
 public:
     Variable(Context * const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
+
+protected:
+    lit_t abs() const;
+    bx_t invert() const;
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
+    soln_t _sat() const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
+    void sat_iter_init(sat_iter * const) const;
 };
 
 
 class Operator : public BoolExpr
 {
-    var_t to_con1(Context &, std::string const &, uint32_t &, var2op_t &) const;
-    op_t  to_con2(Context &, std::string const &, uint32_t &, var2op_t &) const;
-
-protected:
-    std::ostream & op_lsh(std::ostream &) const;
-    void dot_node(std::ostream &) const;
-    void dot_edge(std::ostream &) const;
-    soln_t _sat() const;
-    void insert_support_var(std::unordered_set<var_t> &) const;
-    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
-    void sat_iter_init(sat_iter * const) const;
-
-    virtual std::string const opname_camel() const = 0;
-    virtual std::string const opname_compact() const = 0;
-    virtual bx_t _simplify() const = 0;
-    virtual bx_t eqvar(var_t const &) const = 0;
-    virtual op_t from_args(std::vector<bx_t> const &&) const = 0;
-
-    op_t transform(std::function<bx_t(bx_t const &)>) const;
-
 public:
     bool const simple;
     std::vector<bx_t> const args;
@@ -421,19 +402,40 @@ public:
     bx_t restrict_(point_t const &) const;
 
     bool is_clause() const;
+
+protected:
+    std::ostream & op_lsh(std::ostream &) const;
+    void dot_node(std::ostream &) const;
+    void dot_edge(std::ostream &) const;
+    soln_t _sat() const;
+    void insert_support_var(std::unordered_set<var_t> &) const;
+    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
+    void sat_iter_init(sat_iter * const) const;
+
+    virtual std::string const opname_camel() const = 0;
+    virtual std::string const opname_compact() const = 0;
+    virtual bx_t _simplify() const = 0;
+    virtual bx_t eqvar(var_t const &) const = 0;
+    virtual op_t from_args(std::vector<bx_t> const &&) const = 0;
+
+    op_t transform(std::function<bx_t(bx_t const &)>) const;
+
+private:
+    var_t to_con1(Context &, std::string const &, uint32_t &, var2op_t &) const;
+    op_t  to_con2(Context &, std::string const &, uint32_t &, var2op_t &) const;
 };
 
 
 class NegativeOperator : public Operator
 {
-protected:
-    bx_t _simplify() const;
-
 public:
     NegativeOperator(Kind kind, bool simple, std::vector<bx_t> const & args);
 
     bx_t to_binop() const;
     bx_t to_latop() const;
+
+protected:
+    bx_t _simplify() const;
 };
 
 
@@ -448,34 +450,25 @@ public:
 
 class Nor final : public NegativeOperator
 {
-protected:
-    bx_t invert() const;
-
-    std::string const opname_camel() const;
-    std::string const opname_compact() const;
-    bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
-
 public:
     Nor(bool simple, std::vector<bx_t> const & args);
 
     bx_t to_cnf() const;
     bx_t to_dnf() const;
     bx_t to_posop() const;
-};
 
-
-class Or final : public LatticeOperator
-{
 protected:
     bx_t invert() const;
 
     std::string const opname_camel() const;
     std::string const opname_compact() const;
-    bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
+};
 
+
+class Or final : public LatticeOperator
+{
 public:
     Or(bool simple, std::vector<bx_t> const & args);
     Or(bool simple, std::vector<bx_t> const && args);
@@ -489,30 +482,7 @@ public:
     bx_t to_cnf() const;
     bx_t to_dnf() const;
     bx_t to_posop() const;
-};
 
-
-class Nand final : public NegativeOperator
-{
-protected:
-    bx_t invert() const;
-
-    std::string const opname_camel() const;
-    std::string const opname_compact() const;
-    bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
-
-public:
-    Nand(bool simple, std::vector<bx_t> const & args);
-
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
-    bx_t to_posop() const;
-};
-
-
-class And final : public LatticeOperator
-{
 protected:
     bx_t invert() const;
 
@@ -521,7 +491,30 @@ protected:
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
+};
 
+
+class Nand final : public NegativeOperator
+{
+public:
+    Nand(bool simple, std::vector<bx_t> const & args);
+
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
+    bx_t to_posop() const;
+
+protected:
+    bx_t invert() const;
+
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
+    bx_t eqvar(var_t const &) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
+};
+
+
+class And final : public LatticeOperator
+{
 public:
     And(bool simple, std::vector<bx_t> const & args);
     And(bool simple, std::vector<bx_t> const && args);
@@ -535,30 +528,7 @@ public:
     bx_t to_cnf() const;
     bx_t to_dnf() const;
     bx_t to_posop() const;
-};
 
-
-class Xnor final : public NegativeOperator
-{
-protected:
-    bx_t invert() const;
-
-    std::string const opname_camel() const;
-    std::string const opname_compact() const;
-    bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
-
-public:
-    Xnor(bool simple, std::vector<bx_t> const & args);
-
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
-    bx_t to_posop() const;
-};
-
-
-class Xor final : public Operator
-{
 protected:
     bx_t invert() const;
 
@@ -566,8 +536,31 @@ protected:
     std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(const std::vector<bx_t> &&) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
+};
 
+
+class Xnor final : public NegativeOperator
+{
+public:
+    Xnor(bool simple, std::vector<bx_t> const & args);
+
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
+    bx_t to_posop() const;
+
+protected:
+    bx_t invert() const;
+
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
+    bx_t eqvar(var_t const &) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
+};
+
+
+class Xor final : public Operator
+{
 public:
     Xor(bool simple, std::vector<bx_t> const & args);
     Xor(bool simple, std::vector<bx_t> const && args);
@@ -579,30 +572,7 @@ public:
     bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
-};
 
-
-class Unequal final : public NegativeOperator
-{
-protected:
-    bx_t invert() const;
-
-    std::string const opname_camel() const;
-    std::string const opname_compact() const;
-    bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
-
-public:
-    Unequal(bool simple, std::vector<bx_t> const & args);
-
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
-    bx_t to_posop() const;
-};
-
-
-class Equal final : public Operator
-{
 protected:
     bx_t invert() const;
 
@@ -610,8 +580,31 @@ protected:
     std::string const opname_compact() const;
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
+    op_t from_args(const std::vector<bx_t> &&) const;
+};
 
+
+class Unequal final : public NegativeOperator
+{
+public:
+    Unequal(bool simple, std::vector<bx_t> const & args);
+
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
+    bx_t to_posop() const;
+
+protected:
+    bx_t invert() const;
+
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
+    bx_t eqvar(var_t const &) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
+};
+
+
+class Equal final : public Operator
+{
 public:
     Equal(bool simple, std::vector<bx_t> const & args);
     Equal(bool simple, std::vector<bx_t> const && args);
@@ -621,30 +614,7 @@ public:
     bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
-};
 
-
-class NotImplies final : public NegativeOperator
-{
-protected:
-    bx_t invert() const;
-
-    std::string const opname_camel() const;
-    std::string const opname_compact() const;
-    bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
-
-public:
-    NotImplies(bool simple, bx_t p, bx_t q);
-
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
-    bx_t to_posop() const;
-};
-
-
-class Implies final : public Operator
-{
 protected:
     bx_t invert() const;
 
@@ -653,7 +623,30 @@ protected:
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
+};
 
+
+class NotImplies final : public NegativeOperator
+{
+public:
+    NotImplies(bool simple, bx_t p, bx_t q);
+
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
+    bx_t to_posop() const;
+
+protected:
+    bx_t invert() const;
+
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
+    bx_t eqvar(var_t const &) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
+};
+
+
+class Implies final : public Operator
+{
 public:
     Implies(bool simple, bx_t p, bx_t q);
 
@@ -662,30 +655,7 @@ public:
     bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
-};
 
-
-class NotIfThenElse final : public NegativeOperator
-{
-protected:
-    bx_t invert() const;
-
-    std::string const opname_camel() const;
-    std::string const opname_compact() const;
-    bx_t eqvar(var_t const &) const;
-    op_t from_args(std::vector<bx_t> const &&) const;
-
-public:
-    NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
-
-    bx_t to_cnf() const;
-    bx_t to_dnf() const;
-    bx_t to_posop() const;
-};
-
-
-class IfThenElse final : public Operator
-{
 protected:
     bx_t invert() const;
 
@@ -694,7 +664,30 @@ protected:
     bx_t _simplify() const;
     bx_t eqvar(var_t const &) const;
     op_t from_args(std::vector<bx_t> const &&) const;
+};
 
+
+class NotIfThenElse final : public NegativeOperator
+{
+public:
+    NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
+
+    bx_t to_cnf() const;
+    bx_t to_dnf() const;
+    bx_t to_posop() const;
+
+protected:
+    bx_t invert() const;
+
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
+    bx_t eqvar(var_t const &) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
+};
+
+
+class IfThenElse final : public Operator
+{
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
@@ -703,6 +696,15 @@ public:
     bx_t to_dnf() const;
     bx_t to_latop() const;
     bx_t to_posop() const;
+
+protected:
+    bx_t invert() const;
+
+    std::string const opname_camel() const;
+    std::string const opname_compact() const;
+    bx_t _simplify() const;
+    bx_t eqvar(var_t const &) const;
+    op_t from_args(std::vector<bx_t> const &&) const;
 };
 
 
@@ -716,9 +718,6 @@ class Array
     friend array_t operator+(Array const &, Array const &);
     friend array_t operator*(Array const &, size_t);
     friend array_t operator*(size_t, Array const &);
-
-private:
-    std::vector<bx_t> items;
 
 public:
     Array();
@@ -751,20 +750,14 @@ public:
     std::pair<array_t, array_t> lsh(Array const &) const;
     std::pair<array_t, array_t> rsh(Array const &) const;
     std::pair<array_t, array_t> arsh(size_t) const;
+
+private:
+    std::vector<bx_t> items;
 };
 
 
 class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
 {
-    enum class Color { WHITE, GRAY, BLACK };
-
-    std::unordered_map<bx_t, Color> colors;
-    std::vector<bx_t> stack;
-
-    bx_t const * p;
-
-    void advance_one();
-
 public:
     dfs_iter();
     dfs_iter(bx_t const &);
@@ -773,6 +766,16 @@ public:
     bool operator!=(dfs_iter const &) const;
     bx_t const & operator*() const;
     dfs_iter const & operator++();
+
+private:
+    enum class Color { WHITE, GRAY, BLACK };
+
+    std::unordered_map<bx_t, Color> colors;
+    std::vector<bx_t> stack;
+
+    bx_t const * p;
+
+    void advance_one();
 };
 
 
@@ -785,6 +788,16 @@ class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
     friend class Variable;
     friend class Operator;
 
+public:
+    sat_iter();
+    sat_iter(bx_t const &);
+
+    bool operator==(sat_iter const &) const;
+    bool operator!=(sat_iter const &) const;
+    point_t const & operator*() const;
+    sat_iter const & operator++();
+
+private:
     Context ctx;
     std::unordered_map<uint32_t, var_t> idx2var;
 
@@ -796,23 +809,11 @@ class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
     bool one_soln;
 
     void get_soln();
-
-public:
-    sat_iter();
-    sat_iter(bx_t const &);
-
-    bool operator==(sat_iter const &) const;
-    bool operator!=(sat_iter const &) const;
-    point_t const & operator*() const;
-    sat_iter const & operator++();
 };
 
 
 class space_iter : public std::iterator<std::input_iterator_tag, std::vector<bool>>
 {
-    size_t n;
-    std::vector<bool> counter;
-
 public:
     space_iter();
     space_iter(size_t n);
@@ -822,16 +823,15 @@ public:
     std::vector<bool> const & operator*() const;
     space_iter const & operator++();
     bool parity() const;
+
+private:
+    size_t n;
+    std::vector<bool> counter;
 };
 
 
 class points_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
-    space_iter it;
-    std::vector<var_t> vars;
-
-    point_t point;
-
 public:
     points_iter();
     points_iter(std::vector<var_t> const &);
@@ -840,16 +840,17 @@ public:
     bool operator!=(points_iter const &) const;
     point_t const & operator*() const;
     points_iter const & operator++();
+
+private:
+    space_iter it;
+    std::vector<var_t> vars;
+
+    point_t point;
 };
 
 
 class terms_iter : public std::iterator<std::input_iterator_tag, std::vector<bx_t>>
 {
-    space_iter it;
-    std::vector<bx_t> bxs;
-
-    std::vector<bx_t> term;
-
 public:
     terms_iter();
     terms_iter(std::vector<var_t> const &);
@@ -859,14 +860,17 @@ public:
     bool operator!=(terms_iter const &) const;
     std::vector<bx_t> const & operator*() const;
     terms_iter const & operator++();
+
+private:
+    space_iter it;
+    std::vector<bx_t> bxs;
+
+    std::vector<bx_t> term;
 };
 
 
 class domain_iter : public std::iterator<std::input_iterator_tag, point_t>
 {
-    std::unordered_set<var_t> s;
-    points_iter it;
-
 public:
     domain_iter();
     domain_iter(bx_t const &);
@@ -875,15 +879,15 @@ public:
     bool operator!=(domain_iter const &) const;
     point_t const & operator*() const;
     domain_iter const & operator++();
+
+private:
+    std::unordered_set<var_t> s;
+    points_iter it;
 };
 
 
 class cf_iter : public std::iterator<std::input_iterator_tag, bx_t>
 {
-    bx_t f;
-    points_iter it;
-    bx_t cf;
-
 public:
     cf_iter();
     cf_iter(bx_t const &, std::vector<var_t> const &);
@@ -892,6 +896,11 @@ public:
     bool operator!=(cf_iter const &) const;
     bx_t const & operator*() const;
     cf_iter const & operator++();
+
+private:
+    bx_t f;
+    points_iter it;
+    bx_t cf;
 };
 
 

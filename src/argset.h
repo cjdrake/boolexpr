@@ -28,18 +28,23 @@ namespace boolexpr {
 
 class ArgSet
 {
+public:
+    virtual bx_t reduce() const = 0;
+
 protected:
     std::unordered_set<bx_t> args;
     virtual void insert(bx_t const &) = 0;
     virtual bx_t to_op() const = 0;
-
-public:
-    virtual bx_t reduce() const = 0;
 };
 
 
 class LatticeArgSet : public ArgSet
 {
+public:
+    LatticeArgSet(std::vector<bx_t> const & args, BoolExpr::Kind const & kind,
+                  bx_t const & identity, bx_t const & dominator);
+    bx_t reduce() const;
+
 protected:
     enum class State { infimum, basic, islog, supremum, isill };
     State state;
@@ -49,64 +54,61 @@ protected:
     bx_t dominator;
 
     void insert(bx_t const &);
-
-public:
-    LatticeArgSet(std::vector<bx_t> const & args, BoolExpr::Kind const & kind,
-                  bx_t const & identity, bx_t const & dominator);
-    bx_t reduce() const;
 };
 
 
 class OrArgSet : public LatticeArgSet
 {
-protected:
-    bx_t to_op() const;
-
 public:
     OrArgSet(std::vector<bx_t> const & args);
+
+protected:
+    bx_t to_op() const;
 };
 
 
 class AndArgSet : public LatticeArgSet
 {
-protected:
-    bx_t to_op() const;
-
 public:
     AndArgSet(std::vector<bx_t> const & args);
+
+protected:
+    bx_t to_op() const;
 };
 
 
 class XorArgSet : public ArgSet
 {
-    enum class State { basic, islog, isill };
-    State state;
-    bool parity;
+public:
+    XorArgSet(std::vector<bx_t> const & args);
+    bx_t reduce() const;
 
 protected:
     void insert(bx_t const &);
     bx_t to_op() const;
 
-public:
-    XorArgSet(std::vector<bx_t> const & args);
-    bx_t reduce() const;
+private:
+    enum class State { basic, islog, isill };
+    State state;
+    bool parity;
 };
 
 
 class EqArgSet : public ArgSet
 {
-    enum class State { basic, islog, isill };
-    State state;
-    bool has_zero;
-    bool has_one;
+public:
+    EqArgSet(std::vector<bx_t> const & args);
+    bx_t reduce() const;
 
 protected:
     void insert(bx_t const &);
     bx_t to_op() const;
 
-public:
-    EqArgSet(std::vector<bx_t> const & args);
-    bx_t reduce() const;
+private:
+    enum class State { basic, islog, isill };
+    State state;
+    bool has_zero;
+    bool has_one;
 };
 
 
