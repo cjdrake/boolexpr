@@ -6,6 +6,32 @@
   Release Notes
 *****************
 
+Release 2.4
+===========
+
+Added a root context to the wrapper module so you can create variables without
+having to understand what ``Context`` objects are for.
+
+For example:
+
+.. code-block:: pycon
+
+   >>> from boolexpr import *
+   >>> a = get_var('a')
+   >>> w, x, y, z = map(get_var, "wxyz")
+   >>> X = get_vars('x', 4, 4, 4)
+
+Also, in the C++ API, changed the Array class so it uses ``unique_ptr`` instead
+of raw pointers.
+This makes memory management easier.
+
+Fixed a couple serious issues with Python packaging:
+
+* `Issue #19 <https://github.com/cjdrake/boolexpr/issues/19>`_
+* `Issue #20 <https://github.com/cjdrake/boolexpr/issues/20>`_
+
+Thanks to `shader <https://github.com/shader>`_ for pointing these out.
+
 Release 2.3
 ===========
 
