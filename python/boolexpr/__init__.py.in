@@ -62,8 +62,12 @@ var2bx
 # pylint: skip-file
 
 
-from cffi import FFI
-import importlib
+import importlib.util
+import sys
+
+# C Foreign Function Interface for Python
+# https://cffi.readthedocs.io/en/latest/
+import cffi
 
 
 HEADER = """
@@ -270,10 +274,11 @@ ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 
 """
 
-ffi = FFI()
+
+ffi = cffi.FFI()
 ffi.cdef(HEADER)
-_spec = importlib.util.find_spec("boolexpr._boolexpr")
-lib = ffi.dlopen(_spec.origin)
+libpath = importlib.util.find_spec("boolexpr._boolexpr").origin
+lib = ffi.dlopen(libpath)
 
 
 from .wrap import Context
