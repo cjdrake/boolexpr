@@ -277,8 +277,8 @@ ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 
 ffi = cffi.FFI()
 ffi.cdef(HEADER)
-libpath = importlib.util.find_spec("boolexpr._boolexpr").origin
-lib = ffi.dlopen(libpath)
+_libpath = importlib.util.find_spec("boolexpr._boolexpr").origin
+lib = ffi.dlopen(_libpath)
 
 
 from .wrap import Context
