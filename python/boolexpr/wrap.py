@@ -564,7 +564,7 @@ class BoolExpr:
         """
         return _bx(lib.boolexpr_BoolExpr_to_posop(self._cdata))
 
-    def tseytin(self, ctx, auxvarname="a"):
+    def tseytin(self, ctx=None, auxvarname="a"):
         """Return the Tseytin transformation.
 
         The ``ctx`` parameter is a ``Context`` object that will be used to
@@ -573,6 +573,8 @@ class BoolExpr:
         The ``auxvarname`` parameter is the prefix of auxiliary variable names.
         The suffix will be in the form ``_0``, ``_1``, etc.
         """
+        if ctx is None:
+            ctx = ROOT_CONTEXT
         name = auxvarname.encode("ascii")
         return _bx(lib.boolexpr_BoolExpr_tseytin(self._cdata, ctx._cdata, name))
 
