@@ -812,20 +812,16 @@ class Literal(Atom):
 class Complement(Literal):
     """Boolean Complement"""
     def to_ast(self):
-        return (
-            self.kind,
-            int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(self._cdata))),
-            str(~self),
-        )
+        cdata = lib.boolexpr_Literal_ctx(self._cdata)
+        ctx_ptr = int(ffi.cast("uintptr_t", cdata))
+        return self.kind, ctx_ptr, str(~self)
 
 class Variable(Literal):
     """Boolean Variable"""
     def to_ast(self):
-        return (
-            self.kind,
-            int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(self._cdata))),
-            self.__str__()
-        )
+        cdata = lib.boolexpr_Literal_ctx(self._cdata)
+        ctx_ptr = int(ffi.cast("uintptr_t", cdata))
+        return self.kind, ctx_ptr, self.__str__()
 
 
 class Operator(BoolExpr):
@@ -1097,8 +1093,8 @@ _KIND2OP = {
     lib.ITE   : IfThenElse,
 }
 
-def _var(ctx_num, name):
-    ctx = ffi.cast("void *", ctx_num)
+def _var(ctx_ptr, name):
+    ctx = ffi.cast("void *", ctx_ptr)
     return _bx(lib.boolexpr_Context_get_var(ctx, name.encode("ascii")))
 
 _AST = {
@@ -1196,8 +1192,10 @@ def _bx(cbx):
         lib.boolexpr_BoolExpr_del(cbx)
         return _KIND2CONST[kind]
     if kind in _KIND2LIT:
-        key = (int(ffi.cast("uintptr_t", lib.boolexpr_Literal_ctx(cbx))),
-               lib.boolexpr_Literal_id(cbx))
+        cctx = lib.boolexpr_Literal_ctx(cbx)
+        ctx_ptr = int(ffi.cast("uintptr_t", cctx))
+        id_ = lib.boolexpr_Literal_id(cbx)
+        key = (ctx_ptr, id_)
         try:
             lit = _LITS[key]
         except KeyError:
