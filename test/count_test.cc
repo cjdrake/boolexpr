@@ -24,19 +24,19 @@ class CountTest : public BoolExprTest {};
 
 TEST_F(CountTest, Atoms)
 {
-    EXPECT_EQ(_zero->depth(), 0);
-    EXPECT_EQ(_one->depth(), 0);
-    EXPECT_EQ(_log->depth(), 0);
-    EXPECT_EQ(_ill->depth(), 0);
-    EXPECT_EQ((~xs[0])->depth(), 0);
-    EXPECT_EQ(xs[0]->depth(), 0);
+    EXPECT_EQ(_zero->depth(), 0u);
+    EXPECT_EQ(_one->depth(), 0u);
+    EXPECT_EQ(_log->depth(), 0u);
+    EXPECT_EQ(_ill->depth(), 0u);
+    EXPECT_EQ((~xs[0])->depth(), 0u);
+    EXPECT_EQ(xs[0]->depth(), 0u);
 
-    EXPECT_EQ(_zero->size(), 1);
-    EXPECT_EQ(_one->size(), 1);
-    EXPECT_EQ(_log->size(), 1);
-    EXPECT_EQ(_ill->size(), 1);
-    EXPECT_EQ((~xs[0])->size(), 1);
-    EXPECT_EQ(xs[0]->size(), 1);
+    EXPECT_EQ(_zero->size(), 1u);
+    EXPECT_EQ(_one->size(), 1u);
+    EXPECT_EQ(_log->size(), 1u);
+    EXPECT_EQ(_ill->size(), 1u);
+    EXPECT_EQ((~xs[0])->size(), 1u);
+    EXPECT_EQ(xs[0]->size(), 1u);
 }
 
 
@@ -50,13 +50,13 @@ TEST_F(CountTest, Operators)
                   ite(~xs[8], xs[9], ~xs[10]),
               });
 
-    EXPECT_EQ(y0->depth(), 2);
-    EXPECT_EQ(y0->size(), 17);
+    EXPECT_EQ(y0->depth(), 2u);
+    EXPECT_EQ(y0->size(), 17u);
 
     auto y1 = ~xs[0] | ((xs[1] & ~xs[2]) ^ xs[3]);
 
-    EXPECT_EQ(y1->depth(), 3);
-    EXPECT_EQ(y1->size(), 7);
+    EXPECT_EQ(y1->depth(), 3u);
+    EXPECT_EQ(y1->size(), 7u);
 
     auto y2 = xor_({xs[0], xs[1], xs[2], xs[3]})->to_nnf();
 
@@ -65,6 +65,6 @@ TEST_F(CountTest, Operators)
     //     And(Or(x0, ~x1), Or(~x0, x1), Or(And(x2, ~x3), And(~x2, x3))),
     // )
 
-    EXPECT_EQ(y2->depth(), 4);
-    EXPECT_EQ(y2->size(), 29);
+    EXPECT_EQ(y2->depth(), 4u);
+    EXPECT_EQ(y2->size(), 29u);
 }

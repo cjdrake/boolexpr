@@ -100,12 +100,12 @@ TEST(CFFI, Basic)
     EXPECT_EQ(boolexpr_BoolExpr_kind(y4), BoolExpr::IMPL);
     EXPECT_EQ(boolexpr_BoolExpr_kind(y5), BoolExpr::ITE);
 
-    EXPECT_EQ(boolexpr_BoolExpr_depth(y0), 1);
-    EXPECT_EQ(boolexpr_BoolExpr_depth(y1), 1);
-    EXPECT_EQ(boolexpr_BoolExpr_depth(y2), 1);
-    EXPECT_EQ(boolexpr_BoolExpr_depth(y3), 1);
-    EXPECT_EQ(boolexpr_BoolExpr_depth(y4), 1);
-    EXPECT_EQ(boolexpr_BoolExpr_depth(y5), 1);
+    EXPECT_EQ(boolexpr_BoolExpr_depth(y0), 1u);
+    EXPECT_EQ(boolexpr_BoolExpr_depth(y1), 1u);
+    EXPECT_EQ(boolexpr_BoolExpr_depth(y2), 1u);
+    EXPECT_EQ(boolexpr_BoolExpr_depth(y3), 1u);
+    EXPECT_EQ(boolexpr_BoolExpr_depth(y4), 1u);
+    EXPECT_EQ(boolexpr_BoolExpr_depth(y5), 1u);
 
     auto cstr_y0 = boolexpr_BoolExpr_to_string(y0);
     auto cstr_y1 = boolexpr_BoolExpr_to_string(y1);

@@ -89,7 +89,7 @@ TEST_F(SimplifyTest, OrTruthTable)
 
     // or(x0,  or(x1, x2)) <=>  or(x0, x1, x2)
     auto y0 = (xs[0] | xs[1] | xs[2])->simplify();
-    EXPECT_EQ(y0->depth(), 1);
+    EXPECT_EQ(y0->depth(), 1u);
     EXPECT_TRUE(y0->equiv(or_({xs[0], xs[1], xs[2]})));
 }
 
@@ -152,7 +152,7 @@ TEST_F(SimplifyTest, AndTruthTable)
 
     // and(x0,  and(x1, x2)) <=>  and(x0, x1, x2)
     auto y0 = (xs[0] & xs[1] & xs[2])->simplify();
-    EXPECT_EQ(y0->depth(), 1);
+    EXPECT_EQ(y0->depth(), 1u);
     EXPECT_TRUE(y0->equiv(and_({xs[0], xs[1], xs[2]})));
 }
 
@@ -215,22 +215,22 @@ TEST_F(SimplifyTest, XorTruthTable)
 
     // xor(x0,  xor(x1, x2)) <=>  xor(x0, x1, x2)
     auto y0 = (xs[0] ^ xs[1] ^ xs[2])->simplify();
-    EXPECT_EQ(y0->depth(), 1);
+    EXPECT_EQ(y0->depth(), 1u);
     EXPECT_TRUE(y0->equiv(xor_({xs[0], xs[1], xs[2]})));
 
     // xnor(x0,  xor(x1, x2)) <=> xnor(x0, x1, x2)
     auto y1 = xnor({xs[0], xs[1] ^ xs[2]})->simplify();
-    EXPECT_EQ(y1->depth(), 1);
+    EXPECT_EQ(y1->depth(), 1u);
     EXPECT_TRUE(y1->equiv(xnor({xs[0], xs[1], xs[2]})));
 
     // xor(x0, xnor(x1, x2)) <=> xnor(x0, x1, x2)
     auto y2 = xor_({xs[0], xnor({xs[1], xs[2]})})->simplify();
-    EXPECT_EQ(y2->depth(), 1);
+    EXPECT_EQ(y2->depth(), 1u);
     EXPECT_TRUE(y2->equiv(xnor({xs[0], xs[1], xs[2]})));
 
     // xnor(x0, xnor(x1, x2)) <=> xor(x0, x1, x2)
     auto y3 = xnor({xs[0], xnor({xs[1], xs[2]})})->simplify();
-    EXPECT_EQ(y3->depth(), 1);
+    EXPECT_EQ(y3->depth(), 1u);
     EXPECT_TRUE(y3->equiv(xor_({xs[0], xs[1], xs[2]})));
 }
 

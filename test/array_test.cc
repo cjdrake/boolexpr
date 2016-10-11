@@ -34,9 +34,9 @@ TEST_F(ArrayTest, Constructors)
     // rval ref
     auto X2 = Array {xs[0], xs[1], xs[2], xs[3]};
 
-    EXPECT_EQ(X0.size(), 0);
-    EXPECT_EQ(X1.size(), 3);
-    EXPECT_EQ(X2.size(), 4);
+    EXPECT_EQ(X0.size(), 0u);
+    EXPECT_EQ(X1.size(), 3u);
+    EXPECT_EQ(X2.size(), 4u);
 }
 
 

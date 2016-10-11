@@ -78,16 +78,16 @@ TEST_F(FlattenTest, Xor)
 
         if (i >= 2) {
             EXPECT_TRUE(y0_cnf->is_cnf());
-            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_cnf)->args.size(), (1<<(i-1)));
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_cnf)->args.size(), (1u<<(i-1)));
 
             EXPECT_TRUE(y0_dnf->is_dnf());
-            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_dnf)->args.size(), (1<<(i-1)));
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_dnf)->args.size(), (1u<<(i-1)));
 
             EXPECT_TRUE(y1_cnf->is_cnf());
-            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_cnf)->args.size(), (1<<(i-1)));
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_cnf)->args.size(), (1u<<(i-1)));
 
             EXPECT_TRUE(y1_dnf->is_dnf());
-            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_dnf)->args.size(), (1<<(i-1)));
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_dnf)->args.size(), (1u<<(i-1)));
         }
     }
 }
@@ -127,10 +127,10 @@ TEST_F(FlattenTest, Equal)
             EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_cnf)->args.size(), i*(i-1));
 
             EXPECT_TRUE(y0_dnf->is_dnf());
-            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_dnf)->args.size(), 2);
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y0_dnf)->args.size(), 2u);
 
             EXPECT_TRUE(y1_cnf->is_cnf());
-            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_cnf)->args.size(), 2);
+            EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_cnf)->args.size(), 2u);
 
             EXPECT_TRUE(y1_dnf->is_dnf());
             EXPECT_EQ(std::static_pointer_cast<Operator const>(y1_dnf)->args.size(), i*(i-1));

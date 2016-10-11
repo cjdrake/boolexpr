@@ -32,7 +32,7 @@ TEST_F(SATTest, Atoms)
     auto soln1 = _one->sat();
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
-    EXPECT_EQ(p1.size(), 0);
+    EXPECT_EQ(p1.size(), 0u);
 
     // Logical is not satisfiable
     auto soln2 = _log->sat();
@@ -46,14 +46,14 @@ TEST_F(SATTest, Atoms)
     auto soln4 = xs[0]->sat();
     EXPECT_TRUE(soln4.first);
     auto p4 = *soln4.second;
-    EXPECT_EQ(p4.size(), 1);
+    EXPECT_EQ(p4.size(), 1u);
     EXPECT_EQ(p4[xs[0]], _one);
 
     // sat(~x)
     auto soln5 = (~xs[0])->sat();
     EXPECT_TRUE(soln5.first);
     auto p5 = *soln5.second;
-    EXPECT_EQ(p5.size(), 1);
+    EXPECT_EQ(p5.size(), 1u);
     EXPECT_EQ(p5[xs[0]], _zero);
 }
 
@@ -65,7 +65,7 @@ TEST_F(SATTest, Clauses)
     auto soln0 = y0->sat();
     EXPECT_TRUE(soln0.first);
     auto p0 = *soln0.second;
-    EXPECT_EQ(p0.size(), 4);
+    EXPECT_EQ(p0.size(), 4u);
     EXPECT_TRUE((p0[xs[0]] == _zero) || (p0[xs[1]] == _one) || (p0[xs[2]] == _zero) || (p0[xs[3]] == _one));
 
     // sat(~x0 & x1 & ~x2 & x3)
@@ -73,7 +73,7 @@ TEST_F(SATTest, Clauses)
     auto soln1 = y1->sat();
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
-    EXPECT_EQ(p1.size(), 4);
+    EXPECT_EQ(p1.size(), 4u);
     EXPECT_TRUE((p1[xs[0]] == _zero) && (p1[xs[1]] == _one) && (p1[xs[2]] == _zero) && (p1[xs[3]] == _one));
 }
 

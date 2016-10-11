@@ -56,7 +56,7 @@ encode_cmsat(std::unordered_map<uint32_t, var_t> & idx2var,
         for (bx_t const & arg : or_op->args) {
             auto lit = static_pointer_cast<Literal const>(arg);
             auto index = lit2idx.find(lit)->second;
-            clause.push(mkLit(index>>1, !(index&1u)));
+            clause.push_back(mkLit(index>>1, !(index&1u)));
         }
         solver.addClause(std::move(clause));
     }
@@ -69,13 +69,13 @@ encode_cmsat(std::unordered_map<uint32_t, var_t> & idx2var,
                 for (bx_t const & _arg : or_op->args) {
                     auto lit = static_pointer_cast<Literal const>(_arg);
                     auto index = lit2idx.find(lit)->second;
-                    clause.push(mkLit(index>>1, !(index&1u)));
+                    clause.push_back(mkLit(index>>1, !(index&1u)));
                 }
             }
             else {
                 auto lit = static_pointer_cast<Literal const>(arg);
                 auto index = lit2idx.find(lit)->second;
-                clause.push(mkLit(index>>1, !(index&1u)));
+                clause.push_back(mkLit(index>>1, !(index&1u)));
             }
             solver.addClause(std::move(clause));
         }
@@ -243,11 +243,11 @@ sat_iter::get_soln()
             if (x->ctx != &ctx) {
                 if (solver.modelValue(i) == l_False) {
                     point.insert({x, zero()});
-                    clause.push(mkLit(i, false));
+                    clause.push_back(mkLit(i, false));
                 }
                 else if (solver.modelValue(i) == l_True) {
                     point.insert({x, one()});
-                    clause.push(mkLit(i, true));
+                    clause.push_back(mkLit(i, true));
                 }
             }
         }

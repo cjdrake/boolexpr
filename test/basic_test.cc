@@ -42,10 +42,10 @@ TEST_F(BoolExprTest, Basic)
     lits.push_back(std::static_pointer_cast<const Literal>(xs[3]));
     lits.push_back(std::static_pointer_cast<const Literal>(~xs[5]));
     std::sort(lits.begin(), lits.end());
-    EXPECT_EQ(lits[0]->id, 8<<1);      // ~xs[3]
-    EXPECT_EQ(lits[1]->id, 8<<1 | 1);  //  xs[3]
-    EXPECT_EQ(lits[5]->id, 18<<1);     // ~xs[13]
-    EXPECT_EQ(lits[6]->id, 18<<1 | 1); //  xs[13]
+    EXPECT_EQ(lits[0]->id, 8u<<1);      // ~xs[3]
+    EXPECT_EQ(lits[1]->id, 8u<<1 | 1);  //  xs[3]
+    EXPECT_EQ(lits[5]->id, 18u<<1);     // ~xs[13]
+    EXPECT_EQ(lits[6]->id, 18u<<1 | 1); //  xs[13]
 
     EXPECT_TRUE(_zero->equiv(_zero));
     EXPECT_TRUE(_one->equiv(_one));
