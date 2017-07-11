@@ -26,23 +26,11 @@ using std::vector;
 
 using boolexpr::Array;
 using boolexpr::BoolExpr;
-using boolexpr::BoolExprProxy;
-using boolexpr::CofactorIterProxy;
 using boolexpr::Constant;
 using boolexpr::Context;
-using boolexpr::DfsIterProxy;
-using boolexpr::DomainIterProxy;
 using boolexpr::Literal;
-using boolexpr::LiteralProxy;
-using boolexpr::MapProxy;
 using boolexpr::Operator;
-using boolexpr::PointsIterProxy;
-using boolexpr::SatIterProxy;
-using boolexpr::SetProxy;
-using boolexpr::SolnProxy;
-using boolexpr::TermsIterProxy;
 using boolexpr::Variable;
-using boolexpr::VecProxy;
 
 using boolexpr::bx_t;
 using boolexpr::const_t;

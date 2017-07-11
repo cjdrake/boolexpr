@@ -23,7 +23,17 @@
 #define BOOLEXPR_BXCFFI_H_
 
 
-namespace boolexpr {
+using boolexpr::bx_t;
+using boolexpr::cf_iter;
+using boolexpr::const_t;
+using boolexpr::dfs_iter;
+using boolexpr::domain_iter;
+using boolexpr::lit_t;
+using boolexpr::points_iter;
+using boolexpr::sat_iter;
+using boolexpr::soln_t;
+using boolexpr::terms_iter;
+using boolexpr::var_t;
 
 
 struct BoolExprProxy
@@ -222,9 +232,6 @@ struct CofactorIterProxy
                                  : new BoolExprProxy(*it);
     }
 };
-
-
-} // namespace boolexpr
 
 
 #endif  // BOOLEXPR_BXCFFI_H_

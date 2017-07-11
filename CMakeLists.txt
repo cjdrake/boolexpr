@@ -20,7 +20,7 @@ if(DOXYGEN_FOUND)
     )
 endif(DOXYGEN_FOUND)
 
-file(GLOB boolexpr_srcs "include/boolexpr/*.h" "src/*.cc")
+file(GLOB_RECURSE boolexpr_srcs "include/*.h" "src/*.cc")
 file(GLOB_RECURSE glucosamine_srcs "third_party/glucosamine/src/*.h" "third_party/glucosamine/src/core/Solver.cc")
 file(GLOB_RECURSE boost_srcs "third_party/boost-${BOOST_VERSION}/*.hpp" "third_party/boost-${BOOST_VERSION}/*.cc")
 
