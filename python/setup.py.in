@@ -41,6 +41,7 @@ sources = [
     join("boolexpr", "third_party", "glucosamine", "src", "core", "Solver.cc"),
 ]
 sources += glob(join("boolexpr", "src", "*.cc"))
+sources += glob(join("boolexpr", "src", "boolexpr", "*.cc"))
 
 include_dirs = [
     join("boolexpr", "include"),
