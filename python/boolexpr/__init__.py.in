@@ -220,7 +220,7 @@ BX boolexpr_BoolExpr_to_posop(BX);
 BX boolexpr_BoolExpr_tseytin(BX, CONTEXT, STRING);
 BX boolexpr_BoolExpr_compose(BX, size_t, VARS, BXS);
 BX boolexpr_BoolExpr_restrict(BX, size_t, VARS, CONSTS);
-BX boolexpr_BoolExpr_sat(BX);
+SOLN boolexpr_BoolExpr_sat(BX);
 BX boolexpr_BoolExpr_to_cnf(BX);
 BX boolexpr_BoolExpr_to_dnf(BX);
 BX boolexpr_BoolExpr_to_nnf(BX);

@@ -756,7 +756,7 @@ boolexpr_BoolExpr_restrict(BX c_self, size_t n, VARS c_varps, CONSTS c_constps)
 }
 
 
-DllExport BX
+DllExport SOLN
 boolexpr_BoolExpr_sat(BX c_self)
 {
     auto self = reinterpret_cast<BoolExprProxy const * const>(c_self);

@@ -1143,7 +1143,7 @@ DllExport BX boolexpr_BoolExpr_to_posop(BX);
 DllExport BX boolexpr_BoolExpr_tseytin(BX, CONTEXT, STRING);
 DllExport BX boolexpr_BoolExpr_compose(BX, size_t, VARS, BXS);
 DllExport BX boolexpr_BoolExpr_restrict(BX, size_t, VARS, CONSTS);
-DllExport BX boolexpr_BoolExpr_sat(BX);
+DllExport SOLN boolexpr_BoolExpr_sat(BX);
 DllExport BX boolexpr_BoolExpr_to_cnf(BX);
 DllExport BX boolexpr_BoolExpr_to_dnf(BX);
 DllExport BX boolexpr_BoolExpr_to_nnf(BX);
