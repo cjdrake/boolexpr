@@ -1584,14 +1584,13 @@ class ndarray: # pylint: disable=invalid-name
         """Helper function for __str__"""
         if self.ndim <= 1:
             return "[" + ", ".join(str(x) for x in self) + "]"
-        elif self.ndim == 2:
+        if self.ndim == 2:
             sep = ",\n" + indent
             # pylint: disable=protected-access
             return "[" + sep.join(x._str(indent + " ") for x in self) + "]"
-        else:
-            sep = ",\n\n" + indent
-            # pylint: disable=protected-access
-            return "[" + sep.join(x._str(indent + " ") for x in self) + "]"
+        sep = ",\n\n" + indent
+        # pylint: disable=protected-access
+        return "[" + sep.join(x._str(indent + " ") for x in self) + "]"
 
     def __repr__(self):
         return self.__str__()
@@ -1612,8 +1611,7 @@ class ndarray: # pylint: disable=invalid-name
             items.append(self._bxa[index])
         if shape:
             return array(items, tuple(shape))
-        else:
-            return items[0]
+        return items[0]
 
     def __setitem__(self, key, val):
         parts = self._key2parts(key)
@@ -1820,10 +1818,9 @@ class ndarray: # pylint: disable=invalid-name
     def _part(item):
         if item is Ellipsis:
             return item
-        elif isinstance(item, slice):
+        if isinstance(item, slice):
             return item
-        else:
-            return operator.index(item)
+        return operator.index(item)
 
     def _key2parts(self, key):
         """Convert input key to a list of index parts."""
