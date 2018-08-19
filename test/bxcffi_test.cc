@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
-TEST(CFFI, Basic)
-{
+TEST(CFFI, Basic) {
     auto zero = boolexpr_zero();
     auto one = boolexpr_one();
     auto log = boolexpr_logical();
@@ -84,7 +81,7 @@ TEST(CFFI, Basic)
     boolexpr_String_del(cstr_cn);
     boolexpr_String_del(cstr_dn);
 
-    void const * args[] = {an, b, cn, d};
+    void const* args[] = {an, b, cn, d};
 
     auto y0 = boolexpr_or(4, args);
     auto y1 = boolexpr_and(4, args);

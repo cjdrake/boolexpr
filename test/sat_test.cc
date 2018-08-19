@@ -12,18 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
 class SATTest : public BoolExprTest {};
 
-
-TEST_F(SATTest, Atoms)
-{
+TEST_F(SATTest, Atoms) {
     // Zero is not satisfiable
     auto soln0 = _zero->sat();
     EXPECT_FALSE(soln0.first);
@@ -57,16 +53,15 @@ TEST_F(SATTest, Atoms)
     EXPECT_EQ(p5[xs[0]], _zero);
 }
 
-
-TEST_F(SATTest, Clauses)
-{
+TEST_F(SATTest, Clauses) {
     // sat(~x0 | x1 | ~x2 | x3)
     auto y0 = or_s({~xs[0], xs[1], ~xs[2], xs[3]});
     auto soln0 = y0->sat();
     EXPECT_TRUE(soln0.first);
     auto p0 = *soln0.second;
     EXPECT_EQ(p0.size(), 4u);
-    EXPECT_TRUE((p0[xs[0]] == _zero) || (p0[xs[1]] == _one) || (p0[xs[2]] == _zero) || (p0[xs[3]] == _one));
+    EXPECT_TRUE((p0[xs[0]] == _zero) || (p0[xs[1]] == _one) ||
+                (p0[xs[2]] == _zero) || (p0[xs[3]] == _one));
 
     // sat(~x0 & x1 & ~x2 & x3)
     auto y1 = and_s({~xs[0], xs[1], ~xs[2], xs[3]});
@@ -74,48 +69,51 @@ TEST_F(SATTest, Clauses)
     EXPECT_TRUE(soln1.first);
     auto p1 = *soln1.second;
     EXPECT_EQ(p1.size(), 4u);
-    EXPECT_TRUE((p1[xs[0]] == _zero) && (p1[xs[1]] == _one) && (p1[xs[2]] == _zero) && (p1[xs[3]] == _one));
+    EXPECT_TRUE((p1[xs[0]] == _zero) && (p1[xs[1]] == _one) &&
+                (p1[xs[2]] == _zero) && (p1[xs[3]] == _one));
 }
 
-
-TEST_F(SATTest, Contradiction)
-{
-    auto y = and_s({~xs[0] | ~xs[1], ~xs[0] | xs[1], xs[0] | ~xs[1], xs[0] | xs[1]});
+TEST_F(SATTest, Contradiction) {
+    auto y =
+        and_s({~xs[0] | ~xs[1], ~xs[0] | xs[1], xs[0] | ~xs[1], xs[0] | xs[1]});
     auto soln = y->sat();
     EXPECT_FALSE(soln.first);
 }
 
-
-TEST_F(SATTest, Iter)
-{
+TEST_F(SATTest, Iter) {
     int count;
 
     auto y0 = xs[0] | xs[1];
 
     count = 0;
-    for (auto it = sat_iter(y0); it != sat_iter(); ++it, ++count);
+    for (auto it = sat_iter(y0); it != sat_iter(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 3);
 
     auto y1 = xs[0] & xs[1];
 
     count = 0;
-    for (auto it = sat_iter(y1); it != sat_iter(); ++it, ++count);
+    for (auto it = sat_iter(y1); it != sat_iter(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 1);
 
     auto y2 = xs[0] ^ xs[1];
 
     count = 0;
-    for (auto it = sat_iter(y2); it != sat_iter(); ++it, ++count);
+    for (auto it = sat_iter(y2); it != sat_iter(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 2);
 
     auto y3 = zero();
     count = 0;
-    for (auto it = sat_iter(y3); it != sat_iter(); ++it, ++count);
+    for (auto it = sat_iter(y3); it != sat_iter(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 0);
 
     auto y4 = one();
     count = 0;
-    for (auto it = sat_iter(y4); it != sat_iter(); ++it, ++count);
+    for (auto it = sat_iter(y4); it != sat_iter(); ++it, ++count)
+        ;
     EXPECT_EQ(count, 1);
 
     auto y5 = xs[0];

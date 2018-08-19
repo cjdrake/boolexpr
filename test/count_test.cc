@@ -12,18 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
 class CountTest : public BoolExprTest {};
 
-
-TEST_F(CountTest, Atoms)
-{
+TEST_F(CountTest, Atoms) {
     EXPECT_EQ(_zero->depth(), 0u);
     EXPECT_EQ(_one->depth(), 0u);
     EXPECT_EQ(_log->depth(), 0u);
@@ -39,16 +35,11 @@ TEST_F(CountTest, Atoms)
     EXPECT_EQ(xs[0]->size(), 1u);
 }
 
-
-TEST_F(CountTest, Operators)
-{
+TEST_F(CountTest, Operators) {
     auto y0 = or_({
-                  (~xs[0] & xs[1]),
-                  (~xs[2] ^ xs[3]),
-                  eq({~xs[4], xs[5]}),
-                  impl(~xs[6], xs[7]),
-                  ite(~xs[8], xs[9], ~xs[10]),
-              });
+        (~xs[0] & xs[1]), (~xs[2] ^ xs[3]), eq({~xs[4], xs[5]}),
+        impl(~xs[6], xs[7]), ite(~xs[8], xs[9], ~xs[10]),
+    });
 
     EXPECT_EQ(y0->depth(), 2u);
     EXPECT_EQ(y0->size(), 17u);

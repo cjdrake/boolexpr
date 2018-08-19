@@ -12,18 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
 class TseytinTest : public BoolExprTest {};
 
-
-TEST_F(TseytinTest, Atoms)
-{
+TEST_F(TseytinTest, Atoms) {
     auto ctx = Context();
 
     EXPECT_EQ(_zero->tseytin(ctx), _zero);
@@ -35,25 +31,23 @@ TEST_F(TseytinTest, Atoms)
     EXPECT_EQ(xs[0]->tseytin(ctx), xs[0]);
 }
 
-
-TEST_F(TseytinTest, Operators)
-{
+TEST_F(TseytinTest, Operators) {
     auto ctx = Context();
 
-    auto y0 =  nor_s({xs[0],  xor_s({xs[1], xs[2]}), xs[3]});
-    auto y1 =   or_s({xs[0], xnor_s({xs[1], xs[2]}), xs[3]});
-    auto y2 = nand_s({xs[0],   or_s({xs[1], xs[2]}), xs[3]});
-    auto y3 =  and_s({xs[0],  nor_s({xs[1], xs[2]}), xs[3]});
-    auto y4 = xnor_s({xs[0],  and_s({xs[1], xs[2]}), xs[3]});
-    auto y5 =  xor_s({xs[0], nand_s({xs[1], xs[2]}), xs[3]});
-    auto y6 =  neq_s({xs[0],   eq_s({xs[1], xs[2]}), xs[3]});
-    auto y7 =   eq_s({xs[0],  neq_s({xs[1], xs[2]}), xs[3]});
+    auto y0 = nor_s({xs[0], xor_s({xs[1], xs[2]}), xs[3]});
+    auto y1 = or_s({xs[0], xnor_s({xs[1], xs[2]}), xs[3]});
+    auto y2 = nand_s({xs[0], or_s({xs[1], xs[2]}), xs[3]});
+    auto y3 = and_s({xs[0], nor_s({xs[1], xs[2]}), xs[3]});
+    auto y4 = xnor_s({xs[0], and_s({xs[1], xs[2]}), xs[3]});
+    auto y5 = xor_s({xs[0], nand_s({xs[1], xs[2]}), xs[3]});
+    auto y6 = neq_s({xs[0], eq_s({xs[1], xs[2]}), xs[3]});
+    auto y7 = eq_s({xs[0], neq_s({xs[1], xs[2]}), xs[3]});
 
-    auto y8 = nimpl_s(xs[0],  or_s({xs[1], xs[2]}));
-    auto y9 =  impl_s(xs[0], nor_s({xs[1], xs[2]}));
+    auto y8 = nimpl_s(xs[0], or_s({xs[1], xs[2]}));
+    auto y9 = impl_s(xs[0], nor_s({xs[1], xs[2]}));
 
-    auto y10 = nite_s(xs[0], xs[1],  and_s({xs[2], xs[3]}) );
-    auto y11 =  ite_s(xs[0], xs[1], nand_s({xs[2], xs[3]}));
+    auto y10 = nite_s(xs[0], xs[1], and_s({xs[2], xs[3]}));
+    auto y11 = ite_s(xs[0], xs[1], nand_s({xs[2], xs[3]}));
 
     EXPECT_TRUE(y0->tseytin(ctx)->is_cnf());
     EXPECT_TRUE(y1->tseytin(ctx)->is_cnf());
@@ -69,9 +63,7 @@ TEST_F(TseytinTest, Operators)
     EXPECT_TRUE(y11->tseytin(ctx)->is_cnf());
 }
 
-
-TEST_F(TseytinTest, CNF)
-{
+TEST_F(TseytinTest, CNF) {
     auto ctx = Context();
 
     auto y0 = onehot({xs[0], xs[1], xs[2], xs[3]});

@@ -12,18 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
 class NNFTest : public BoolExprTest {};
 
-
-TEST_F(NNFTest, DeMorgan)
-{
+TEST_F(NNFTest, DeMorgan) {
     auto y0 = ~(xs[0] | xs[1]);
     auto y1 = y0->to_nnf();
     EXPECT_TRUE(IS_AND(y1) && y0->equiv(y1));
@@ -33,9 +29,7 @@ TEST_F(NNFTest, DeMorgan)
     EXPECT_TRUE(IS_OR(y3) && y2->equiv(y3));
 }
 
-
-TEST_F(NNFTest, Xor)
-{
+TEST_F(NNFTest, Xor) {
     auto y0 = ~(xs[0] ^ xs[1]);
     auto y1 = y0->to_nnf();
     EXPECT_TRUE(IS_AND(y1) && y0->equiv(y1));
@@ -53,9 +47,7 @@ TEST_F(NNFTest, Xor)
     EXPECT_TRUE(IS_OR(y7) && y6->equiv(y7));
 }
 
-
-TEST_F(NNFTest, Equal)
-{
+TEST_F(NNFTest, Equal) {
     auto y0 = ~eq({xs[0], xs[1]});
     auto y1 = y0->to_nnf();
     EXPECT_TRUE(IS_AND(y1) && y0->equiv(y1));
@@ -73,9 +65,7 @@ TEST_F(NNFTest, Equal)
     EXPECT_TRUE(IS_OR(y7) && y6->equiv(y7));
 }
 
-
-TEST_F(NNFTest, Implies)
-{
+TEST_F(NNFTest, Implies) {
     auto y0 = ~impl(xs[0], xs[1]);
     auto y1 = y0->to_nnf();
     EXPECT_TRUE(IS_AND(y1) && y0->equiv(y1));
@@ -85,9 +75,7 @@ TEST_F(NNFTest, Implies)
     EXPECT_TRUE(IS_OR(y3) && y2->equiv(y3));
 }
 
-
-TEST_F(NNFTest, IfThenElse)
-{
+TEST_F(NNFTest, IfThenElse) {
     auto y0 = ~ite(xs[0], xs[1], xs[2]);
     auto y1 = y0->to_nnf();
     EXPECT_TRUE(IS_AND(y1) && y0->equiv(y1));

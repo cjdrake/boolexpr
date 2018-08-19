@@ -12,34 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
 BoolExprTest::BoolExprTest()
-    : _zero {zero()}
-    , _one {one()}
-    , _log {logical()}
-    , _ill {illogical()}
-    , p {ctx.get_var("p")}
-    , q {ctx.get_var("q")}
-    , s {ctx.get_var("s")}
-    , d1 {ctx.get_var("d1")}
-    , d0 {ctx.get_var("d0")}
-{
+    : _zero{zero()},
+      _one{one()},
+      _log{logical()},
+      _ill{illogical()},
+      p{ctx.get_var("p")},
+      q{ctx.get_var("q")},
+      s{ctx.get_var("s")},
+      d1{ctx.get_var("d1")},
+      d0{ctx.get_var("d0")} {
     for (int i = 0; i < N; ++i)
         xs.push_back(ctx.get_var("x_" + std::to_string(i)));
 }
 
+void BoolExprTest::SetUp() {}
 
-void
-BoolExprTest::SetUp()
-{}
-
-
-void
-BoolExprTest::TearDown()
-{}
+void BoolExprTest::TearDown() {}

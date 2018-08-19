@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
-TEST_F(BoolExprTest, Basic)
-{
+TEST_F(BoolExprTest, Basic) {
     EXPECT_EQ(ctx.get_var("x_0"), xs[0]);
 
     EXPECT_EQ(~_log, _log);
@@ -42,10 +39,10 @@ TEST_F(BoolExprTest, Basic)
     lits.push_back(std::static_pointer_cast<const Literal>(xs[3]));
     lits.push_back(std::static_pointer_cast<const Literal>(~xs[5]));
     std::sort(lits.begin(), lits.end());
-    EXPECT_EQ(lits[0]->id, 8u<<1);      // ~xs[3]
-    EXPECT_EQ(lits[1]->id, 8u<<1 | 1);  //  xs[3]
-    EXPECT_EQ(lits[5]->id, 18u<<1);     // ~xs[13]
-    EXPECT_EQ(lits[6]->id, 18u<<1 | 1); //  xs[13]
+    EXPECT_EQ(lits[0]->id, 8u << 1);       // ~xs[3]
+    EXPECT_EQ(lits[1]->id, 8u << 1 | 1);   //  xs[3]
+    EXPECT_EQ(lits[5]->id, 18u << 1);      // ~xs[13]
+    EXPECT_EQ(lits[6]->id, 18u << 1 | 1);  //  xs[13]
 
     EXPECT_TRUE(_zero->equiv(_zero));
     EXPECT_TRUE(_one->equiv(_one));
@@ -53,10 +50,8 @@ TEST_F(BoolExprTest, Basic)
     EXPECT_TRUE(x->equiv(x));
 }
 
-
-TEST_F(BoolExprTest, Constructors)
-{
-    auto args = vector<bx_t> {xs[0], xs[1], xs[2], xs[3]};
+TEST_F(BoolExprTest, Constructors) {
+    auto args = vector<bx_t>{xs[0], xs[1], xs[2], xs[3]};
 
     auto y0 = nor(args);
     auto y1 = nor(vector<bx_t>{xs[0], xs[1], xs[2], xs[3]});
@@ -67,10 +62,10 @@ TEST_F(BoolExprTest, Constructors)
 
     EXPECT_TRUE(eq({y0, y1, y2, y3, y4, y5})->sat().first);
 
-    auto  y6 = or_(args);
-    auto  y7 = or_(vector<bx_t>{xs[0], xs[1], xs[2], xs[3]});
-    auto  y8 = or_({xs[0], xs[1], xs[2], xs[3]});
-    auto  y9 = or_s(args);
+    auto y6 = or_(args);
+    auto y7 = or_(vector<bx_t>{xs[0], xs[1], xs[2], xs[3]});
+    auto y8 = or_({xs[0], xs[1], xs[2], xs[3]});
+    auto y9 = or_s(args);
     auto y10 = or_s(vector<bx_t>{xs[0], xs[1], xs[2], xs[3]});
     auto y11 = or_s({xs[0], xs[1], xs[2], xs[3]});
 
@@ -131,72 +126,68 @@ TEST_F(BoolExprTest, Constructors)
     EXPECT_TRUE(eq({y42, y43, y44, y45, y46, y47})->sat().first);
 }
 
-
-TEST_F(BoolExprTest, Degenerate)
-{
-    auto zero_args = vector<bx_t> {};
-    auto one_arg = vector<bx_t> {xs[0]};
+TEST_F(BoolExprTest, Degenerate) {
+    auto zero_args = vector<bx_t>{};
+    auto one_arg = vector<bx_t>{xs[0]};
 
     EXPECT_EQ(nor(zero_args), _one);
     EXPECT_EQ(nor(one_arg), ~xs[0]);
-    EXPECT_EQ(nor(vector<bx_t> {}), _one);
-    EXPECT_EQ(nor(vector<bx_t> {xs[0]}), ~xs[0]);
+    EXPECT_EQ(nor(vector<bx_t>{}), _one);
+    EXPECT_EQ(nor(vector<bx_t>{xs[0]}), ~xs[0]);
     EXPECT_EQ(nor({}), _one);
     EXPECT_EQ(nor({xs[0]}), ~xs[0]);
 
     EXPECT_EQ(or_(zero_args), _zero);
     EXPECT_EQ(or_(one_arg), xs[0]);
-    EXPECT_EQ(or_(vector<bx_t> {}), _zero);
-    EXPECT_EQ(or_(vector<bx_t> {xs[0]}), xs[0]);
+    EXPECT_EQ(or_(vector<bx_t>{}), _zero);
+    EXPECT_EQ(or_(vector<bx_t>{xs[0]}), xs[0]);
     EXPECT_EQ(or_({}), _zero);
     EXPECT_EQ(or_({xs[0]}), xs[0]);
 
     EXPECT_EQ(nand(zero_args), _zero);
     EXPECT_EQ(nand(one_arg), ~xs[0]);
-    EXPECT_EQ(nand(vector<bx_t> {}), _zero);
-    EXPECT_EQ(nand(vector<bx_t> {xs[0]}), ~xs[0]);
+    EXPECT_EQ(nand(vector<bx_t>{}), _zero);
+    EXPECT_EQ(nand(vector<bx_t>{xs[0]}), ~xs[0]);
     EXPECT_EQ(nand({}), _zero);
     EXPECT_EQ(nand({xs[0]}), ~xs[0]);
 
     EXPECT_EQ(and_(zero_args), _one);
     EXPECT_EQ(and_(one_arg), xs[0]);
-    EXPECT_EQ(and_(vector<bx_t> {}), _one);
-    EXPECT_EQ(and_(vector<bx_t> {xs[0]}), xs[0]);
+    EXPECT_EQ(and_(vector<bx_t>{}), _one);
+    EXPECT_EQ(and_(vector<bx_t>{xs[0]}), xs[0]);
     EXPECT_EQ(and_({}), _one);
     EXPECT_EQ(and_({xs[0]}), xs[0]);
 
     EXPECT_EQ(xnor(zero_args), _one);
     EXPECT_EQ(xnor(one_arg), ~xs[0]);
-    EXPECT_EQ(xnor(vector<bx_t> {}), _one);
-    EXPECT_EQ(xnor(vector<bx_t> {xs[0]}), ~xs[0]);
+    EXPECT_EQ(xnor(vector<bx_t>{}), _one);
+    EXPECT_EQ(xnor(vector<bx_t>{xs[0]}), ~xs[0]);
     EXPECT_EQ(xnor({}), _one);
     EXPECT_EQ(xnor({xs[0]}), ~xs[0]);
 
     EXPECT_EQ(xor_(zero_args), _zero);
     EXPECT_EQ(xor_(one_arg), xs[0]);
-    EXPECT_EQ(xor_(vector<bx_t> {}), _zero);
-    EXPECT_EQ(xor_(vector<bx_t> {xs[0]}), xs[0]);
+    EXPECT_EQ(xor_(vector<bx_t>{}), _zero);
+    EXPECT_EQ(xor_(vector<bx_t>{xs[0]}), xs[0]);
     EXPECT_EQ(xor_({}), _zero);
     EXPECT_EQ(xor_({xs[0]}), xs[0]);
 
     EXPECT_EQ(neq(zero_args), _zero);
     EXPECT_EQ(neq(one_arg), _zero);
-    EXPECT_EQ(neq(vector<bx_t> {}), _zero);
-    EXPECT_EQ(neq(vector<bx_t> {xs[0]}), _zero);
+    EXPECT_EQ(neq(vector<bx_t>{}), _zero);
+    EXPECT_EQ(neq(vector<bx_t>{xs[0]}), _zero);
     EXPECT_EQ(neq({}), _zero);
     EXPECT_EQ(neq({xs[0]}), _zero);
 
     EXPECT_EQ(eq(zero_args), _one);
     EXPECT_EQ(eq(one_arg), _one);
-    EXPECT_EQ(eq(vector<bx_t> {}), _one);
-    EXPECT_EQ(eq(vector<bx_t> {xs[0]}), _one);
+    EXPECT_EQ(eq(vector<bx_t>{}), _one);
+    EXPECT_EQ(eq(vector<bx_t>{xs[0]}), _one);
     EXPECT_EQ(eq({}), _one);
     EXPECT_EQ(eq({xs[0]}), _one);
 }
 
-
-TEST_F(BoolExprTest, IsCNF)
-{
+TEST_F(BoolExprTest, IsCNF) {
     EXPECT_FALSE(_zero->is_cnf());
     EXPECT_TRUE(_one->is_cnf());
     EXPECT_FALSE((xs[0] ^ xs[1])->is_cnf());
@@ -223,9 +214,7 @@ TEST_F(BoolExprTest, IsCNF)
     EXPECT_TRUE(y5->is_cnf());
 }
 
-
-TEST_F(BoolExprTest, IsDNF)
-{
+TEST_F(BoolExprTest, IsDNF) {
     EXPECT_TRUE(_zero->is_dnf());
     EXPECT_FALSE(_one->is_dnf());
     EXPECT_FALSE((xs[0] ^ xs[1])->is_dnf());
@@ -252,9 +241,7 @@ TEST_F(BoolExprTest, IsDNF)
     EXPECT_TRUE(y5->is_dnf());
 }
 
-
-TEST_F(BoolExprTest, Support)
-{
+TEST_F(BoolExprTest, Support) {
     auto y = (~xs[0] & xs[1]) | (~xs[2] & xs[3]);
     std::unordered_set<var_t> s = {xs[0], xs[1], xs[2], xs[3]};
 

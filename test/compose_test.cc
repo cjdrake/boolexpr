@@ -12,23 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <gtest/gtest.h>
 
 #include "boolexpr/boolexpr.h"
 #include "boolexprtest.h"
 
-
 class ComposeTest : public BoolExprTest {};
 
-
-TEST_F(ComposeTest, Basic)
-{
-    auto var2bx = var2bx_t {
-        {xs[0], xs[4]},
-        {xs[1], xs[5]},
-        {xs[2], xs[6]},
-        {xs[3], xs[7]},
+TEST_F(ComposeTest, Basic) {
+    auto var2bx = var2bx_t{
+        {xs[0], xs[4]}, {xs[1], xs[5]}, {xs[2], xs[6]}, {xs[3], xs[7]},
     };
 
     auto g0 = _zero->compose(var2bx);
@@ -42,14 +35,9 @@ TEST_F(ComposeTest, Basic)
     EXPECT_TRUE(g2->equiv(~xs[4] | ((xs[5] & ~xs[6]) ^ xs[7])));
 }
 
-
-TEST_F(ComposeTest, Restrict)
-{
-    auto point = point_t {
-        {xs[0], _zero},
-        {xs[1], _one},
-        {xs[2], _zero},
-        {xs[3], _one},
+TEST_F(ComposeTest, Restrict) {
+    auto point = point_t{
+        {xs[0], _zero}, {xs[1], _one}, {xs[2], _zero}, {xs[3], _one},
     };
 
     auto g0 = _zero->restrict_(point);
