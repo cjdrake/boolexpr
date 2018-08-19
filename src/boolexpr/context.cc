@@ -12,25 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::make_shared;
 using std::string;
 
-
 namespace boolexpr {
 
+Context::Context() : id{0} {}
 
-Context::Context()
-    : id {0}
-{}
-
-
-var_t
-Context::get_var(string name)
-{
+var_t Context::get_var(string name) {
     auto search = vars.find(name);
     if (search == vars.end()) {
         auto xn = make_shared<Complement>(this, id++);
@@ -44,19 +35,10 @@ Context::get_var(string name)
     return search->second;
 }
 
-
-string
-Context::get_name(id_t id) const
-{
+string Context::get_name(id_t id) const {
     return id2name.find(id >> 1)->second;
 }
 
-
-lit_t
-Context::get_lit(id_t id) const
-{
-    return id2lit.find(id)->second;
-}
-
+lit_t Context::get_lit(id_t id) const { return id2lit.find(id)->second; }
 
 }  // namespace boolexpr

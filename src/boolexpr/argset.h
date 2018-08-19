@@ -12,22 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // WARNING:
 //     The contents of this file are implementation details.
 //     Do not use these declarations for anything,
 //     because they may change without notice.
 
-
 #ifndef BOOLEXPR_ARGSET_H_
 #define BOOLEXPR_ARGSET_H_
 
-
 namespace boolexpr {
 
-
-class ArgSet
-{
+class ArgSet {
 public:
     virtual bx_t reduce() const = 0;
 
@@ -37,12 +32,10 @@ protected:
     virtual bx_t to_op() const = 0;
 };
 
-
-class LatticeArgSet : public ArgSet
-{
+class LatticeArgSet : public ArgSet {
 public:
-    LatticeArgSet(std::vector<bx_t> const & args, BoolExpr::Kind const & kind,
-                  bx_t const & identity, bx_t const & dominator);
+    LatticeArgSet(std::vector<bx_t> const &args, BoolExpr::Kind const &kind,
+                  bx_t const &identity, bx_t const &dominator);
     bx_t reduce() const;
 
 protected:
@@ -56,31 +49,25 @@ protected:
     void insert(bx_t const &);
 };
 
-
-class OrArgSet : public LatticeArgSet
-{
+class OrArgSet : public LatticeArgSet {
 public:
-    OrArgSet(std::vector<bx_t> const & args);
+    OrArgSet(std::vector<bx_t> const &args);
 
 protected:
     bx_t to_op() const;
 };
 
-
-class AndArgSet : public LatticeArgSet
-{
+class AndArgSet : public LatticeArgSet {
 public:
-    AndArgSet(std::vector<bx_t> const & args);
+    AndArgSet(std::vector<bx_t> const &args);
 
 protected:
     bx_t to_op() const;
 };
 
-
-class XorArgSet : public ArgSet
-{
+class XorArgSet : public ArgSet {
 public:
-    XorArgSet(std::vector<bx_t> const & args);
+    XorArgSet(std::vector<bx_t> const &args);
     bx_t reduce() const;
 
 protected:
@@ -93,11 +80,9 @@ private:
     bool parity;
 };
 
-
-class EqArgSet : public ArgSet
-{
+class EqArgSet : public ArgSet {
 public:
-    EqArgSet(std::vector<bx_t> const & args);
+    EqArgSet(std::vector<bx_t> const &args);
     bx_t reduce() const;
 
 protected:
@@ -111,8 +96,6 @@ private:
     bool has_one;
 };
 
-
-} // namespace boolexpr
-
+}  // namespace boolexpr
 
 #endif  // BOOLEXPR_ARGSET_H_

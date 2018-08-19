@@ -12,140 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::make_shared;
 
-
 namespace boolexpr {
 
+bx_t Zero::invert() const { return one(); }
 
-bx_t
-Zero::invert() const
-{
-    return one();
-}
+bx_t One::invert() const { return zero(); }
 
+bx_t Logical::invert() const { return shared_from_this(); }
 
-bx_t
-One::invert() const
-{
-    return zero();
-}
+bx_t Illogical::invert() const { return shared_from_this(); }
 
+bx_t Complement::invert() const { return ctx->get_lit(id + 1); }
 
-bx_t
-Logical::invert() const
-{
-    return shared_from_this();
-}
+bx_t Variable::invert() const { return ctx->get_lit(id - 1); }
 
+bx_t Nor::invert() const { return make_shared<Or>(simple, args); }
 
-bx_t
-Illogical::invert() const
-{
-    return shared_from_this();
-}
+bx_t Or::invert() const { return make_shared<Nor>(simple, args); }
 
+bx_t Nand::invert() const { return make_shared<And>(simple, args); }
 
-bx_t
-Complement::invert() const
-{
-    return ctx->get_lit(id + 1);
-}
+bx_t And::invert() const { return make_shared<Nand>(simple, args); }
 
+bx_t Xnor::invert() const { return make_shared<Xor>(simple, args); }
 
-bx_t
-Variable::invert() const
-{
-    return ctx->get_lit(id - 1);
-}
+bx_t Xor::invert() const { return make_shared<Xnor>(simple, args); }
 
+bx_t Unequal::invert() const { return make_shared<Equal>(simple, args); }
 
-bx_t
-Nor::invert() const
-{
-    return make_shared<Or>(simple, args);
-}
+bx_t Equal::invert() const { return make_shared<Unequal>(simple, args); }
 
-
-bx_t
-Or::invert() const
-{
-    return make_shared<Nor>(simple, args);
-}
-
-
-bx_t
-Nand::invert() const
-{
-    return make_shared<And>(simple, args);
-}
-
-
-bx_t
-And::invert() const
-{
-    return make_shared<Nand>(simple, args);
-}
-
-
-bx_t
-Xnor::invert() const
-{
-    return make_shared<Xor>(simple, args);
-}
-
-
-bx_t
-Xor::invert() const
-{
-    return make_shared<Xnor>(simple, args);
-}
-
-
-bx_t
-Unequal::invert() const
-{
-    return make_shared<Equal>(simple, args);
-}
-
-
-bx_t
-Equal::invert() const
-{
-    return make_shared<Unequal>(simple, args);
-}
-
-
-bx_t
-NotImplies::invert() const
-{
+bx_t NotImplies::invert() const {
     return make_shared<Implies>(simple, args[0], args[1]);
 }
 
-
-bx_t
-Implies::invert() const
-{
+bx_t Implies::invert() const {
     return make_shared<NotImplies>(simple, args[0], args[1]);
 }
 
-
-bx_t
-NotIfThenElse::invert() const
-{
+bx_t NotIfThenElse::invert() const {
     return make_shared<IfThenElse>(simple, args[0], args[1], args[2]);
 }
 
-
-bx_t
-IfThenElse::invert() const
-{
+bx_t IfThenElse::invert() const {
     return make_shared<NotIfThenElse>(simple, args[0], args[1], args[2]);
 }
-
 
 }  // namespace boolexpr

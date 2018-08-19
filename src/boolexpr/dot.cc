@@ -12,50 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <sstream>
 
 #include "boolexpr/boolexpr.h"
 
-
 using std::static_pointer_cast;
 using std::string;
 
-
 namespace boolexpr {
 
-
-void
-Zero::dot_node(std::ostream & s) const
-{
+void Zero::dot_node(std::ostream& s) const {
     s << " n" << this << " [label=\"0\",shape=box];";
 }
 
-
-void
-One::dot_node(std::ostream & s) const
-{
+void One::dot_node(std::ostream& s) const {
     s << " n" << this << " [label=\"1\",shape=box];";
 }
 
-
-void
-Logical::dot_node(std::ostream & s) const
-{
+void Logical::dot_node(std::ostream& s) const {
     s << " n" << this << " [label=\"X\",shape=box];";
 }
 
-
-void
-Illogical::dot_node(std::ostream & s) const
-{
+void Illogical::dot_node(std::ostream& s) const {
     s << " n" << this << " [label=\"?\",shape=box];";
 }
 
-
-void
-Complement::dot_node(std::ostream & s) const
-{
+void Complement::dot_node(std::ostream& s) const {
     auto xn = static_pointer_cast<Complement const>(shared_from_this());
 
     s << " n" << this;
@@ -64,10 +46,7 @@ Complement::dot_node(std::ostream & s) const
     s << ",shape=box];";
 }
 
-
-void
-Variable::dot_node(std::ostream & s) const
-{
+void Variable::dot_node(std::ostream& s) const {
     auto x = static_pointer_cast<Variable const>(shared_from_this());
 
     s << " n" << this;
@@ -76,25 +55,16 @@ Variable::dot_node(std::ostream & s) const
     s << ",shape=box];";
 }
 
-
-void
-Operator::dot_node(std::ostream & s) const
-{
+void Operator::dot_node(std::ostream& s) const {
     s << " n" << this;
     s << " [label=";
     s << "\"" << opname_compact() << "\"";
     s << ",shape=circle];";
 }
 
+void Atom::dot_edge(std::ostream& s) const {}
 
-void
-Atom::dot_edge(std::ostream & s) const
-{}
-
-
-void
-Operator::dot_edge(std::ostream & s) const
-{
+void Operator::dot_edge(std::ostream& s) const {
     for (size_t i = 0; i < args.size(); ++i) {
         s << " n" << &*args[i];
         s << " --";
@@ -103,10 +73,7 @@ Operator::dot_edge(std::ostream & s) const
     }
 }
 
-
-string
-BoolExpr::to_dot() const
-{
+string BoolExpr::to_dot() const {
     auto self = shared_from_this();
 
     std::ostringstream oss;
@@ -126,6 +93,5 @@ BoolExpr::to_dot() const
 
     return oss.str();
 }
-
 
 }  // namespace boolexpr

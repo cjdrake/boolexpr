@@ -12,18 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 namespace boolexpr {
 
-
-bx_t
-BoolExpr::to_nnf() const
-{
-    return to_latop()->to_posop()->simplify();
-}
-
+bx_t BoolExpr::to_nnf() const { return to_latop()->to_posop()->simplify(); }
 
 }  // namespace boolexpr

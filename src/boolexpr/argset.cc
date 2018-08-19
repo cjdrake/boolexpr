@@ -12,56 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-#include "boolexpr/boolexpr.h"
 #include "argset.h"
-
+#include "boolexpr/boolexpr.h"
 
 using std::make_shared;
 using std::static_pointer_cast;
 using std::vector;
 
-
 namespace boolexpr {
 
-
-LatticeArgSet::LatticeArgSet(vector<bx_t> const & args,
-                             BoolExpr::Kind const & kind,
-                             bx_t const & identity,
-                             bx_t const & dominator)
-    : state {State::infimum}
-    , kind {kind}
-    , identity {identity}
-    , dominator {dominator}
-{
-    for (bx_t const & arg : args) {
+LatticeArgSet::LatticeArgSet(vector<bx_t> const& args,
+                             BoolExpr::Kind const& kind, bx_t const& identity,
+                             bx_t const& dominator)
+    : state{State::infimum},
+      kind{kind},
+      identity{identity},
+      dominator{dominator} {
+    for (bx_t const& arg : args) {
         insert(arg->simplify());
     }
 }
 
-
-void
-LatticeArgSet::insert(bx_t const & arg)
-{
+void LatticeArgSet::insert(bx_t const& arg) {
     switch (state) {
         case State::infimum:
             if (IS_ILL(arg)) {
                 state = State::isill;
-            }
-            else if (ARE_SAME(arg, dominator)
-                         || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
+            } else if (ARE_SAME(arg, dominator) ||
+                       (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
-            }
-            else if (IS_LOG(arg)) {
+            } else if (IS_LOG(arg)) {
                 state = State::islog;
-            }
-            else if (arg->kind == kind) {
+            } else if (arg->kind == kind) {
                 auto op = static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) {
+                for (bx_t const& _arg : op->args) {
                     insert(_arg);
                 }
-            }
-            else if (!ARE_SAME(arg, identity)) {
+            } else if (!ARE_SAME(arg, identity)) {
                 args.insert(arg);
                 state = State::basic;
             }
@@ -70,21 +57,17 @@ LatticeArgSet::insert(bx_t const & arg)
         case State::basic:
             if (IS_ILL(arg)) {
                 state = State::isill;
-            }
-            else if (ARE_SAME(arg, dominator)
-                         || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
+            } else if (ARE_SAME(arg, dominator) ||
+                       (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
-            }
-            else if (IS_LOG(arg)) {
+            } else if (IS_LOG(arg)) {
                 state = State::islog;
-            }
-            else if (arg->kind == kind) {
+            } else if (arg->kind == kind) {
                 auto op = static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) {
+                for (bx_t const& _arg : op->args) {
                     insert(_arg);
                 }
-            }
-            else if (!ARE_SAME(arg, identity)) {
+            } else if (!ARE_SAME(arg, identity)) {
                 args.insert(arg);
             }
             break;
@@ -92,18 +75,15 @@ LatticeArgSet::insert(bx_t const & arg)
         case State::islog:
             if (IS_ILL(arg)) {
                 state = State::isill;
-            }
-            else if (ARE_SAME(arg, dominator)
-                         || (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
+            } else if (ARE_SAME(arg, dominator) ||
+                       (IS_LIT(arg) && (args.find(~arg) != args.cend()))) {
                 state = State::supremum;
-            }
-            else if (arg->kind == kind) {
+            } else if (arg->kind == kind) {
                 auto op = static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) {
+                for (bx_t const& _arg : op->args) {
                     insert(_arg);
                 }
-            }
-            else if (!ARE_SAME(arg, identity)) {
+            } else if (!ARE_SAME(arg, identity)) {
                 args.insert(arg);
             }
             break;
@@ -111,10 +91,9 @@ LatticeArgSet::insert(bx_t const & arg)
         case State::supremum:
             if (IS_ILL(arg)) {
                 state = State::isill;
-            }
-            else if (arg->kind == kind) {
+            } else if (arg->kind == kind) {
                 auto op = static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) {
+                for (bx_t const& _arg : op->args) {
                     insert(_arg);
                 }
             }
@@ -125,10 +104,7 @@ LatticeArgSet::insert(bx_t const & arg)
     }
 }
 
-
-bx_t
-LatticeArgSet::reduce() const
-{
+bx_t LatticeArgSet::reduce() const {
     if (state == State::infimum) {
         return identity;
     }
@@ -152,53 +128,35 @@ LatticeArgSet::reduce() const
     return to_op();
 }
 
+OrArgSet::OrArgSet(vector<bx_t> const& args)
+    : LatticeArgSet(args, BoolExpr::OR, Or::identity(), Or::dominator()) {}
 
-OrArgSet::OrArgSet(vector<bx_t> const & args)
-    : LatticeArgSet(args, BoolExpr::OR, Or::identity(), Or::dominator())
-{}
-
-
-bx_t
-OrArgSet::to_op() const
-{
+bx_t OrArgSet::to_op() const {
     return make_shared<Or>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
+AndArgSet::AndArgSet(vector<bx_t> const& args)
+    : LatticeArgSet(args, BoolExpr::AND, And::identity(), And::dominator()) {}
 
-AndArgSet::AndArgSet(vector<bx_t> const & args)
-    : LatticeArgSet(args, BoolExpr::AND, And::identity(), And::dominator())
-{}
-
-
-bx_t
-AndArgSet::to_op() const
-{
+bx_t AndArgSet::to_op() const {
     return make_shared<And>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
-
-XorArgSet::XorArgSet(vector<bx_t> const & args)
-    : state {State::basic}
-    , parity {true}
-{
-    for (bx_t const & arg : args) {
+XorArgSet::XorArgSet(vector<bx_t> const& args)
+    : state{State::basic}, parity{true} {
+    for (bx_t const& arg : args) {
         insert(arg->simplify());
     }
 }
 
-
-void
-XorArgSet::insert(bx_t const & arg)
-{
+void XorArgSet::insert(bx_t const& arg) {
     switch (state) {
         case State::basic:
             if (IS_ILL(arg)) {
                 state = State::isill;
-            }
-            else if (IS_LOG(arg)) {
+            } else if (IS_LOG(arg)) {
                 state = State::islog;
-            }
-            else if (IS_KNOWN(arg)) {
+            } else if (IS_KNOWN(arg)) {
                 parity ^= static_cast<bool>(arg->kind);
             }
             // xor(x, y, z, z) <=> xor(x, y) ; xnor(x, y, z, z) <=> xnor(x, y)
@@ -214,7 +172,7 @@ XorArgSet::insert(bx_t const & arg)
             // xnor(x, xor(y, z)) <=> xnor(x, y, z)
             else if (IS_XOR(arg)) {
                 auto op = static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) {
+                for (bx_t const& _arg : op->args) {
                     insert(_arg);
                 }
             }
@@ -222,12 +180,11 @@ XorArgSet::insert(bx_t const & arg)
             // xnor(x, xnor(y, z)) <=>  xor(x, y, z)
             else if (IS_XNOR(arg)) {
                 auto op = static_pointer_cast<Operator const>(arg);
-                for (bx_t const & _arg : op->args) {
+                for (bx_t const& _arg : op->args) {
                     insert(_arg);
                 }
                 parity ^= true;
-            }
-            else {
+            } else {
                 args.insert(arg);
             }
             break;
@@ -243,17 +200,11 @@ XorArgSet::insert(bx_t const & arg)
     }
 }
 
-
-bx_t
-XorArgSet::to_op() const
-{
+bx_t XorArgSet::to_op() const {
     return make_shared<Xor>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
-
-bx_t
-XorArgSet::reduce() const
-{
+bx_t XorArgSet::reduce() const {
     if (state == State::islog) {
         return logical();
     }
@@ -266,58 +217,44 @@ XorArgSet::reduce() const
 
     if (args.size() == 0) {
         y = zero();
-    }
-    else if (args.size() == 1) {
+    } else if (args.size() == 1) {
         y = *args.cbegin();
-    }
-    else {
+    } else {
         y = to_op();
     }
 
     return parity ? y : ~y;
 }
 
-
-EqArgSet::EqArgSet(vector<bx_t> const & args)
-    : state {State::basic}
-    , has_zero {false}
-    , has_one {false}
-{
-    for (bx_t const & arg : args) {
+EqArgSet::EqArgSet(vector<bx_t> const& args)
+    : state{State::basic}, has_zero{false}, has_one{false} {
+    for (bx_t const& arg : args) {
         insert(arg->simplify());
     }
 }
 
-
-void
-EqArgSet::insert(bx_t const & arg)
-{
+void EqArgSet::insert(bx_t const& arg) {
     switch (state) {
         case State::basic:
             if (IS_ILL(arg)) {
                 state = State::isill;
-            }
-            else if (IS_LOG(arg)) {
+            } else if (IS_LOG(arg)) {
                 state = State::islog;
-            }
-            else if (IS_ZERO(arg)) {
+            } else if (IS_ZERO(arg)) {
                 has_zero = true;
                 if (has_one) {
                     args.clear();
                 }
-            }
-            else if (IS_ONE(arg)) {
+            } else if (IS_ONE(arg)) {
                 has_one = true;
                 if (has_zero) {
                     args.clear();
                 }
-            }
-            else if (IS_LIT(arg) && (args.find(~arg) != args.cend())) {
+            } else if (IS_LIT(arg) && (args.find(~arg) != args.cend())) {
                 has_zero = true;
                 has_one = true;
                 args.clear();
-            }
-            else {
+            } else {
                 args.insert(arg);
             }
             break;
@@ -333,17 +270,11 @@ EqArgSet::insert(bx_t const & arg)
     }
 }
 
-
-bx_t
-EqArgSet::to_op() const
-{
+bx_t EqArgSet::to_op() const {
     return make_shared<Equal>(true, vector<bx_t>(args.cbegin(), args.cend()));
 }
 
-
-bx_t
-EqArgSet::reduce() const
-{
+bx_t EqArgSet::reduce() const {
     if (state == State::islog) {
         return logical();
     }
@@ -358,8 +289,8 @@ EqArgSet::reduce() const
     }
 
     // eq() <=> eq(0) <=> eq(1) <=> 1
-    if ((static_cast<size_t>(has_zero)
-             + static_cast<size_t>(has_one) + args.size()) < 2) {
+    if ((static_cast<size_t>(has_zero) + static_cast<size_t>(has_one) +
+         args.size()) < 2) {
         return one();
     }
 
@@ -375,6 +306,5 @@ EqArgSet::reduce() const
 
     return to_op();
 }
-
 
 }  // namespace boolexpr

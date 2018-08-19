@@ -12,34 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::vector;
 
-
 namespace boolexpr {
 
+bx_t Atom::to_binop() const { return shared_from_this(); }
 
-bx_t
-Atom::to_binop() const
-{
-    return shared_from_this();
-}
-
-
-bx_t
-NegativeOperator::to_binop() const
-{
+bx_t NegativeOperator::to_binop() const {
     auto op = ~shared_from_this();
     return ~op->to_binop();
 }
 
-
-bx_t
-Or::to_binop() const
-{
+bx_t Or::to_binop() const {
     size_t n = args.size();
 
     if (n == 0) {               // LCOV_EXCL_LINE
@@ -51,7 +37,7 @@ Or::to_binop() const
     }                                // LCOV_EXCL_LINE
 
     if (n == 2) {
-        return transform([](bx_t const & bx){return bx->to_binop();});
+        return transform([](bx_t const& bx) { return bx->to_binop(); });
     }
 
     // x0 | x1 | x2 | x3 <=> (x0 | x1) | (x2 | x3)
@@ -63,10 +49,7 @@ Or::to_binop() const
     return lo->to_binop() | hi->to_binop();
 }
 
-
-bx_t
-And::to_binop() const
-{
+bx_t And::to_binop() const {
     size_t n = args.size();
 
     if (n == 0) {                // LCOV_EXCL_LINE
@@ -78,7 +61,7 @@ And::to_binop() const
     }                                // LCOV_EXCL_LINE
 
     if (n == 2) {
-        return transform([](bx_t const & bx){return bx->to_binop();});
+        return transform([](bx_t const& bx) { return bx->to_binop(); });
     }
 
     // x0 & x1 & x2 & x3 <=> (x0 & x1) & (x2 & x3)
@@ -90,10 +73,7 @@ And::to_binop() const
     return lo->to_binop() & hi->to_binop();
 }
 
-
-bx_t
-Xor::to_binop() const
-{
+bx_t Xor::to_binop() const {
     size_t n = args.size();
 
     if (n == 0) {                // LCOV_EXCL_LINE
@@ -105,7 +85,7 @@ Xor::to_binop() const
     }                                // LCOV_EXCL_LINE
 
     if (n == 2) {
-        return transform([](bx_t const & bx){return bx->to_binop();});
+        return transform([](bx_t const& bx) { return bx->to_binop(); });
     }
 
     // x0 ^ x1 ^ x2 ^ x3 <=> (x0 ^ x1) ^ (x2 ^ x3)
@@ -117,10 +97,7 @@ Xor::to_binop() const
     return lo->to_binop() ^ hi->to_binop();
 }
 
-
-bx_t
-Equal::to_binop() const
-{
+bx_t Equal::to_binop() const {
     size_t n = args.size();
 
     if (n < 2) {       // LCOV_EXCL_LINE
@@ -128,7 +105,7 @@ Equal::to_binop() const
     }                  // LCOV_EXCL_LINE
 
     if (n == 2) {
-        return transform([](bx_t const & bx){return bx->to_binop();});
+        return transform([](bx_t const& bx) { return bx->to_binop(); });
     }
 
     vector<bx_t> _args(n);
@@ -136,9 +113,9 @@ Equal::to_binop() const
         _args[i] = args[i]->to_binop();
     }
 
-    vector<bx_t> pairs(n * (n-1) / 2);
+    vector<bx_t> pairs(n * (n - 1) / 2);
     size_t cnt = 0;
-    for (size_t i = 0; i < (n-1); ++i) {
+    for (size_t i = 0; i < (n - 1); ++i) {
         for (size_t j = i + 1; j < n; ++j) {
             pairs[cnt++] = eq({_args[i], _args[j]});
         }
@@ -147,19 +124,12 @@ Equal::to_binop() const
     return and_(std::move(pairs));
 }
 
-
-bx_t
-Implies::to_binop() const
-{
-    return transform([](bx_t const & bx){return bx->to_binop();});
+bx_t Implies::to_binop() const {
+    return transform([](bx_t const& bx) { return bx->to_binop(); });
 }
 
-
-bx_t
-IfThenElse::to_binop() const
-{
-    return transform([](bx_t const & bx){return bx->to_binop();});
+bx_t IfThenElse::to_binop() const {
+    return transform([](bx_t const& bx) { return bx->to_binop(); });
 }
-
 
 }  // namespace boolexpr

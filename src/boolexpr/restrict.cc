@@ -12,49 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::static_pointer_cast;
 
-
 namespace boolexpr {
 
+bx_t Constant::restrict_(point_t const &) const { return shared_from_this(); }
 
-bx_t
-Constant::restrict_(point_t const &) const
-{
-    return shared_from_this();
-}
-
-
-bx_t
-Complement::restrict_(point_t const & point) const
-{
+bx_t Complement::restrict_(point_t const &point) const {
     auto self = shared_from_this();
     auto x = static_pointer_cast<Variable const>(~self);
     auto search = point.find(x);
     return (search == point.end()) ? self : ~(search->second);
 }
 
-
-bx_t
-Variable::restrict_(point_t const & point) const
-{
+bx_t Variable::restrict_(point_t const &point) const {
     auto self = shared_from_this();
     auto x = static_pointer_cast<Variable const>(self);
     auto search = point.find(x);
     return (search == point.end()) ? self : search->second;
 }
 
-
-bx_t
-Operator::restrict_(point_t const & point) const
-{
-    auto f = [&point] (bx_t const & bx) { return bx->restrict_(point); };
+bx_t Operator::restrict_(point_t const &point) const {
+    auto f = [&point](bx_t const &bx) { return bx->restrict_(point); };
     return transform(f)->simplify();
 }
-
 
 }  // namespace boolexpr

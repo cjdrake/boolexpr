@@ -12,20 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 namespace boolexpr {
 
-
-bool
-BoolExpr::equiv(bx_t const & other) const
-{
+bool BoolExpr::equiv(bx_t const& other) const {
     auto self = shared_from_this();
     auto soln = (self ^ other)->sat();
     return !soln.first;
 }
-
 
 }  // namespace boolexpr

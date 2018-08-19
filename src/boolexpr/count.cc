@@ -12,25 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 namespace boolexpr {
 
+uint32_t Atom::depth() const { return 0; }
 
-uint32_t
-Atom::depth() const
-{
-    return 0;
-}
-
-
-uint32_t
-Operator::depth() const
-{
+uint32_t Operator::depth() const {
     uint32_t max_depth = 0;
-    for (bx_t const & arg : args) {
+    for (bx_t const& arg : args) {
         auto depth = arg->depth();
         if (depth > max_depth) {
             max_depth = depth;
@@ -39,23 +29,14 @@ Operator::depth() const
     return max_depth + 1;
 }
 
+uint32_t Atom::size() const { return 1; }
 
-uint32_t
-Atom::size() const
-{
-    return 1;
-}
-
-
-uint32_t
-Operator::size() const
-{
+uint32_t Operator::size() const {
     uint32_t size = 0;
-    for (bx_t const & arg : args) {
+    for (bx_t const& arg : args) {
         size += arg->size();
     }
     return size + 1;
 }
-
 
 }  // namespace boolexpr

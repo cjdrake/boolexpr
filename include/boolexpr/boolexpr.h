@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef BOOLEXPR_H_
 #define BOOLEXPR_H_
 
-
 #ifdef __cplusplus
-
 
 #include <boost/optional.hpp>
 #include "core/Solver.h"  // Solver, lbool, vec
@@ -34,44 +31,41 @@
 #include <utility>  // pair
 #include <vector>
 
-
 // Kind checks
-#define IS_ZERO(expr)  ((expr)->kind == boolexpr::BoolExpr::ZERO)
-#define IS_ONE(expr)   ((expr)->kind == boolexpr::BoolExpr::ONE)
-#define IS_LOG(expr)   ((expr)->kind == boolexpr::BoolExpr::LOG)
-#define IS_ILL(expr)   ((expr)->kind == boolexpr::BoolExpr::ILL)
-#define IS_COMP(expr)  ((expr)->kind == boolexpr::BoolExpr::COMP)
-#define IS_VAR(expr)   ((expr)->kind == boolexpr::BoolExpr::VAR)
-#define IS_NOR(expr)   ((expr)->kind == boolexpr::BoolExpr::NOR)
-#define IS_OR(expr)    ((expr)->kind == boolexpr::BoolExpr::OR)
-#define IS_NAND(expr)  ((expr)->kind == boolexpr::BoolExpr::NAND)
-#define IS_AND(expr)   ((expr)->kind == boolexpr::BoolExpr::AND)
-#define IS_XNOR(expr)  ((expr)->kind == boolexpr::BoolExpr::XNOR)
-#define IS_XOR(expr)   ((expr)->kind == boolexpr::BoolExpr::XOR)
-#define IS_NEQ(expr)   ((expr)->kind == boolexpr::BoolExpr::NEQ)
-#define IS_EQ(expr)    ((expr)->kind == boolexpr::BoolExpr::EQ)
+#define IS_ZERO(expr) ((expr)->kind == boolexpr::BoolExpr::ZERO)
+#define IS_ONE(expr) ((expr)->kind == boolexpr::BoolExpr::ONE)
+#define IS_LOG(expr) ((expr)->kind == boolexpr::BoolExpr::LOG)
+#define IS_ILL(expr) ((expr)->kind == boolexpr::BoolExpr::ILL)
+#define IS_COMP(expr) ((expr)->kind == boolexpr::BoolExpr::COMP)
+#define IS_VAR(expr) ((expr)->kind == boolexpr::BoolExpr::VAR)
+#define IS_NOR(expr) ((expr)->kind == boolexpr::BoolExpr::NOR)
+#define IS_OR(expr) ((expr)->kind == boolexpr::BoolExpr::OR)
+#define IS_NAND(expr) ((expr)->kind == boolexpr::BoolExpr::NAND)
+#define IS_AND(expr) ((expr)->kind == boolexpr::BoolExpr::AND)
+#define IS_XNOR(expr) ((expr)->kind == boolexpr::BoolExpr::XNOR)
+#define IS_XOR(expr) ((expr)->kind == boolexpr::BoolExpr::XOR)
+#define IS_NEQ(expr) ((expr)->kind == boolexpr::BoolExpr::NEQ)
+#define IS_EQ(expr) ((expr)->kind == boolexpr::BoolExpr::EQ)
 #define IS_NIMPL(expr) ((expr)->kind == boolexpr::BoolExpr::NIMPL)
-#define IS_IMPL(expr)  ((expr)->kind == boolexpr::BoolExpr::IMPL)
-#define IS_NITE(expr)  ((expr)->kind == boolexpr::BoolExpr::NITE)
-#define IS_ITE(expr)   ((expr)->kind == boolexpr::BoolExpr::ITE)
+#define IS_IMPL(expr) ((expr)->kind == boolexpr::BoolExpr::IMPL)
+#define IS_NITE(expr) ((expr)->kind == boolexpr::BoolExpr::NITE)
+#define IS_ITE(expr) ((expr)->kind == boolexpr::BoolExpr::ITE)
 
 #define ARE_SAME(ex1, ex2) ((ex1)->kind == (ex2)->kind)
 
 // Category checks
-#define IS_ATOM(expr)    ((expr)->kind >> 4 == 0) // 0 ****
-#define IS_OP(expr)      ((expr)->kind >> 4 == 1) // 1 ****
-#define IS_CONST(expr)   ((expr)->kind >> 3 == 0) // 0 0***
-#define IS_KNOWN(expr)   ((expr)->kind >> 2 == 0) // 0 00**
-#define IS_UNKNOWN(expr) ((expr)->kind >> 2 == 1) // 0 01**
-#define IS_LIT(expr)     ((expr)->kind >> 3 == 1) // 0 1***
-#define IS_NARY(expr)    ((expr)->kind >> 3 == 2) // 1 0***
-#define IS_NEG(expr)     (!((expr)->kind & 1))    // * ***0
-#define IS_POS(expr)     ((expr)->kind & 1)       // * ***1
-
+#define IS_ATOM(expr) ((expr)->kind >> 4 == 0)     // 0 ****
+#define IS_OP(expr) ((expr)->kind >> 4 == 1)       // 1 ****
+#define IS_CONST(expr) ((expr)->kind >> 3 == 0)    // 0 0***
+#define IS_KNOWN(expr) ((expr)->kind >> 2 == 0)    // 0 00**
+#define IS_UNKNOWN(expr) ((expr)->kind >> 2 == 1)  // 0 01**
+#define IS_LIT(expr) ((expr)->kind >> 3 == 1)      // 0 1***
+#define IS_NARY(expr) ((expr)->kind >> 3 == 2)     // 1 0***
+#define IS_NEG(expr) (!((expr)->kind & 1))         // * ***0
+#define IS_POS(expr) ((expr)->kind & 1)            // * ***1
 
 /// Top-level namespace
 namespace boolexpr {
-
 
 // Forward declarations
 class Context;
@@ -87,7 +81,6 @@ class Operator;
 class LatticeOperator;
 class Array;
 class sat_iter;
-
 
 using id_t = uint32_t;
 
@@ -112,9 +105,7 @@ using soln_t = std::pair<bool, boost::optional<point_t>>;
 
 using array_t = std::unique_ptr<Array>;
 
-
-class Context
-{
+class Context {
     friend class Complement;
     friend class Variable;
 
@@ -134,35 +125,33 @@ private:
     lit_t get_lit(id_t id) const;
 };
 
-
-class BoolExpr : public std::enable_shared_from_this<BoolExpr>
-{
+class BoolExpr : public std::enable_shared_from_this<BoolExpr> {
     friend class Operator;
     friend class sat_iter;
 
     friend bx_t operator~(bx_t const &);
-    friend std::ostream & operator<<(std::ostream &, bx_t const &);
+    friend std::ostream &operator<<(std::ostream &, bx_t const &);
 
 public:
     enum Kind {
-        ZERO  = 0x00,   // 0 0000
-        ONE   = 0x01,   // 0 0001
-        LOG   = 0x04,   // 0 0100
-        ILL   = 0x06,   // 0 0110
-        COMP  = 0x08,   // 0 1000
-        VAR   = 0x09,   // 0 1001
-        NOR   = 0x10,   // 1 0000
-        OR    = 0x11,   // 1 0001
-        NAND  = 0x12,   // 1 0010
-        AND   = 0x13,   // 1 0011
-        XNOR  = 0x14,   // 1 0100
-        XOR   = 0x15,   // 1 0101
-        NEQ   = 0x16,   // 1 0110
-        EQ    = 0x17,   // 1 0111
-        NIMPL = 0x18,   // 1 1000
-        IMPL  = 0x19,   // 1 1001
-        NITE  = 0x1A,   // 1 1010
-        ITE   = 0x1B,   // 1 1011
+        ZERO = 0x00,   // 0 0000
+        ONE = 0x01,    // 0 0001
+        LOG = 0x04,    // 0 0100
+        ILL = 0x06,    // 0 0110
+        COMP = 0x08,   // 0 1000
+        VAR = 0x09,    // 0 1001
+        NOR = 0x10,    // 1 0000
+        OR = 0x11,     // 1 0001
+        NAND = 0x12,   // 1 0010
+        AND = 0x13,    // 1 0011
+        XNOR = 0x14,   // 1 0100
+        XOR = 0x15,    // 1 0101
+        NEQ = 0x16,    // 1 0110
+        EQ = 0x17,     // 1 0111
+        NIMPL = 0x18,  // 1 1000
+        IMPL = 0x19,   // 1 1001
+        NITE = 0x1A,   // 1 1010
+        ITE = 0x1B,    // 1 1011
     };
 
     Kind const kind;
@@ -205,18 +194,17 @@ public:
 
 protected:
     virtual bx_t invert() const = 0;
-    virtual std::ostream & op_lsh(std::ostream &) const = 0;
+    virtual std::ostream &op_lsh(std::ostream &) const = 0;
     virtual void dot_node(std::ostream &) const = 0;
     virtual void dot_edge(std::ostream &) const = 0;
     virtual soln_t _sat() const = 0;
     virtual void insert_support_var(std::unordered_set<var_t> &) const = 0;
-    virtual bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const = 0;
-    virtual void sat_iter_init(sat_iter * const) const = 0;
+    virtual bx_t find_subop(bool &, Context &, std::string const &, uint32_t &,
+                            var2op_t &) const = 0;
+    virtual void sat_iter_init(sat_iter *const) const = 0;
 };
 
-
-class Atom : public BoolExpr
-{
+class Atom : public BoolExpr {
 public:
     Atom(Kind kind);
 
@@ -235,12 +223,11 @@ public:
 protected:
     void dot_edge(std::ostream &) const;
     void insert_support_var(std::unordered_set<var_t> &) const;
-    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
+    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &,
+                    var2op_t &) const;
 };
 
-
-class Constant : public Atom
-{
+class Constant : public Atom {
 public:
     Constant(Kind kind);
 
@@ -248,18 +235,14 @@ public:
     bx_t restrict_(point_t const &) const;
 };
 
-
-class Known : public Constant
-{
+class Known : public Constant {
 public:
     bool const val;
 
     Known(Kind kind, bool val);
 };
 
-
-class Zero final : public Known
-{
+class Zero final : public Known {
 public:
     Zero();
 
@@ -267,15 +250,13 @@ public:
 
 protected:
     bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
-    void sat_iter_init(sat_iter * const) const;
+    void sat_iter_init(sat_iter *const) const;
 };
 
-
-class One final : public Known
-{
+class One final : public Known {
 public:
     One();
 
@@ -283,58 +264,50 @@ public:
 
 protected:
     bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
-    void sat_iter_init(sat_iter * const) const;
+    void sat_iter_init(sat_iter *const) const;
 };
 
-
-class Unknown : public Constant
-{
+class Unknown : public Constant {
 public:
     Unknown(Kind kind);
 
 protected:
-    void sat_iter_init(sat_iter * const) const;
+    void sat_iter_init(sat_iter *const) const;
 };
 
-
-class Logical final : public Unknown
-{
+class Logical final : public Unknown {
 public:
     Logical();
 
 protected:
     bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
 };
 
-
-class Illogical final : public Unknown
-{
+class Illogical final : public Unknown {
 public:
     Illogical();
 
 protected:
     bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
 };
 
-
-class Literal : public Atom
-{
+class Literal : public Atom {
     friend lit_t abs(lit_t const &);
 
 public:
-    Context * const ctx;
+    Context *const ctx;
     id_t const id;
 
-    Literal(Kind kind, Context * const ctx, id_t id);
+    Literal(Kind kind, Context *const ctx, id_t id);
 
     bool is_cnf() const;
     bool is_dnf() const;
@@ -343,11 +316,9 @@ protected:
     virtual lit_t abs() const = 0;
 };
 
-
-class Complement final : public Literal
-{
+class Complement final : public Literal {
 public:
-    Complement(Context * const ctx, id_t id);
+    Complement(Context *const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
@@ -355,18 +326,16 @@ public:
 protected:
     lit_t abs() const;
     bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
-    void sat_iter_init(sat_iter * const) const;
+    void sat_iter_init(sat_iter *const) const;
 };
 
-
-class Variable final : public Literal
-{
+class Variable final : public Literal {
 public:
-    Variable(Context * const ctx, id_t id);
+    Variable(Context *const ctx, id_t id);
 
     bx_t compose(var2bx_t const &) const;
     bx_t restrict_(point_t const &) const;
@@ -374,22 +343,20 @@ public:
 protected:
     lit_t abs() const;
     bx_t invert() const;
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
-    void sat_iter_init(sat_iter * const) const;
+    void sat_iter_init(sat_iter *const) const;
 };
 
-
-class Operator : public BoolExpr
-{
+class Operator : public BoolExpr {
 public:
     bool const simple;
     std::vector<bx_t> const args;
 
-    Operator(Kind kind, bool simple, std::vector<bx_t> const & args);
-    Operator(Kind kind, bool simple, std::vector<bx_t> const && args);
+    Operator(Kind kind, bool simple, std::vector<bx_t> const &args);
+    Operator(Kind kind, bool simple, std::vector<bx_t> const &&args);
 
     uint32_t depth() const;
     uint32_t size() const;
@@ -404,13 +371,14 @@ public:
     bool is_clause() const;
 
 protected:
-    std::ostream & op_lsh(std::ostream &) const;
+    std::ostream &op_lsh(std::ostream &) const;
     void dot_node(std::ostream &) const;
     void dot_edge(std::ostream &) const;
     soln_t _sat() const;
     void insert_support_var(std::unordered_set<var_t> &) const;
-    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &, var2op_t &) const;
-    void sat_iter_init(sat_iter * const) const;
+    bx_t find_subop(bool &, Context &, std::string const &, uint32_t &,
+                    var2op_t &) const;
+    void sat_iter_init(sat_iter *const) const;
 
     virtual std::string const opname_camel() const = 0;
     virtual std::string const opname_compact() const = 0;
@@ -422,14 +390,12 @@ protected:
 
 private:
     var_t to_con1(Context &, std::string const &, uint32_t &, var2op_t &) const;
-    op_t  to_con2(Context &, std::string const &, uint32_t &, var2op_t &) const;
+    op_t to_con2(Context &, std::string const &, uint32_t &, var2op_t &) const;
 };
 
-
-class NegativeOperator : public Operator
-{
+class NegativeOperator : public Operator {
 public:
-    NegativeOperator(Kind kind, bool simple, std::vector<bx_t> const & args);
+    NegativeOperator(Kind kind, bool simple, std::vector<bx_t> const &args);
 
     bx_t to_binop() const;
     bx_t to_latop() const;
@@ -438,20 +404,16 @@ protected:
     bx_t _simplify() const;
 };
 
-
-class LatticeOperator : public Operator
-{
+class LatticeOperator : public Operator {
 public:
-    LatticeOperator(Kind kind, bool simple, std::vector<bx_t> const & args);
+    LatticeOperator(Kind kind, bool simple, std::vector<bx_t> const &args);
 
     bx_t to_latop() const;
 };
 
-
-class Nor final : public NegativeOperator
-{
+class Nor final : public NegativeOperator {
 public:
-    Nor(bool simple, std::vector<bx_t> const & args);
+    Nor(bool simple, std::vector<bx_t> const &args);
 
     bx_t to_cnf() const;
     bx_t to_dnf() const;
@@ -466,12 +428,10 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Or final : public LatticeOperator
-{
+class Or final : public LatticeOperator {
 public:
-    Or(bool simple, std::vector<bx_t> const & args);
-    Or(bool simple, std::vector<bx_t> const && args);
+    Or(bool simple, std::vector<bx_t> const &args);
+    Or(bool simple, std::vector<bx_t> const &&args);
 
     static bx_t identity();
     static bx_t dominator();
@@ -493,11 +453,9 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Nand final : public NegativeOperator
-{
+class Nand final : public NegativeOperator {
 public:
-    Nand(bool simple, std::vector<bx_t> const & args);
+    Nand(bool simple, std::vector<bx_t> const &args);
 
     bx_t to_cnf() const;
     bx_t to_dnf() const;
@@ -512,12 +470,10 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class And final : public LatticeOperator
-{
+class And final : public LatticeOperator {
 public:
-    And(bool simple, std::vector<bx_t> const & args);
-    And(bool simple, std::vector<bx_t> const && args);
+    And(bool simple, std::vector<bx_t> const &args);
+    And(bool simple, std::vector<bx_t> const &&args);
 
     static bx_t identity();
     static bx_t dominator();
@@ -539,11 +495,9 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Xnor final : public NegativeOperator
-{
+class Xnor final : public NegativeOperator {
 public:
-    Xnor(bool simple, std::vector<bx_t> const & args);
+    Xnor(bool simple, std::vector<bx_t> const &args);
 
     bx_t to_cnf() const;
     bx_t to_dnf() const;
@@ -558,12 +512,10 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Xor final : public Operator
-{
+class Xor final : public Operator {
 public:
-    Xor(bool simple, std::vector<bx_t> const & args);
-    Xor(bool simple, std::vector<bx_t> const && args);
+    Xor(bool simple, std::vector<bx_t> const &args);
+    Xor(bool simple, std::vector<bx_t> const &&args);
 
     static bx_t identity();
 
@@ -583,11 +535,9 @@ protected:
     op_t from_args(const std::vector<bx_t> &&) const;
 };
 
-
-class Unequal final : public NegativeOperator
-{
+class Unequal final : public NegativeOperator {
 public:
-    Unequal(bool simple, std::vector<bx_t> const & args);
+    Unequal(bool simple, std::vector<bx_t> const &args);
 
     bx_t to_cnf() const;
     bx_t to_dnf() const;
@@ -602,12 +552,10 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Equal final : public Operator
-{
+class Equal final : public Operator {
 public:
-    Equal(bool simple, std::vector<bx_t> const & args);
-    Equal(bool simple, std::vector<bx_t> const && args);
+    Equal(bool simple, std::vector<bx_t> const &args);
+    Equal(bool simple, std::vector<bx_t> const &&args);
 
     bx_t to_binop() const;
     bx_t to_cnf() const;
@@ -625,9 +573,7 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class NotImplies final : public NegativeOperator
-{
+class NotImplies final : public NegativeOperator {
 public:
     NotImplies(bool simple, bx_t p, bx_t q);
 
@@ -644,9 +590,7 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Implies final : public Operator
-{
+class Implies final : public Operator {
 public:
     Implies(bool simple, bx_t p, bx_t q);
 
@@ -666,9 +610,7 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class NotIfThenElse final : public NegativeOperator
-{
+class NotIfThenElse final : public NegativeOperator {
 public:
     NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
@@ -685,9 +627,7 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class IfThenElse final : public Operator
-{
+class IfThenElse final : public Operator {
 public:
     IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0);
 
@@ -707,9 +647,7 @@ protected:
     op_t from_args(std::vector<bx_t> const &&) const;
 };
 
-
-class Array
-{
+class Array {
     friend array_t operator~(Array const &);
     friend array_t operator|(Array const &, Array const &);
     friend array_t operator&(Array const &, Array const &);
@@ -725,8 +663,8 @@ public:
     Array(std::vector<bx_t> const &&);
     Array(std::initializer_list<bx_t> const items);
 
-    bx_t const & operator[](size_t) const;
-    bx_t & operator[](size_t);
+    bx_t const &operator[](size_t) const;
+    bx_t &operator[](size_t);
 
     size_t size() const;
     std::vector<bx_t>::const_iterator begin() const;
@@ -755,17 +693,15 @@ private:
     std::vector<bx_t> items;
 };
 
-
-class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t>
-{
+class dfs_iter : public std::iterator<std::input_iterator_tag, bx_t> {
 public:
     dfs_iter();
     dfs_iter(bx_t const &);
 
     bool operator==(dfs_iter const &) const;
     bool operator!=(dfs_iter const &) const;
-    bx_t const & operator*() const;
-    dfs_iter const & operator++();
+    bx_t const &operator*() const;
+    dfs_iter const &operator++();
 
 private:
     enum class Color { WHITE, GRAY, BLACK };
@@ -773,14 +709,12 @@ private:
     std::unordered_map<bx_t, Color> colors;
     std::vector<bx_t> stack;
 
-    bx_t const * p;
+    bx_t const *p;
 
     void advance_one();
 };
 
-
-class sat_iter : public std::iterator<std::input_iterator_tag, point_t>
-{
+class sat_iter : public std::iterator<std::input_iterator_tag, point_t> {
     friend class Zero;
     friend class One;
     friend class Unknown;
@@ -794,8 +728,8 @@ public:
 
     bool operator==(sat_iter const &) const;
     bool operator!=(sat_iter const &) const;
-    point_t const & operator*() const;
-    sat_iter const & operator++();
+    point_t const &operator*() const;
+    sat_iter const &operator++();
 
 private:
     Context ctx;
@@ -811,17 +745,16 @@ private:
     void get_soln();
 };
 
-
-class space_iter : public std::iterator<std::input_iterator_tag, std::vector<bool>>
-{
+class space_iter
+    : public std::iterator<std::input_iterator_tag, std::vector<bool>> {
 public:
     space_iter();
     space_iter(size_t n);
 
     bool operator==(space_iter const &) const;
     bool operator!=(space_iter const &) const;
-    std::vector<bool> const & operator*() const;
-    space_iter const & operator++();
+    std::vector<bool> const &operator*() const;
+    space_iter const &operator++();
     bool parity() const;
 
 private:
@@ -829,17 +762,15 @@ private:
     std::vector<bool> counter;
 };
 
-
-class points_iter : public std::iterator<std::input_iterator_tag, point_t>
-{
+class points_iter : public std::iterator<std::input_iterator_tag, point_t> {
 public:
     points_iter();
     points_iter(std::vector<var_t> const &);
 
     bool operator==(points_iter const &) const;
     bool operator!=(points_iter const &) const;
-    point_t const & operator*() const;
-    points_iter const & operator++();
+    point_t const &operator*() const;
+    points_iter const &operator++();
 
 private:
     space_iter it;
@@ -848,9 +779,8 @@ private:
     point_t point;
 };
 
-
-class terms_iter : public std::iterator<std::input_iterator_tag, std::vector<bx_t>>
-{
+class terms_iter
+    : public std::iterator<std::input_iterator_tag, std::vector<bx_t>> {
 public:
     terms_iter();
     terms_iter(std::vector<var_t> const &);
@@ -858,8 +788,8 @@ public:
 
     bool operator==(terms_iter const &) const;
     bool operator!=(terms_iter const &) const;
-    std::vector<bx_t> const & operator*() const;
-    terms_iter const & operator++();
+    std::vector<bx_t> const &operator*() const;
+    terms_iter const &operator++();
 
 private:
     space_iter it;
@@ -868,41 +798,36 @@ private:
     std::vector<bx_t> term;
 };
 
-
-class domain_iter : public std::iterator<std::input_iterator_tag, point_t>
-{
+class domain_iter : public std::iterator<std::input_iterator_tag, point_t> {
 public:
     domain_iter();
     domain_iter(bx_t const &);
 
     bool operator==(domain_iter const &) const;
     bool operator!=(domain_iter const &) const;
-    point_t const & operator*() const;
-    domain_iter const & operator++();
+    point_t const &operator*() const;
+    domain_iter const &operator++();
 
 private:
     std::unordered_set<var_t> s;
     points_iter it;
 };
 
-
-class cf_iter : public std::iterator<std::input_iterator_tag, bx_t>
-{
+class cf_iter : public std::iterator<std::input_iterator_tag, bx_t> {
 public:
     cf_iter();
     cf_iter(bx_t const &, std::vector<var_t> const &);
 
     bool operator==(cf_iter const &) const;
     bool operator!=(cf_iter const &) const;
-    bx_t const & operator*() const;
-    cf_iter const & operator++();
+    bx_t const &operator*() const;
+    cf_iter const &operator++();
 
 private:
     bx_t f;
     points_iter it;
     bx_t cf;
 };
-
 
 /// Return Boolean zero.
 zero_t zero();
@@ -986,7 +911,7 @@ bx_t operator&(bx_t const &, bx_t const &);
 bx_t operator^(bx_t const &, bx_t const &);
 lit_t abs(lit_t const &);
 bool operator<(lit_t const &, lit_t const &);
-std::ostream & operator<<(std::ostream &, bx_t const &);
+std::ostream &operator<<(std::ostream &, bx_t const &);
 
 array_t operator~(Array const &);
 array_t operator|(Array const &, Array const &);
@@ -996,46 +921,40 @@ array_t operator+(Array const &, Array const &);
 array_t operator*(Array const &, size_t);
 array_t operator*(size_t, Array const &);
 
-
-} // namespace boolexpr
-
+}  // namespace boolexpr
 
 #endif  // __cplusplus
 
-
 #ifdef __GNUC__
-#    define DllExport
+#define DllExport
 #elif __clang__
-#    define DllExport
+#define DllExport
 #elif _MSC_VER
-#    define DllExport __declspec(dllexport)
+#define DllExport __declspec(dllexport)
 #endif
-
 
 // C Foreign Function Interface (CFFI)
 extern "C" {
 
-
-typedef char const * const STRING;
-typedef void * const CONTEXT;
-typedef void const * const BX;
-typedef void const * const LIT;
-typedef void * const ARRAY;
-typedef void * const ARRAY_PAIR;
-typedef void const * const * const BXS;
-typedef void const * const * const VARS;
-typedef void const * const * const CONSTS;
-typedef void * const VEC;
-typedef void * const VARSET;
-typedef void * const POINT;
-typedef void * const SOLN;
-typedef void * const DFS_ITER;
-typedef void * const SAT_ITER;
-typedef void * const POINTS_ITER;
-typedef void * const TERMS_ITER;
-typedef void * const DOM_ITER;
-typedef void * const CF_ITER;
-
+typedef char const *const STRING;
+typedef void *const CONTEXT;
+typedef void const *const BX;
+typedef void const *const LIT;
+typedef void *const ARRAY;
+typedef void *const ARRAY_PAIR;
+typedef void const *const *const BXS;
+typedef void const *const *const VARS;
+typedef void const *const *const CONSTS;
+typedef void *const VEC;
+typedef void *const VARSET;
+typedef void *const POINT;
+typedef void *const SOLN;
+typedef void *const DFS_ITER;
+typedef void *const SAT_ITER;
+typedef void *const POINTS_ITER;
+typedef void *const TERMS_ITER;
+typedef void *const DOM_ITER;
+typedef void *const CF_ITER;
 
 DllExport CONTEXT boolexpr_Context_new(void);
 DllExport void boolexpr_Context_del(CONTEXT);
@@ -1195,8 +1114,6 @@ DllExport ARRAY_PAIR boolexpr_Array_lsh(ARRAY, ARRAY);
 DllExport ARRAY_PAIR boolexpr_Array_rsh(ARRAY, ARRAY);
 DllExport ARRAY_PAIR boolexpr_Array_arsh(ARRAY, size_t);
 
-
-} // extern "C"
-
+}  // extern "C"
 
 #endif  // BOOLEXPR_H_

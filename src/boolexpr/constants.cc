@@ -12,46 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::make_shared;
 
-
 namespace boolexpr {
 
-
-zero_t
-zero()
-{
+zero_t zero() {
     static auto _zero = make_shared<Zero>();
     return _zero;
 }
 
-
-one_t
-one()
-{
+one_t one() {
     static auto _one = make_shared<One>();
     return _one;
 }
 
-
-log_t
-logical()
-{
+log_t logical() {
     static auto _log = make_shared<Logical>();
     return _log;
 }
 
-
-ill_t
-illogical()
-{
+ill_t illogical() {
     static auto _ill = make_shared<Illogical>();
     return _ill;
 }
-
 
 }  // namespace boolexpr

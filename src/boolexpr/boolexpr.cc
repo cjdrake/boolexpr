@@ -12,312 +12,162 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::make_shared;
 using std::static_pointer_cast;
 using std::unordered_set;
 using std::vector;
 
-
 namespace boolexpr {
 
+BoolExpr::BoolExpr(Kind kind) : kind{kind} {}
 
-BoolExpr::BoolExpr(Kind kind)
-    : kind {kind}
-{}
+Atom::Atom(Kind kind) : BoolExpr(kind) {}
 
+Constant::Constant(Kind kind) : Atom(kind) {}
 
-Atom::Atom(Kind kind)
-    : BoolExpr(kind)
-{}
+Known::Known(Kind kind, bool val) : Constant(kind), val{val} {}
 
+Zero::Zero() : Known(ZERO, false) {}
 
-Constant::Constant(Kind kind)
-    : Atom(kind)
-{}
+One::One() : Known(ONE, true) {}
 
+Unknown::Unknown(Kind kind) : Constant(kind) {}
 
-Known::Known(Kind kind, bool val)
-    : Constant(kind)
-    , val {val}
-{}
+Logical::Logical() : Unknown(LOG) {}
 
+Illogical::Illogical() : Unknown(ILL) {}
 
-Zero::Zero()
-    : Known(ZERO, false)
-{}
+Literal::Literal(Kind kind, Context *const ctx, id_t id)
+    : Atom(kind), ctx{ctx}, id{id} {}
 
+Complement::Complement(Context *const ctx, id_t id) : Literal(COMP, ctx, id) {}
 
-One::One()
-    : Known(ONE, true)
-{}
+Variable::Variable(Context *const ctx, id_t id) : Literal(VAR, ctx, id) {}
 
+Operator::Operator(Kind kind, bool simple, vector<bx_t> const &args)
+    : BoolExpr(kind), simple{simple}, args{args} {}
 
-Unknown::Unknown(Kind kind)
-    : Constant(kind)
-{}
-
-
-Logical::Logical()
-    : Unknown(LOG)
-{}
-
-
-Illogical::Illogical()
-    : Unknown(ILL)
-{}
-
-
-Literal::Literal(Kind kind, Context * const ctx, id_t id)
-    : Atom(kind)
-    , ctx {ctx}
-    , id {id}
-{}
-
-
-Complement::Complement(Context * const ctx, id_t id)
-    : Literal(COMP, ctx, id)
-{}
-
-
-Variable::Variable(Context * const ctx, id_t id)
-    : Literal(VAR, ctx, id)
-{}
-
-
-Operator::Operator(Kind kind, bool simple, vector<bx_t> const & args)
-    : BoolExpr(kind)
-    , simple {simple}
-    , args {args}
-{}
-
-
-Operator::Operator(Kind kind, bool simple, vector<bx_t> const && args)
-    : BoolExpr(kind)
-    , simple {simple}
-    , args {args}
-{}
-
+Operator::Operator(Kind kind, bool simple, vector<bx_t> const &&args)
+    : BoolExpr(kind), simple{simple}, args{args} {}
 
 NegativeOperator::NegativeOperator(Kind kind, bool simple,
-                                   vector<bx_t> const & args)
-    : Operator(kind, simple, args)
-{}
-
+                                   vector<bx_t> const &args)
+    : Operator(kind, simple, args) {}
 
 LatticeOperator::LatticeOperator(Kind kind, bool simple,
-                                 vector<bx_t> const & args)
-    : Operator(kind, simple, args)
-{}
+                                 vector<bx_t> const &args)
+    : Operator(kind, simple, args) {}
 
+Nor::Nor(bool simple, vector<bx_t> const &args)
+    : NegativeOperator(NOR, simple, args) {}
 
-Nor::Nor(bool simple, vector<bx_t> const & args)
-    : NegativeOperator(NOR, simple, args)
-{}
+Or::Or(bool simple, vector<bx_t> const &args)
+    : LatticeOperator(OR, simple, args) {}
 
+Or::Or(bool simple, vector<bx_t> const &&args)
+    : LatticeOperator(OR, simple, args) {}
 
-Or::Or(bool simple, vector<bx_t> const & args)
-    : LatticeOperator(OR, simple, args)
-{}
+Nand::Nand(bool simple, vector<bx_t> const &args)
+    : NegativeOperator(NAND, simple, args) {}
 
+And::And(bool simple, vector<bx_t> const &args)
+    : LatticeOperator(AND, simple, args) {}
 
-Or::Or(bool simple, vector<bx_t> const && args)
-    : LatticeOperator(OR, simple, args)
-{}
+And::And(bool simple, vector<bx_t> const &&args)
+    : LatticeOperator(AND, simple, args) {}
 
+Xnor::Xnor(bool simple, vector<bx_t> const &args)
+    : NegativeOperator(XNOR, simple, args) {}
 
-Nand::Nand(bool simple, vector<bx_t> const & args)
-    : NegativeOperator(NAND, simple, args)
-{}
+Xor::Xor(bool simple, vector<bx_t> const &args) : Operator(XOR, simple, args) {}
 
+Xor::Xor(bool simple, vector<bx_t> const &&args)
+    : Operator(XOR, simple, args) {}
 
-And::And(bool simple, vector<bx_t> const & args)
-    : LatticeOperator(AND, simple, args)
-{}
+Unequal::Unequal(bool simple, vector<bx_t> const &args)
+    : NegativeOperator(NEQ, simple, args) {}
 
+Equal::Equal(bool simple, std::vector<bx_t> const &args)
+    : Operator(EQ, simple, args) {}
 
-And::And(bool simple, vector<bx_t> const && args)
-    : LatticeOperator(AND, simple, args)
-{}
-
-
-Xnor::Xnor(bool simple, vector<bx_t> const & args)
-    : NegativeOperator(XNOR, simple, args)
-{}
-
-
-Xor::Xor(bool simple, vector<bx_t> const & args)
-    : Operator(XOR, simple, args)
-{}
-
-
-Xor::Xor(bool simple, vector<bx_t> const && args)
-    : Operator(XOR, simple, args)
-{}
-
-
-Unequal::Unequal(bool simple, vector<bx_t> const & args)
-    : NegativeOperator(NEQ, simple, args)
-{}
-
-
-Equal::Equal(bool simple, std::vector<bx_t> const & args)
-    : Operator(EQ, simple, args)
-{}
-
-
-Equal::Equal(bool simple, std::vector<bx_t> const && args)
-    : Operator(EQ, simple, args)
-{}
-
+Equal::Equal(bool simple, std::vector<bx_t> const &&args)
+    : Operator(EQ, simple, args) {}
 
 NotImplies::NotImplies(bool simple, bx_t p, bx_t q)
-    : NegativeOperator(NIMPL, simple, vector<bx_t>{p, q})
-{}
-
+    : NegativeOperator(NIMPL, simple, vector<bx_t>{p, q}) {}
 
 Implies::Implies(bool simple, bx_t p, bx_t q)
-    : Operator(IMPL, simple, vector<bx_t>{p, q})
-{}
-
+    : Operator(IMPL, simple, vector<bx_t>{p, q}) {}
 
 NotIfThenElse::NotIfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0)
-    : NegativeOperator(NITE, simple, vector<bx_t>{s, d1, d0})
-{}
-
+    : NegativeOperator(NITE, simple, vector<bx_t>{s, d1, d0}) {}
 
 IfThenElse::IfThenElse(bool simple, bx_t s, bx_t d1, bx_t d0)
-    : Operator(ITE, simple, vector<bx_t>{s, d1, d0})
-{}
+    : Operator(ITE, simple, vector<bx_t>{s, d1, d0}) {}
 
+bx_t Or::identity() { return zero(); }
 
-bx_t
-Or::identity()
-{
-    return zero();
-}
+bx_t Or::dominator() { return one(); }
 
+bx_t And::identity() { return one(); }
 
-bx_t
-Or::dominator()
-{
-    return one();
-}
+bx_t And::dominator() { return zero(); }
 
+bx_t Xor::identity() { return zero(); }
 
-bx_t
-And::identity()
-{
-    return one();
-}
-
-
-bx_t
-And::dominator()
-{
-    return zero();
-}
-
-
-bx_t
-Xor::identity()
-{
-    return zero();
-}
-
-
-op_t
-Nor::from_args(vector<bx_t> const && args) const
-{
+op_t Nor::from_args(vector<bx_t> const &&args) const {
     return make_shared<Nor>(false, args);
 }
 
-
-op_t
-Or::from_args(vector<bx_t> const && args) const
-{
+op_t Or::from_args(vector<bx_t> const &&args) const {
     return make_shared<Or>(false, args);
 }
 
-
-op_t
-Nand::from_args(vector<bx_t> const && args) const
-{
+op_t Nand::from_args(vector<bx_t> const &&args) const {
     return make_shared<Nand>(false, args);
 }
 
-
-op_t
-And::from_args(vector<bx_t> const && args) const
-{
+op_t And::from_args(vector<bx_t> const &&args) const {
     return make_shared<And>(false, args);
 }
 
-
-op_t
-Xnor::from_args(vector<bx_t> const && args) const
-{
+op_t Xnor::from_args(vector<bx_t> const &&args) const {
     return make_shared<Xnor>(false, args);
 }
 
-
-op_t
-Xor::from_args(vector<bx_t> const && args) const
-{
+op_t Xor::from_args(vector<bx_t> const &&args) const {
     return make_shared<Xor>(false, args);
 }
 
-
-op_t
-Unequal::from_args(vector<bx_t> const && args) const
-{
+op_t Unequal::from_args(vector<bx_t> const &&args) const {
     return make_shared<Unequal>(false, args);
 }
 
-
-op_t
-Equal::from_args(vector<bx_t> const && args) const
-{
+op_t Equal::from_args(vector<bx_t> const &&args) const {
     return make_shared<Equal>(false, args);
 }
 
-
-op_t
-NotImplies::from_args(vector<bx_t> const && args) const
-{
+op_t NotImplies::from_args(vector<bx_t> const &&args) const {
     return make_shared<NotImplies>(false, args[0], args[1]);
 }
 
-
-op_t
-Implies::from_args(vector<bx_t> const && args) const
-{
+op_t Implies::from_args(vector<bx_t> const &&args) const {
     return make_shared<Implies>(false, args[0], args[1]);
 }
 
-
-op_t
-NotIfThenElse::from_args(vector<bx_t> const && args) const
-{
+op_t NotIfThenElse::from_args(vector<bx_t> const &&args) const {
     return make_shared<NotIfThenElse>(false, args[0], args[1], args[2]);
 }
 
-
-op_t
-IfThenElse::from_args(vector<bx_t> const && args) const
-{
+op_t IfThenElse::from_args(vector<bx_t> const &&args) const {
     return make_shared<IfThenElse>(false, args[0], args[1], args[2]);
 }
 
-
 // Properties
-bool
-Operator::is_clause() const
-{
-    for (bx_t const & arg : args) {
+bool Operator::is_clause() const {
+    for (bx_t const &arg : args) {
         if (!IS_LIT(arg)) {
             return false;
         }
@@ -325,39 +175,16 @@ Operator::is_clause() const
     return true;
 }
 
+bool Atom::is_cnf() const { return false; }
 
-bool
-Atom::is_cnf() const
-{
-    return false;
-}
+bool One::is_cnf() const { return true; }
 
+bool Literal::is_cnf() const { return true; }
 
-bool
-One::is_cnf() const
-{
-    return true;
-}
+bool Operator::is_cnf() const { return false; }
 
-
-bool
-Literal::is_cnf() const
-{
-    return true;
-}
-
-
-bool
-Operator::is_cnf() const
-{
-    return false;
-}
-
-
-bool
-Or::is_cnf() const
-{
-    for (bx_t const & arg : args) {
+bool Or::is_cnf() const {
+    for (bx_t const &arg : args) {
         if (!IS_LIT(arg)) {
             return false;
         }
@@ -365,63 +192,37 @@ Or::is_cnf() const
     return true;
 }
 
-
-bool
-And::is_cnf() const
-{
-    for (bx_t const & arg : args) {
-        if (!IS_LIT(arg) && !(IS_OR(arg) && static_pointer_cast<Or const>(arg)->is_clause())) {
+bool And::is_cnf() const {
+    for (bx_t const &arg : args) {
+        if (!IS_LIT(arg) &&
+            !(IS_OR(arg) && static_pointer_cast<Or const>(arg)->is_clause())) {
             return false;
         }
     }
     return true;
 }
 
+bool Atom::is_dnf() const { return false; }
 
-bool
-Atom::is_dnf() const
-{
-    return false;
-}
+bool Zero::is_dnf() const { return true; }
 
+bool Literal::is_dnf() const { return true; }
 
-bool
-Zero::is_dnf() const
-{
-    return true;
-}
+bool Operator::is_dnf() const { return false; }
 
-
-bool
-Literal::is_dnf() const
-{
-    return true;
-}
-
-
-bool
-Operator::is_dnf() const
-{
-    return false;
-}
-
-
-bool
-Or::is_dnf() const
-{
-    for (bx_t const & arg : args) {
-        if (!IS_LIT(arg) && !(IS_AND(arg) && static_pointer_cast<And const>(arg)->is_clause())) {
+bool Or::is_dnf() const {
+    for (bx_t const &arg : args) {
+        if (!IS_LIT(arg) &&
+            !(IS_AND(arg) &&
+              static_pointer_cast<And const>(arg)->is_clause())) {
             return false;
         }
     }
     return true;
 }
 
-
-bool
-And::is_dnf() const
-{
-    for (bx_t const & arg : args) {
+bool And::is_dnf() const {
+    for (bx_t const &arg : args) {
         if (!IS_LIT(arg)) {
             return false;
         }
@@ -429,34 +230,19 @@ And::is_dnf() const
     return true;
 }
 
+void Atom::insert_support_var(unordered_set<var_t> &s) const {}
 
-void
-Atom::insert_support_var(unordered_set<var_t> & s) const
-{}
-
-
-void
-Complement::insert_support_var(unordered_set<var_t> & s) const
-{
+void Complement::insert_support_var(unordered_set<var_t> &s) const {
     s.insert(static_pointer_cast<Variable const>(~shared_from_this()));
 }
 
-
-void
-Variable::insert_support_var(unordered_set<var_t> & s) const
-{
+void Variable::insert_support_var(unordered_set<var_t> &s) const {
     s.insert(static_pointer_cast<Variable const>(shared_from_this()));
 }
 
+void Operator::insert_support_var(unordered_set<var_t> &s) const {}
 
-void
-Operator::insert_support_var(unordered_set<var_t> & s) const
-{}
-
-
-unordered_set<var_t>
-BoolExpr::support() const
-{
+unordered_set<var_t> BoolExpr::support() const {
     unordered_set<var_t> s;
 
     for (auto it = dfs_iter(shared_from_this()); it != dfs_iter(); ++it) {
@@ -466,17 +252,9 @@ BoolExpr::support() const
     return s;
 }
 
+uint32_t BoolExpr::degree() const { return support().size(); }
 
-uint32_t
-BoolExpr::degree() const
-{
-    return support().size();
-}
-
-
-op_t
-Operator::transform(std::function<bx_t(bx_t const &)> f) const
-{
+op_t Operator::transform(std::function<bx_t(bx_t const &)> f) const {
     uint32_t mod_count = 0;
     size_t n = args.size();
     vector<bx_t> _args(n);
@@ -495,10 +273,7 @@ Operator::transform(std::function<bx_t(bx_t const &)> f) const
     return static_pointer_cast<Operator const>(shared_from_this());
 }
 
-
-bx_t
-BoolExpr::expand(vector<var_t> const & xs) const
-{
+bx_t BoolExpr::expand(vector<var_t> const &xs) const {
     auto self = shared_from_this();
 
     vector<bx_t> or_args;
@@ -508,7 +283,7 @@ BoolExpr::expand(vector<var_t> const & xs) const
 
     for (; it1 != terms_iter() && it2 != cf_iter(); ++it1, ++it2) {
         vector<bx_t> and_args;
-        for (auto const & term : *it1) {
+        for (auto const &term : *it1) {
             and_args.push_back(term);
         }
         and_args.push_back(*it2);
@@ -518,30 +293,20 @@ BoolExpr::expand(vector<var_t> const & xs) const
     return or_(std::move(or_args));
 }
 
-
 // FIXME(cjdrake): Implement these as reductions
-bx_t
-BoolExpr::smoothing(vector<var_t> const & xs) const
-{
+bx_t BoolExpr::smoothing(vector<var_t> const &xs) const {
     auto self = shared_from_this();
     return or_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
 }
 
-
-bx_t
-BoolExpr::consensus(vector<var_t> const & xs) const
-{
+bx_t BoolExpr::consensus(vector<var_t> const &xs) const {
     auto self = shared_from_this();
     return and_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
 }
 
-
-bx_t
-BoolExpr::derivative(vector<var_t> const & xs) const
-{
+bx_t BoolExpr::derivative(vector<var_t> const &xs) const {
     auto self = shared_from_this();
     return xor_s(vector<bx_t>(cf_iter(self, xs), cf_iter()));
 }
-
 
 }  // namespace boolexpr

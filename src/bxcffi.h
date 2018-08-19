@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // WARNING:
 //     The contents of this file are implementation details.
 //     Do not use these declarations for anything,
 //     because they may change without notice.
 
-
 #ifndef BOOLEXPR_BXCFFI_H_
 #define BOOLEXPR_BXCFFI_H_
-
 
 using boolexpr::bx_t;
 using boolexpr::cf_iter;
@@ -35,203 +32,147 @@ using boolexpr::soln_t;
 using boolexpr::terms_iter;
 using boolexpr::var_t;
 
-
-struct BoolExprProxy
-{
+struct BoolExprProxy {
     bx_t const bx;
 
-    BoolExprProxy(bx_t const & bx): bx {bx} {}
+    BoolExprProxy(bx_t const& bx) : bx{bx} {}
 };
 
-
-struct LiteralProxy
-{
+struct LiteralProxy {
     lit_t const lit;
 
-    LiteralProxy(lit_t const & lit): lit {lit} {}
+    LiteralProxy(lit_t const& lit) : lit{lit} {}
 };
 
-
 template <typename T>
-struct VecProxy
-{
+struct VecProxy {
     std::vector<T> v;
     typename std::vector<T>::iterator it;
 
-    VecProxy(std::vector<T> const & v): v {v} {}
+    VecProxy(std::vector<T> const& v) : v{v} {}
 
     void iter() { it = v.begin(); }
     void next() { ++it; }
 
-    BoolExprProxy * val() const
-    {
-        return (it == v.end()) ? nullptr
-                               : new BoolExprProxy(*it);
+    BoolExprProxy* val() const {
+        return (it == v.end()) ? nullptr : new BoolExprProxy(*it);
     }
 };
 
-
 template <typename T>
-struct SetProxy
-{
+struct SetProxy {
     std::unordered_set<T> s;
     typename std::unordered_set<T>::iterator it;
 
-    SetProxy(std::unordered_set<T> const && s): s {s} {}
+    SetProxy(std::unordered_set<T> const&& s) : s{s} {}
 
     void iter() { it = s.begin(); }
     void next() { ++it; }
 
-    BoolExprProxy * val() const
-    {
-        return (it == s.end()) ? nullptr
-                               : new BoolExprProxy(*it);
+    BoolExprProxy* val() const {
+        return (it == s.end()) ? nullptr : new BoolExprProxy(*it);
     }
 };
 
-
 template <typename K, typename V>
-struct MapProxy
-{
+struct MapProxy {
     std::unordered_map<K, V> m;
     typename std::unordered_map<K, V>::iterator it;
 
-    MapProxy(std::unordered_map<K, V> const & m): m {m} {}
-    MapProxy(std::unordered_map<K, V> const && m): m {m} {}
+    MapProxy(std::unordered_map<K, V> const& m) : m{m} {}
+    MapProxy(std::unordered_map<K, V> const&& m) : m{m} {}
 
     void iter() { it = m.begin(); }
     void next() { ++it; }
 
-    BoolExprProxy * key() const
-    {
-        return (it == m.end()) ? nullptr
-                               : new BoolExprProxy((*it).first);
+    BoolExprProxy* key() const {
+        return (it == m.end()) ? nullptr : new BoolExprProxy((*it).first);
     }
 
-    BoolExprProxy * val() const
-    {
-        return (it == m.end()) ? nullptr
-                               : new BoolExprProxy((*it).second);
+    BoolExprProxy* val() const {
+        return (it == m.end()) ? nullptr : new BoolExprProxy((*it).second);
     }
 };
 
-
-struct SolnProxy
-{
+struct SolnProxy {
     soln_t soln;
 
-    SolnProxy(soln_t const && soln)
-        : soln {soln}
-    {}
+    SolnProxy(soln_t const&& soln) : soln{soln} {}
 };
 
-
-struct DfsIterProxy
-{
+struct DfsIterProxy {
     dfs_iter it;
 
-    DfsIterProxy(bx_t const & bx)
-        : it {dfs_iter(bx)}
-    {}
+    DfsIterProxy(bx_t const& bx) : it{dfs_iter(bx)} {}
 
     void next() { ++it; }
 
-    BoolExprProxy * val() const
-    {
-        return (it == dfs_iter()) ? nullptr
-                                  : new BoolExprProxy(*it);
+    BoolExprProxy* val() const {
+        return (it == dfs_iter()) ? nullptr : new BoolExprProxy(*it);
     }
 };
 
-
-struct SatIterProxy
-{
+struct SatIterProxy {
     sat_iter it;
 
-    SatIterProxy(bx_t const & bx)
-        : it {sat_iter(bx)}
-    {}
+    SatIterProxy(bx_t const& bx) : it{sat_iter(bx)} {}
 
     void next() { ++it; }
 
-    MapProxy<var_t, const_t> * val() const
-    {
-        return (it == sat_iter()) ? nullptr
-                                  : new MapProxy<var_t, const_t>(*it);
+    MapProxy<var_t, const_t>* val() const {
+        return (it == sat_iter()) ? nullptr : new MapProxy<var_t, const_t>(*it);
     }
 };
 
-
-struct PointsIterProxy
-{
+struct PointsIterProxy {
     points_iter it;
 
-    PointsIterProxy(std::vector<var_t> const & xs)
-        : it {xs}
-    {}
+    PointsIterProxy(std::vector<var_t> const& xs) : it{xs} {}
 
     void next() { ++it; }
 
-    MapProxy<var_t, const_t> * val() const
-    {
+    MapProxy<var_t, const_t>* val() const {
         return (it == points_iter()) ? nullptr
                                      : new MapProxy<var_t, const_t>(*it);
     }
 };
 
-
-struct TermsIterProxy
-{
+struct TermsIterProxy {
     terms_iter it;
 
-    TermsIterProxy(std::vector<bx_t> const & args)
-        : it {args}
-    {}
+    TermsIterProxy(std::vector<bx_t> const& args) : it{args} {}
 
     void next() { ++it; }
 
-    VecProxy<bx_t> * val() const
-    {
-        return (it == terms_iter()) ? nullptr
-                                    : new VecProxy<bx_t>(*it);
+    VecProxy<bx_t>* val() const {
+        return (it == terms_iter()) ? nullptr : new VecProxy<bx_t>(*it);
     }
 };
 
-
-struct DomainIterProxy
-{
+struct DomainIterProxy {
     domain_iter it;
 
-    DomainIterProxy(bx_t const & bx)
-        : it {domain_iter(bx)}
-    {}
+    DomainIterProxy(bx_t const& bx) : it{domain_iter(bx)} {}
 
     void next() { ++it; }
 
-    MapProxy<var_t, const_t> * val() const
-    {
+    MapProxy<var_t, const_t>* val() const {
         return (it == domain_iter()) ? nullptr
                                      : new MapProxy<var_t, const_t>(*it);
     }
 };
 
-
-struct CofactorIterProxy
-{
+struct CofactorIterProxy {
     cf_iter it;
 
-    CofactorIterProxy(bx_t const & bx, std::vector<var_t> const & vars)
-        : it {cf_iter(bx, vars)}
-    {}
+    CofactorIterProxy(bx_t const& bx, std::vector<var_t> const& vars)
+        : it{cf_iter(bx, vars)} {}
 
     void next() { ++it; }
 
-    BoolExprProxy * val() const
-    {
-        return (it == cf_iter()) ? nullptr
-                                 : new BoolExprProxy(*it);
+    BoolExprProxy* val() const {
+        return (it == cf_iter()) ? nullptr : new BoolExprProxy(*it);
     }
 };
-
 
 #endif  // BOOLEXPR_BXCFFI_H_

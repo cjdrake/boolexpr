@@ -12,28 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-#include "boolexpr/boolexpr.h"
 #include "argset.h"
-
+#include "boolexpr/boolexpr.h"
 
 using std::make_shared;
 
-
 namespace boolexpr {
 
-
 // Atoms are already simple
-bx_t
-Atom::simplify() const
-{
-    return shared_from_this();
-}
+bx_t Atom::simplify() const { return shared_from_this(); }
 
-
-bx_t
-Operator::simplify() const
-{
+bx_t Operator::simplify() const {
     if (simple) {
         return shared_from_this();
     }
@@ -41,46 +30,20 @@ Operator::simplify() const
     return _simplify();
 }
 
-
-bx_t
-NegativeOperator::_simplify() const
-{
+bx_t NegativeOperator::_simplify() const {
     auto op = ~shared_from_this();
     return ~op->simplify();
 }
 
+bx_t Or::_simplify() const { return OrArgSet(args).reduce(); }
 
-bx_t
-Or::_simplify() const
-{
-    return OrArgSet(args).reduce();
-}
+bx_t And::_simplify() const { return AndArgSet(args).reduce(); }
 
+bx_t Xor::_simplify() const { return XorArgSet(args).reduce(); }
 
-bx_t
-And::_simplify() const
-{
-    return AndArgSet(args).reduce();
-}
+bx_t Equal::_simplify() const { return EqArgSet(args).reduce(); }
 
-
-bx_t
-Xor::_simplify() const
-{
-    return XorArgSet(args).reduce();
-}
-
-
-bx_t
-Equal::_simplify() const
-{
-    return EqArgSet(args).reduce();
-}
-
-
-bx_t
-Implies::_simplify() const
-{
+bx_t Implies::_simplify() const {
     auto p = args[0]->simplify();
     auto q = args[1]->simplify();
 
@@ -121,10 +84,7 @@ Implies::_simplify() const
     return make_shared<Implies>(true, p, q);
 }
 
-
-bx_t
-IfThenElse::_simplify() const
-{
+bx_t IfThenElse::_simplify() const {
     auto s = args[0]->simplify();
     auto d1 = args[1]->simplify();
     auto d0 = args[2]->simplify();
@@ -205,6 +165,5 @@ IfThenElse::_simplify() const
 
     return make_shared<IfThenElse>(true, s, d1, d0);
 }
-
 
 }  // namespace boolexpr

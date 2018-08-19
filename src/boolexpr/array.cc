@@ -12,42 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::initializer_list;
 using std::make_pair;
 using std::unique_ptr;
 using std::vector;
 
-
 namespace boolexpr {
 
+Array::Array() : items{} {}
 
-Array::Array()
-    : items {}
-{}
+Array::Array(vector<bx_t> const& items) : items{items} {}
 
+Array::Array(vector<bx_t> const&& items) : items{items} {}
 
-Array::Array(vector<bx_t> const & items)
-    : items {items}
-{}
+Array::Array(initializer_list<bx_t> const items) : items{items} {}
 
-
-Array::Array(vector<bx_t> const && items)
-    : items {items}
-{}
-
-
-Array::Array(initializer_list<bx_t> const items)
-    : items {items}
-{}
-
-
-array_t
-operator~(Array const & self)
-{
+array_t operator~(Array const& self) {
     size_t n = self.items.size();
     vector<bx_t> items(n);
 
@@ -58,10 +40,7 @@ operator~(Array const & self)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-operator|(Array const & lhs, Array const & rhs)
-{
+array_t operator|(Array const& lhs, Array const& rhs) {
     vector<bx_t> items;
 
     auto lhs_it = lhs.items.begin();
@@ -82,10 +61,7 @@ operator|(Array const & lhs, Array const & rhs)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-operator&(Array const & lhs, Array const & rhs)
-{
+array_t operator&(Array const& lhs, Array const& rhs) {
     vector<bx_t> items;
 
     auto lhs_it = lhs.items.begin();
@@ -106,10 +82,7 @@ operator&(Array const & lhs, Array const & rhs)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-operator^(Array const & lhs, Array const & rhs)
-{
+array_t operator^(Array const& lhs, Array const& rhs) {
     vector<bx_t> items;
 
     auto lhs_it = lhs.items.begin();
@@ -130,10 +103,7 @@ operator^(Array const & lhs, Array const & rhs)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-operator+(Array const & lhs, Array const & rhs)
-{
+array_t operator+(Array const& lhs, Array const& rhs) {
     vector<bx_t> items(lhs.items.size() + rhs.items.size());
 
     size_t cnt = 0;
@@ -149,10 +119,7 @@ operator+(Array const & lhs, Array const & rhs)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-operator*(Array const & lhs, size_t num)
-{
+array_t operator*(Array const& lhs, size_t num) {
     vector<bx_t> items(num * lhs.items.size());
 
     size_t cnt = 0;
@@ -166,10 +133,7 @@ operator*(Array const & lhs, size_t num)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-operator*(size_t num, Array const & rhs)
-{
+array_t operator*(size_t num, Array const& rhs) {
     vector<bx_t> items(num * rhs.items.size());
 
     size_t cnt = 0;
@@ -183,45 +147,19 @@ operator*(size_t num, Array const & rhs)
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
+bx_t const& Array::operator[](size_t index) const { return this->items[index]; }
 
-bx_t const &
-Array::operator[](size_t index) const
-{
-    return this->items[index];
-}
+bx_t& Array::operator[](size_t index) { return this->items[index]; }
 
+size_t Array::size() const { return this->items.size(); }
 
-bx_t &
-Array::operator[](size_t index)
-{
-    return this->items[index];
-}
-
-
-size_t
-Array::size() const
-{
-    return this->items.size();
-}
-
-
-vector<bx_t>::const_iterator
-Array::begin() const
-{
+vector<bx_t>::const_iterator Array::begin() const {
     return this->items.begin();
 }
 
+vector<bx_t>::const_iterator Array::end() const { return this->items.end(); }
 
-vector<bx_t>::const_iterator
-Array::end() const
-{
-    return this->items.end();
-}
-
-
-array_t
-Array::simplify() const
-{
+array_t Array::simplify() const {
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
@@ -232,10 +170,7 @@ Array::simplify() const
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-Array::compose(var2bx_t const & var2bx) const
-{
+array_t Array::compose(var2bx_t const& var2bx) const {
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
@@ -246,10 +181,7 @@ Array::compose(var2bx_t const & var2bx) const
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-Array::restrict_(point_t const & point) const
-{
+array_t Array::restrict_(point_t const& point) const {
     size_t n = this->items.size();
     vector<bx_t> items(n);
 
@@ -260,10 +192,7 @@ Array::restrict_(point_t const & point) const
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-bool
-Array::equiv(Array const & other) const
-{
+bool Array::equiv(Array const& other) const {
     if (this->items.size() != other.items.size()) {
         return false;
     }
@@ -277,10 +206,7 @@ Array::equiv(Array const & other) const
     return true;
 }
 
-
-array_t
-Array::zext(size_t num) const
-{
+array_t Array::zext(size_t num) const {
     vector<bx_t> items(this->items.size() + num);
 
     size_t cnt = 0;
@@ -295,10 +221,7 @@ Array::zext(size_t num) const
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
-
-array_t
-Array::sext(size_t num) const
-{
+array_t Array::sext(size_t num) const {
     vector<bx_t> items(this->items.size() + num);
 
     size_t cnt = 0;
@@ -306,7 +229,7 @@ Array::sext(size_t num) const
         items[cnt++] = this->items[i];
     }
 
-    auto sign = this->items[this->items.size()-1];
+    auto sign = this->items[this->items.size() - 1];
     for (size_t i = 0; i < num; ++i) {
         items[cnt++] = sign;
     }
@@ -314,52 +237,19 @@ Array::sext(size_t num) const
     return unique_ptr<Array>(new Array(std::move(items)));
 }
 
+bx_t Array::nor_reduce() const { return nor(items); }
 
-bx_t
-Array::nor_reduce() const
-{
-    return nor(items);
-}
+bx_t Array::or_reduce() const { return or_(items); }
 
+bx_t Array::nand_reduce() const { return nand(items); }
 
-bx_t
-Array::or_reduce() const
-{
-    return or_(items);
-}
+bx_t Array::and_reduce() const { return and_(items); }
 
+bx_t Array::xnor_reduce() const { return xnor(items); }
 
-bx_t
-Array::nand_reduce() const
-{
-    return nand(items);
-}
+bx_t Array::xor_reduce() const { return xor_(items); }
 
-
-bx_t
-Array::and_reduce() const
-{
-    return and_(items);
-}
-
-
-bx_t
-Array::xnor_reduce() const
-{
-    return xnor(items);
-}
-
-
-bx_t
-Array::xor_reduce() const
-{
-    return xor_(items);
-}
-
-
-std::pair<array_t, array_t>
-Array::lsh(Array const & a) const
-{
+std::pair<array_t, array_t> Array::lsh(Array const& a) const {
     auto m = this->items.size();
     auto n = a.items.size();
 
@@ -373,23 +263,18 @@ Array::lsh(Array const & a) const
     }
 
     for (size_t i = n; i < m; ++i) {
-        fst[i] = this->items[i-n];
+        fst[i] = this->items[i - n];
     }
 
     for (size_t i = 0; i < n; ++i) {
-        snd[i] = this->items[i+m-n];
+        snd[i] = this->items[i + m - n];
     }
 
-    return make_pair(
-               unique_ptr<Array>(new Array(std::move(fst))),
-               unique_ptr<Array>(new Array(std::move(snd)))
-           );
+    return make_pair(unique_ptr<Array>(new Array(std::move(fst))),
+                     unique_ptr<Array>(new Array(std::move(snd))));
 }
 
-
-std::pair<array_t, array_t>
-Array::rsh(Array const & a) const
-{
+std::pair<array_t, array_t> Array::rsh(Array const& a) const {
     auto m = this->items.size();
     auto n = a.items.size();
 
@@ -402,24 +287,19 @@ Array::rsh(Array const & a) const
         fst[i] = this->items[i];
     }
 
-    for (size_t i = 0; i < (m-n); ++i) {
-        snd[i] = this->items[i+n];
+    for (size_t i = 0; i < (m - n); ++i) {
+        snd[i] = this->items[i + n];
     }
 
-    for (size_t i = (m-n); i < m; ++i) {
-        snd[i] = a.items[i-m+n];
+    for (size_t i = (m - n); i < m; ++i) {
+        snd[i] = a.items[i - m + n];
     }
 
-    return make_pair(
-               unique_ptr<Array>(new Array(std::move(fst))),
-               unique_ptr<Array>(new Array(std::move(snd)))
-           );
+    return make_pair(unique_ptr<Array>(new Array(std::move(fst))),
+                     unique_ptr<Array>(new Array(std::move(snd))));
 }
 
-
-std::pair<array_t, array_t>
-Array::arsh(size_t n) const
-{
+std::pair<array_t, array_t> Array::arsh(size_t n) const {
     auto m = this->items.size();
 
     assert(m >= n);
@@ -431,19 +311,16 @@ Array::arsh(size_t n) const
         fst[i] = this->items[i];
     }
 
-    for (size_t i = 0; i < (m-n); ++i) {
-        snd[i] = this->items[i+n];
+    for (size_t i = 0; i < (m - n); ++i) {
+        snd[i] = this->items[i + n];
     }
 
-    for (size_t i = (m-n); i < m; ++i) {
-        snd[i] = this->items[m-1];
+    for (size_t i = (m - n); i < m; ++i) {
+        snd[i] = this->items[m - 1];
     }
 
-    return make_pair(
-               unique_ptr<Array>(new Array(std::move(fst))),
-               unique_ptr<Array>(new Array(std::move(snd)))
-           );
+    return make_pair(unique_ptr<Array>(new Array(std::move(fst))),
+                     unique_ptr<Array>(new Array(std::move(snd))));
 }
-
 
 }  // namespace boolexpr

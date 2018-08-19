@@ -12,26 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "boolexpr/boolexpr.h"
-
 
 using std::vector;
 
-
 namespace boolexpr {
 
+bx_t Atom::to_posop() const { return shared_from_this(); }
 
-bx_t
-Atom::to_posop() const
-{
-    return shared_from_this();
-}
-
-
-bx_t
-Nor::to_posop() const
-{
+bx_t Nor::to_posop() const {
     // ~(x0 | x1 | ...) <=> ~x0 & ~x1 & ...
     size_t n = args.size();
     vector<bx_t> _args(n);
@@ -43,17 +32,11 @@ Nor::to_posop() const
     return and_(std::move(_args));
 }
 
-
-bx_t
-Or::to_posop() const
-{
-    return transform([](bx_t const & arg){return arg->to_posop();});
+bx_t Or::to_posop() const {
+    return transform([](bx_t const& arg) { return arg->to_posop(); });
 }
 
-
-bx_t
-Nand::to_posop() const
-{
+bx_t Nand::to_posop() const {
     // ~(x0 & x1 & ...) <=> ~x0 | ~x1 | ...
     size_t n = args.size();
     vector<bx_t> _args(n);
@@ -65,17 +48,11 @@ Nand::to_posop() const
     return or_(std::move(_args));
 }
 
-
-bx_t
-And::to_posop() const
-{
-    return transform([](bx_t const & arg){return arg->to_posop();});
+bx_t And::to_posop() const {
+    return transform([](bx_t const& arg) { return arg->to_posop(); });
 }
 
-
-bx_t
-Xnor::to_posop() const
-{
+bx_t Xnor::to_posop() const {
     // ~(x0 ^ x1 ^ x2 ^ ...) <=> ~x0 ^ x1 ^ x2 ^ ...
     size_t n = args.size();
     vector<bx_t> _args(n);
@@ -88,17 +65,11 @@ Xnor::to_posop() const
     return xor_(std::move(_args));
 }
 
-
-bx_t
-Xor::to_posop() const
-{
-    return transform([](bx_t const & arg){return arg->to_posop();});
+bx_t Xor::to_posop() const {
+    return transform([](bx_t const& arg) { return arg->to_posop(); });
 }
 
-
-bx_t
-Unequal::to_posop() const
-{
+bx_t Unequal::to_posop() const {
     // ~eq(x0, x1, x2, ...) <=> eq(~x0, x1, x2, ...)
     size_t n = args.size();
     vector<bx_t> _args(n);
@@ -111,17 +82,11 @@ Unequal::to_posop() const
     return eq(std::move(_args));
 }
 
-
-bx_t
-Equal::to_posop() const
-{
-    return transform([](bx_t const & arg){return arg->to_posop();});
+bx_t Equal::to_posop() const {
+    return transform([](bx_t const& arg) { return arg->to_posop(); });
 }
 
-
-bx_t
-NotImplies::to_posop() const
-{
+bx_t NotImplies::to_posop() const {
     // ~(p => q) <=> p & ~q
     auto p = (args[0])->to_posop();
     auto qn = (~args[1])->to_posop();
@@ -129,10 +94,7 @@ NotImplies::to_posop() const
     return p & qn;
 }
 
-
-bx_t
-Implies::to_posop() const
-{
+bx_t Implies::to_posop() const {
     // p => q <=> ~p | q
     auto pn = (~args[0])->to_posop();
     auto q = (args[1])->to_posop();
@@ -140,17 +102,11 @@ Implies::to_posop() const
     return pn | q;
 }
 
-
-bx_t
-IfThenElse::to_posop() const
-{
-    return transform([](bx_t const & arg){return arg->to_posop();});
+bx_t IfThenElse::to_posop() const {
+    return transform([](bx_t const& arg) { return arg->to_posop(); });
 }
 
-
-bx_t
-NotIfThenElse::to_posop() const
-{
+bx_t NotIfThenElse::to_posop() const {
     // ~(s ? d1 : d0) <=> s ? ~d1 : ~d0
     auto s = (args[0])->to_posop();
     auto d1n = (~args[1])->to_posop();
@@ -158,6 +114,5 @@ NotIfThenElse::to_posop() const
 
     return ite(s, d1n, d0n);
 }
-
 
 }  // namespace boolexpr
