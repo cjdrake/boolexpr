@@ -8,7 +8,7 @@ find_program(pylint_path pylint)
 
 file(GLOB srcs "boolexpr/*.py")
 
-file(COPY ../LICENSE ../README.rst DESTINATION .)
+file(COPY ../LICENSE ../README.md DESTINATION .)
 file(COPY .pylintrc MANIFEST.in test_boolexpr.py DESTINATION .)
 file(COPY ${srcs} DESTINATION boolexpr)
 file(COPY ../include DESTINATION boolexpr/)

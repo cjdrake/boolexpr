@@ -1,4 +1,4 @@
-include LICENSE README.rst
+include LICENSE README.md
 recursive-include boolexpr/include *
 recursive-include boolexpr/src *
 recursive-include boolexpr/third_party *

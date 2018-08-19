@@ -22,7 +22,7 @@ from setuptools import Extension
 from setuptools import setup
 
 
-with open("README.rst") as fin:
+with open("README.md") as fin:
     README = fin.read()
 
 CLASSIFIERS = [
