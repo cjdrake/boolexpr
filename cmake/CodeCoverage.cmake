@@ -70,13 +70,13 @@ function(setup_target_for_coverage
     _testrunner
     _outputname
 )
-    if(NOT lcov_path)
+    if (NOT lcov_path)
         message(FATAL_ERROR "lcov not found!")
-    endif()
+    endif ()
 
-    if(NOT genhtml_path)
+    if (NOT genhtml_path)
         message(FATAL_ERROR "genhtml not found!")
-    endif()
+    endif ()
 
     set(coverage_info "${CMAKE_BINARY_DIR}/${_outputname}.info")
     set(coverage_cleaned "${coverage_info}.cleaned")
