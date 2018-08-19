@@ -12,7 +12,7 @@ add_custom_target(
 )
 
 # make cover
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
     include(CodeCoverage)
     setup_target_for_coverage(cover a.out html)
-endif()
+endif ()

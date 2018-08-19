@@ -24,7 +24,7 @@ add_custom_command(
     COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -i
 )
 
-if(coverage_path)
+if (coverage_path)
     # Run unit tests with coverage
     add_custom_target(
         pycov
@@ -32,9 +32,9 @@ if(coverage_path)
         COMMAND ${coverage_path} html
         DEPENDS stamp
     )
-endif(coverage_path)
+endif (coverage_path)
 
-if(DOXYGEN_FOUND)
+if (DOXYGEN_FOUND)
     # Build Sphinx documentation
     add_custom_target(
         pyhtml
@@ -43,17 +43,17 @@ if(DOXYGEN_FOUND)
         DEPENDS ccapiref stamp
     )
     # Upload to GCS
-    if(gsutil_path)
+    if (gsutil_path)
         add_custom_target(
             pyhtml-upload
             COMMAND ${gsutil_path} -m rsync -d -p -r build/sphinx/html ${GCS_BUCKET}
             COMMAND ${gsutil_path} -m acl ch -u AllUsers:R ${GCS_BUCKET}/**
             DEPENDS pyhtml
         )
-    endif(gsutil_path)
-endif(DOXYGEN_FOUND)
+    endif (gsutil_path)
+endif (DOXYGEN_FOUND)
 
-if(pylint_path)
+if (pylint_path)
     # Run PyLint
     add_custom_target(
         pylint
@@ -61,7 +61,7 @@ if(pylint_path)
         COMMAND ${pylint_path} boolexpr
         DEPENDS stamp
     )
-endif(pylint_path)
+endif (pylint_path)
 
 add_custom_target(
     pytest

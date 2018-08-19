@@ -10,7 +10,7 @@ set(BOOST_VERSION 1.54.0)
 # Doxygen
 include(FindDoxygen)
 
-if(DOXYGEN_FOUND)
+if (DOXYGEN_FOUND)
     configure_file(Doxyfile.in Doxyfile)
     add_custom_target(
         ccapiref
@@ -18,7 +18,7 @@ if(DOXYGEN_FOUND)
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
-endif(DOXYGEN_FOUND)
+endif (DOXYGEN_FOUND)
 
 file(GLOB_RECURSE boolexpr_srcs "src/*.cc")
 file(GLOB_RECURSE glucosamine_srcs "third_party/glucosamine/src/core/Solver.cc")
@@ -26,13 +26,13 @@ file(GLOB_RECURSE boost_srcs "third_party/boost-${BOOST_VERSION}/*.hpp")
 
 add_library(boolexpr ${boolexpr_srcs} ${glucosamine_srcs})
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+if (${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     target_compile_options(boolexpr PUBLIC -std=c++11 -Wall)
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
     target_compile_options(boolexpr PUBLIC -std=c++11 -Wall)
 elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     target_compile_options(boolexpr PUBLIC /std:c++11 /Wall)
-endif()
+endif ()
 
 target_include_directories(boolexpr PUBLIC include)
 target_include_directories(boolexpr PUBLIC third_party/boost-1.54.0)
@@ -41,9 +41,9 @@ target_include_directories(boolexpr PUBLIC third_party/glucosamine/src)
 # Python bindings
 add_subdirectory(python)
 
-if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
+if (${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
     # Google Test
     add_subdirectory(third_party/googletest)
     # Unit tests
     add_subdirectory(test)
-endif()
+endif ()
