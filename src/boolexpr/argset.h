@@ -20,6 +20,8 @@
 #ifndef BOOLEXPR_ARGSET_H_
 #define BOOLEXPR_ARGSET_H_
 
+#include "boolexpr/boolexpr.h"
+
 namespace boolexpr {
 
 class ArgSet {
