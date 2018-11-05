@@ -1121,60 +1121,56 @@ _AST = {
 
 def _expect_array(obj):
     """Return an ndarray, or raise TypeError."""
-    if obj == 0 or obj == "0":
+    if obj in (0, "0"):
         return array([ZERO])
-    elif obj == 1 or obj == "1":
+    if obj in (1, "1"):
         return array([ONE])
-    elif obj == "x" or obj == "X":
+    if obj in ("x", "X"):
         return array([LOGICAL])
-    elif obj == "?":
+    if obj == "?":
         return array([ILLOGICAL])
-    elif isinstance(obj, BoolExpr):
+    if isinstance(obj, BoolExpr):
         return array([obj])
-    elif isinstance(obj, ndarray):
+    if isinstance(obj, ndarray):
         return obj
-    else:
-        raise TypeError("Expected obj to be an ndarray")
+    raise TypeError("Expected obj to be an ndarray")
 
 
 def _expect_bx(obj):
     """Return a BoolExpr, or raise TypeError."""
-    if obj == 0 or obj == "0":
+    if obj in (0, "0"):
         return ZERO
-    elif obj == 1 or obj == "1":
+    if obj in (1, "1"):
         return ONE
-    elif obj == "x" or obj == "X":
+    if obj in ("x", "X"):
         return LOGICAL
-    elif obj == "?":
+    if obj == "?":
         return ILLOGICAL
-    elif isinstance(obj, BoolExpr):
+    if isinstance(obj, BoolExpr):
         return obj
-    else:
-        raise TypeError("Expected obj to be a BoolExpr")
+    raise TypeError("Expected obj to be a BoolExpr")
 
 
 def _expect_const(obj):
     """Return a Constant, or raise TypeError."""
-    if obj == 0 or obj == "0":
+    if obj in (0, "0"):
         return ZERO
-    elif obj == 1 or obj == "1":
+    if obj in (1, "1"):
         return ONE
-    elif obj == "x" or obj == "X":
+    if obj in ("x", "X"):
         return LOGICAL
-    elif obj == "?":
+    if obj == "?":
         return ILLOGICAL
-    elif isinstance(obj, Constant):
+    if isinstance(obj, Constant):
         return obj
-    else:
-        raise TypeError("Expected obj to be a Constant")
+    raise TypeError("Expected obj to be a Constant")
 
 
 def _expect_var(obj):
     """Return a Variable, or raise TypeError."""
     if isinstance(obj, Variable):
         return obj
-    else:
-        raise TypeError("Expected obj to be a Variable")
+    raise TypeError("Expected obj to be a Variable")
 
 
 def _convert_args(args):
@@ -1965,7 +1961,7 @@ def _itemize(objs):
     isseq = [isinstance(obj, collections.Sequence) for obj in objs]
     if not any(isseq):
         return list(objs), ((0, len(objs)), )
-    elif all(isseq):
+    if all(isseq):
         items = list()
         shape = None
         for obj in objs:
@@ -1977,8 +1973,7 @@ def _itemize(objs):
             items += _items
         shape = ((0, len(objs)), ) + shape
         return items, shape
-    else:
-        raise ValueError("expected uniform array dimensions")
+    raise ValueError("expected uniform array dimensions")
 
 
 def _uint2objs(num, length=None):
